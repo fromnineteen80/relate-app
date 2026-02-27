@@ -87,8 +87,7 @@ export default function LandingPage() {
             367 Questions. 32 Personas. One Relationship Profile.
           </p>
           <h1 className="font-serif text-5xl md:text-6xl font-semibold leading-[1.1] mb-6">
-            Relationship intelligence,<br />
-            not relationship advice.
+            The first dating and relationship intelligence layer
           </h1>
           <p className="text-lg text-secondary max-w-xl mx-auto mb-10 leading-relaxed">
             The most comprehensive relationship assessment ever built. Discover your persona, understand your dating patterns, and see who you&apos;re actually compatible with. Improve your relationships. All backed by clinical psychology and supported by Claude.ai.
