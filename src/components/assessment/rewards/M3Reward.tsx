@@ -11,10 +11,10 @@ type Props = {
 };
 
 function getGapInterpretation(gap: number): string {
-  if (gap > 20) return "You want significantly more than you offer. This creates relationship debt - partners may feel they're giving access you don't reciprocate.";
+  if (gap > 20) return "You want significantly more than you offer. This creates relationship debt, and partners may feel they're giving access you don't reciprocate.";
   if (gap < -20) return "You offer far more than you ask for. This can feel generous but may attract partners who take without giving.";
-  if (gap > 5) return "You want slightly more than you offer. Watch this balance over time - a small tilt can widen under stress.";
-  if (gap < -5) return "You offer slightly more than you ask for. This is sustainable - you won't drain partners or feel perpetually unsatisfied.";
+  if (gap > 5) return "You want slightly more than you offer. Watch this balance over time, as a small tilt can widen under stress.";
+  if (gap < -5) return "You offer slightly more than you ask for. This is sustainable, and you won't drain partners or feel perpetually unsatisfied.";
   return "Your want and offer are well balanced. This symmetry is a relationship strength.";
 }
 
@@ -204,7 +204,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
         You know what you want, who you are, and how you connect. One question remains: what happens when it gets hard?
       </p>
       <p className="text-sm text-secondary mb-8">
-        Module 4 maps your conflict patterns - how you fight, what triggers you, and whether you can repair.
+        Module 4 maps your conflict patterns: how you fight, what triggers you, and whether you can repair.
       </p>
       <button onClick={onContinue} className="btn-primary px-8 py-3">
         Continue to Module 4

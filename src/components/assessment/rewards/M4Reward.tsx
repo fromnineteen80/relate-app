@@ -12,7 +12,7 @@ type Props = {
 };
 
 const APPROACH_DESC: Record<string, string> = {
-  withdraw: "When overwhelmed, you need space to process. You'll come back - but you need to leave first.",
+  withdraw: "When overwhelmed, you need space to process. You'll come back, but you need to leave first.",
   pursue: "When threatened, you move toward the conflict. You'd rather fight it out than let it fester.",
 };
 
@@ -194,12 +194,12 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
         <p className="text-secondary text-sm leading-relaxed mb-8">
           Your conflict style shapes which matches will thrive and which will spiral.
           {summary.approach === 'withdraw'
-            ? " A partner who pursues while you withdraw creates a deadly loop - unless one of you can break pattern. A partner who also withdraws may avoid conflict entirely, letting resentment build."
-            : " A partner who withdraws while you pursue creates a chase dynamic - your intensity meets their silence. A partner who also pursues may escalate conflicts into warfare."
+            ? " A partner who pursues while you withdraw creates a deadly loop, unless one of you can break pattern. A partner who also withdraws may avoid conflict entirely, letting resentment build."
+            : " A partner who withdraws while you pursue creates a chase dynamic: your intensity meets their silence. A partner who also pursues may escalate conflicts into warfare."
           }
         </p>
         <p className="text-xs text-secondary italic mb-8">
-          Your full report shows exactly which of your 16 matches carry these risks - and which are built to last.
+          Your full report shows exactly which of your 16 matches carry these risks, and which are built to last.
         </p>
 
         <button onClick={() => setScreen(4)} className="btn-primary w-full">

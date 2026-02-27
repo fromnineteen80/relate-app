@@ -9,7 +9,7 @@ function buildAdvisorContext(body: any): string {
 
   let context = `
 
-## ADVISOR MODE - Additional Context
+## ADVISOR MODE: Additional Context
 
 Only reference scores explicitly provided below. Never invent data you don't have.
 
@@ -34,7 +34,7 @@ Only reference scores explicitly provided below. Never invent data you don't hav
   // Module 1 data
   if (progress?.m1Complete && userData?.m1) {
     const m1 = userData.m1;
-    context += `## Module 1 Complete - What They Want\n`;
+    context += `## Module 1 Complete: What They Want\n`;
     if (m1.dimensions) {
       for (const [dim, data] of Object.entries(m1.dimensions) as [string, any][]) {
         if (data?.assignedPole) {
@@ -50,7 +50,7 @@ Only reference scores explicitly provided below. Never invent data you don't hav
   // Module 2 data
   if (progress?.m2Complete && userData?.m2) {
     const m2 = userData.m2;
-    context += `## Module 2 Complete - Who They Are\n`;
+    context += `## Module 2 Complete: Who They Are\n`;
     if (m2.persona || m2.personaMetadata) {
       const p = m2.personaMetadata || m2.persona || {};
       context += `- Persona: ${p.name || persona?.name || 'Unknown'} (${m2.code || persona?.code || '-'})\n`;
@@ -84,7 +84,7 @@ Only reference scores explicitly provided below. Never invent data you don't hav
   // Module 3 data
   if (progress?.m3Complete && userData?.m3) {
     const m3 = userData.m3;
-    context += `## Module 3 Complete - How They Connect\n`;
+    context += `## Module 3 Complete: How They Connect\n`;
     if (m3.wantScore != null) context += `- Want Score: ${m3.wantScore}/100 (how much differentiated access they seek)\n`;
     if (m3.offerScore != null) context += `- Offer Score: ${m3.offerScore}/100 (how much they give)\n`;
     if (m3.wantScore != null && m3.offerScore != null) {
@@ -99,7 +99,7 @@ Only reference scores explicitly provided below. Never invent data you don't hav
   // Module 4 data
   if (progress?.m4Complete && userData?.m4) {
     const m4 = userData.m4;
-    context += `## Module 4 Complete - Conflict Profile\n`;
+    context += `## Module 4 Complete: Conflict Profile\n`;
     const approach = m4.conflictApproach?.approach || m4.summary?.approach;
     const driver = m4.emotionalDrivers?.primary || m4.summary?.primaryDriver;
     const repairSpeed = m4.repairRecovery?.speed?.style || m4.summary?.repairSpeed;
@@ -135,7 +135,7 @@ Only reference scores explicitly provided below. Never invent data you don't hav
     if (results.matches?.length > 0) {
       context += `\n**Top 3 Matches:**\n`;
       results.matches.slice(0, 3).forEach((m: any, i: number) => {
-        context += `${i + 1}. ${m.name} (${m.tier}) - ${m.compatibilityScore}%\n`;
+        context += `${i + 1}. ${m.name} (${m.tier}): ${m.compatibilityScore}%\n`;
       });
     }
     context += '\n';
@@ -148,23 +148,23 @@ Only reference scores explicitly provided below. Never invent data you don't hav
     const repair = couplesReport.repairCompatibility || {};
     const ceilingFloor = couplesReport.ceilingFloor || {};
 
-    context += `## Couples Data - TOGETHER Mode (speaking to both partners)\n`;
+    context += `## Couples Data: TOGETHER Mode (speaking to both partners)\n`;
     context += `**Partner 1:** ${overview.user1?.name || 'Partner 1'} (${overview.user1?.code || '-'})\n`;
     context += `**Partner 2:** ${overview.user2?.name || 'Partner 2'} (${overview.user2?.code || '-'})\n`;
     context += `**Pairing:** ${overview.archetype?.name || 'N/A'} (Score: ${overview.overallScore || '-'})\n`;
     context += `**Alignment:** ${overview.alignmentPercent || '-'}% | M3 Compat: ${overview.m3Compat || '-'}% | M4 Compat: ${overview.m4Compat || '-'}%\n`;
-    context += `**Conflict Dynamic:** ${conflict.dynamic?.label || 'N/A'} - ${conflict.dynamic?.description || ''}\n`;
+    context += `**Conflict Dynamic:** ${conflict.dynamic?.label || 'N/A'}: ${conflict.dynamic?.description || ''}\n`;
     context += `**Drivers:** ${conflict.driverAnalysis?.user1Driver || '-'} vs ${conflict.driverAnalysis?.user2Driver || '-'}${conflict.driverAnalysis?.collision ? ' [COLLISION]' : ''}\n`;
     context += `**Repair Compat:** Speed match: ${repair.repair?.speedMatch ? 'Yes' : 'No'}, Mode match: ${repair.repair?.modeMatch ? 'Yes' : 'No'}\n`;
     context += `**Gottman Risk:** ${repair.overallRisk || 'N/A'}\n`;
     context += `**Ceiling/Floor:** ${ceilingFloor.ceiling || '-'}/${ceilingFloor.floor || '-'} (Current: ${ceilingFloor.current || '-'})\n\n`;
-    context += `Address both partners. Be balanced - don't take sides. Provide concrete exercises and conversation prompts.\n\n`;
+    context += `Address both partners. Be balanced and don't take sides. Provide concrete exercises and conversation prompts.\n\n`;
 
   } else if (mode === 'individual' && couplesReport) {
     const overview = couplesReport.overview || {};
     const conflict = couplesReport.conflictChoreography || {};
 
-    context += `## Couples Data - INDIVIDUAL Mode (speaking to one partner about the relationship)\n`;
+    context += `## Couples Data: INDIVIDUAL Mode (speaking to one partner about the relationship)\n`;
     context += `**User:** ${persona?.name || 'User'} (${persona?.code || '-'})\n`;
     context += `**Partner:** ${partnerPersona?.name || 'Partner'} (${partnerPersona?.code || '-'})\n`;
     context += `**Pairing:** ${overview.archetype?.name || 'N/A'} (Score: ${overview.overallScore || '-'})\n`;
@@ -189,9 +189,9 @@ export async function POST(request: NextRequest) {
     if (isCouplesMode) {
       const couplesResponses = [
         `As a ${personaName} paired with ${partnerName}, your key dynamic is the balance between what you each bring to connection. ${couplesReport?.conflictChoreography?.dynamic?.label ? `Your ${couplesReport.conflictChoreography.dynamic.label} conflict pattern` : 'Your conflict pattern'} means you need to be especially mindful of how you initiate difficult conversations.`,
-        `Your conflict choreography shows a ${couplesReport?.conflictChoreography?.dynamic?.label || 'distinctive'} pattern. This isn't inherently good or bad - it's about awareness. When you notice the pattern starting, name it: "I think we're doing our thing." That alone can interrupt the cycle.`,
+        `Your conflict choreography shows a ${couplesReport?.conflictChoreography?.dynamic?.label || 'distinctive'} pattern. This isn't inherently good or bad; it's about awareness. When you notice the pattern starting, name it: "I think we're doing our thing." That alone can interrupt the cycle.`,
         "Looking at your repair compatibility, the most impactful thing you can practice is signaling. When you need space to process, tell your partner: 'I need 20 minutes, but I'm coming back.' This prevents withdrawal from being read as abandonment.",
-        `Your ceiling-floor analysis shows ${couplesReport?.ceilingFloor?.growthPotential || 'meaningful'} points of growth potential. The areas with the most leverage are your shared challenges - completing them together builds both the relationship and your individual awareness.`,
+        `Your ceiling-floor analysis shows ${couplesReport?.ceilingFloor?.growthPotential || 'meaningful'} points of growth potential. The areas with the most leverage are your shared challenges. Completing them together builds both the relationship and your individual awareness.`,
       ];
       const idx = (history?.length || 0) % couplesResponses.length;
       return NextResponse.json({ response: couplesResponses[idx] });
@@ -206,26 +206,26 @@ export async function POST(request: NextRequest) {
       const driver = m4.emotionalDrivers?.primary || m4.summary?.primaryDriver || 'your driver';
       responses = [
         `Based on your ${personaName} profile, I'd suggest focusing on your conflict repair patterns. Your ${approach} approach and ${driver} driver shape how you navigate disagreements. Understanding this pattern is the first step to changing it.`,
-        `Your connection style scores suggest ${userData?.m3?.wantScore > userData?.m3?.offerScore ? 'you want more than you offer' : 'you offer more than you ask for'}. ${userData?.m3?.wantScore > userData?.m3?.offerScore ? "This isn't selfish - it's clarity about your needs. The work is finding someone who naturally gives at your level." : 'This generosity is a strength, but watch for resentment building if the balance stays skewed too long.'}`,
-        "Looking at your compatibility rankings, your top matches share your values dimension. This is significant - values alignment predicts long-term satisfaction more reliably than physical or social chemistry.",
-        `Your Gottman scores are worth paying attention to. ${m4.gottmanScreener?.primary ? `Your highest area is ${m4.gottmanScreener.primary}` : 'The area to watch is defensiveness'} - even moderate scores here can escalate conflicts. Try acknowledging your partner's perspective before explaining yours.`,
+        `Your connection style scores suggest ${userData?.m3?.wantScore > userData?.m3?.offerScore ? 'you want more than you offer' : 'you offer more than you ask for'}. ${userData?.m3?.wantScore > userData?.m3?.offerScore ? "This isn't selfish; it's clarity about your needs. The work is finding someone who naturally gives at your level." : 'This generosity is a strength, but watch for resentment building if the balance stays skewed too long.'}`,
+        "Looking at your compatibility rankings, your top matches share your values dimension. This is significant because values alignment predicts long-term satisfaction more reliably than physical or social chemistry.",
+        `Your Gottman scores are worth paying attention to. ${m4.gottmanScreener?.primary ? `Your highest area is ${m4.gottmanScreener.primary}` : 'The area to watch is defensiveness'}. Even moderate scores here can escalate conflicts. Try acknowledging your partner's perspective before explaining yours.`,
       ];
     } else if (progress?.m2Complete || userData?.m2) {
       responses = [
-        `Your ${personaName} persona reveals interesting tensions in who you are versus what you want. This gap isn't a flaw -it's where your growth edge lives. The question is whether you lean into who you are or chase what you want.`,
+        `Your ${personaName} persona reveals interesting tensions in who you are versus what you want. This gap isn't a flaw; it's where your growth edge lives. The question is whether you lean into who you are or chase what you want.`,
         "You're still in the assessment, so I don't have your full profile yet. But based on what I can see, you have strong self-awareness in how you describe yourself. That's a genuine asset in relationships.",
-        "Finishing Modules 3 and 4 will give us much more to work with -your connection style and conflict patterns are where the real coaching insights emerge.",
+        "Finishing Modules 3 and 4 will give us much more to work with. Your connection style and conflict patterns are where the real coaching insights emerge.",
       ];
     } else if (progress?.m1Complete || userData?.m1) {
       responses = [
-        "Your Module 1 results show clear preferences. The strength of your convictions matters -strong preferences make matching more precise but narrow the pool. Moderate preferences increase options but may mean more compromise.",
-        "You're early in the assessment -complete Module 2 to discover your persona, which is where the real insights begin.",
+        "Your Module 1 results show clear preferences. The strength of your convictions matters: strong preferences make matching more precise but narrow the pool. Moderate preferences increase options but may mean more compromise.",
+        "You're early in the assessment. Complete Module 2 to discover your persona, which is where the real insights begin.",
         "Keep answering honestly, not aspirationally. The assessment works best when it captures who you actually are, not who you wish you were.",
       ];
     } else {
       responses = [
-        "Welcome to RELATE. I'm here to help as you work through the assessment. Feel free to ask if any question feels confusing or uncomfortable -that's often where the most important data lives.",
-        "The assessment is designed to capture your actual patterns, not your ideal self. Answer with your gut -overthinking tends to introduce noise.",
+        "Welcome to RELATE. I'm here to help as you work through the assessment. Feel free to ask if any question feels confusing or uncomfortable. That's often where the most important data lives.",
+        "The assessment is designed to capture your actual patterns, not your ideal self. Answer with your gut. Overthinking tends to introduce noise.",
         "Take your time. There are no wrong answers, and you can always come back to me if something feels off.",
       ];
     }

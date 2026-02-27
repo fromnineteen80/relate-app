@@ -3,7 +3,7 @@ import { Providers } from "./providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "RELATE - Relationship Intelligence",
+  title: "RELATE | Relationship Intelligence",
   description: "A 367-question relationship assessment. Discover your persona, compatibility rankings, and personalized coaching.",
 };
 
