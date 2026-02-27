@@ -16,16 +16,24 @@ export const RELATE_SYSTEM_PROMPT = `You are the RELATE Assessment Intelligence 
 ### The Four Modules
 
 **Module 1 — What You Want (134 questions)**
-Measures preferences across 4 dimensions:
-- Physical: Beauty ↔ Confidence ↔ Fitness ↔ Maturity
-- Social: Allure ↔ Warmth ↔ Charisma ↔ Presence
-- Lifestyle: Thrill ↔ Peace
-- Values: Traditional ↔ Egalitarian
+Measures preferences across 4 dimensions (poles differ by gender):
+
+Male dimensions:
+- Physical: A = Fitness ↔ B = Maturity
+- Social: C = Leadership ↔ D = Presence
+- Lifestyle: E = Adventure ↔ F = Stability
+- Values: G = Traditional ↔ H = Egalitarian
+
+Female dimensions:
+- Physical: A = Beauty ↔ B = Confidence
+- Social: C = Allure ↔ D = Charm
+- Lifestyle: E = Thrill ↔ F = Peace
+- Values: G = Traditional ↔ H = Egalitarian
 
 Output: 4-letter preference code (e.g., ACEG) with strength percentages
 
 **Module 2 — Who You Are (137 questions)**
-Measures how user presents across same 4 dimensions
+Measures how user presents across same 4 gender-specific dimensions
 Output: 4-letter persona code → maps to one of 32 personas (16 male, 16 female)
 
 **Module 3 — How You Connect (28 questions)**
@@ -46,10 +54,10 @@ Measures conflict patterns:
 ### The 32 Personas
 
 **Male Personas:**
-ACEG-Gladiator, ACEH-Maverick, ACFG-Spy, ACFH-Engineer, ADEG-Cowboy, ADEH-Sherpa, ADFG-Diplomat, ADFH-Architect, BCEG-Maverick, BCEH-Rockstar, BCFG-Politician, BCFH-Professor, BDEG-Ranger, BDEH-Captain, BDFG-Monk, BDFH-Builder
+ACEG-Gladiator, ACEH-Maverick, ACFG-Spy, ACFH-Engineer, ADEG-Cowboy, ADEH-Sherpa, ADFG-Curator, ADFH-Recruiter, BCEG-Legionnaire, BCEH-Astronaut, BCFG-Statesman, BCFH-Professor, BDEG-Ranger, BDEH-Playwright, BDFG-Arborist, BDFH-Builder
 
 **Female Personas:**
-ACEG-Siren, ACEH-Firebrand, ACFG-Enchantress, ACFH-Sage, ADEG-Wildcard, ADEH-Healer, ADFG-Muse, ADFH-Anchor, BCEG-Spark, BCEH-Champion, BCFG-Mystic, BCFH-Scholar, BDEG-Pioneer, BDEH-Guardian, BDFG-Oracle, BDFH-Therapist
+ACEG-Debutante, ACEH-Correspondent, ACFG-Duchess, ACFH-Influencer, ADEG-Barrel Racer, ADEH-Podcaster, ADFG-Trophy, ADFH-Girl Next Door, BCEG-Party Planner, BCEH-Marketer, BCFG-Executive, BCFH-Producer, BDEG-Coach, BDEH-Founder, BDFG-Designer, BDFH-Therapist
 
 ### Compatibility Tiers
 

@@ -35,10 +35,10 @@ const MODULES = [
 const PERSONAS_PREVIEW = [
   { name: 'The Gladiator', code: 'ACEG', desc: 'Fitness + Leadership + Adventure + Traditional' },
   { name: 'The Maverick', code: 'ACEH', desc: 'Fitness + Leadership + Adventure + Egalitarian' },
-  { name: 'The Enchantress', code: 'ACFG', desc: 'Beauty + Allure + Peace + Traditional' },
-  { name: 'The Architect', code: 'ADFH', desc: 'Fitness + Presence + Peace + Egalitarian' },
-  { name: 'The Oracle', code: 'BDFG', desc: 'Maturity + Presence + Peace + Traditional' },
-  { name: 'The Champion', code: 'BCEH', desc: 'Confidence + Charisma + Thrill + Egalitarian' },
+  { name: 'The Duchess', code: 'ACFG', desc: 'Beauty + Allure + Peace + Traditional' },
+  { name: 'The Recruiter', code: 'ADFH', desc: 'Fitness + Presence + Stability + Egalitarian' },
+  { name: 'The Designer', code: 'BDFG', desc: 'Confidence + Charm + Peace + Traditional' },
+  { name: 'The Astronaut', code: 'BCEH', desc: 'Maturity + Leadership + Adventure + Egalitarian' },
 ];
 
 const FRAMEWORKS = [

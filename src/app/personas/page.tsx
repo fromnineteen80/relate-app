@@ -20,22 +20,19 @@ type PersonaData = {
 const MALE_CODES = ['ACEG', 'ACEH', 'ACFG', 'ACFH', 'ADEG', 'ADEH', 'ADFG', 'ADFH', 'BCEG', 'BCEH', 'BCFG', 'BCFH', 'BDEG', 'BDEH', 'BDFG', 'BDFH'];
 const FEMALE_CODES = ['ACEG', 'ACEH', 'ACFG', 'ACFH', 'ADEG', 'ADEH', 'ADFG', 'ADFH', 'BCEG', 'BCEH', 'BCFG', 'BCFH', 'BDEG', 'BDEH', 'BDFG', 'BDFH'];
 
-const DIMENSION_LABELS: Record<string, [string, string]> = {
-  A: ['Physical', 'Fitness / Beauty'],
-  B: ['Physical', 'Maturity / Confidence'],
-  C: ['Social', 'Allure / Charisma'],
-  D: ['Social', 'Warmth / Presence'],
-  E: ['Lifestyle', 'Thrill'],
-  F: ['Lifestyle', 'Peace'],
-  G: ['Values', 'Traditional'],
-  H: ['Values', 'Egalitarian'],
+const MALE_DIMENSION_LABELS: Record<string, string> = {
+  A: 'Fitness', B: 'Maturity', C: 'Leadership', D: 'Presence',
+  E: 'Adventure', F: 'Stability', G: 'Traditional', H: 'Egalitarian',
 };
 
-function decodeDimensions(code: string): string[] {
-  return code.split('').map(letter => {
-    const dim = DIMENSION_LABELS[letter];
-    return dim ? `${dim[1]}` : letter;
-  });
+const FEMALE_DIMENSION_LABELS: Record<string, string> = {
+  A: 'Beauty', B: 'Confidence', C: 'Allure', D: 'Charm',
+  E: 'Thrill', F: 'Peace', G: 'Traditional', H: 'Egalitarian',
+};
+
+function decodeDimensions(code: string, gender: 'male' | 'female'): string[] {
+  const labels = gender === 'male' ? MALE_DIMENSION_LABELS : FEMALE_DIMENSION_LABELS;
+  return code.split('').map(letter => labels[letter] || letter);
 }
 
 export default function PersonasPage() {
@@ -108,28 +105,53 @@ export default function PersonasPage() {
         {/* Dimension Key */}
         <div className="card mb-8">
           <h2 className="font-serif font-semibold mb-3">Code Key</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-            <div>
-              <p className="text-xs text-secondary font-mono mb-1">PHYSICAL</p>
-              <p><span className="font-mono text-accent">A</span> = Fitness / Beauty</p>
-              <p><span className="font-mono text-accent">B</span> = Maturity / Confidence</p>
+          {activeTab === 'male' ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+              <div>
+                <p className="text-xs text-secondary font-mono mb-1">PHYSICAL</p>
+                <p><span className="font-mono text-accent">A</span> = Fitness</p>
+                <p><span className="font-mono text-accent">B</span> = Maturity</p>
+              </div>
+              <div>
+                <p className="text-xs text-secondary font-mono mb-1">SOCIAL</p>
+                <p><span className="font-mono text-accent">C</span> = Leadership</p>
+                <p><span className="font-mono text-accent">D</span> = Presence</p>
+              </div>
+              <div>
+                <p className="text-xs text-secondary font-mono mb-1">LIFESTYLE</p>
+                <p><span className="font-mono text-accent">E</span> = Adventure</p>
+                <p><span className="font-mono text-accent">F</span> = Stability</p>
+              </div>
+              <div>
+                <p className="text-xs text-secondary font-mono mb-1">VALUES</p>
+                <p><span className="font-mono text-accent">G</span> = Traditional</p>
+                <p><span className="font-mono text-accent">H</span> = Egalitarian</p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs text-secondary font-mono mb-1">SOCIAL</p>
-              <p><span className="font-mono text-accent">C</span> = Allure / Charisma</p>
-              <p><span className="font-mono text-accent">D</span> = Warmth / Presence</p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+              <div>
+                <p className="text-xs text-secondary font-mono mb-1">PHYSICAL</p>
+                <p><span className="font-mono text-accent">A</span> = Beauty</p>
+                <p><span className="font-mono text-accent">B</span> = Confidence</p>
+              </div>
+              <div>
+                <p className="text-xs text-secondary font-mono mb-1">SOCIAL</p>
+                <p><span className="font-mono text-accent">C</span> = Allure</p>
+                <p><span className="font-mono text-accent">D</span> = Charm</p>
+              </div>
+              <div>
+                <p className="text-xs text-secondary font-mono mb-1">LIFESTYLE</p>
+                <p><span className="font-mono text-accent">E</span> = Thrill</p>
+                <p><span className="font-mono text-accent">F</span> = Peace</p>
+              </div>
+              <div>
+                <p className="text-xs text-secondary font-mono mb-1">VALUES</p>
+                <p><span className="font-mono text-accent">G</span> = Traditional</p>
+                <p><span className="font-mono text-accent">H</span> = Egalitarian</p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs text-secondary font-mono mb-1">LIFESTYLE</p>
-              <p><span className="font-mono text-accent">E</span> = Thrill</p>
-              <p><span className="font-mono text-accent">F</span> = Peace</p>
-            </div>
-            <div>
-              <p className="text-xs text-secondary font-mono mb-1">VALUES</p>
-              <p><span className="font-mono text-accent">G</span> = Traditional</p>
-              <p><span className="font-mono text-accent">H</span> = Egalitarian</p>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Gender tabs */}
@@ -157,7 +179,7 @@ export default function PersonasPage() {
           {personas.map((persona) => {
             const isExpanded = expandedCode === persona.code;
             const isUserPersona = userPersonaCode === persona.code;
-            const dims = decodeDimensions(persona.code);
+            const dims = decodeDimensions(persona.code, activeTab);
 
             return (
               <div
