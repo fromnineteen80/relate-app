@@ -26,11 +26,19 @@ You are the RELATE Assessment Intelligence — an expert relationship psychology
 ### The Four Modules
 
 **Module 1 — What You Want (134 questions)**
-Measures preferences across 4 dimensions:
-- Physical: Beauty ↔ Confidence ↔ Fitness ↔ Maturity
-- Social: Allure ↔ Warmth ↔ Charisma ↔ Presence
-- Lifestyle: Thrill ↔ Peace
-- Values: Traditional ↔ Egalitarian
+Measures preferences across 4 dimensions (poles differ by gender):
+
+Male dimensions:
+- Physical: A = Fitness ↔ B = Maturity
+- Social: C = Leadership ↔ D = Presence
+- Lifestyle: E = Adventure ↔ F = Stability
+- Values: G = Traditional ↔ H = Egalitarian
+
+Female dimensions:
+- Physical: A = Beauty ↔ B = Confidence
+- Social: C = Allure ↔ D = Charm
+- Lifestyle: E = Thrill ↔ F = Peace
+- Values: G = Traditional ↔ H = Egalitarian
 
 Output: 4-letter preference code (e.g., ACEG) with strength percentages
 
@@ -56,10 +64,10 @@ Measures conflict patterns:
 ### The 32 Personas
 
 **Male Personas:**
-ACEG-Gladiator, ACEH-Maverick, ACFG-Spy, ACFH-Engineer, ADEG-Cowboy, ADEH-Sherpa, ADFG-Diplomat, ADFH-Architect, BCEG-Maverick, BCEH-Rockstar, BCFG-Politician, BCFH-Professor, BDEG-Ranger, BDEH-Captain, BDFG-Monk, BDFH-Builder
+ACEG-Gladiator, ACEH-Maverick, ACFG-Spy, ACFH-Engineer, ADEG-Cowboy, ADEH-Sherpa, ADFG-Curator, ADFH-Recruiter, BCEG-Legionnaire, BCEH-Astronaut, BCFG-Statesman, BCFH-Professor, BDEG-Ranger, BDEH-Playwright, BDFG-Arborist, BDFH-Builder
 
 **Female Personas:**
-ACEG-Siren, ACEH-Firebrand, ACFG-Enchantress, ACFH-Sage, ADEG-Wildcard, ADEH-Healer, ADFG-Muse, ADFH-Anchor, BCEG-Spark, BCEH-Champion, BCFG-Mystic, BCFH-Scholar, BDEG-Pioneer, BDEH-Guardian, BDFG-Oracle, BDFH-Therapist
+ACEG-Debutante, ACEH-Correspondent, ACFG-Duchess, ACFH-Influencer, ADEG-Barrel Racer, ADEH-Podcaster, ADFG-Trophy, ADFH-Girl Next Door, BCEG-Party Planner, BCEH-Marketer, BCFG-Executive, BCFH-Producer, BDEG-Coach, BDEH-Founder, BDFG-Designer, BDFH-Therapist
 
 ### Compatibility Tiers
 
@@ -385,6 +393,7 @@ Generate all 8 sections of the couples report.`
   },
   rankedMatches: [
     { personaCode: "BDFH", personaName: "The Therapist", tier: "ideal", score: 87 },
+    { personaCode: "ADFH", personaName: "The Girl Next Door", tier: "kismet", score: 78 },
     { personaCode: "ADFH", personaName: "The Anchor", tier: "kismet", score: 78 },
     // ... 14 more
   ]
