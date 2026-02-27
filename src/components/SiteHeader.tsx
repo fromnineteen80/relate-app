@@ -24,6 +24,9 @@ export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'lan
             <a href="#how-it-works" className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
               How It Works
             </a>
+            <Link href="/about" className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
+              About
+            </Link>
             <a href="#personas" className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
               Personas
             </a>
