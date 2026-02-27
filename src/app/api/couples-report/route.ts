@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateCouplesReport } from '@/lib/couples';
+import { RELATE_SYSTEM_PROMPT, RELATE_MODELS, RELATE_MAX_TOKENS } from '@/lib/prompts/relate-system';
 
 /* eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any */
 const questionsModule = require('../../../../relate_questions.js');
@@ -97,13 +98,54 @@ export async function POST(request: NextRequest) {
       parallels = frameworksModule.calculateParallels(user1Results.m1, user2Results.m1);
     } catch { /* optional */ }
 
-    // Generate the 7-section couples report
+    // Generate the 7-section couples report (computed data)
     const couplesReport = generateCouplesReport(user1Results, user2Results);
+
+    // Generate AI narrative for the couples report
+    let aiNarrative: string | null = null;
+    const useMock = process.env.NEXT_PUBLIC_MOCK_ADVISOR === 'true';
+
+    if (useMock) {
+      const u1Name = user1Results.persona?.name || 'Partner 1';
+      const u2Name = user2Results.persona?.name || 'Partner 2';
+      aiNarrative = `The ${u1Name} and ${u2Name} pairing brings together two distinct relational profiles. Your overall compatibility score of ${couplesReport.overview?.overallScore || '—'} reflects ${couplesReport.overview?.archetype?.name === 'Natural Partners' ? 'strong natural alignment' : 'areas of both harmony and productive tension'}. ${couplesReport.conflictChoreography?.dynamic?.description || 'Your conflict dynamic shapes how you navigate disagreements.'} The data suggests focusing on ${couplesReport.repairCompatibility?.highRiskHorsemen?.length > 0 ? 'your Gottman risk areas' : 'deepening your communication patterns'} as the highest-leverage growth area for this relationship.`;
+    } else {
+      try {
+        const Anthropic = require('@anthropic-ai/sdk');
+        const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+        const response = await anthropic.messages.create({
+          model: RELATE_MODELS.couplesReport,
+          max_tokens: RELATE_MAX_TOKENS.couplesReport,
+          system: RELATE_SYSTEM_PROMPT,
+          messages: [{
+            role: 'user',
+            content: `Generate the couples compatibility report.
+
+PARTNER 1:
+${JSON.stringify({ gender: user1Results.gender, persona: user1Results.persona, m1: user1Results.m1, m2: user1Results.m2, m3: user1Results.m3, m4: user1Results.m4, demographics: user1Results.demographics }, null, 2)}
+
+PARTNER 2:
+${JSON.stringify({ gender: user2Results.gender, persona: user2Results.persona, m1: user2Results.m1, m2: user2Results.m2, m3: user2Results.m3, m4: user2Results.m4, demographics: user2Results.demographics }, null, 2)}
+
+COMPUTED REPORT DATA:
+${JSON.stringify(couplesReport, null, 2)}
+
+Generate all 8 sections of the couples report as flowing prose narrative.`,
+          }],
+        });
+
+        aiNarrative = response.content[0]?.text || null;
+      } catch (err) {
+        console.error('AI narrative generation failed, returning data-only report:', err);
+      }
+    }
 
     return NextResponse.json({
       success: true,
       report: {
         ...couplesReport,
+        aiNarrative,
         tensionCompatibility,
         frameworkParallels: parallels,
         user1Summary: {

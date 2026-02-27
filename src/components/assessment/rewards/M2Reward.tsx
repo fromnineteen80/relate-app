@@ -14,7 +14,7 @@ const PERSONA_TAGLINES: Record<string, string> = {
   ACEG: 'Commands the arena',
   ACEH: 'Charts the unknown',
   ACFG: 'Moves unseen',
-  ACFH: 'Architects the system',
+  ACFH: 'Builds the team',
   ADEG: 'Rides the frontier',
   ADEH: 'Guides the ascent',
   ADFG: 'Preserves what matters',

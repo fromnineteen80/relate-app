@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import Link from 'next/link';
+import { SiteHeader } from '@/components/SiteHeader';
 import { useAuth } from '@/lib/auth-context';
 
 export default function InviteAcceptPage() {
@@ -38,11 +38,7 @@ export default function InviteAcceptPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto">
-          <Link href="/" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-        </div>
-      </header>
+      <SiteHeader />
       <main className="flex-1 flex items-center justify-center px-6">
         <div className="w-full max-w-sm">
           <h2 className="font-serif text-2xl font-semibold mb-2">You&apos;ve been invited</h2>

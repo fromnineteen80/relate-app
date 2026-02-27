@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { SiteHeader } from '@/components/SiteHeader';
 
 function tierColor(tier: string) {
   const colors: Record<string, string> = {
@@ -34,12 +35,7 @@ export default function MatchesPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link href="/results" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-          <Link href="/results" className="text-sm text-secondary hover:text-foreground">← Back to Results</Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="max-w-3xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-6">All Compatibility Rankings</h2>

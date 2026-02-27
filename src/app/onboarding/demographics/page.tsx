@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { SiteHeader } from '@/components/SiteHeader';
 import { useAuth } from '@/lib/auth-context';
 import { config } from '@/lib/config';
 import { getSupabase } from '@/lib/supabase/client';
@@ -431,14 +431,7 @@ export default function DemographicsPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link href="/" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-          {config.useMockAuth && (
-            <span className="text-xs font-mono bg-warning/10 text-warning px-2 py-1 rounded">[TEST MODE]</span>
-          )}
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="flex-1 max-w-lg mx-auto px-6 py-8 w-full">
         {/* Section nav */}

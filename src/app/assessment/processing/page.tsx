@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { SiteHeader } from '@/components/SiteHeader';
 
 export default function ProcessingPage() {
   const router = useRouter();
@@ -69,11 +69,7 @@ export default function ProcessingPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto">
-          <Link href="/" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-        </div>
-      </header>
+      <SiteHeader />
       <main className="flex-1 flex items-center justify-center px-6">
         <div className="max-w-md w-full text-center">
           <h2 className="font-serif text-2xl font-semibold mb-6">Processing Your Assessment</h2>

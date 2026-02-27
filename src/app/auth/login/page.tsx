@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
+import { SiteHeader } from '@/components/SiteHeader';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -27,15 +28,16 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto">
-          <Link href="/" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-        </div>
-      </header>
+    <div className="min-h-screen flex flex-col bg-background">
+      <SiteHeader variant="auth" />
+
       <main className="flex-1 flex items-center justify-center px-6">
         <div className="w-full max-w-sm">
-          <h2 className="font-serif text-2xl font-semibold mb-6">Log in</h2>
+          <div className="text-center mb-8">
+            <h1 className="font-serif text-3xl font-semibold mb-2">Welcome back</h1>
+            <p className="text-sm text-secondary">Log in to continue your assessment or view your results.</p>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="label">Email</label>
@@ -44,6 +46,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="input"
+                placeholder="you@example.com"
                 required
               />
             </div>
@@ -54,6 +57,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input"
+                placeholder="Your password"
                 required
               />
             </div>
@@ -62,9 +66,18 @@ export default function LoginPage() {
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
           </form>
-          <p className="text-sm text-secondary mt-4">
-            No account? <Link href="/auth/signup" className="text-accent hover:underline">Sign up</Link>
-          </p>
+
+          <div className="mt-6 text-center">
+            <p className="text-sm text-secondary">
+              No account? <Link href="/auth/signup" className="text-accent hover:underline">Create one</Link>
+            </p>
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-border text-center">
+            <p className="text-xs text-secondary">
+              367 questions. 32 personas. Your relationship intelligence awaits.
+            </p>
+          </div>
         </div>
       </main>
     </div>

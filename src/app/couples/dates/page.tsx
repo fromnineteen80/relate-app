@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { SiteHeader } from '@/components/SiteHeader';
 import { getPersonalizedDates, DATE_IDEAS } from '@/lib/couples';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -53,12 +53,7 @@ export default function DatesPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link href="/couples" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-          <Link href="/couples" className="text-xs text-secondary hover:text-foreground">← Dashboard</Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="max-w-2xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-1">Date Ideas</h2>

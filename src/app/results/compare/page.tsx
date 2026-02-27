@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { SiteHeader } from '@/components/SiteHeader';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -206,15 +207,7 @@ export default function ComparePage() {
 
 function CouplesHeader() {
   return (
-    <header className="border-b border-border px-6 py-4">
-      <div className="max-w-5xl mx-auto flex items-center justify-between">
-        <Link href="/results" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-mono text-secondary">Couples Report</span>
-          <Link href="/results" className="text-xs text-secondary hover:text-foreground">← Results</Link>
-        </div>
-      </div>
-    </header>
+    <SiteHeader />
   );
 }
 

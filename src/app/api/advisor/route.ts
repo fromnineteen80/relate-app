@@ -1,21 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { RELATE_SYSTEM_PROMPT, RELATE_MODELS, RELATE_MAX_TOKENS } from '@/lib/prompts/relate-system';
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-require-imports */
 
-// Build dynamic system prompt based on user progress and context
+// Build dynamic user context to append after the shared system prompt
 function buildAdvisorContext(body: any): string {
   const { persona, results, mode, couplesReport, partnerPersona, locationContext, progress, userData } = body;
 
-  let context = `You are the RELATE Advisor, an expert relationship coach with deep knowledge of attachment theory, Gottman methodology, and the RELATE assessment framework.
+  let context = `
 
-## Your Role
-- Be warm but direct. No fluff.
-- Reference their specific scores and patterns, not generic advice.
-- If they ask about something not yet assessed, note that and offer to discuss once they complete that module.
-- If they're struggling with a question, help them reflect without biasing their answer.
-- Use prose paragraphs, not bullet points (unless specifically asked).
-- Keep responses concise — 2-4 paragraphs max unless they ask for depth.
-- Never invent data you don't have. Only reference scores explicitly provided below.
+## ADVISOR MODE — Additional Context
+
+Only reference scores explicitly provided below. Never invent data you don't have.
 
 `;
 
@@ -242,7 +238,8 @@ export async function POST(request: NextRequest) {
     const Anthropic = require('@anthropic-ai/sdk');
     const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-    const systemPrompt = buildAdvisorContext(body);
+    const userContext = buildAdvisorContext(body);
+    const systemPrompt = RELATE_SYSTEM_PROMPT + userContext;
 
     const messages = [
       ...(history || []).map((m: { role: string; content: string }) => ({
@@ -253,8 +250,8 @@ export async function POST(request: NextRequest) {
     ];
 
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1024,
+      model: RELATE_MODELS.advisor,
+      max_tokens: RELATE_MAX_TOKENS.advisor,
       system: systemPrompt,
       messages,
     });

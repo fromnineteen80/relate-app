@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
+import { SiteHeader } from '@/components/SiteHeader';
 
 export default function SignUpPage() {
   const [email, setEmail] = useState('');
@@ -36,15 +37,16 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto">
-          <Link href="/" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-        </div>
-      </header>
+    <div className="min-h-screen flex flex-col bg-background">
+      <SiteHeader variant="auth" />
+
       <main className="flex-1 flex items-center justify-center px-6">
         <div className="w-full max-w-sm">
-          <h2 className="font-serif text-2xl font-semibold mb-6">Create account</h2>
+          <div className="text-center mb-8">
+            <h1 className="font-serif text-3xl font-semibold mb-2">Create your account</h1>
+            <p className="text-sm text-secondary">Start the assessment. Discover your persona. It&apos;s free.</p>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="label">Email</label>
@@ -53,6 +55,7 @@ export default function SignUpPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="input"
+                placeholder="you@example.com"
                 required
               />
             </div>
@@ -63,6 +66,7 @@ export default function SignUpPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input"
+                placeholder="At least 6 characters"
                 required
                 minLength={6}
               />
@@ -74,6 +78,7 @@ export default function SignUpPage() {
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 className="input"
+                placeholder="Confirm your password"
                 required
               />
             </div>
@@ -82,9 +87,23 @@ export default function SignUpPage() {
               {loading ? 'Creating account...' : 'Create account'}
             </button>
           </form>
-          <p className="text-sm text-secondary mt-4">
-            Already have an account? <Link href="/auth/login" className="text-accent hover:underline">Log in</Link>
-          </p>
+
+          <div className="mt-6 text-center">
+            <p className="text-sm text-secondary">
+              Already have an account? <Link href="/auth/login" className="text-accent hover:underline">Log in</Link>
+            </p>
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-border">
+            <div className="flex items-start gap-3 text-xs text-secondary">
+              <span className="text-accent mt-0.5">—</span>
+              <span>The assessment takes ~100 minutes across 4 modules. Your progress is saved automatically.</span>
+            </div>
+            <div className="flex items-start gap-3 text-xs text-secondary mt-2">
+              <span className="text-accent mt-0.5">—</span>
+              <span>Free tier includes your persona code, traits, and top 3 compatibility matches.</span>
+            </div>
+          </div>
         </div>
       </main>
     </div>

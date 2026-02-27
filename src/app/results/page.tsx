@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { config } from '@/lib/config';
 import { getMockPaymentStatus } from '@/lib/mock/payments';
 import { generateReferrals, Referral } from '@/lib/referrals';
+import { SiteHeader } from '@/components/SiteHeader';
 
 type ResultsReport = {
   persona: { code: string; name: string; traits: string; datingBehavior: string[]; mostAttractive: string[]; leastAttractive: string[] };
@@ -58,17 +59,7 @@ export default function ResultsDashboard() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link href="/" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-          <div className="flex items-center gap-3">
-            {config.useMockPayments && (
-              <span className="text-xs font-mono bg-warning/10 text-warning px-2 py-1 rounded">[TEST MODE]</span>
-            )}
-            {hasPaid && <span className="text-xs font-mono text-success">Full Access</span>}
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="max-w-3xl mx-auto px-6 py-8 w-full">
         {/* Persona Card */}
