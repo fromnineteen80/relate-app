@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #fafaf9;
+  --foreground: #292524;
+  --accent: #c2410c;
+  --border: #e7e5e4;
+  --secondary: #78716c;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Newsreader', 'Lora', Georgia, serif;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-accent text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-accent-hover transition-colors;
+  }
+  .btn-secondary {
+    @apply border border-accent text-accent px-4 py-2 rounded-md text-sm font-medium hover:bg-orange-50 transition-colors;
+  }
+  .card {
+    @apply bg-white border border-border rounded-md p-4;
+  }
+  .input {
+    @apply w-full border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent;
+  }
+  .label {
+    @apply block text-sm font-medium text-foreground mb-1;
+  }
+}
