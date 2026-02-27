@@ -175,7 +175,7 @@ export default function ResultsDashboard() {
                 {report.matches.length - freeMatchLimit} more matches available with Full Report
               </p>
               <Link href="/api/checkout?product=full_report" className="btn-primary inline-block">
-                Unlock Full Report - $19
+                Unlock Full Report ($19)
               </Link>
             </div>
           )}

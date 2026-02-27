@@ -104,8 +104,9 @@ function getStarters(pathname: string, hasCouples: boolean): string[] {
   }
   return [
     "What are my biggest strengths in relationships?",
-    "How can I improve my conflict repair?",
+    "Help me understand my attachment style",
     "What should I look for in a partner?",
+    "How many ideal matches are within 100 miles?",
   ];
 }
 

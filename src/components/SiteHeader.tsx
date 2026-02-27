@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { config } from '@/lib/config';
 
 export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'landing' | 'auth' }) {
   const { user, signOut } = useAuth();
@@ -14,7 +13,6 @@ export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'lan
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const isLanding = variant === 'landing';
   const isAuth = variant === 'auth';
 
   // Close dropdown when clicking outside
@@ -45,40 +43,35 @@ export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'lan
   }
 
   return (
-    <header className={`px-6 py-4 sticky top-0 z-50 ${isLanding ? 'bg-stone-100/95 backdrop-blur-sm' : 'border-b border-border bg-white/95 backdrop-blur-sm'}`}>
+    <header className="px-6 py-4 sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-sm">
       <div className="max-w-5xl mx-auto flex items-center justify-between">
         <Link href="/" className="font-serif text-xl font-semibold tracking-tight">
           RELATE
         </Link>
 
-        {isAuth ? null : isLanding ? (
+        {isAuth ? null : (
           <nav className="flex items-center gap-6">
             <Link href="/about" className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
               About
             </Link>
-            <a href="#how-it-works" className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
+            <a href={pathname === '/' ? '#how-it-works' : '/#how-it-works'} className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
               How It Works
             </a>
             <Link href="/personas" className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
               Personas
             </Link>
-            <a href="#pricing" className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
+            <a href={pathname === '/' ? '#pricing' : '/#pricing'} className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
               Pricing
             </a>
             {user ? (
-              <div className="flex items-center gap-3">
-                <Link href="/assessment" className="btn-primary text-xs px-3 py-1.5">
-                  Continue Assessment
-                </Link>
-                <ProfileAvatar
-                  initial={initial}
-                  photoUrl={profilePhoto}
-                  dropdownOpen={dropdownOpen}
-                  setDropdownOpen={setDropdownOpen}
-                  dropdownRef={dropdownRef}
-                  onSignOut={handleSignOut}
-                />
-              </div>
+              <ProfileAvatar
+                initial={initial}
+                photoUrl={profilePhoto}
+                dropdownOpen={dropdownOpen}
+                setDropdownOpen={setDropdownOpen}
+                dropdownRef={dropdownRef}
+                onSignOut={handleSignOut}
+              />
             ) : (
               <div className="flex items-center gap-3">
                 <Link href="/auth/login" className="text-sm text-secondary hover:text-foreground transition-colors">
@@ -89,23 +82,6 @@ export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'lan
                 </Link>
               </div>
             )}
-          </nav>
-        ) : (
-          <nav className="flex items-center gap-1">
-            {config.useMockAuth && (
-              <span className="text-xs font-mono bg-warning/10 text-warning px-2 py-1 rounded mr-2">[TEST]</span>
-            )}
-            <NavLink href="/assessment" current={pathname}>Assessment</NavLink>
-            <NavLink href="/results" current={pathname}>Results</NavLink>
-            <NavLink href="/personas" current={pathname}>Personas</NavLink>
-            <ProfileAvatar
-              initial={initial}
-              photoUrl={profilePhoto}
-              dropdownOpen={dropdownOpen}
-              setDropdownOpen={setDropdownOpen}
-              dropdownRef={dropdownRef}
-              onSignOut={handleSignOut}
-            />
           </nav>
         )}
       </div>
@@ -148,11 +124,14 @@ function ProfileAvatar({
           <Link href="/account" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
             Account
           </Link>
+          <Link href="/assessment" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
+            Assessment
+          </Link>
+          <Link href="/results" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
+            Results
+          </Link>
           <Link href="/settings/profile" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
             Edit Profile
-          </Link>
-          <Link href="/onboarding/demographics" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
-            Edit Demographics
           </Link>
           <Link href="/settings/billing" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
             Billing
@@ -167,21 +146,5 @@ function ProfileAvatar({
         </div>
       )}
     </div>
-  );
-}
-
-function NavLink({ href, current, children }: { href: string; current: string; children: React.ReactNode }) {
-  const isActive = current === href || current.startsWith(href + '/');
-  return (
-    <Link
-      href={href}
-      className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
-        isActive
-          ? 'bg-accent/10 text-accent font-medium'
-          : 'text-secondary hover:text-foreground hover:bg-stone-100'
-      }`}
-    >
-      {children}
-    </Link>
   );
 }

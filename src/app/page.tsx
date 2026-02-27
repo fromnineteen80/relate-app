@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { SiteHeader } from '@/components/SiteHeader';
 
 const MODULES = [
@@ -6,21 +7,21 @@ const MODULES = [
     num: '01',
     title: 'What You Want',
     subtitle: '134 questions',
-    desc: 'Map your preferences across four dimensions: physical attraction, social energy, lifestyle pace, and core values. This isn\'t a wish list - it\'s a measurement of what actually holds your attention.',
+    desc: 'Map your preferences across four dimensions: physical attraction, social energy, lifestyle pace, and core values. This isn\'t a wish list. It\'s a measurement of what actually holds your attention.',
     time: '~38 min',
   },
   {
     num: '02',
     title: 'Who You Are',
     subtitle: '137 questions',
-    desc: 'The same four dimensions, turned inward. This is where your persona emerges - one of 32 types that describes how you show up in relationships, not who you wish you were.',
+    desc: 'The same four dimensions, turned inward. This is where your persona emerges as one of 32 types that describes how you show up in relationships, not who you wish you were.',
     time: '~39 min',
   },
   {
     num: '03',
     title: 'How You Connect',
     subtitle: '28 questions',
-    desc: 'Measures your intimacy exchange - how much access you want versus how much you offer. This gap predicts satisfaction better than any compatibility quiz.',
+    desc: 'Measures your intimacy exchange: how much access you want versus how much you offer. This gap predicts satisfaction better than any compatibility quiz.',
     time: '~8 min',
   },
   {
@@ -51,7 +52,7 @@ const FRAMEWORKS = [
 const FAQS = [
   {
     q: 'How long does the assessment take?',
-    a: 'About 100 minutes total across 4 modules. You can save progress and return anytime - no need to complete it in one sitting.',
+    a: 'About 100 minutes total across 4 modules. You can save progress and return anytime, so there is no need to complete it in one sitting.',
   },
   {
     q: 'What do I get for free?',
@@ -78,7 +79,7 @@ const FAQS = [
 export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col">
-      <SiteHeader variant="landing" />
+      <SiteHeader />
 
       {/* ── Hero ── */}
       <section className="relative pt-16 pb-20 px-6 bg-gradient-to-b from-stone-100 to-background">
@@ -87,10 +88,10 @@ export default function LandingPage() {
             Fixing the match to partner journey for 112 million U.S. singles.
           </p>
           <h1 className="font-serif text-5xl md:text-6xl font-semibold leading-[1.1] mb-6">
-            The first dating and relationship intelligence layer
+            The First Dating Intelligence Layer
           </h1>
           <p className="text-lg text-secondary max-w-xl mx-auto mb-10 leading-relaxed">
-            The most comprehensive relationship assessment ever built. Discover your persona, understand your dating patterns, and see who you&apos;re actually compatible with. Improve your relationships. All backed by clinical psychology and supported by Claude.ai.
+            The most comprehensive relationship assessment ever built. Discover your persona, understand your dating patterns, and see who you&apos;re actually compatible with. Take meaningful steps with your partner to improve your relationship. All backed by clinical psychology and supported by Claude.ai.
           </p>
           <div className="flex items-center justify-center">
             <Link href="/auth/signup" className="btn-primary text-base px-8 py-3">
@@ -138,12 +139,13 @@ export default function LandingPage() {
 
           <div className="space-y-4">
             {MODULES.map((m) => (
-              <div key={m.num} className="card flex flex-col md:flex-row md:items-start gap-4 md:gap-8">
+              <div key={m.num} className="card flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
                 <div className="flex items-center gap-4 md:w-48 flex-shrink-0">
                   <span className="font-mono text-3xl font-light text-stone-300">{m.num}</span>
                   <div>
                     <h3 className="font-serif text-lg font-semibold">{m.title}</h3>
-                    <p className="text-xs text-secondary font-mono">{m.subtitle} · {m.time}</p>
+                    <p className="text-xs text-secondary font-mono">{m.subtitle}</p>
+                    <p className="text-xs text-secondary font-mono">{m.time}</p>
                   </div>
                 </div>
                 <p className="text-sm text-secondary leading-relaxed">{m.desc}</p>
@@ -166,11 +168,11 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { title: 'Your Persona', desc: 'One of 32 types - a 4-letter code with a name, traits, dating behavior, strengths, and growth areas. Specific to your gender.' },
+              { title: 'Your Persona', desc: 'One of 32 types, represented by a 4-letter code with a name, traits, dating behavior, strengths, and growth areas. Specific to your gender.' },
               { title: 'Compatibility Rankings', desc: 'All 16 opposite-gender personas ranked from Ideal to Incompatible, with detailed match analysis for each.' },
               { title: 'Conflict Signature', desc: 'Your pursue/withdraw pattern, primary emotional driver, repair speed and mode, emotional capacity, and Gottman screening.' },
-              { title: 'Connection Profile', desc: 'Your want/offer balance - how much intimacy you seek vs. how much you give. Plus attentiveness and context-switching patterns.' },
-              { title: 'AI Coaching', desc: 'Claude-powered relationship advisor that references your actual scores and patterns. Not generic advice - insight specific to you.' },
+              { title: 'Connection Profile', desc: 'Your want/offer balance: how much intimacy you seek vs. how much you give. Plus attentiveness and context-switching patterns.' },
+              { title: 'AI Coaching', desc: 'Claude-powered relationship advisor that references your actual scores and patterns. Not generic advice, but insight specific to you.' },
               { title: 'Couples Report', desc: 'When both partners complete the assessment: a 7-section compatibility analysis, growth challenges, conversation cards, and date ideas.' },
             ].map((item) => (
               <div key={item.title} className="card">
@@ -189,7 +191,7 @@ export default function LandingPage() {
             <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">32 Personas</p>
             <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">Which one are you?</h2>
             <p className="text-secondary max-w-lg mx-auto">
-              Your 4-letter code maps to one of 32 relationship personas -16 male, 16 female. Each has distinct traits, dating behaviors, strengths, and shadows.
+              Your 4-letter code maps to one of 32 relationship personas, 16 male and 16 female. Each has distinct traits, dating behaviors, strengths, and shadows.
             </p>
           </div>
 
@@ -221,111 +223,15 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* US Map - SVG with state outlines */}
+          {/* US Map */}
           <div className="max-w-2xl mx-auto">
-            <svg viewBox="0 0 960 600" className="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
-              {/* Simplified US state paths in grey tones */}
-              <g fill="none" stroke="#a8a29e" strokeWidth="1">
-                {/* Washington */}
-                <path d="M118,42 L158,42 L175,50 L183,62 L180,80 L135,80 L118,65Z" fill="#d6d3d1" />
-                {/* Oregon */}
-                <path d="M118,65 L135,80 L180,80 L178,105 L175,120 L110,120 L100,90Z" fill="#e7e5e4" />
-                {/* California */}
-                <path d="M100,90 L110,120 L120,155 L115,190 L105,220 L85,250 L80,230 L75,200 L78,160 L85,120Z" fill="#d6d3d1" />
-                {/* Nevada */}
-                <path d="M110,120 L175,120 L165,190 L115,190 L120,155Z" fill="#e7e5e4" />
-                {/* Idaho */}
-                <path d="M180,80 L200,60 L215,80 L210,120 L175,120 L178,105Z" fill="#d6d3d1" />
-                {/* Montana */}
-                <path d="M200,60 L300,50 L310,70 L280,85 L215,80Z" fill="#e7e5e4" />
-                {/* Wyoming */}
-                <path d="M215,80 L280,85 L285,120 L210,120Z" fill="#d6d3d1" />
-                {/* Utah */}
-                <path d="M175,120 L210,120 L215,170 L165,190Z" fill="#e7e5e4" />
-                {/* Colorado */}
-                <path d="M210,120 L285,120 L290,170 L215,170Z" fill="#d6d3d1" />
-                {/* Arizona */}
-                <path d="M115,190 L165,190 L175,240 L130,260 L105,220Z" fill="#e7e5e4" />
-                {/* New Mexico */}
-                <path d="M165,190 L215,170 L230,240 L175,260 L175,240Z" fill="#d6d3d1" />
-                {/* North Dakota */}
-                <path d="M310,70 L390,65 L395,95 L315,100Z" fill="#e7e5e4" />
-                {/* South Dakota */}
-                <path d="M315,100 L395,95 L400,130 L320,135Z" fill="#d6d3d1" />
-                {/* Nebraska */}
-                <path d="M320,135 L400,130 L410,165 L300,165Z" fill="#e7e5e4" />
-                {/* Kansas */}
-                <path d="M300,165 L410,165 L415,205 L310,205Z" fill="#d6d3d1" />
-                {/* Oklahoma */}
-                <path d="M310,205 L415,205 L420,245 L350,250 L310,240Z" fill="#e7e5e4" />
-                {/* Texas */}
-                <path d="M230,240 L310,240 L350,250 L380,290 L370,350 L320,380 L280,360 L250,310 L230,280Z" fill="#d6d3d1" />
-                {/* Minnesota */}
-                <path d="M395,65 L460,60 L465,120 L400,130Z" fill="#e7e5e4" />
-                {/* Iowa */}
-                <path d="M400,130 L465,120 L475,160 L410,165Z" fill="#d6d3d1" />
-                {/* Missouri */}
-                <path d="M410,165 L475,160 L490,210 L415,205Z" fill="#e7e5e4" />
-                {/* Arkansas */}
-                <path d="M415,205 L490,210 L495,250 L420,245Z" fill="#d6d3d1" />
-                {/* Louisiana */}
-                <path d="M420,245 L495,250 L500,300 L460,310 L430,290Z" fill="#e7e5e4" />
-                {/* Wisconsin */}
-                <path d="M465,60 L530,55 L535,110 L465,120Z" fill="#d6d3d1" />
-                {/* Illinois */}
-                <path d="M475,160 L530,140 L540,195 L490,210Z" fill="#e7e5e4" />
-                {/* Michigan */}
-                <path d="M530,55 L570,40 L590,60 L580,110 L535,110Z" fill="#d6d3d1" />
-                {/* Indiana */}
-                <path d="M540,140 L575,130 L580,185 L545,195Z" fill="#e7e5e4" />
-                {/* Ohio */}
-                <path d="M575,130 L630,110 L640,160 L580,185Z" fill="#d6d3d1" />
-                {/* Kentucky */}
-                <path d="M540,195 L580,185 L640,190 L610,215 L530,215Z" fill="#e7e5e4" />
-                {/* Tennessee */}
-                <path d="M530,215 L610,215 L625,240 L500,245Z" fill="#d6d3d1" />
-                {/* Mississippi */}
-                <path d="M495,250 L530,248 L535,300 L500,300Z" fill="#e7e5e4" />
-                {/* Alabama */}
-                <path d="M530,248 L575,245 L580,300 L535,300Z" fill="#d6d3d1" />
-                {/* Georgia */}
-                <path d="M575,245 L625,240 L640,295 L610,310 L580,300Z" fill="#e7e5e4" />
-                {/* Florida */}
-                <path d="M580,300 L610,310 L640,295 L660,320 L655,380 L630,400 L600,370 L585,330Z" fill="#d6d3d1" />
-                {/* South Carolina */}
-                <path d="M625,240 L670,225 L680,260 L640,270Z" fill="#e7e5e4" />
-                {/* North Carolina */}
-                <path d="M610,215 L700,200 L710,225 L670,225 L625,240Z" fill="#d6d3d1" />
-                {/* Virginia */}
-                <path d="M640,190 L710,175 L720,200 L700,200 L610,215Z" fill="#e7e5e4" />
-                {/* West Virginia */}
-                <path d="M640,160 L665,155 L670,185 L640,190Z" fill="#d6d3d1" />
-                {/* Pennsylvania */}
-                <path d="M630,110 L720,100 L725,135 L640,145Z" fill="#e7e5e4" />
-                {/* New York */}
-                <path d="M650,60 L730,50 L740,90 L720,100 L650,85Z" fill="#d6d3d1" />
-                {/* Vermont */}
-                <path d="M730,50 L745,40 L750,65 L740,70Z" fill="#e7e5e4" />
-                {/* New Hampshire */}
-                <path d="M745,40 L760,35 L762,60 L750,65Z" fill="#d6d3d1" />
-                {/* Maine */}
-                <path d="M760,15 L790,10 L795,50 L762,55Z" fill="#e7e5e4" />
-                {/* Massachusetts */}
-                <path d="M740,70 L780,65 L782,80 L742,82Z" fill="#d6d3d1" />
-                {/* Connecticut */}
-                <path d="M740,82 L770,80 L772,95 L742,95Z" fill="#e7e5e4" />
-                {/* New Jersey */}
-                <path d="M725,100 L740,95 L745,130 L730,135Z" fill="#d6d3d1" />
-                {/* Delaware */}
-                <path d="M725,135 L740,132 L742,150 L728,148Z" fill="#e7e5e4" />
-                {/* Maryland */}
-                <path d="M665,155 L725,145 L728,165 L670,175Z" fill="#d6d3d1" />
-                {/* Alaska (inset) */}
-                <path d="M80,340 L150,330 L170,350 L155,380 L120,390 L80,370Z" fill="#e7e5e4" />
-                {/* Hawaii (inset) */}
-                <path d="M200,370 L215,365 L225,375 L218,385 L205,382Z" fill="#d6d3d1" />
-              </g>
-            </svg>
+            <Image
+              src="https://upload.wikimedia.org/wikipedia/commons/f/f3/BlankMap-USA-states.PNG"
+              alt="Map of the United States"
+              width={1200}
+              height={750}
+              className="w-full h-auto grayscale opacity-60"
+            />
           </div>
 
           <p className="text-center text-xs text-secondary mt-6">
@@ -394,7 +300,7 @@ export default function LandingPage() {
               </div>
               <span className="font-mono text-xs text-accent tracking-wider">FULL REPORT</span>
               <p className="font-serif text-4xl font-semibold mt-2">$19</p>
-              <p className="text-sm text-secondary mt-3 mb-6">The complete picture - all matches, all insights.</p>
+              <p className="text-sm text-secondary mt-3 mb-6">The complete picture: all matches, all insights.</p>
               <div className="space-y-2.5 mb-8 flex-1">
                 {[
                   'Everything in Free',
