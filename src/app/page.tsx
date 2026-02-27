@@ -91,7 +91,7 @@ export default function LandingPage() {
             not relationship advice.
           </h1>
           <p className="text-lg text-secondary max-w-xl mx-auto mb-10 leading-relaxed">
-            The most comprehensive relationship assessment ever built. Discover your persona, understand your patterns, and see who you&apos;re actually compatible with — backed by clinical psychology, not horoscopes.
+            The most comprehensive relationship assessment ever built. Discover your persona, understand your dating patterns, and see who you&apos;re actually compatible with. Improve your relationships. All backed by clinical psychology and supported by Claude.ai.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/auth/signup" className="btn-primary text-base px-8 py-3">
