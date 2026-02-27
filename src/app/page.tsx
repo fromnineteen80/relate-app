@@ -6,21 +6,21 @@ const MODULES = [
     num: '01',
     title: 'What You Want',
     subtitle: '134 questions',
-    desc: 'Map your preferences across four dimensions: physical attraction, social energy, lifestyle pace, and core values. This isn\'t a wish list — it\'s a measurement of what actually holds your attention.',
+    desc: 'Map your preferences across four dimensions: physical attraction, social energy, lifestyle pace, and core values. This isn\'t a wish list - it\'s a measurement of what actually holds your attention.',
     time: '~38 min',
   },
   {
     num: '02',
     title: 'Who You Are',
     subtitle: '137 questions',
-    desc: 'The same four dimensions, turned inward. This is where your persona emerges — one of 32 types that describes how you show up in relationships, not who you wish you were.',
+    desc: 'The same four dimensions, turned inward. This is where your persona emerges - one of 32 types that describes how you show up in relationships, not who you wish you were.',
     time: '~39 min',
   },
   {
     num: '03',
     title: 'How You Connect',
     subtitle: '28 questions',
-    desc: 'Measures your intimacy exchange — how much access you want versus how much you offer. This gap predicts satisfaction better than any compatibility quiz.',
+    desc: 'Measures your intimacy exchange - how much access you want versus how much you offer. This gap predicts satisfaction better than any compatibility quiz.',
     time: '~8 min',
   },
   {
@@ -51,7 +51,7 @@ const FRAMEWORKS = [
 const FAQS = [
   {
     q: 'How long does the assessment take?',
-    a: 'About 100 minutes total across 4 modules. You can save progress and return anytime — no need to complete it in one sitting.',
+    a: 'About 100 minutes total across 4 modules. You can save progress and return anytime - no need to complete it in one sitting.',
   },
   {
     q: 'What do I get for free?',
@@ -92,13 +92,10 @@ export default function LandingPage() {
           <p className="text-lg text-secondary max-w-xl mx-auto mb-10 leading-relaxed">
             The most comprehensive relationship assessment ever built. Discover your persona, understand your dating patterns, and see who you&apos;re actually compatible with. Improve your relationships. All backed by clinical psychology and supported by Claude.ai.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex items-center justify-center">
             <Link href="/auth/signup" className="btn-primary text-base px-8 py-3">
-              Start Assessment — Free
+              Start Assessment
             </Link>
-            <a href="#how-it-works" className="text-sm text-secondary hover:text-foreground transition-colors">
-              See how it works
-            </a>
           </div>
         </div>
       </section>
@@ -169,11 +166,11 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { title: 'Your Persona', desc: 'One of 32 types — a 4-letter code with a name, traits, dating behavior, strengths, and growth areas. Specific to your gender.' },
+              { title: 'Your Persona', desc: 'One of 32 types - a 4-letter code with a name, traits, dating behavior, strengths, and growth areas. Specific to your gender.' },
               { title: 'Compatibility Rankings', desc: 'All 16 opposite-gender personas ranked from Ideal to Incompatible, with detailed match analysis for each.' },
               { title: 'Conflict Signature', desc: 'Your pursue/withdraw pattern, primary emotional driver, repair speed and mode, emotional capacity, and Gottman screening.' },
-              { title: 'Connection Profile', desc: 'Your want/offer balance — how much intimacy you seek vs. how much you give. Plus attentiveness and context-switching patterns.' },
-              { title: 'AI Coaching', desc: 'Claude-powered relationship advisor that references your actual scores and patterns. Not generic advice — insight specific to you.' },
+              { title: 'Connection Profile', desc: 'Your want/offer balance - how much intimacy you seek vs. how much you give. Plus attentiveness and context-switching patterns.' },
+              { title: 'AI Coaching', desc: 'Claude-powered relationship advisor that references your actual scores and patterns. Not generic advice - insight specific to you.' },
               { title: 'Couples Report', desc: 'When both partners complete the assessment: a 7-section compatibility analysis, growth challenges, conversation cards, and date ideas.' },
             ].map((item) => (
               <div key={item.title} className="card">
@@ -192,7 +189,7 @@ export default function LandingPage() {
             <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">32 Personas</p>
             <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">Which one are you?</h2>
             <p className="text-secondary max-w-lg mx-auto">
-              Your 4-letter code maps to one of 32 relationship personas — 16 male, 16 female. Each has distinct traits, dating behaviors, strengths, and shadows.
+              Your 4-letter code maps to one of 32 relationship personas -16 male, 16 female. Each has distinct traits, dating behaviors, strengths, and shadows.
             </p>
           </div>
 
@@ -259,7 +256,7 @@ export default function LandingPage() {
                   '3 advisor messages',
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-2 text-sm">
-                    <span className="text-secondary mt-0.5">—</span>
+                    <span className="text-secondary mt-0.5">&#8226;</span>
                     <span>{item}</span>
                   </div>
                 ))}
@@ -273,7 +270,7 @@ export default function LandingPage() {
               </div>
               <span className="font-mono text-xs text-accent tracking-wider">FULL REPORT</span>
               <p className="font-serif text-4xl font-semibold mt-2">$19</p>
-              <p className="text-sm text-secondary mt-3 mb-6">The complete picture — all matches, all insights.</p>
+              <p className="text-sm text-secondary mt-3 mb-6">The complete picture - all matches, all insights.</p>
               <div className="space-y-2.5 mb-8 flex-1">
                 {[
                   'Everything in Free',
@@ -283,7 +280,7 @@ export default function LandingPage() {
                   'Personalized growth path',
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-2 text-sm">
-                    <span className="text-accent mt-0.5">—</span>
+                    <span className="text-accent mt-0.5">&#8226;</span>
                     <span>{item}</span>
                   </div>
                 ))}
@@ -305,7 +302,7 @@ export default function LandingPage() {
                   'Shared couples advisor',
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-2 text-sm">
-                    <span className="text-secondary mt-0.5">—</span>
+                    <span className="text-secondary mt-0.5">&#8226;</span>
                     <span>{item}</span>
                   </div>
                 ))}

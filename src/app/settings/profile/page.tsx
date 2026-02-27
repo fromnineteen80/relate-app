@@ -21,7 +21,7 @@ export default function ProfileSettings() {
         <h2 className="font-serif text-2xl font-semibold mb-6">Profile Settings</h2>
         <div className="card mb-4">
           <p className="text-sm text-secondary">Email</p>
-          <p className="font-mono text-sm">{user?.email || '—'}</p>
+          <p className="font-mono text-sm">{user?.email || '-'}</p>
         </div>
         <Link href="/onboarding/demographics" className="btn-secondary block text-center mb-4">
           Update Demographics

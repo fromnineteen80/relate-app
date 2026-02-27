@@ -89,8 +89,8 @@ export default function AccountPage() {
             </Link>
           </div>
           <div className="space-y-3">
-            <Row label="Email" value={user?.email || '—'} />
-            <Row label="Gender" value={gender === 'M' ? 'Man' : gender === 'W' ? 'Woman' : '—'} />
+            <Row label="Email" value={user?.email || '-'} />
+            <Row label="Gender" value={gender === 'M' ? 'Man' : gender === 'W' ? 'Woman' : '-'} />
             {demographics.age && <Row label="Age" value={String(demographics.age)} />}
             {demographics.relationshipStatus && (
               <Row label="Relationship Status" value={demographics.relationshipStatus} />
@@ -160,7 +160,7 @@ export default function AccountPage() {
                 <div className="w-8 h-8 rounded-full bg-success/10 text-success flex items-center justify-center text-sm flex-shrink-0">✓</div>
                 <div>
                   <p className="text-sm font-medium">
-                    {payment.product === 'couples_report' ? 'Couples Report' : 'Full Report'} — Active
+                    {payment.product === 'couples_report' ? 'Couples Report' : 'Full Report'} - Active
                   </p>
                   <p className="text-xs text-secondary">One-time purchase. Full access to all features.</p>
                 </div>
@@ -174,11 +174,11 @@ export default function AccountPage() {
                   </p>
                   {config.useMockPayments ? (
                     <button onClick={() => handleMockUpgrade('couples_report')} className="btn-primary text-xs" disabled={mockUpgrading}>
-                      {mockUpgrading ? 'Upgrading...' : 'Upgrade — $29'}
+                      {mockUpgrading ? 'Upgrading...' : 'Upgrade - $29'}
                     </button>
                   ) : (
                     <Link href="/api/checkout?product=couples_report" className="btn-primary text-xs inline-block">
-                      Upgrade — $29
+                      Upgrade - $29
                     </Link>
                   )}
                 </div>
@@ -187,7 +187,7 @@ export default function AccountPage() {
           ) : (
             <div className="space-y-3">
               <div className="flex items-center gap-3 p-3 bg-stone-50 border border-border rounded-md">
-                <div className="w-8 h-8 rounded-full bg-stone-200 text-secondary flex items-center justify-center text-sm flex-shrink-0">—</div>
+                <div className="w-8 h-8 rounded-full bg-stone-200 text-secondary flex items-center justify-center text-sm flex-shrink-0">-</div>
                 <div>
                   <p className="text-sm font-medium">Free Tier</p>
                   <p className="text-xs text-secondary">Persona code, top 3 matches, 3 advisor messages.</p>
@@ -250,7 +250,7 @@ export default function AccountPage() {
           ) : (
             <div>
               <p className="text-sm text-secondary mb-4">
-                Invite your partner to take the assessment. Once they complete it, you&apos;ll unlock couples features — compatibility report, growth challenges, conversation cards, and shared advisor.
+                Invite your partner to take the assessment. Once they complete it, you&apos;ll unlock couples features - compatibility report, growth challenges, conversation cards, and shared advisor.
               </p>
               <Link href="/invite" className="btn-primary text-xs inline-block">Invite Partner</Link>
             </div>

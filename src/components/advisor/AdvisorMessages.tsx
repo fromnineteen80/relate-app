@@ -50,7 +50,7 @@ export default function AdvisorMessages() {
             You&apos;ve used {messageCount} of 3 free messages.
           </p>
           <a href="/api/checkout?product=full_report" className="text-xs text-accent hover:underline font-medium">
-            Unlock unlimited advisor access — $19
+            Unlock unlimited advisor access - $19
           </a>
         </div>
       )}

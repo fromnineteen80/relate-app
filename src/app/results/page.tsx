@@ -88,7 +88,7 @@ export default function ResultsDashboard() {
                   <div className="flex-1 h-2 bg-stone-200 rounded-full overflow-hidden">
                     <div className="h-full bg-accent rounded-full" style={{ width: `${Math.max(d.poleAScore || 50, d.poleBScore || 50)}%` }} />
                   </div>
-                  <span className="text-xs font-mono w-20 text-right">{d.assignedPole || '—'}</span>
+                  <span className="text-xs font-mono w-20 text-right">{d.assignedPole || '-'}</span>
                 </div>
               );
             })}
@@ -100,15 +100,15 @@ export default function ResultsDashboard() {
           <h3 className="font-serif text-lg font-semibold mb-3">Connection Style</h3>
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
-              <span className="font-mono text-2xl font-semibold">{report.m3?.wantScore ?? '—'}</span>
+              <span className="font-mono text-2xl font-semibold">{report.m3?.wantScore ?? '-'}</span>
               <p className="text-xs text-secondary mt-1">Want Score</p>
             </div>
             <div>
-              <span className="font-mono text-2xl font-semibold">{report.m3?.offerScore ?? '—'}</span>
+              <span className="font-mono text-2xl font-semibold">{report.m3?.offerScore ?? '-'}</span>
               <p className="text-xs text-secondary mt-1">Offer Score</p>
             </div>
             <div>
-              <span className="font-mono text-2xl font-semibold">{report.m3?.typeName ?? '—'}</span>
+              <span className="font-mono text-2xl font-semibold">{report.m3?.typeName ?? '-'}</span>
               <p className="text-xs text-secondary mt-1">Type</p>
             </div>
           </div>
@@ -127,7 +127,7 @@ export default function ResultsDashboard() {
             ].map(([label, val]) => (
               <div key={label as string} className="flex justify-between py-1 border-b border-border last:border-0">
                 <span className="text-secondary">{label}</span>
-                <span className="font-mono capitalize">{val || '—'}</span>
+                <span className="font-mono capitalize">{val || '-'}</span>
               </div>
             ))}
           </div>
@@ -175,7 +175,7 @@ export default function ResultsDashboard() {
                 {report.matches.length - freeMatchLimit} more matches available with Full Report
               </p>
               <Link href="/api/checkout?product=full_report" className="btn-primary inline-block">
-                Unlock Full Report — $19
+                Unlock Full Report - $19
               </Link>
             </div>
           )}

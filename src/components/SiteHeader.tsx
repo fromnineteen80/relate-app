@@ -21,12 +21,12 @@ export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'lan
 
         {isAuth ? null : isLanding ? (
           <nav className="flex items-center gap-6">
-            <a href="#how-it-works" className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
-              How It Works
-            </a>
             <Link href="/about" className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
               About
             </Link>
+            <a href="#how-it-works" className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
+              How It Works
+            </a>
             <a href="#personas" className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
               Personas
             </a>
@@ -34,7 +34,7 @@ export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'lan
               Pricing
             </a>
             {user ? (
-              <Link href="/assessment" className="btn-primary">
+              <Link href="/assessment" className="btn-primary text-xs px-3 py-1.5">
                 Continue Assessment
               </Link>
             ) : (
@@ -42,7 +42,7 @@ export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'lan
                 <Link href="/auth/login" className="text-sm text-secondary hover:text-foreground transition-colors">
                   Log in
                 </Link>
-                <Link href="/auth/signup" className="btn-primary">
+                <Link href="/auth/signup" className="btn-primary text-xs px-3 py-1.5">
                   Start Free
                 </Link>
               </div>

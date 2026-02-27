@@ -12,7 +12,7 @@ type Props = {
 
 const DIMENSION_DESCRIPTIONS: Record<string, Record<string, string>> = {
   physical: {
-    A_M: "You're drawn to how she looks — physical appearance is primary.",
+    A_M: "You're drawn to how she looks - physical appearance is primary.",
     B_M: "You're drawn to how she carries herself, not conventional attractiveness.",
     A_W: "You want a man who is physically fit and takes care of his body.",
     B_W: "You value experience and depth over raw physical attributes.",
@@ -135,7 +135,7 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
   return (
     <div className={`max-w-md mx-auto text-center transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
       <p className="text-lg font-serif leading-relaxed mb-4">
-        You know what you want. Now let&apos;s see who you are — and whether those two things align.
+        You know what you want. Now let&apos;s see who you are - and whether those two things align.
       </p>
       <p className="text-sm text-secondary mb-8">
         Module 2 measures how you show up, not what you seek. The gap between them reveals your growth edges.
