@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { SiteHeader } from '@/components/SiteHeader';
 
 function tierLabel(tier: string) {
   const labels: Record<string, string> = {
@@ -41,12 +42,7 @@ export default function MatchDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link href="/results" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-          <Link href="/results/matches" className="text-sm text-secondary hover:text-foreground">← All Matches</Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="max-w-2xl mx-auto px-6 py-8 w-full">
         <div className="flex items-start justify-between mb-6">

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { config } from '@/lib/config';
+import { SiteHeader } from '@/components/SiteHeader';
 
 export default function InvitePage() {
   const { user } = useAuth();
@@ -54,11 +55,7 @@ export default function InvitePage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link href="/results" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="flex-1 max-w-md mx-auto px-6 py-12 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-2">Invite Your Partner</h2>

@@ -3,17 +3,14 @@
 import Link from 'next/link';
 import { config } from '@/lib/config';
 import { getMockPaymentStatus } from '@/lib/mock/payments';
+import { SiteHeader } from '@/components/SiteHeader';
 
 export default function BillingPage() {
   const payment = config.useMockPayments ? getMockPaymentStatus() : { paid: false, product: null };
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link href="/results" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-        </div>
-      </header>
+      <SiteHeader />
       <main className="max-w-md mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-6">Billing</h2>
         <div className="card">

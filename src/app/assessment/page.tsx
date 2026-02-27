@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { config } from '@/lib/config';
+import { SiteHeader } from '@/components/SiteHeader';
 
 type ModuleStatus = { completed: boolean; questionIndex: number; total: number };
 
@@ -44,7 +45,7 @@ export default function AssessmentHub() {
   if (!gender) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        <SiteHeader />
         <main className="flex-1 max-w-2xl mx-auto px-6 py-12 w-full">
           <h2 className="font-serif text-2xl font-semibold mb-4">Complete your profile first</h2>
           <p className="text-secondary mb-6">You need to fill in your demographics before starting the assessment.</p>
@@ -65,7 +66,7 @@ export default function AssessmentHub() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <SiteHeader />
       <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-3xl font-semibold mb-2">Assessment</h2>
         <p className="text-secondary mb-8">Complete all 4 modules to receive your persona and compatibility rankings.</p>
@@ -110,18 +111,5 @@ export default function AssessmentHub() {
         )}
       </main>
     </div>
-  );
-}
-
-function Header() {
-  return (
-    <header className="border-b border-border px-6 py-4">
-      <div className="max-w-5xl mx-auto flex items-center justify-between">
-        <Link href="/" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-        {config.useMockAuth && (
-          <span className="text-xs font-mono bg-warning/10 text-warning px-2 py-1 rounded">[TEST MODE]</span>
-        )}
-      </div>
-    </header>
   );
 }

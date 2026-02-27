@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import Link from 'next/link';
+import { SiteHeader } from '@/components/SiteHeader';
 import { CONVERSATION_DECKS } from '@/lib/couples';
 
 export default function CardsPage() {
@@ -34,14 +34,7 @@ export default function CardsPage() {
 
     return (
       <div className="min-h-screen flex flex-col">
-        <header className="border-b border-border px-6 py-4">
-          <div className="max-w-5xl mx-auto flex items-center justify-between">
-            <Link href="/couples" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-            <button onClick={() => setActiveDeck(null)} className="text-xs text-secondary hover:text-foreground">
-              ← All Decks
-            </button>
-          </div>
-        </header>
+        <SiteHeader />
 
         <main className="flex-1 flex flex-col items-center justify-center px-6 py-8">
           <p className="text-xs text-secondary font-mono mb-2">{deck.name} Deck</p>
@@ -74,12 +67,7 @@ export default function CardsPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link href="/couples" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-          <Link href="/couples" className="text-xs text-secondary hover:text-foreground">← Dashboard</Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="max-w-2xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-1">Conversation Cards</h2>

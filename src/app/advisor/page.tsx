@@ -3,6 +3,7 @@
 import { useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { SiteHeader } from '@/components/SiteHeader';
 import { useAdvisor } from '@/lib/advisor-context';
 
 function AdvisorRedirect() {
@@ -23,12 +24,7 @@ function AdvisorRedirect() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link href="/results" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-          <span className="text-xs text-secondary">Advisor</span>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="flex-1 flex items-center justify-center px-6">
         <div className="max-w-md text-center">
