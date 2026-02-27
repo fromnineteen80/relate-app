@@ -34,7 +34,7 @@ export default function PersonaPage() {
             <h3 className="font-serif text-lg font-semibold mb-3">Dating Behavior</h3>
             <ul className="space-y-2">
               {persona.datingBehavior.map((b: string, i: number) => (
-                <li key={i} className="text-sm flex gap-2"><span className="text-accent">—</span>{b}</li>
+                <li key={i} className="text-sm flex gap-2"><span className="text-accent">&#8226;</span>{b}</li>
               ))}
             </ul>
           </section>
@@ -45,7 +45,7 @@ export default function PersonaPage() {
             <h3 className="font-serif text-lg font-semibold mb-3">In Relationships</h3>
             <ul className="space-y-2">
               {persona.inRelationships.map((b: string, i: number) => (
-                <li key={i} className="text-sm flex gap-2"><span className="text-accent">—</span>{b}</li>
+                <li key={i} className="text-sm flex gap-2"><span className="text-accent">&#8226;</span>{b}</li>
               ))}
             </ul>
           </section>

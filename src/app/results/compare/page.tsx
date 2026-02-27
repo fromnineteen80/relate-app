@@ -293,7 +293,7 @@ function AlignmentSection({ data, overview }: { data: any; overview: any }) {
                   ✓
                 </div>
                 <div>
-                  <p className="text-sm font-medium capitalize">{p.dimension} — {p.type === 'shared_desire' ? 'Shared Desire' : 'Want–Offer Match'}</p>
+                  <p className="text-sm font-medium capitalize">{p.dimension} -{p.type === 'shared_desire' ? 'Shared Desire' : 'Want-Offer Match'}</p>
                   <p className="text-xs text-secondary mt-1">{p.narrative}</p>
                   <div className="flex items-center gap-2 mt-2">
                     <div className="h-1.5 flex-1 bg-stone-200 rounded-full overflow-hidden">
@@ -482,10 +482,10 @@ function RepairSection({ data }: { data: any }) {
   };
 
   const horsemenAntidotes: Record<string, string> = {
-    criticism: 'Gentle startup — begin with "I feel..." instead of "You always..."',
-    contempt: 'Build a culture of appreciation — express gratitude daily',
-    defensiveness: 'Take responsibility — even a small part of the problem',
-    stonewalling: 'Self-soothe — take a break and come back within 20 minutes',
+    criticism: 'Gentle startup -begin with "I feel..." instead of "You always..."',
+    contempt: 'Build a culture of appreciation -express gratitude daily',
+    defensiveness: 'Take responsibility -even a small part of the problem',
+    stonewalling: 'Self-soothe -take a break and come back within 20 minutes',
   };
 
   return (
@@ -501,7 +501,7 @@ function RepairSection({ data }: { data: any }) {
 
       {/* Gottman horsemen comparison */}
       <div className="card">
-        <h3 className="font-serif text-sm font-semibold mb-4">Four Horsemen — Combined Risk</h3>
+        <h3 className="font-serif text-sm font-semibold mb-4">Four Horsemen -Combined Risk</h3>
         <div className="space-y-4">
           {data.horsemen?.map((h: any) => (
             <div key={h.horseman}>

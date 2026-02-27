@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     if (useMock) {
       const u1Name = user1Results.persona?.name || 'Partner 1';
       const u2Name = user2Results.persona?.name || 'Partner 2';
-      aiNarrative = `The ${u1Name} and ${u2Name} pairing brings together two distinct relational profiles. Your overall compatibility score of ${couplesReport.overview?.overallScore || '—'} reflects ${couplesReport.overview?.archetype?.name === 'Natural Partners' ? 'strong natural alignment' : 'areas of both harmony and productive tension'}. ${couplesReport.conflictChoreography?.dynamic?.description || 'Your conflict dynamic shapes how you navigate disagreements.'} The data suggests focusing on ${couplesReport.repairCompatibility?.highRiskHorsemen?.length > 0 ? 'your Gottman risk areas' : 'deepening your communication patterns'} as the highest-leverage growth area for this relationship.`;
+      aiNarrative = `The ${u1Name} and ${u2Name} pairing brings together two distinct relational profiles. Your overall compatibility score of ${couplesReport.overview?.overallScore || '-'} reflects ${couplesReport.overview?.archetype?.name === 'Natural Partners' ? 'strong natural alignment' : 'areas of both harmony and productive tension'}. ${couplesReport.conflictChoreography?.dynamic?.description || 'Your conflict dynamic shapes how you navigate disagreements.'} The data suggests focusing on ${couplesReport.repairCompatibility?.highRiskHorsemen?.length > 0 ? 'your Gottman risk areas' : 'deepening your communication patterns'} as the highest-leverage growth area for this relationship.`;
     } else {
       try {
         const Anthropic = require('@anthropic-ai/sdk');

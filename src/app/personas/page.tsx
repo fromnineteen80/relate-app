@@ -219,7 +219,7 @@ export default function PersonasPage() {
                         <ul className="space-y-1.5">
                           {persona.datingBehavior.map((item, i) => (
                             <li key={i} className="text-sm flex items-start gap-2">
-                              <span className="text-accent mt-0.5 flex-shrink-0">—</span>
+                              <span className="text-accent mt-0.5 flex-shrink-0">&#8226;</span>
                               <span>{item}</span>
                             </li>
                           ))}
@@ -233,7 +233,7 @@ export default function PersonasPage() {
                         <ul className="space-y-1.5">
                           {persona.inRelationships.map((item, i) => (
                             <li key={i} className="text-sm flex items-start gap-2">
-                              <span className="text-accent mt-0.5 flex-shrink-0">—</span>
+                              <span className="text-accent mt-0.5 flex-shrink-0">&#8226;</span>
                               <span>{item}</span>
                             </li>
                           ))}
@@ -248,7 +248,7 @@ export default function PersonasPage() {
                           <ul className="space-y-1.5">
                             {persona.mostAttractive.map((item, i) => (
                               <li key={i} className="text-sm flex items-start gap-2">
-                                <span className="text-success mt-0.5 flex-shrink-0">—</span>
+                                <span className="text-success mt-0.5 flex-shrink-0">&#8226;</span>
                                 <span>{item}</span>
                               </li>
                             ))}
@@ -262,7 +262,7 @@ export default function PersonasPage() {
                           <ul className="space-y-1.5">
                             {persona.leastAttractive.map((item, i) => (
                               <li key={i} className="text-sm flex items-start gap-2">
-                                <span className="text-warning mt-0.5 flex-shrink-0">—</span>
+                                <span className="text-warning mt-0.5 flex-shrink-0">&#8226;</span>
                                 <span>{item}</span>
                               </li>
                             ))}
@@ -277,7 +277,7 @@ export default function PersonasPage() {
                         <ul className="space-y-1.5">
                           {persona.struggles.map((item, i) => (
                             <li key={i} className="text-sm flex items-start gap-2">
-                              <span className="text-secondary mt-0.5 flex-shrink-0">—</span>
+                              <span className="text-secondary mt-0.5 flex-shrink-0">&#8226;</span>
                               <span>{item}</span>
                             </li>
                           ))}

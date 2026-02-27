@@ -19,8 +19,8 @@ function generatePairingOverview(user1: any, user2: any): any {
   for (const dim of dims) {
     const u1Dim = user1.m1?.dimensions?.[dim] || user1.m2?.dimensions?.[dim];
     const u2Dim = user2.m1?.dimensions?.[dim] || user2.m2?.dimensions?.[dim];
-    const u1Pole = u1Dim?.assignedPole || '—';
-    const u2Pole = u2Dim?.assignedPole || '—';
+    const u1Pole = u1Dim?.assignedPole || '-';
+    const u2Pole = u2Dim?.assignedPole || '-';
     const aligned = u1Pole === u2Pole;
     if (aligned) shared++;
     totalStrength += (u1Dim?.strength || 50) + (u2Dim?.strength || 50);
@@ -135,7 +135,7 @@ function generateClashSection(user1: any, user2: any): any {
         severity: bothStrong ? 'high' : 'moderate',
         narrative: bothStrong
           ? `Both of you feel strongly about opposite directions in ${dim}. This requires deliberate negotiation.`
-          : `You differ in ${dim}, but at least one of you holds this lightly — making compromise easier.`,
+          : `You differ in ${dim}, but at least one of you holds this lightly - making compromise easier.`,
       });
     }
   }
@@ -172,7 +172,7 @@ function generateConflictChoreography(user1: any, user2: any): any {
   let dynamicLabel = 'Mixed';
   let dynamicDescription = '';
   if (pursueWithdraw) {
-    dynamicLabel = 'Pursue–Withdraw';
+    dynamicLabel = 'Pursue-Withdraw';
     dynamicDescription = 'One of you moves toward conflict while the other pulls away. The pursuer needs to give space; the withdrawer needs to signal they\'ll return.';
   } else if (bothPursue) {
     dynamicLabel = 'Dual Pursuit';
@@ -192,7 +192,7 @@ function generateConflictChoreography(user1: any, user2: any): any {
     user2Driver: u2Driver,
     collision: driverCollision,
     narrative: driverCollision
-      ? `You share the same primary emotional driver (${u1Driver}). This means you deeply understand each other\'s triggers — but can also accidentally activate them.`
+      ? `You share the same primary emotional driver (${u1Driver}). This means you deeply understand each other\'s triggers - but can also accidentally activate them.`
       : `Different primary drivers (${u1Driver} vs ${u2Driver}) mean your emotional triggers are distinct. Learning your partner\'s driver is key to de-escalation.`,
   };
 
@@ -296,9 +296,9 @@ function generateDailyLifePreview(user1: any, user2: any): any {
     area: 'Decision Making',
     dynamic: u1Values.assignedPole === u2Values.assignedPole
       ? 'Shared values make big decisions easier. You\'ll naturally agree on priorities around finances, family, and life direction.'
-      : 'Different value orientations mean big decisions require more discussion. Neither perspective is wrong — the key is finding integrative solutions.',
-    user1Pole: u1Values.assignedPole || '—',
-    user2Pole: u2Values.assignedPole || '—',
+      : 'Different value orientations mean big decisions require more discussion. Neither perspective is wrong - the key is finding integrative solutions.',
+    user1Pole: u1Values.assignedPole || '-',
+    user2Pole: u2Values.assignedPole || '-',
   });
 
   // Social life
@@ -309,8 +309,8 @@ function generateDailyLifePreview(user1: any, user2: any): any {
     dynamic: u1Social.assignedPole === u2Social.assignedPole
       ? 'Similar social preferences mean less friction around how you spend weekends and who you spend time with.'
       : 'Different social needs mean negotiating friend groups, social events, and alone time. Building a shared social calendar with individual flexibility works well.',
-    user1Pole: u1Social.assignedPole || '—',
-    user2Pole: u2Social.assignedPole || '—',
+    user1Pole: u1Social.assignedPole || '-',
+    user2Pole: u2Social.assignedPole || '-',
   });
 
   // Stress response
@@ -319,8 +319,8 @@ function generateDailyLifePreview(user1: any, user2: any): any {
   scenarios.push({
     area: 'Under Stress',
     dynamic: u1Approach === u2Approach
-      ? `You both ${u1Approach === 'pursue' ? 'engage directly' : 'withdraw to process'} under stress. This symmetry means you instinctively understand each other — but may also amplify the pattern.`
-      : 'Different stress responses create a natural counterbalance — but only if both partners understand the pattern. The pursuer gives space; the withdrawer comes back.',
+      ? `You both ${u1Approach === 'pursue' ? 'engage directly' : 'withdraw to process'} under stress. This symmetry means you instinctively understand each other - but may also amplify the pattern.`
+      : 'Different stress responses create a natural counterbalance - but only if both partners understand the pattern. The pursuer gives space; the withdrawer comes back.',
     user1Approach: u1Approach,
     user2Approach: u2Approach,
   });
@@ -373,7 +373,7 @@ function generateCeilingFloor(user1: any, user2: any, overview: any): any {
     floorFactors: floorFactors.length > 0 ? floorFactors : ['No significant risk factors identified'],
     narrative: growthPotential > riskExposure
       ? 'Your upside potential exceeds your downside risk. With intentional effort, this relationship can significantly outperform its baseline.'
-      : 'Your risk exposure is notable. Focus on the floor factors first — shoring up vulnerabilities protects the relationship\'s foundation before building higher.',
+      : 'Your risk exposure is notable. Focus on the floor factors first - shoring up vulnerabilities protects the relationship\'s foundation before building higher.',
   };
 }
 
@@ -579,7 +579,7 @@ export const DATE_IDEAS = [
   // Active / Adventure
   { id: 'd1', category: 'adventure', title: 'Sunrise Hike', description: 'Wake up early and hike to a viewpoint for sunrise. Bring coffee.', forTypes: ['physical_A'] },
   { id: 'd2', category: 'adventure', title: 'Cooking Challenge', description: 'Each partner picks a mystery ingredient. You have 45 minutes to make dinner.', forTypes: ['lifestyle_A'] },
-  { id: 'd3', category: 'adventure', title: 'City Exploration', description: 'Pick a neighborhood neither of you has explored. No phones for navigation — just wander.', forTypes: ['social_A'] },
+  { id: 'd3', category: 'adventure', title: 'City Exploration', description: 'Pick a neighborhood neither of you has explored. No phones for navigation - just wander.', forTypes: ['social_A'] },
   { id: 'd4', category: 'adventure', title: 'Volunteer Together', description: 'Find a cause you both care about and spend a morning volunteering.', forTypes: ['values_A'] },
   // Intimate / Quiet
   { id: 'd5', category: 'intimate', title: 'Question Night', description: 'Draw from the RELATE conversation cards over dinner. No phones, no TV.', forTypes: ['social_B'] },
@@ -590,7 +590,7 @@ export const DATE_IDEAS = [
   { id: 'd9', category: 'social', title: 'Double Date', description: 'Plan an evening with another couple. Focus on shared laughter.', forTypes: ['social_A'] },
   { id: 'd10', category: 'social', title: 'Game Night', description: 'Host a board game night. Cooperative games build teamwork.', forTypes: ['social_A', 'lifestyle_A'] },
   // Growth-oriented
-  { id: 'd11', category: 'growth', title: 'Workshop Together', description: 'Take a class in something neither of you knows — pottery, dance, cooking.', forTypes: ['lifestyle_A', 'values_A'] },
+  { id: 'd11', category: 'growth', title: 'Workshop Together', description: 'Take a class in something neither of you knows - pottery, dance, cooking.', forTypes: ['lifestyle_A', 'values_A'] },
   { id: 'd12', category: 'growth', title: 'Future Mapping Date', description: 'Go to a cafe with a notebook and map your next year together. Dreams, goals, adventures.', forTypes: ['values_A', 'values_B'] },
 ];
 
