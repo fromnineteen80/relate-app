@@ -7,7 +7,8 @@ export async function GET(request: NextRequest) {
 
   if (useMockPayments) {
     // In mock mode, redirect directly to success
-    return NextResponse.redirect(new URL(`/results?success=true&product=${product}`, request.url));
+    const successPath = product === 'couples_report' ? '/results/compare?success=true' : '/results?success=true';
+    return NextResponse.redirect(new URL(`${successPath}&product=${product}`, request.url));
   }
 
   try {
@@ -26,8 +27,12 @@ export async function GET(request: NextRequest) {
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_URL}/results?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_URL}/results?canceled=true`,
+      success_url: product === 'couples_report'
+        ? `${process.env.NEXT_PUBLIC_URL}/results/compare?success=true`
+        : `${process.env.NEXT_PUBLIC_URL}/results?success=true`,
+      cancel_url: product === 'couples_report'
+        ? `${process.env.NEXT_PUBLIC_URL}/results/compare?canceled=true`
+        : `${process.env.NEXT_PUBLIC_URL}/results?canceled=true`,
       metadata: { product },
     });
 

@@ -221,6 +221,19 @@ export default function ResultsDashboard() {
           </section>
         )}
 
+        {/* Couples CTA */}
+        <section className="card mb-6 border-accent">
+          <h3 className="font-serif text-lg font-semibold mb-2">Couples Mode</h3>
+          <p className="text-sm text-secondary mb-4">
+            Invite your partner to take the assessment and unlock your compatibility report, growth plan, and shared advisor.
+          </p>
+          <div className="flex gap-3">
+            <Link href="/invite" className="btn-primary text-xs">Invite Partner</Link>
+            <Link href="/results/compare" className="btn-secondary text-xs">Couples Report</Link>
+            <Link href="/couples" className="btn-secondary text-xs">Couples Dashboard</Link>
+          </div>
+        </section>
+
         {/* Navigation */}
         <div className="flex gap-3 flex-wrap">
           <Link href="/results/persona" className="btn-secondary text-xs">Persona Details</Link>
