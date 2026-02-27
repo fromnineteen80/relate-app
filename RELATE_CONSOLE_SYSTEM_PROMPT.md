@@ -394,6 +394,7 @@ Generate all 8 sections of the couples report.`
   rankedMatches: [
     { personaCode: "BDFH", personaName: "The Therapist", tier: "ideal", score: 87 },
     { personaCode: "ADFH", personaName: "The Girl Next Door", tier: "kismet", score: 78 },
+    { personaCode: "ADFH", personaName: "The Anchor", tier: "kismet", score: 78 },
     // ... 14 more
   ]
 }
