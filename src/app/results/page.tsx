@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { config } from '@/lib/config';
 import { getMockPaymentStatus } from '@/lib/mock/payments';
+import { generateReferrals, Referral } from '@/lib/referrals';
 
 type ResultsReport = {
   persona: { code: string; name: string; traits: string; datingBehavior: string[]; mostAttractive: string[]; leastAttractive: string[] };
@@ -35,11 +36,14 @@ export default function ResultsDashboard() {
   const router = useRouter();
   const [report, setReport] = useState<ResultsReport | null>(null);
   const [hasPaid, setHasPaid] = useState(false);
+  const [referrals, setReferrals] = useState<Referral[]>([]);
 
   useEffect(() => {
     const stored = localStorage.getItem('relate_results');
     if (!stored) { router.push('/assessment'); return; }
-    setReport(JSON.parse(stored));
+    const parsedReport = JSON.parse(stored);
+    setReport(parsedReport);
+    setReferrals(generateReferrals(parsedReport));
 
     if (config.useMockPayments) {
       setHasPaid(getMockPaymentStatus().paid);
@@ -185,6 +189,37 @@ export default function ResultsDashboard() {
             </div>
           )}
         </section>
+
+        {/* Referrals */}
+        {referrals.length > 0 && (
+          <section className="mb-6">
+            <h3 className="font-serif text-lg font-semibold mb-3">Recommended Resources</h3>
+            <div className="space-y-2">
+              {referrals.map((ref) => (
+                <a
+                  key={ref.service}
+                  href={ref.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => fetch('/api/referral-click', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ service: ref.service, affiliateUrl: ref.url }),
+                  })}
+                  className="card block hover:border-accent transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium">{ref.cta}</p>
+                      <p className="text-xs text-secondary">{ref.reason}</p>
+                    </div>
+                    <span className="text-accent text-sm">→</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Navigation */}
         <div className="flex gap-3 flex-wrap">
