@@ -2,9 +2,8 @@
 
 import { useState, useEffect, useCallback, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { config } from '@/lib/config';
 import { FlatQuestion } from '@/lib/questions';
+import { SiteHeader } from '@/components/SiteHeader';
 import QuestionCard from './QuestionCard';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -98,7 +97,7 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
   if (showIntro) {
     return (
       <div className="min-h-screen flex flex-col">
-        <AssessmentHeader moduleNumber={moduleNumber} />
+        <SiteHeader />
         <main className="flex-1 flex items-center justify-center px-6">
           <div className="max-w-md text-center">
             <span className="font-mono text-xs text-secondary">Module {moduleNumber} of 4</span>
@@ -119,7 +118,7 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
   if (scoring) {
     return (
       <div className="min-h-screen flex flex-col">
-        <AssessmentHeader moduleNumber={moduleNumber} />
+        <SiteHeader />
         <main className="flex-1 flex items-center justify-center px-6">
           <div className="max-w-md text-center">
             <div className="w-12 h-12 rounded-full border-2 border-accent border-t-transparent animate-spin mx-auto mb-4" />
@@ -136,7 +135,7 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
     if (renderReward && scoredData) {
       return (
         <div className="min-h-screen flex flex-col">
-          <AssessmentHeader moduleNumber={moduleNumber} />
+          <SiteHeader />
           <main className="flex-1 px-6 py-8">
             {renderReward({ responses, scoredData, onContinue: handleContinue })}
           </main>
@@ -147,7 +146,7 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
     // Fallback: simple completion
     return (
       <div className="min-h-screen flex flex-col">
-        <AssessmentHeader moduleNumber={moduleNumber} />
+        <SiteHeader />
         <main className="flex-1 flex items-center justify-center px-6">
           <div className="max-w-md text-center">
             <div className="w-12 h-12 rounded-full bg-success text-white flex items-center justify-center mx-auto mb-4 text-lg">
@@ -169,7 +168,7 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
 
   return (
     <div className="min-h-screen flex flex-col">
-      <AssessmentHeader moduleNumber={moduleNumber} />
+      <SiteHeader />
 
       {/* Progress bar */}
       <div className="border-b border-border">
@@ -212,18 +211,3 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
   );
 }
 
-function AssessmentHeader({ moduleNumber }: { moduleNumber: number }) {
-  return (
-    <header className="border-b border-border px-6 py-4">
-      <div className="max-w-5xl mx-auto flex items-center justify-between">
-        <Link href="/assessment" className="font-serif text-xl font-semibold tracking-tight">RELATE</Link>
-        <div className="flex items-center gap-3">
-          <span className="font-mono text-xs text-secondary">Module {moduleNumber}</span>
-          {config.useMockAuth && (
-            <span className="text-xs font-mono bg-warning/10 text-warning px-2 py-1 rounded">[TEST]</span>
-          )}
-        </div>
-      </div>
-    </header>
-  );
-}

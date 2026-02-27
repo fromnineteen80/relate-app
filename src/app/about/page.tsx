@@ -7,7 +7,7 @@ export default function AboutPage() {
       <SiteHeader variant="landing" />
 
       {/* ── Hero ── */}
-      <section className="relative pt-32 pb-16 px-6 bg-gradient-to-b from-stone-100 to-background">
+      <section className="relative pt-16 pb-16 px-6 bg-gradient-to-b from-stone-100 to-background">
         <div className="max-w-3xl mx-auto text-center">
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-4">About Relate</p>
           <h1 className="font-serif text-4xl md:text-5xl font-semibold leading-[1.1] mb-6">
