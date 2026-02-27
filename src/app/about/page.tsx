@@ -4,7 +4,7 @@ import { SiteHeader } from '@/components/SiteHeader';
 export default function AboutPage() {
   return (
     <div className="min-h-screen flex flex-col">
-      <SiteHeader variant="landing" />
+      <SiteHeader />
 
       {/* ── Hero ── */}
       <section className="relative pt-16 pb-16 px-6 bg-gradient-to-b from-stone-100 to-background">
@@ -22,23 +22,18 @@ export default function AboutPage() {
       {/* ── Intelligence Layer ── */}
       <section className="px-6 py-20 border-b border-border">
         <div className="max-w-3xl mx-auto">
-          <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-8 text-center">
-            Introducing the first dating and relationship intelligence layer.
-          </h2>
-          <ul className="space-y-3 max-w-lg mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               'Understand the dating economy',
               'Pinpoint your ideal partner',
-              'Plan more meaningful dates',
-              'Professional support that fits your journey',
+              'Coaching that fits your journey',
               'Build better and lasting relationships',
             ].map((item) => (
-              <li key={item} className="flex items-start gap-3 text-secondary">
-                <span className="text-accent mt-0.5">&#9702;</span>
-                <span>{item}</span>
-              </li>
+              <div key={item} className="card">
+                <p className="font-serif font-semibold">{item}</p>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
