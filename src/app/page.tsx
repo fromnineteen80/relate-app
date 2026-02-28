@@ -56,23 +56,27 @@ const FAQS = [
   },
   {
     q: 'What do I get for free?',
-    a: 'Your persona code, traits description, and your top 3 compatibility matches with tier rankings. The free tier gives you a meaningful snapshot.',
+    a: 'Your persona code, traits description, top 3 compatibility matches, and 3 advisor messages. The free tier gives you a meaningful snapshot, but does not include the full report or PDF download.',
   },
   {
-    q: 'What\'s in the Full Report?',
-    a: 'All 16 match rankings with detailed analysis, your complete conflict profile with Gottman scores, AI-powered coaching through the Claude Advisor, and a personalized growth path.',
+    q: 'What is the difference between Plus and Premium?',
+    a: 'Plus ($19.99) gives you the full report with all 16 match rankings, conflict analysis, growth path, and a downloadable PDF. Premium ($29.99) adds unlimited access to the Claude AI relationship advisor and the ability to retake the assessment as your life evolves.',
+  },
+  {
+    q: 'Can I retake the assessment?',
+    a: 'Premium subscribers can retake the assessment at any time. Your persona reflects who you are now, and that changes as you grow. Retaking after significant life events or relationship shifts often reveals meaningful evolution.',
   },
   {
     q: 'How does Couples Mode work?',
-    a: 'Both partners take the assessment independently. Then you unlock a 7-section compatibility report, shared growth challenges, conversation cards, and a couples advisor.',
+    a: 'Both partners take the assessment independently. With the Couples tier ($49.99), you unlock a 7-section compatibility report, shared growth challenges, conversation cards, a couples advisor, and PDF reports for both partners.',
+  },
+  {
+    q: 'Can I download my report?',
+    a: 'Yes. Plus, Premium, and Couples tiers all include a downloadable PDF version of your full report.',
   },
   {
     q: 'Is this scientifically validated?',
     a: 'RELATE draws from established frameworks: Gottman\'s Four Horsemen, Emotionally Focused Therapy, Attachment Theory, and Internal Family Systems. The assessment instruments map onto validated psychological constructs.',
-  },
-  {
-    q: 'Can I retake the assessment?',
-    a: 'Yes. Your persona reflects who you are now, and that changes as you grow. Retaking after significant life events or relationship shifts often reveals meaningful evolution.',
   },
 ];
 
@@ -264,7 +268,7 @@ export default function LandingPage() {
 
       {/* ── Pricing ── */}
       <section id="pricing" className="px-6 py-20">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Pricing</p>
             <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">Start free. Go deeper if you want.</h2>
@@ -273,11 +277,12 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Free */}
             <div className="card flex flex-col">
               <span className="font-mono text-xs text-secondary tracking-wider">FREE</span>
               <p className="font-serif text-4xl font-semibold mt-2">$0</p>
-              <p className="text-sm text-secondary mt-3 mb-6">Everything you need to discover your persona.</p>
+              <p className="text-sm text-secondary mt-3 mb-6">Discover your persona.</p>
               <div className="space-y-2.5 mb-8 flex-1">
                 {[
                   '367-question assessment',
@@ -294,20 +299,42 @@ export default function LandingPage() {
               <Link href="/auth/signup" className="btn-secondary w-full text-center">Start Free</Link>
             </div>
 
-            <div className="card flex flex-col border-accent relative">
-              <div className="absolute -top-3 left-4 bg-accent text-white text-xs font-medium px-3 py-1 rounded-full">
-                Most popular
-              </div>
-              <span className="font-mono text-xs text-accent tracking-wider">FULL REPORT</span>
-              <p className="font-serif text-4xl font-semibold mt-2">$19</p>
-              <p className="text-sm text-secondary mt-3 mb-6">The complete picture: all matches, all insights.</p>
+            {/* Plus */}
+            <div className="card flex flex-col">
+              <span className="font-mono text-xs text-secondary tracking-wider">PLUS</span>
+              <p className="font-serif text-4xl font-semibold mt-2">$19.99</p>
+              <p className="text-sm text-secondary mt-3 mb-6">The complete picture.</p>
               <div className="space-y-2.5 mb-8 flex-1">
                 {[
                   'Everything in Free',
                   'All 16 match rankings + details',
                   'Full conflict analysis',
-                  'Unlimited AI advisor',
                   'Personalized growth path',
+                  'Downloadable PDF report',
+                ].map((item) => (
+                  <div key={item} className="flex items-start gap-2 text-sm">
+                    <span className="text-secondary mt-0.5">&#8226;</span>
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+              <Link href="/auth/signup" className="btn-secondary w-full text-center">Get Plus</Link>
+            </div>
+
+            {/* Premium */}
+            <div className="card flex flex-col border-accent relative">
+              <div className="absolute -top-3 left-4 bg-accent text-white text-xs font-medium px-3 py-1 rounded-full">
+                Most popular
+              </div>
+              <span className="font-mono text-xs text-accent tracking-wider">PREMIUM</span>
+              <p className="font-serif text-4xl font-semibold mt-2">$29.99</p>
+              <p className="text-sm text-secondary mt-3 mb-6">Full insight + AI coaching.</p>
+              <div className="space-y-2.5 mb-8 flex-1">
+                {[
+                  'Everything in Plus',
+                  'Unlimited AI advisor',
+                  'Retake the assessment',
+                  'Downloadable PDF report',
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-2 text-sm">
                     <span className="text-accent mt-0.5">&#8226;</span>
@@ -315,20 +342,20 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-              <Link href="/auth/signup" className="btn-primary w-full text-center">Get Full Report</Link>
+              <Link href="/auth/signup" className="btn-primary w-full text-center">Get Premium</Link>
             </div>
 
+            {/* Couples */}
             <div className="card flex flex-col">
               <span className="font-mono text-xs text-secondary tracking-wider">COUPLES</span>
-              <p className="font-serif text-4xl font-semibold mt-2">$29</p>
-              <p className="text-sm text-secondary mt-3 mb-6">Both partners, one complete compatibility analysis.</p>
+              <p className="font-serif text-4xl font-semibold mt-2">$49.99</p>
+              <p className="text-sm text-secondary mt-3 mb-6">Two partners, full compatibility.</p>
               <div className="space-y-2.5 mb-8 flex-1">
                 {[
-                  'Everything in Full Report (x2)',
+                  'Everything in Premium (x2)',
                   '7-section compatibility report',
                   'Growth challenges and levels',
                   'Conversation card decks',
-                  'Personalized date ideas',
                   'Shared couples advisor',
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-2 text-sm">
@@ -337,7 +364,7 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-              <Link href="/auth/signup" className="btn-secondary w-full text-center">Get Couples Report</Link>
+              <Link href="/auth/signup" className="btn-secondary w-full text-center">Get Couples</Link>
             </div>
           </div>
         </div>

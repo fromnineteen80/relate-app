@@ -1,38 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { PRICING, type PricingTier } from '@/lib/config';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const product = searchParams.get('product') || 'full_report';
+  const product = (searchParams.get('product') || 'plus') as PricingTier;
   const useMockPayments = process.env.NEXT_PUBLIC_MOCK_PAYMENTS === 'true';
 
+  if (!PRICING[product] || product === 'free') {
+    return NextResponse.json({ error: 'Invalid product' }, { status: 400 });
+  }
+
   if (useMockPayments) {
-    // In mock mode, redirect directly to success
-    const successPath = product === 'couples_report' ? '/results/compare?success=true' : '/results?success=true';
+    const successPath = product === 'couples' ? '/results/compare?success=true' : '/account?success=true';
     return NextResponse.redirect(new URL(`${successPath}&product=${product}`, request.url));
   }
 
   try {
     const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-    const prices: Record<string, { name: string; amount: number }> = {
-      full_report: { name: 'RELATE Full Report', amount: 1900 },
-      couples_report: { name: 'RELATE Couples Report', amount: 2900 },
-    };
+    const tier = PRICING[product];
 
-    const { name, amount } = prices[product] || prices.full_report;
+    const successUrl = product === 'couples'
+      ? `${process.env.NEXT_PUBLIC_URL}/results/compare?success=true`
+      : `${process.env.NEXT_PUBLIC_URL}/account?success=true`;
+
+    const cancelUrl = product === 'couples'
+      ? `${process.env.NEXT_PUBLIC_URL}/results/compare?canceled=true`
+      : `${process.env.NEXT_PUBLIC_URL}/account?canceled=true`;
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{
-        price_data: { currency: 'usd', product_data: { name }, unit_amount: amount },
+        price_data: {
+          currency: 'usd',
+          product_data: { name: `RELATE ${tier.label}` },
+          unit_amount: tier.stripeCents,
+        },
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: product === 'couples_report'
-        ? `${process.env.NEXT_PUBLIC_URL}/results/compare?success=true`
-        : `${process.env.NEXT_PUBLIC_URL}/results?success=true`,
-      cancel_url: product === 'couples_report'
-        ? `${process.env.NEXT_PUBLIC_URL}/results/compare?canceled=true`
-        : `${process.env.NEXT_PUBLIC_URL}/results?canceled=true`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       metadata: { product },
     });
 

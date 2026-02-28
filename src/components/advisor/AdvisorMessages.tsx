@@ -49,8 +49,11 @@ export default function AdvisorMessages() {
           <p className="text-xs text-secondary mb-2">
             You&apos;ve used {messageCount} of 3 free messages.
           </p>
-          <a href="/api/checkout?product=full_report" className="text-xs text-accent hover:underline font-medium">
-            Unlock unlimited advisor access ($19)
+          <p className="text-xs text-secondary mb-3">
+            Upgrade to Premium for unlimited AI advisor access.
+          </p>
+          <a href="/api/checkout?product=premium" className="text-xs text-accent hover:underline font-medium">
+            Upgrade to Premium ($29.99)
           </a>
         </div>
       )}

@@ -1,18 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
 import { useAuth } from '@/lib/auth-context';
 import { config } from '@/lib/config';
 import { getSupabase } from '@/lib/supabase/client';
-
-const STATES = [
-  'AL','AK','AZ','AR','CA','CO','CT','DE','DC','FL','GA','HI','ID','IL','IN',
-  'IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH',
-  'NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT',
-  'VT','VA','WA','WV','WI','WY',
-];
+import { isProfileComplete, getProfile } from '@/lib/onboarding';
 
 const ETHNICITIES = ['White','Hispanic/Latino','Black','Asian','Native American','Pacific Islander','Other/Mixed'];
 const ORIENTATIONS = ['Straight','Gay/Lesbian','Bisexual','Other'];
@@ -26,9 +20,6 @@ const FITNESS_LEVELS = ['Never','1 day a week','2 to 3 days a week','4 to 6 days
 const POLITICAL_VIEWS = ['Apolitical','Liberal','Moderate','Conservative'];
 
 type FormData = {
-  zipCode: string;
-  city: string;
-  state: string;
   gender: string;
   age: string;
   ethnicity: string;
@@ -56,7 +47,6 @@ type FormData = {
 };
 
 const SECTIONS = [
-  { id: 'location', title: 'Location', subtitle: 'Where are you based?' },
   { id: 'identity', title: 'Identity', subtitle: 'Core demographics' },
   { id: 'about', title: 'About You', subtitle: 'Your profile' },
   { id: 'preferences', title: 'Partner Preferences', subtitle: 'What you\'re looking for' },
@@ -69,14 +59,14 @@ function formatCurrency(val: number) {
 }
 
 export default function DemographicsPage() {
-  const { user } = useAuth();
+  const { user, loading, emailVerified } = useAuth();
   const router = useRouter();
   const [currentSection, setCurrentSection] = useState(0);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [savedToast, setSavedToast] = useState(false);
 
   const [form, setForm] = useState<FormData>({
-    zipCode: '', city: '', state: '',
     gender: '', age: '', ethnicity: '', orientation: 'Straight',
     income: 50000, education: '', height: '', bodyType: '', fitness: '',
     political: '', smoking: '', hasKids: '', wantKids: '', relationshipStatus: '',
@@ -84,6 +74,28 @@ export default function DemographicsPage() {
     prefBodyTypes: [], prefFitnessLevels: [], prefPolitical: [],
     prefHasKids: '', prefSmoking: '', seeking: '',
   });
+
+  // Load saved demographics on mount
+  useEffect(() => {
+    const stored = localStorage.getItem('relate_demographics_draft');
+    if (stored) {
+      try {
+        const d = JSON.parse(stored);
+        setForm(prev => ({ ...prev, ...d }));
+      } catch { /* ignore */ }
+    }
+  }, []);
+
+  // Guard: must be logged in, verified, and have profile completed
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth/login');
+    } else if (!loading && user && !emailVerified) {
+      router.push('/auth/verify-email');
+    } else if (!loading && user && emailVerified && !isProfileComplete()) {
+      router.push('/onboarding/profile');
+    }
+  }, [loading, user, emailVerified, router]);
 
   function updateField(field: keyof FormData, value: string | number | string[]) {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -99,36 +111,51 @@ export default function DemographicsPage() {
     });
   }
 
+  const autoSave = useCallback(() => {
+    localStorage.setItem('relate_demographics_draft', JSON.stringify(form));
+    setSavedToast(true);
+    setTimeout(() => setSavedToast(false), 1500);
+  }, [form]);
+
   function canAdvance() {
     switch (currentSection) {
-      case 0: return form.zipCode.match(/^\d{5}$/);
-      case 1: return form.gender && form.age && form.ethnicity && form.orientation;
-      case 2: {
+      case 0: return form.gender && form.age && form.ethnicity && form.orientation;
+      case 1: {
         const base = form.income >= 0 && form.education && form.bodyType && form.fitness &&
           form.political && form.smoking && form.hasKids && form.wantKids && form.relationshipStatus;
         if (form.gender === 'Man') return base && form.height;
         return base;
       }
-      case 3: {
+      case 2: {
         const base = form.prefAgeMin && form.prefAgeMax && form.prefBodyTypes.length > 0 &&
           form.prefFitnessLevels.length > 0 && form.prefPolitical.length > 0 &&
           form.prefHasKids && form.prefSmoking;
         if (form.gender === 'Woman') return base && form.prefHeight;
         return base;
       }
-      case 4: return !!form.seeking;
+      case 3: return !!form.seeking;
       default: return false;
     }
+  }
+
+  function handleAdvance() {
+    autoSave();
+    setCurrentSection(prev => prev + 1);
   }
 
   async function handleSave() {
     setSaving(true);
     setError('');
 
+    const profile = getProfile();
+
     const userData = {
       gender: form.gender === 'Man' ? 'M' : 'W',
       age: parseInt(form.age),
-      zip_code: form.zipCode,
+      zip_code: profile?.zipCode || '',
+      city: profile?.city || '',
+      state: profile?.state || '',
+      county: profile?.county || '',
       ethnicity: form.ethnicity,
       orientation: form.orientation,
       income: form.income,
@@ -159,7 +186,8 @@ export default function DemographicsPage() {
     if (config.useMockAuth) {
       localStorage.setItem('relate_demographics', JSON.stringify(userData));
       localStorage.setItem('relate_gender', userData.gender);
-      router.push('/assessment');
+      localStorage.removeItem('relate_demographics_draft');
+      router.push('/account');
       return;
     }
 
@@ -168,7 +196,10 @@ export default function DemographicsPage() {
       if (!supabase || !user) throw new Error('Not authenticated');
       const { error: dbError } = await supabase.from('users').upsert({ id: user.id, email: user.email, ...userData });
       if (dbError) throw dbError;
-      router.push('/assessment');
+      localStorage.setItem('relate_demographics', JSON.stringify(userData));
+      localStorage.setItem('relate_gender', userData.gender);
+      localStorage.removeItem('relate_demographics_draft');
+      router.push('/account');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to save');
       setSaving(false);
@@ -178,28 +209,6 @@ export default function DemographicsPage() {
   function renderSection() {
     switch (currentSection) {
       case 0: return (
-        <div className="space-y-4">
-          <div>
-            <label className="label">ZIP Code *</label>
-            <input type="text" value={form.zipCode} onChange={e => updateField('zipCode', e.target.value)}
-              className="input" maxLength={5} placeholder="10001" />
-          </div>
-          <div>
-            <label className="label">City</label>
-            <input type="text" value={form.city} onChange={e => updateField('city', e.target.value)}
-              className="input" placeholder="New York" />
-          </div>
-          <div>
-            <label className="label">State</label>
-            <select value={form.state} onChange={e => updateField('state', e.target.value)} className="input">
-              <option value="">Select...</option>
-              {STATES.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-          </div>
-        </div>
-      );
-
-      case 1: return (
         <div className="space-y-4">
           <div>
             <label className="label">Gender *</label>
@@ -230,7 +239,7 @@ export default function DemographicsPage() {
         </div>
       );
 
-      case 2: return (
+      case 1: return (
         <div className="space-y-4">
           <div>
             <label className="label">Annual Income *</label>
@@ -314,7 +323,7 @@ export default function DemographicsPage() {
         </div>
       );
 
-      case 3: return (
+      case 2: return (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -405,7 +414,7 @@ export default function DemographicsPage() {
         </div>
       );
 
-      case 4: return (
+      case 3: return (
         <div className="space-y-4">
           <div>
             <label className="label">What brings you to RELATE? *</label>
@@ -429,22 +438,40 @@ export default function DemographicsPage() {
     }
   }
 
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
 
       <main className="flex-1 max-w-lg mx-auto px-6 py-8 w-full">
-        {/* Section nav */}
+        {/* Saved toast */}
+        {savedToast && (
+          <div className="fixed top-4 right-4 bg-success text-white text-xs px-3 py-1.5 rounded-md shadow-lg z-50 animate-fade-in">
+            Saved
+          </div>
+        )}
+
+        <div className="mb-6">
+          <span className="font-mono text-xs text-secondary">Step 2 of 3</span>
+          <h2 className="font-serif text-2xl font-semibold mt-1">{SECTIONS[currentSection].title}</h2>
+          <p className="text-sm text-secondary">{SECTIONS[currentSection].subtitle}</p>
+        </div>
+
+        {/* Progress bar */}
         <div className="flex gap-1 mb-8">
+          <div className="h-1 flex-1 rounded-full bg-accent" />
+          <div className="h-1 flex-1 rounded-full bg-accent" />
+          <div className="h-1 flex-1 rounded-full bg-stone-200" />
+        </div>
+
+        {/* Section progress */}
+        <div className="flex gap-1 mb-6">
           {SECTIONS.map((s, i) => (
             <div key={s.id} className={`h-1 flex-1 rounded-full ${i <= currentSection ? 'bg-accent' : 'bg-stone-200'}`} />
           ))}
-        </div>
-
-        <div className="mb-6">
-          <span className="font-mono text-xs text-secondary">Section {currentSection + 1} of {SECTIONS.length}</span>
-          <h2 className="font-serif text-2xl font-semibold mt-1">{SECTIONS[currentSection].title}</h2>
-          <p className="text-sm text-secondary">{SECTIONS[currentSection].subtitle}</p>
         </div>
 
         {renderSection()}
@@ -453,15 +480,21 @@ export default function DemographicsPage() {
 
         <div className="flex justify-between mt-8">
           <button
-            onClick={() => setCurrentSection(prev => prev - 1)}
+            onClick={() => {
+              autoSave();
+              if (currentSection === 0) {
+                router.push('/onboarding/profile');
+              } else {
+                setCurrentSection(prev => prev - 1);
+              }
+            }}
             className="btn-secondary"
-            disabled={currentSection === 0}
           >
             Back
           </button>
           {currentSection < SECTIONS.length - 1 ? (
             <button
-              onClick={() => setCurrentSection(prev => prev + 1)}
+              onClick={handleAdvance}
               className="btn-primary"
               disabled={!canAdvance()}
             >
@@ -473,7 +506,7 @@ export default function DemographicsPage() {
               className="btn-primary"
               disabled={!canAdvance() || saving}
             >
-              {saving ? 'Saving...' : 'Start Assessment'}
+              {saving ? 'Saving...' : 'Continue to Account'}
             </button>
           )}
         </div>

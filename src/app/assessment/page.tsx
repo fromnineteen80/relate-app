@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { config } from '@/lib/config';
+import { isProfileComplete, hasDemographics } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
 
 type ModuleStatus = { completed: boolean; questionIndex: number; total: number };
@@ -17,7 +18,7 @@ const MODULES = [
 ];
 
 export default function AssessmentHub() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, emailVerified } = useAuth();
   const router = useRouter();
   const [statuses, setStatuses] = useState<Record<number, ModuleStatus>>({});
   const [gender, setGender] = useState<string | null>(null);
@@ -25,6 +26,18 @@ export default function AssessmentHub() {
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/auth/login');
+      return;
+    }
+    if (!authLoading && user && !emailVerified) {
+      router.push('/auth/verify-email');
+      return;
+    }
+    if (!authLoading && user && emailVerified && !isProfileComplete()) {
+      router.push('/onboarding/profile');
+      return;
+    }
+    if (!authLoading && user && emailVerified && isProfileComplete() && !hasDemographics()) {
+      router.push('/onboarding/demographics');
       return;
     }
 
@@ -38,7 +51,7 @@ export default function AssessmentHub() {
       }
       setStatuses(s);
     }
-  }, [authLoading, user, router]);
+  }, [authLoading, user, emailVerified, router]);
 
   if (authLoading) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
 
@@ -48,8 +61,8 @@ export default function AssessmentHub() {
         <SiteHeader />
         <main className="flex-1 max-w-2xl mx-auto px-6 py-12 w-full">
           <h2 className="font-serif text-2xl font-semibold mb-4">Complete your profile first</h2>
-          <p className="text-secondary mb-6">You need to fill in your demographics before starting the assessment.</p>
-          <Link href="/onboarding/demographics" className="btn-primary">Go to Demographics</Link>
+          <p className="text-secondary mb-6">You need to fill in your profile and demographics before starting the assessment.</p>
+          <Link href="/onboarding/profile" className="btn-primary">Go to Profile Setup</Link>
         </main>
       </div>
     );
