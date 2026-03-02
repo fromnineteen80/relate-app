@@ -98,8 +98,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       return { error };
     }
-    const { error } = await supabase.auth.signUp({ email, password });
-    return { error: error?.message || null };
+
+    // Create user server-side with auto-confirm (bypasses email verification)
+    const res = await fetch('/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      return { error: data.error || 'Signup failed' };
+    }
+
+    // User is confirmed — sign them in immediately
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (signInError) {
+      return { error: signInError.message };
+    }
+    return { error: null };
   }
 
   async function signOut() {
