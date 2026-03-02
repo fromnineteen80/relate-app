@@ -17,6 +17,8 @@ type PersonaData = {
   struggles: string[];
 };
 
+type MatchResult = { rank: number; code: string; name: string; tier: string; compatibilityScore: number; traits: string; summary: string };
+
 const MALE_CODES = ['ACEG', 'ACEH', 'ACFG', 'ACFH', 'ADEG', 'ADEH', 'ADFG', 'ADFH', 'BCEG', 'BCEH', 'BCFG', 'BCFH', 'BDEG', 'BDEH', 'BDFG', 'BDFH'];
 const FEMALE_CODES = ['ACEG', 'ACEH', 'ACFG', 'ACFH', 'ADEG', 'ADEH', 'ADFG', 'ADFH', 'BCEG', 'BCEH', 'BCFG', 'BCFH', 'BDEG', 'BDEH', 'BDFG', 'BDFH'];
 
@@ -30,6 +32,30 @@ const FEMALE_DIMENSION_LABELS: Record<string, string> = {
   E: 'Thrill', F: 'Peace', G: 'Traditional', H: 'Egalitarian',
 };
 
+function tierColor(tier: string) {
+  const colors: Record<string, string> = {
+    ideal: 'text-success', kismet: 'text-success', effort: 'text-warning',
+    longShot: 'text-secondary', atRisk: 'text-danger', incompatible: 'text-danger',
+  };
+  return colors[tier] || 'text-secondary';
+}
+
+function tierLabel(tier: string) {
+  const labels: Record<string, string> = {
+    ideal: 'Ideal', kismet: 'Kismet', effort: 'Effort',
+    longShot: 'Long Shot', atRisk: 'At Risk', incompatible: 'Incompatible',
+  };
+  return labels[tier] || tier;
+}
+
+function tierBgColor(tier: string) {
+  const colors: Record<string, string> = {
+    ideal: 'bg-success', kismet: 'bg-success/70', effort: 'bg-warning',
+    longShot: 'bg-stone-400', atRisk: 'bg-danger/70', incompatible: 'bg-danger',
+  };
+  return colors[tier] || 'bg-secondary';
+}
+
 function decodeDimensions(code: string, gender: 'male' | 'female'): string[] {
   const labels = gender === 'male' ? MALE_DIMENSION_LABELS : FEMALE_DIMENSION_LABELS;
   return code.split('').map(letter => labels[letter] || letter);
@@ -41,6 +67,9 @@ export default function PersonasPage() {
   const [activeTab, setActiveTab] = useState<'male' | 'female'>('male');
   const [expandedCode, setExpandedCode] = useState<string | null>(null);
   const [userPersonaCode, setUserPersonaCode] = useState<string | null>(null);
+  const [userPersonaName, setUserPersonaName] = useState<string | null>(null);
+  const [userGender, setUserGender] = useState<string | null>(null);
+  const [userMatches, setUserMatches] = useState<MatchResult[]>([]);
 
   useEffect(() => {
     try {
@@ -76,14 +105,17 @@ export default function PersonasPage() {
       console.error('Failed to load persona data:', e);
     }
 
-    // Check if user has a persona
+    // Check if user has a persona and matches
     const results = localStorage.getItem('relate_results');
     if (results) {
       try {
         const parsed = JSON.parse(results);
         setUserPersonaCode(parsed.persona?.code || null);
+        setUserPersonaName(parsed.persona?.name || null);
+        setUserMatches(parsed.matches || []);
       } catch { /* ignore */ }
     }
+    setUserGender(localStorage.getItem('relate_gender'));
   }, []);
 
   const personas = activeTab === 'male' ? malePersonas : femalePersonas;
@@ -290,6 +322,65 @@ export default function PersonasPage() {
             );
           })}
         </div>
+
+        {/* Cross-Gender Compatibility */}
+        {userPersonaCode && userMatches.length > 0 && (
+          <div className="mt-10">
+            <div className="text-center mb-6">
+              <p className="font-mono text-xs tracking-widest text-accent uppercase mb-2">Your Matches</p>
+              <h2 className="font-serif text-2xl font-semibold mb-2">
+                How {userPersonaName || 'You'} Matches With {userGender === 'M' ? 'Female' : 'Male'} Personas
+              </h2>
+              <p className="text-secondary text-sm max-w-lg mx-auto">
+                Based on your complete assessment results, here is your compatibility with all 16 {userGender === 'M' ? 'female' : 'male'} personas, ranked by score.
+              </p>
+            </div>
+
+            <div className="card mb-4">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-accent/10 text-accent flex items-center justify-center font-mono text-sm font-semibold">
+                  {userPersonaCode}
+                </div>
+                <div>
+                  <p className="font-serif font-semibold">{userPersonaName}</p>
+                  <p className="text-xs text-secondary">Your persona compatibility with all {userGender === 'M' ? 'female' : 'male'} personas</p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                {userMatches.map((match) => (
+                  <div key={match.code} className="flex items-center gap-3 py-2 border-b border-border last:border-0">
+                    <span className="font-mono text-xs text-secondary w-6 text-right">{match.rank}</span>
+                    <div className={`w-2 h-2 rounded-full ${tierBgColor(match.tier)} flex-shrink-0`} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium truncate">{match.name}</span>
+                        <span className="font-mono text-xs text-accent">{match.code}</span>
+                      </div>
+                    </div>
+                    <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>
+                    <div className="w-16 text-right">
+                      <span className="font-mono text-sm font-semibold">{match.compatibilityScore}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-3 justify-center text-xs">
+              {['ideal', 'kismet', 'effort', 'longShot', 'atRisk', 'incompatible'].map(tier => {
+                const count = userMatches.filter(m => m.tier === tier).length;
+                if (count === 0) return null;
+                return (
+                  <span key={tier} className="flex items-center gap-1.5">
+                    <span className={`w-2 h-2 rounded-full ${tierBgColor(tier)}`} />
+                    <span className="text-secondary">{tierLabel(tier)} ({count})</span>
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* CTA */}
         <div className="text-center mt-12 mb-8">

@@ -48,6 +48,7 @@ export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'lan
     { href: '/about', label: 'About', isAnchor: false },
     { href: pathname === '/' ? '#how-it-works' : '/#how-it-works', label: 'How It Works', isAnchor: true },
     { href: '/personas', label: 'Personas', isAnchor: false },
+    { href: '/methodology', label: 'Methodology', isAnchor: false },
     { href: pathname === '/' ? '#pricing' : '/#pricing', label: 'Pricing', isAnchor: true },
   ];
 
