@@ -82,6 +82,7 @@ export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'lan
                   setDropdownOpen={setDropdownOpen}
                   dropdownRef={dropdownRef}
                   onSignOut={handleSignOut}
+                  router={router}
                 />
               ) : (
                 <div className="flex items-center gap-3">
@@ -105,6 +106,7 @@ export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'lan
                   setDropdownOpen={setDropdownOpen}
                   dropdownRef={dropdownRef}
                   onSignOut={handleSignOut}
+                  router={router}
                 />
               )}
               <button
@@ -179,6 +181,7 @@ function ProfileAvatar({
   setDropdownOpen,
   dropdownRef,
   onSignOut,
+  router,
 }: {
   initial: string;
   photoUrl: string | null;
@@ -186,7 +189,13 @@ function ProfileAvatar({
   setDropdownOpen: (open: boolean) => void;
   dropdownRef: React.RefObject<HTMLDivElement>;
   onSignOut: () => void;
+  router: ReturnType<typeof useRouter>;
 }) {
+  function navigate(path: string) {
+    setDropdownOpen(false);
+    router.push(path);
+  }
+
   return (
     <div className="relative ml-2" ref={dropdownRef}>
       <button
@@ -204,24 +213,24 @@ function ProfileAvatar({
 
       {dropdownOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white border border-border rounded-md shadow-lg py-1 z-50">
-          <Link href="/account" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
+          <button onClick={() => navigate('/account')} className="block w-full text-left px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
             Account
-          </Link>
-          <Link href="/assessment" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
+          </button>
+          <button onClick={() => navigate('/assessment')} className="block w-full text-left px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
             Assessment
-          </Link>
-          <Link href="/results" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
+          </button>
+          <button onClick={() => navigate('/results')} className="block w-full text-left px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
             Results
-          </Link>
-          <Link href="/settings/profile" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
+          </button>
+          <button onClick={() => navigate('/settings/profile')} className="block w-full text-left px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
             Edit Profile
-          </Link>
-          <Link href="/settings/billing" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
+          </button>
+          <button onClick={() => navigate('/settings/billing')} className="block w-full text-left px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
             Billing
-          </Link>
+          </button>
           <div className="border-t border-border my-1" />
           <button
-            onClick={onSignOut}
+            onClick={() => { setDropdownOpen(false); onSignOut(); }}
             className="block w-full text-left px-4 py-2 text-sm text-danger hover:bg-stone-50"
           >
             Sign out

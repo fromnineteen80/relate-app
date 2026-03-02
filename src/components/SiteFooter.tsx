@@ -13,8 +13,6 @@ export function SiteFooter() {
             <Link href="/about" className="hover:text-foreground transition-colors">About</Link>
             <Link href="/methodology" className="hover:text-foreground transition-colors">Methodology</Link>
             <Link href="/personas" className="hover:text-foreground transition-colors">Personas</Link>
-            <Link href="/auth/login" className="hover:text-foreground transition-colors">Log In</Link>
-            <Link href="/auth/signup" className="hover:text-foreground transition-colors">Sign Up</Link>
           </div>
         </div>
         <div className="mt-6 pt-6 border-t border-border text-xs text-secondary">
