@@ -10,6 +10,9 @@ create table if not exists public.users (
   gender char(1) check (gender in ('M', 'W')),
   age integer,
   zip_code text,
+  city text,
+  state text,
+  county text,
   ethnicity text,
   orientation text,
   income integer,
@@ -88,8 +91,8 @@ create table if not exists public.challenge_progress (
 -- ============================================================
 create table if not exists public.payments (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid references public.users(id) on delete set null,
-  product text check (product in ('full_report', 'couples_report')),
+  customer_email text,
+  product text,
   amount integer,
   stripe_session_id text unique,
   stripe_payment_intent text,
@@ -112,13 +115,13 @@ create table if not exists public.referral_clicks (
 -- Row Level Security (RLS)
 -- ============================================================
 
--- Enable RLS on all tables
-alter table public.users enable row level security;
-alter table public.partnerships enable row level security;
-alter table public.checkins enable row level security;
-alter table public.challenge_progress enable row level security;
-alter table public.payments enable row level security;
-alter table public.referral_clicks enable row level security;
+-- Disable RLS for testing (re-enable with policies for production)
+alter table public.users disable row level security;
+alter table public.partnerships disable row level security;
+alter table public.checkins disable row level security;
+alter table public.challenge_progress disable row level security;
+alter table public.payments disable row level security;
+alter table public.referral_clicks disable row level security;
 
 -- USERS: read/write own record
 create policy "Users can read own profile"
@@ -197,7 +200,7 @@ create policy "Users can update challenges for own partnerships"
 -- PAYMENTS: users can read their own payments (inserts via service role / webhook)
 create policy "Users can read own payments"
   on public.payments for select
-  using (auth.uid() = user_id);
+  using (auth.email() = customer_email);
 
 -- REFERRAL_CLICKS: users can read their own clicks (inserts via service role)
 create policy "Users can read own referral clicks"
@@ -213,5 +216,5 @@ create index if not exists idx_partnerships_token on public.partnerships(invite_
 create index if not exists idx_checkins_partnership on public.checkins(partnership_id);
 create index if not exists idx_checkins_created on public.checkins(created_at desc);
 create index if not exists idx_challenge_partnership on public.challenge_progress(partnership_id);
-create index if not exists idx_payments_user on public.payments(user_id);
+create index if not exists idx_payments_email on public.payments(customer_email);
 create index if not exists idx_payments_session on public.payments(stripe_session_id);
