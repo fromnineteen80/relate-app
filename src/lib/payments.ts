@@ -16,6 +16,11 @@ const TIER_PRIORITY: Record<PricingTier, number> = {
  * In real mode, calls /api/payment-status which queries the Supabase payments table.
  */
 export async function fetchPaymentTier(email?: string): Promise<{ paid: boolean; tier: PricingTier }> {
+  // Test mode: bypass payments, grant full access. Stripe still works if used.
+  if (config.testFullAccess) {
+    return { paid: true, tier: 'premium' };
+  }
+
   if (config.useMockPayments) {
     return getMockPaymentStatus();
   }
