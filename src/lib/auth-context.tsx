@@ -35,11 +35,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [emailVerified, setEmailVerified] = useState(false);
 
+  // Email verification is temporarily bypassed. When re-enabling, restore
+  // the isMockEmailVerified() / email_confirmed_at checks below.
   useEffect(() => {
     if (config.useMockAuth) {
       const mockUser = getMockUser();
       setUser(mockUser);
-      setEmailVerified(isMockEmailVerified());
+      setEmailVerified(true);
       setLoading(false);
       return;
     }
@@ -47,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUser({ id: session.user.id, email: session.user.email! });
-        setEmailVerified(!!session.user.email_confirmed_at);
+        setEmailVerified(true);
       } else {
         setUser(null);
         setEmailVerified(false);
@@ -58,7 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setUser({ id: session.user.id, email: session.user.email! });
-        setEmailVerified(!!session.user.email_confirmed_at);
+        setEmailVerified(true);
       } else {
         setUser(null);
         setEmailVerified(false);
@@ -69,18 +71,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const refreshVerification = useCallback(async () => {
-    if (config.useMockAuth) {
-      const verified = isMockEmailVerified();
-      setEmailVerified(verified);
-      return verified;
-    }
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.user) {
-      const verified = !!session.user.email_confirmed_at;
-      setEmailVerified(verified);
-      return verified;
-    }
-    return false;
+    // Email verification is temporarily bypassed
+    setEmailVerified(true);
+    return true;
   }, []);
 
   async function signIn(email: string, password: string) {
@@ -101,7 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { error } = mockSignUp(email, password);
       if (!error) {
         setUser(getMockUser());
-        setEmailVerified(false);
+        setEmailVerified(true);
       }
       return { error };
     }
