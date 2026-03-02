@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState, useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/lib/auth-context';
 import { config, PRICING, type PricingTier } from '@/lib/config';
 import { getMockPaymentStatus, mockPurchase } from '@/lib/mock/payments';
+import { fetchPaymentTier, refreshPaymentTier } from '@/lib/payments';
 import { getProfile } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
 
@@ -80,9 +81,18 @@ function tierLabel(tier: string) {
   return labels[tier] || tier;
 }
 
-export default function AccountPage() {
+export default function AccountPageWrapper() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>}>
+      <AccountPage />
+    </Suspense>
+  );
+}
+
+function AccountPage() {
   const { user, signOut, loading: authLoading } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [currentTier, setCurrentTier] = useState<PricingTier>('free');
   const [demographics, setDemographics] = useState<Demographics>({});
   const [gender, setGender] = useState<string | null>(null);
@@ -100,15 +110,26 @@ export default function AccountPage() {
   const [m4Data, setM4Data] = useState<M4Scored | null>(null);
   const [matches, setMatches] = useState<MatchResult[]>([]);
   const [downloading, setDownloading] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+  // Fetch payment tier (works in both mock and real mode)
+  useEffect(() => {
+    if (!user) return;
+    const isSuccess = searchParams.get('success') === 'true';
+
+    async function loadTier() {
+      const fetcher = isSuccess ? refreshPaymentTier : fetchPaymentTier;
+      const { tier } = await fetcher(user!.email);
+      setCurrentTier(tier);
+      if (isSuccess) setPaymentSuccess(true);
+    }
+    loadTier();
+  }, [user, searchParams]);
 
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/auth/login');
       return;
-    }
-
-    if (config.useMockPayments) {
-      setCurrentTier(getMockPaymentStatus().tier);
     }
 
     const demoStr = localStorage.getItem('relate_demographics');
@@ -223,6 +244,17 @@ export default function AccountPage() {
       <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
         <h1 className="font-serif text-3xl font-semibold mb-8">Account</h1>
 
+        {/* ── Payment Success Toast ── */}
+        {paymentSuccess && (
+          <div className="mb-4 p-3 bg-success/10 border border-success/20 rounded-md flex items-center gap-3 animate-fade-in">
+            <span className="text-success text-lg">✓</span>
+            <div>
+              <p className="text-sm font-medium">Payment successful</p>
+              <p className="text-xs text-secondary">Your account has been upgraded to {PRICING[currentTier].label}.</p>
+            </div>
+          </div>
+        )}
+
         {/* ── Profile ── */}
         <section className="card mb-4">
           <div className="flex items-center justify-between mb-4">
@@ -298,7 +330,7 @@ export default function AccountPage() {
                       {mockUpgrading ? 'Processing...' : `Upgrade to ${PRICING[tier].label}`}
                     </button>
                   ) : (
-                    <Link href={`/api/checkout?product=${tier}`} className={`text-xs w-full text-center block ${tier === 'premium' ? 'btn-primary' : 'btn-secondary'}`}>
+                    <Link href={`/api/checkout?product=${tier}&email=${encodeURIComponent(user?.email || '')}`} className={`text-xs w-full text-center block ${tier === 'premium' ? 'btn-primary' : 'btn-secondary'}`}>
                       Upgrade to {PRICING[tier].label}
                     </Link>
                   )}
@@ -583,7 +615,7 @@ export default function AccountPage() {
                     {downloading ? 'Preparing...' : 'Download'}
                   </button>
                 ) : (
-                  <Link href="/api/checkout?product=plus" className="btn-secondary text-xs">
+                  <Link href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary text-xs">
                     Upgrade
                   </Link>
                 )}

@@ -3,9 +3,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { config, type PricingTier } from '@/lib/config';
-import { getMockPaymentStatus } from '@/lib/mock/payments';
+import { type PricingTier } from '@/lib/config';
+import { fetchPaymentTier } from '@/lib/payments';
 import { generateReferrals, Referral } from '@/lib/referrals';
+import { useAuth } from '@/lib/auth-context';
 import { SiteHeader } from '@/components/SiteHeader';
 
 type ResultsReport = {
@@ -35,6 +36,7 @@ function tierLabel(tier: string) {
 
 export default function ResultsDashboard() {
   const router = useRouter();
+  const { user } = useAuth();
   const [report, setReport] = useState<ResultsReport | null>(null);
   const [pricingTier, setPricingTier] = useState<PricingTier>('free');
   const [referrals, setReferrals] = useState<Referral[]>([]);
@@ -46,11 +48,12 @@ export default function ResultsDashboard() {
     const parsedReport = JSON.parse(stored);
     setReport(parsedReport);
     setReferrals(generateReferrals(parsedReport));
-
-    if (config.useMockPayments) {
-      setPricingTier(getMockPaymentStatus().tier);
-    }
   }, [router]);
+
+  useEffect(() => {
+    if (!user) return;
+    fetchPaymentTier(user.email).then(({ tier }) => setPricingTier(tier));
+  }, [user]);
 
   const handleDownloadPDF = useCallback(async () => {
     if (!report) return;
@@ -219,10 +222,10 @@ export default function ResultsDashboard() {
                 {report.matches.length - freeMatchLimit} more matches available with Plus
               </p>
               <div className="flex gap-2 justify-center">
-                <Link href="/api/checkout?product=plus" className="btn-secondary inline-block text-sm">
+                <Link href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary inline-block text-sm">
                   Plus ($19.99)
                 </Link>
-                <Link href="/api/checkout?product=premium" className="btn-primary inline-block text-sm">
+                <Link href={`/api/checkout?product=premium&email=${encodeURIComponent(user?.email || '')}`} className="btn-primary inline-block text-sm">
                   Premium ($29.99)
                 </Link>
               </div>
