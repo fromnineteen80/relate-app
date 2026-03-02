@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
-import { getMockPaymentStatus } from '@/lib/mock/payments';
-import { config } from '@/lib/config';
+import { fetchPaymentTier } from '@/lib/payments';
+import { useAuth } from '@/lib/auth-context';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -150,6 +150,7 @@ function collectUserData(): any {
 
 export function AdvisorProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
@@ -175,14 +176,13 @@ export function AdvisorProvider({ children }: { children: ReactNode }) {
     const couples = localStorage.getItem('relate_couples_report');
     setHasCouplesData(!!couples);
     if (couples && !savedMode) setMode('individual');
-
-    if (config.useMockPayments) {
-      setHasPaid(getMockPaymentStatus().paid);
-    } else {
-      // In production, check payment status from localStorage or API
-      setHasPaid(!!localStorage.getItem('relate_payment_confirmed'));
-    }
   }, []);
+
+  // Fetch payment status
+  useEffect(() => {
+    if (!user) return;
+    fetchPaymentTier(user.email).then(({ paid }) => setHasPaid(paid));
+  }, [user]);
 
   // Persist messages to sessionStorage
   useEffect(() => {

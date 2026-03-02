@@ -52,7 +52,7 @@ export default function AdvisorMessages() {
           <p className="text-xs text-secondary mb-3">
             Upgrade to Premium for unlimited AI advisor access.
           </p>
-          <a href="/api/checkout?product=premium" className="text-xs text-accent hover:underline font-medium">
+          <a href="/account" className="text-xs text-accent hover:underline font-medium">
             Upgrade to Premium ($29.99)
           </a>
         </div>

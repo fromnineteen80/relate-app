@@ -12,13 +12,15 @@ export async function POST(request: NextRequest) {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
       const { product } = session.metadata || {};
+      const customerEmail = session.customer_email || session.customer_details?.email || null;
 
       const supabase = createServerClient();
       await supabase.from('payments').insert({
-        product: product || 'full_report',
+        product: product || 'plus',
         amount: session.amount_total,
         stripe_session_id: session.id,
         stripe_payment_intent: session.payment_intent,
+        customer_email: customerEmail,
         status: 'completed',
       });
     }

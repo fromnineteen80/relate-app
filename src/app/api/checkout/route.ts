@@ -4,6 +4,7 @@ import { PRICING, type PricingTier } from '@/lib/config';
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const product = (searchParams.get('product') || 'plus') as PricingTier;
+  const email = searchParams.get('email') || '';
   const useMockPayments = process.env.NEXT_PUBLIC_MOCK_PAYMENTS === 'true';
 
   if (!PRICING[product] || product === 'free') {
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest) {
       ? `${process.env.NEXT_PUBLIC_URL}/results/compare?canceled=true`
       : `${process.env.NEXT_PUBLIC_URL}/account?canceled=true`;
 
-    const session = await stripe.checkout.sessions.create({
+    const sessionConfig: Record<string, unknown> = {
       payment_method_types: ['card'],
       line_items: [{
         price_data: {
@@ -41,7 +42,14 @@ export async function GET(request: NextRequest) {
       success_url: successUrl,
       cancel_url: cancelUrl,
       metadata: { product },
-    });
+    };
+
+    // Pre-fill email in Stripe checkout if provided
+    if (email) {
+      sessionConfig.customer_email = email;
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionConfig);
 
     return NextResponse.redirect(session.url);
   } catch (error: unknown) {
