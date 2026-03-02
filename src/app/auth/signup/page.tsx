@@ -32,7 +32,7 @@ export default function SignUpPage() {
       setError(error);
       setLoading(false);
     } else {
-      router.push('/onboarding/demographics');
+      router.push('/auth/verify-email');
     }
   }
 

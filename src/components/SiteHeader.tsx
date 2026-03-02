@@ -11,6 +11,7 @@ export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'lan
   const pathname = usePathname();
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isAuth = variant === 'auth';
@@ -28,9 +29,10 @@ export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'lan
     }
   }, [dropdownOpen]);
 
-  // Close dropdown on route change
+  // Close menus on route change
   useEffect(() => {
     setDropdownOpen(false);
+    setMobileMenuOpen(false);
   }, [pathname]);
 
   const profileName = typeof window !== 'undefined' ? localStorage.getItem('relate_profile_name') : null;
@@ -42,49 +44,130 @@ export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'lan
     router.push('/');
   }
 
+  const navLinks = [
+    { href: '/about', label: 'About', isAnchor: false },
+    { href: pathname === '/' ? '#how-it-works' : '/#how-it-works', label: 'How It Works', isAnchor: true },
+    { href: '/personas', label: 'Personas', isAnchor: false },
+    { href: '/methodology', label: 'Methodology', isAnchor: false },
+    { href: pathname === '/' ? '#pricing' : '/#pricing', label: 'Pricing', isAnchor: true },
+  ];
+
   return (
-    <header className="px-6 py-4 sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-sm">
-      <div className="max-w-5xl mx-auto flex items-center justify-between">
+    <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-sm">
+      <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link href="/" className="font-serif text-xl font-semibold tracking-tight">
           RELATE
         </Link>
 
         {isAuth ? null : (
-          <nav className="flex items-center gap-6">
-            <Link href="/about" className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
-              About
-            </Link>
-            <a href={pathname === '/' ? '#how-it-works' : '/#how-it-works'} className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
-              How It Works
-            </a>
-            <Link href="/personas" className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
-              Personas
-            </Link>
-            <a href={pathname === '/' ? '#pricing' : '/#pricing'} className="text-sm text-secondary hover:text-foreground transition-colors hidden md:block">
-              Pricing
-            </a>
-            {user ? (
-              <ProfileAvatar
-                initial={initial}
-                photoUrl={profilePhoto}
-                dropdownOpen={dropdownOpen}
-                setDropdownOpen={setDropdownOpen}
-                dropdownRef={dropdownRef}
-                onSignOut={handleSignOut}
-              />
-            ) : (
-              <div className="flex items-center gap-3">
-                <Link href="/auth/login" className="text-sm text-secondary hover:text-foreground transition-colors">
-                  Log in
-                </Link>
-                <Link href="/auth/signup" className="btn-primary text-xs px-3 py-1.5">
-                  Start Free
-                </Link>
-              </div>
-            )}
-          </nav>
+          <>
+            {/* Desktop nav */}
+            <nav className="hidden md:flex items-center gap-6">
+              {navLinks.map(link =>
+                link.isAnchor ? (
+                  <a key={link.label} href={link.href} className="text-sm text-secondary hover:text-foreground transition-colors">
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link key={link.label} href={link.href} className="text-sm text-secondary hover:text-foreground transition-colors">
+                    {link.label}
+                  </Link>
+                )
+              )}
+              {user ? (
+                <ProfileAvatar
+                  initial={initial}
+                  photoUrl={profilePhoto}
+                  dropdownOpen={dropdownOpen}
+                  setDropdownOpen={setDropdownOpen}
+                  dropdownRef={dropdownRef}
+                  onSignOut={handleSignOut}
+                />
+              ) : (
+                <div className="flex items-center gap-3">
+                  <Link href="/auth/login" className="text-sm text-secondary hover:text-foreground transition-colors">
+                    Log in
+                  </Link>
+                  <Link href="/auth/signup" className="btn-primary text-xs px-3 py-1.5">
+                    Start Free
+                  </Link>
+                </div>
+              )}
+            </nav>
+
+            {/* Mobile: hamburger + avatar */}
+            <div className="flex md:hidden items-center gap-2">
+              {user && (
+                <ProfileAvatar
+                  initial={initial}
+                  photoUrl={profilePhoto}
+                  dropdownOpen={dropdownOpen}
+                  setDropdownOpen={setDropdownOpen}
+                  dropdownRef={dropdownRef}
+                  onSignOut={handleSignOut}
+                />
+              )}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="w-8 h-8 flex items-center justify-center text-secondary hover:text-foreground transition-colors"
+                aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              >
+                {mobileMenuOpen ? (
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                    <line x1="4" y1="4" x2="16" y2="16" />
+                    <line x1="16" y1="4" x2="4" y2="16" />
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                    <line x1="3" y1="6" x2="17" y2="6" />
+                    <line x1="3" y1="10" x2="17" y2="10" />
+                    <line x1="3" y1="14" x2="17" y2="14" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </>
         )}
       </div>
+
+      {/* Mobile menu dropdown */}
+      {!isAuth && mobileMenuOpen && (
+        <div className="md:hidden border-t border-border bg-white px-6 py-4 animate-fade-in">
+          <nav className="flex flex-col gap-3">
+            {navLinks.map(link =>
+              link.isAnchor ? (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm text-secondary hover:text-foreground transition-colors py-1"
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="text-sm text-secondary hover:text-foreground transition-colors py-1"
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
+            {!user && (
+              <>
+                <div className="border-t border-border my-1" />
+                <Link href="/auth/login" className="text-sm text-secondary hover:text-foreground transition-colors py-1">
+                  Log in
+                </Link>
+                <Link href="/auth/signup" className="btn-primary text-center text-sm py-2">
+                  Start Free
+                </Link>
+              </>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

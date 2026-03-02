@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
+import { getOnboardingRedirect } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
 
 export default function LoginPage() {
@@ -11,7 +12,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, emailVerified } = useAuth();
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
@@ -23,7 +24,8 @@ export default function LoginPage() {
       setError(error);
       setLoading(false);
     } else {
-      router.push('/assessment');
+      // Smart redirect based on where they are in the onboarding flow
+      router.push(getOnboardingRedirect(emailVerified));
     }
   }
 

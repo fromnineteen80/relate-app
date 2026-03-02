@@ -6,7 +6,7 @@ import { getMockPaymentStatus } from '@/lib/mock/payments';
 import { SiteHeader } from '@/components/SiteHeader';
 
 export default function BillingPage() {
-  const payment = config.useMockPayments ? getMockPaymentStatus() : { paid: false, product: null };
+  const payment = config.useMockPayments ? getMockPaymentStatus() : { paid: false, tier: 'free' as const };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -17,7 +17,7 @@ export default function BillingPage() {
           <h3 className="font-serif font-semibold mb-3">Purchase History</h3>
           {payment.paid ? (
             <div className="flex justify-between text-sm py-2 border-b border-border">
-              <span>{payment.product === 'couples_report' ? 'Couples Report' : 'Full Report'}</span>
+              <span>{payment.tier === 'couples' ? 'Couples' : payment.tier === 'premium' ? 'Premium' : payment.tier === 'plus' ? 'Plus' : 'Free'}</span>
               <span className="font-mono text-success">Paid</span>
             </div>
           ) : (

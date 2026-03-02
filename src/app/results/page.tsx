@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { config } from '@/lib/config';
+import { config, type PricingTier } from '@/lib/config';
 import { getMockPaymentStatus } from '@/lib/mock/payments';
 import { generateReferrals, Referral } from '@/lib/referrals';
 import { SiteHeader } from '@/components/SiteHeader';
@@ -36,8 +36,9 @@ function tierLabel(tier: string) {
 export default function ResultsDashboard() {
   const router = useRouter();
   const [report, setReport] = useState<ResultsReport | null>(null);
-  const [hasPaid, setHasPaid] = useState(false);
+  const [pricingTier, setPricingTier] = useState<PricingTier>('free');
   const [referrals, setReferrals] = useState<Referral[]>([]);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem('relate_results');
@@ -47,12 +48,48 @@ export default function ResultsDashboard() {
     setReferrals(generateReferrals(parsedReport));
 
     if (config.useMockPayments) {
-      setHasPaid(getMockPaymentStatus().paid);
+      setPricingTier(getMockPaymentStatus().tier);
     }
   }, [router]);
 
+  const handleDownloadPDF = useCallback(async () => {
+    if (!report) return;
+    setDownloading(true);
+    try {
+      const res = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          persona: report.persona,
+          dimensions: report.dimensions,
+          m3: report.m3,
+          m4: report.m4,
+          matches: report.matches,
+        }),
+      });
+      const data = await res.json();
+      if (data.html) {
+        // Open in new window for print/save as PDF
+        const win = window.open('', '_blank');
+        if (win) {
+          win.document.write(data.html);
+          win.document.close();
+          // Trigger print dialog after a brief delay for rendering
+          setTimeout(() => win.print(), 500);
+        }
+      }
+    } catch (err) {
+      console.error('PDF download failed:', err);
+    } finally {
+      setDownloading(false);
+    }
+  }, [report]);
+
   if (!report) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
 
+  const hasPaid = pricingTier !== 'free';
+  const hasAdvisor = pricingTier === 'premium' || pricingTier === 'couples';
+  const canDownload = hasPaid; // Plus, Premium, Couples
   const m4Summary = report.m4?.summary || {};
   const freeMatchLimit = 3;
   const visibleMatches = hasPaid ? report.matches : report.matches.slice(0, freeMatchLimit);
@@ -70,7 +107,14 @@ export default function ResultsDashboard() {
               <h2 className="font-serif text-3xl font-semibold">{report.persona.name}</h2>
               <span className="font-mono text-sm text-accent">{report.persona.code}</span>
             </div>
-            <Link href="/results/persona" className="btn-secondary text-xs">Details</Link>
+            <div className="flex gap-2">
+              {canDownload && (
+                <button onClick={handleDownloadPDF} disabled={downloading} className="btn-secondary text-xs">
+                  {downloading ? 'Preparing...' : 'Download PDF'}
+                </button>
+              )}
+              <Link href="/results/persona" className="btn-secondary text-xs">Details</Link>
+            </div>
           </div>
           {report.persona.traits && <p className="text-sm text-secondary">{report.persona.traits}</p>}
         </section>
@@ -172,11 +216,16 @@ export default function ResultsDashboard() {
           {!hasPaid && report.matches.length > freeMatchLimit && (
             <div className="mt-4 card border-accent text-center">
               <p className="text-sm mb-3">
-                {report.matches.length - freeMatchLimit} more matches available with Full Report
+                {report.matches.length - freeMatchLimit} more matches available with Plus
               </p>
-              <Link href="/api/checkout?product=full_report" className="btn-primary inline-block">
-                Unlock Full Report ($19)
-              </Link>
+              <div className="flex gap-2 justify-center">
+                <Link href="/api/checkout?product=plus" className="btn-secondary inline-block text-sm">
+                  Plus ($19.99)
+                </Link>
+                <Link href="/api/checkout?product=premium" className="btn-primary inline-block text-sm">
+                  Premium ($29.99)
+                </Link>
+              </div>
             </div>
           )}
         </section>
@@ -232,8 +281,10 @@ export default function ResultsDashboard() {
             <>
               <Link href="/results/matches" className="btn-secondary text-xs">All Matches</Link>
               <Link href="/results/conflict" className="btn-secondary text-xs">Conflict Analysis</Link>
-              <Link href="/advisor" className="btn-secondary text-xs">Claude Advisor</Link>
             </>
+          )}
+          {hasAdvisor && (
+            <Link href="/advisor" className="btn-secondary text-xs">Claude Advisor</Link>
           )}
           <Link href="/invite" className="btn-secondary text-xs">Invite Partner</Link>
         </div>

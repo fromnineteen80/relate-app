@@ -13,9 +13,20 @@ export function getMockUser() {
   return null;
 }
 
+export function isMockEmailVerified(): boolean {
+  if (typeof window === 'undefined') return false;
+  return localStorage.getItem('relate_email_verified') === 'true';
+}
+
+export function mockVerifyEmail() {
+  localStorage.setItem('relate_email_verified', 'true');
+}
+
 export function mockSignUp(email: string, _password: string) {
   const user = { ...MOCK_USER, email };
   localStorage.setItem('relate_mock_user', JSON.stringify(user));
+  // New accounts are not verified yet
+  localStorage.removeItem('relate_email_verified');
   return { user, error: null };
 }
 
