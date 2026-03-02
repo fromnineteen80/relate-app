@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
+import { saveProfileToDb } from '@/lib/supabase/progress';
 
 export default function ProfileSettings() {
   const { user, signOut } = useAuth();
@@ -23,6 +24,25 @@ export default function ProfileSettings() {
 
   function handleSave() {
     localStorage.setItem('relate_profile_name', name.trim());
+    // Also update relate_profile and persist to Supabase
+    const stored = localStorage.getItem('relate_profile');
+    const profile = stored ? JSON.parse(stored) : {};
+    const parts = name.trim().split(/\s+/);
+    const firstName = parts[0] || '';
+    const lastName = parts.slice(1).join(' ') || '';
+    profile.firstName = firstName;
+    profile.lastName = lastName;
+    localStorage.setItem('relate_profile', JSON.stringify(profile));
+    if (user) {
+      saveProfileToDb(user.id, user.email, {
+        firstName,
+        lastName,
+        zipCode: profile.zipCode || '',
+        city: profile.city || '',
+        state: profile.state || '',
+        county: profile.county || '',
+      });
+    }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   }

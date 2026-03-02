@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { config } from '@/lib/config';
 import { isProfileComplete, hasDemographics } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
+import { loadAndHydrateProgress, loadProfileFromDb } from '@/lib/supabase/progress';
 
 type ModuleStatus = { completed: boolean; questionIndex: number; total: number };
 
@@ -24,24 +24,22 @@ export default function AssessmentHub() {
   const [gender, setGender] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/auth/login');
-      return;
-    }
-    if (!authLoading && user && !emailVerified) {
-      router.push('/auth/verify-email');
-      return;
-    }
-    if (!authLoading && user && emailVerified && !isProfileComplete()) {
-      router.push('/onboarding/profile');
-      return;
-    }
-    if (!authLoading && user && emailVerified && isProfileComplete() && !hasDemographics()) {
-      router.push('/onboarding/demographics');
-      return;
-    }
+    if (authLoading) return;
+    if (!user) { router.push('/auth/login'); return; }
+    if (!emailVerified) { router.push('/auth/verify-email'); return; }
 
-    if (config.useMockAuth) {
+    async function loadProgress() {
+      // If localStorage is empty, try hydrating from Supabase first
+      if (!localStorage.getItem('relate_profile') && user) {
+        await loadProfileFromDb(user.id);
+      }
+      if (!localStorage.getItem('relate_m1_responses') && user) {
+        await loadAndHydrateProgress(user.id);
+      }
+
+      if (!isProfileComplete()) { router.push('/onboarding/profile'); return; }
+      if (!hasDemographics()) { router.push('/onboarding/demographics'); return; }
+
       setGender(localStorage.getItem('relate_gender'));
       const s: Record<number, ModuleStatus> = {};
       for (let m = 1; m <= 4; m++) {
@@ -51,6 +49,8 @@ export default function AssessmentHub() {
       }
       setStatuses(s);
     }
+
+    loadProgress();
   }, [authLoading, user, emailVerified, router]);
 
   if (authLoading) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;

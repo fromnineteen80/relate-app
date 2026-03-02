@@ -7,6 +7,8 @@
 create table if not exists public.users (
   id uuid primary key references auth.users(id) on delete cascade,
   email text,
+  first_name text,
+  last_name text,
   gender char(1) check (gender in ('M', 'W')),
   age integer,
   zip_code text,
@@ -112,6 +114,27 @@ create table if not exists public.referral_clicks (
 );
 
 -- ============================================================
+-- 7. USER_PROGRESS table — assessment responses & results
+-- ============================================================
+create table if not exists public.user_progress (
+  user_id uuid primary key references public.users(id) on delete cascade,
+  m1_responses jsonb,
+  m2_responses jsonb,
+  m3_responses jsonb,
+  m4_responses jsonb,
+  m1_completed boolean default false,
+  m2_completed boolean default false,
+  m3_completed boolean default false,
+  m4_completed boolean default false,
+  m1_scored jsonb,
+  m2_scored jsonb,
+  m3_scored jsonb,
+  m4_scored jsonb,
+  results jsonb,
+  updated_at timestamp with time zone default now()
+);
+
+-- ============================================================
 -- Row Level Security (RLS)
 -- ============================================================
 
@@ -122,6 +145,7 @@ alter table public.checkins disable row level security;
 alter table public.challenge_progress disable row level security;
 alter table public.payments disable row level security;
 alter table public.referral_clicks disable row level security;
+alter table public.user_progress disable row level security;
 
 -- USERS: read/write own record
 create policy "Users can read own profile"
@@ -205,6 +229,19 @@ create policy "Users can read own payments"
 -- REFERRAL_CLICKS: users can read their own clicks (inserts via service role)
 create policy "Users can read own referral clicks"
   on public.referral_clicks for select
+  using (auth.uid() = user_id);
+
+-- USER_PROGRESS: read/write own progress
+create policy "Users can read own progress"
+  on public.user_progress for select
+  using (auth.uid() = user_id);
+
+create policy "Users can insert own progress"
+  on public.user_progress for insert
+  with check (auth.uid() = user_id);
+
+create policy "Users can update own progress"
+  on public.user_progress for update
   using (auth.uid() = user_id);
 
 -- ============================================================
