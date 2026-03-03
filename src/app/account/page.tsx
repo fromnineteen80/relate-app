@@ -40,21 +40,32 @@ type M3Scored = {
     offerScore?: number;
     wantOfferGap?: number;
     typeName?: string;
+    typeDescription?: string;
+    typeDetails?: {
+      strengths?: string[];
+      challenges?: string[];
+    };
+  };
+  attentiveness?: {
+    level?: string;
+    score?: number;
   };
 };
 
 type M4Scored = {
   result?: {
     conflictApproach?: { approach?: string; score?: number };
-    emotionalDrivers?: { primary?: string; secondary?: string };
+    emotionalDrivers?: { primary?: string; secondary?: string; scores?: Record<string, number>; primaryScore?: number };
     repairRecovery?: {
-      speed?: { style?: string };
-      mode?: { style?: string };
+      speed?: { style?: string; score?: number };
+      mode?: { style?: string; score?: number };
     };
     emotionalCapacity?: { level?: string; score?: number };
     gottmanScreener?: {
-      horsemen?: Record<string, { score?: number; riskLevel?: string }>;
+      horsemen?: Record<string, { score?: number; riskLevel?: string; antidote?: string }>;
       overallRisk?: string;
+      coachingPriority?: string;
+      primary?: string;
     };
   };
 };
@@ -111,6 +122,9 @@ function AccountPage() {
   const [matches, setMatches] = useState<MatchResult[]>([]);
   const [downloading, setDownloading] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  // Full results for richer graphics / coaching
+  const [fullM3, setFullM3] = useState<M3Scored['result'] | null>(null);
+  const [fullM4, setFullM4] = useState<M4Scored['result'] | null>(null);
 
   // Fetch payment tier (works in both mock and real mode)
   useEffect(() => {
@@ -168,6 +182,8 @@ function AccountPage() {
       try {
         const results = JSON.parse(resultsStr);
         setMatches(results.matches || []);
+        if (results.m3) setFullM3(results.m3);
+        if (results.m4) setFullM4(results.m4);
       } catch { /* ignore */ }
     }
 
@@ -557,6 +573,19 @@ function AccountPage() {
           </section>
         )}
 
+        {/* ── Want vs Offer Graphic ── */}
+        {(m3Data?.result || fullM3) && (
+          <WantOfferGraphic m3={fullM3 || m3Data?.result || null} />
+        )}
+
+        {/* ── Growth Plan / Coaching ── */}
+        {(fullM3 || fullM4 || m3Data?.result || m4Data?.result) && (
+          <GrowthPlan
+            m3={fullM3 || m3Data?.result || null}
+            m4={fullM4 || m4Data?.result || null}
+          />
+        )}
+
         {/* ── Compatibility Rankings ── */}
         {matches.length > 0 && (
           <section className="card mb-4">
@@ -726,6 +755,268 @@ function AccountPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+// ── Want vs Offer Bar Chart ──
+function WantOfferGraphic({ m3 }: { m3: M3Scored['result'] | null }) {
+  if (!m3) return null;
+  const want = m3.wantScore ?? 50;
+  const offer = m3.offerScore ?? 50;
+  const gap = m3.wantOfferGap ?? (want - offer);
+  const typeName = m3.typeName || '';
+
+  function gapLabel(g: number) {
+    if (g > 20) return 'You seek significantly more than you provide';
+    if (g > 5) return 'You seek slightly more than you provide';
+    if (g < -20) return 'You provide significantly more than you seek';
+    if (g < -5) return 'You provide slightly more than you seek';
+    return 'Your want and offer are well balanced';
+  }
+
+  function gapColor(g: number) {
+    const abs = Math.abs(g);
+    if (abs <= 5) return 'text-success';
+    if (abs <= 20) return 'text-warning';
+    return 'text-danger';
+  }
+
+  return (
+    <section className="card mb-4">
+      <h2 className="font-serif text-lg font-semibold mb-1">Connection Balance</h2>
+      <p className="text-xs text-secondary mb-5">What you seek in a partner vs. what you offer</p>
+
+      <div className="space-y-4">
+        {/* Want bar */}
+        <div>
+          <div className="flex justify-between items-baseline mb-1.5">
+            <span className="text-xs font-mono text-secondary uppercase tracking-wider">What You Want</span>
+            <span className="font-mono text-lg font-semibold">{want}</span>
+          </div>
+          <div className="relative h-3 bg-stone-200 rounded-full overflow-hidden">
+            <div
+              className="absolute inset-y-0 left-0 bg-accent rounded-full transition-all duration-1000 ease-out"
+              style={{ width: `${want}%` }}
+            />
+          </div>
+          <p className="text-xs text-secondary mt-1">
+            {want >= 60 ? 'You seek exclusive access — a partner with hidden depth' : 'You value consistency and transparency in a partner'}
+          </p>
+        </div>
+
+        {/* Offer bar */}
+        <div>
+          <div className="flex justify-between items-baseline mb-1.5">
+            <span className="text-xs font-mono text-secondary uppercase tracking-wider">What You Offer</span>
+            <span className="font-mono text-lg font-semibold">{offer}</span>
+          </div>
+          <div className="relative h-3 bg-stone-200 rounded-full overflow-hidden">
+            <div
+              className="absolute inset-y-0 left-0 bg-stone-600 rounded-full transition-all duration-1000 ease-out"
+              style={{ width: `${offer}%` }}
+            />
+          </div>
+          <p className="text-xs text-secondary mt-1">
+            {offer >= 60 ? 'You reveal different sides of yourself in different contexts' : 'You are the same person in every context'}
+          </p>
+        </div>
+
+        {/* Gap visualization */}
+        <div className="pt-3 border-t border-border">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Gap</span>
+            <span className={`font-mono text-sm font-semibold ${gapColor(gap)}`}>
+              {gap > 0 ? '+' : ''}{gap}
+            </span>
+          </div>
+
+          {/* Gap bar: center-anchored */}
+          <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
+            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-stone-300" />
+            {gap !== 0 && (
+              <div
+                className={`absolute top-0 bottom-0 rounded-full transition-all duration-700 ${gap > 0 ? 'bg-accent/60' : 'bg-stone-500/60'}`}
+                style={{
+                  left: gap > 0 ? '50%' : `${50 + (gap / 2)}%`,
+                  width: `${Math.abs(gap) / 2}%`,
+                }}
+              />
+            )}
+          </div>
+
+          <p className={`text-xs mt-2 ${gapColor(gap)}`}>{gapLabel(gap)}</p>
+        </div>
+
+        {/* Type badge */}
+        {typeName && (
+          <div className="flex items-center gap-2 pt-2">
+            <span className="text-xs font-mono text-secondary">Type:</span>
+            <span className="text-xs font-medium bg-stone-100 px-2 py-0.5 rounded">{typeName}</span>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ── Growth Plan / CBT Coaching ──
+function GrowthPlan({ m3, m4 }: { m3: M3Scored['result'] | null; m4: M4Scored['result'] | null }) {
+  // Build coaching steps from assessment data
+  const steps: { priority: 'high' | 'medium' | 'low'; title: string; description: string; technique: string }[] = [];
+
+  // M3-based coaching: Want/Offer gap
+  if (m3) {
+    const gap = m3.wantOfferGap ?? 0;
+    if (gap > 20) {
+      steps.push({
+        priority: 'high',
+        title: 'Close the Want/Offer Gap',
+        description: 'You want significantly more from a partner than you currently offer. This asymmetry can create relationship debt.',
+        technique: 'Practice reciprocity awareness: each week, identify one way you ask for connection and match it with something you give. Journal the exchange.',
+      });
+    } else if (gap < -20) {
+      steps.push({
+        priority: 'medium',
+        title: 'Set Boundaries on Giving',
+        description: 'You offer far more than you ask for. Generous, but watch for resentment if the balance stays skewed.',
+        technique: 'Practice asking for what you need before giving. Use the "request before offer" rule in conversations this week.',
+      });
+    }
+
+    // Type-specific challenge coaching
+    if (m3.typeDetails?.challenges && m3.typeDetails.challenges.length > 0) {
+      steps.push({
+        priority: 'low',
+        title: 'Work Your Growth Edge',
+        description: m3.typeDetails.challenges[0],
+        technique: 'Identify one relationship moment this week where this challenge showed up. Write down what happened, what you felt, and one alternative response.',
+      });
+    }
+  }
+
+  // M4-based coaching
+  if (m4) {
+    // Gottman horsemen — highest priority
+    const horsemen = m4.gottmanScreener?.horsemen;
+    if (horsemen) {
+      const highRisk = Object.entries(horsemen).filter(([, h]) => h.riskLevel === 'high');
+      const mediumRisk = Object.entries(horsemen).filter(([, h]) => h.riskLevel === 'medium');
+
+      for (const [name, data] of highRisk) {
+        steps.push({
+          priority: 'high',
+          title: `Address ${name.charAt(0).toUpperCase() + name.slice(1)}`,
+          description: `Your ${name} score is elevated. This is one of the strongest predictors of relationship difficulty.`,
+          technique: data.antidote || `Practice the antidote to ${name} daily. Notice when it arises and pause before responding.`,
+        });
+      }
+
+      for (const [name, data] of mediumRisk) {
+        steps.push({
+          priority: 'medium',
+          title: `Monitor ${name.charAt(0).toUpperCase() + name.slice(1)}`,
+          description: `Moderate ${name} tendency detected. Worth watching before it escalates under stress.`,
+          technique: data.antidote || `When you notice ${name} arising, take a breath and reframe your response.`,
+        });
+      }
+    }
+
+    // Emotional driver coaching
+    const driver = m4.emotionalDrivers?.primary;
+    if (driver) {
+      const driverCoaching: Record<string, { title: string; desc: string; technique: string }> = {
+        abandonment: {
+          title: 'Soothe Abandonment Anxiety',
+          desc: 'Your conflict behavior is driven by fear of being left. This can cause pursuit patterns that push partners away.',
+          technique: 'When you feel the urge to pursue during conflict, pause for 90 seconds. Name the fear ("I\'m afraid they\'ll leave") then check: is there actual evidence of leaving, or am I projecting?',
+        },
+        engulfment: {
+          title: 'Honor Your Need for Space',
+          desc: 'Your conflict behavior is driven by fear of losing autonomy. You may withdraw when you feel controlled.',
+          technique: 'Practice communicating your need for space proactively: "I need 20 minutes to process, then I\'ll come back." This prevents your partner from feeling abandoned.',
+        },
+        inadequacy: {
+          title: 'Challenge Inadequacy Beliefs',
+          desc: 'Your conflict behavior is driven by feeling "not good enough." This can cause collapse or overcompensation.',
+          technique: 'CBT thought record: when you feel inadequate during conflict, write the trigger, automatic thought, evidence for/against, and a balanced alternative thought.',
+        },
+        injustice: {
+          title: 'Reframe the Fairness Lens',
+          desc: 'Your conflict behavior is driven by perceived unfairness. This can turn disagreements into moral battles.',
+          technique: 'Before arguing your case, state your partner\'s perspective back to them. Ask: "Did I get that right?" This builds empathy before you advocate for yourself.',
+        },
+      };
+
+      const coaching = driverCoaching[driver];
+      if (coaching) {
+        steps.push({
+          priority: 'medium',
+          title: coaching.title,
+          description: coaching.desc,
+          technique: coaching.technique,
+        });
+      }
+    }
+
+    // Emotional capacity coaching
+    if (m4.emotionalCapacity?.level === 'low') {
+      steps.push({
+        priority: 'high',
+        title: 'Build Emotional Capacity',
+        description: 'You get overwhelmed quickly during conflict. This limits your ability to stay present and repair.',
+        technique: 'Practice the physiological sigh (double inhale through nose, long exhale through mouth) when you feel flooded. Build tolerance gradually: start with 2-minute difficult conversations and extend over time.',
+      });
+    }
+
+    // Repair mismatch awareness
+    if (m4.repairRecovery?.speed?.style === 'slow' && m4.conflictApproach?.approach === 'pursue') {
+      steps.push({
+        priority: 'low',
+        title: 'Align Repair Timing',
+        description: 'You pursue resolution immediately but need time to repair well. This internal contradiction can lead to premature, ineffective repair attempts.',
+        technique: 'When conflict arises, say: "I want to resolve this, and I also know I need a bit of time to do it well. Can we revisit in 30 minutes?"',
+      });
+    }
+  }
+
+  if (steps.length === 0) return null;
+
+  // Sort: high > medium > low
+  const priorityOrder = { high: 0, medium: 1, low: 2 };
+  steps.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+
+  function priorityBadge(p: 'high' | 'medium' | 'low') {
+    const styles = {
+      high: 'bg-danger/10 text-danger',
+      medium: 'bg-warning/10 text-warning',
+      low: 'bg-stone-100 text-secondary',
+    };
+    return styles[p];
+  }
+
+  return (
+    <section className="card mb-4">
+      <h2 className="font-serif text-lg font-semibold mb-1">Growth Plan</h2>
+      <p className="text-xs text-secondary mb-5">Evidence-based coaching steps from your assessment results</p>
+
+      <div className="space-y-4">
+        {steps.map((step, i) => (
+          <div key={i} className="border border-border rounded-md p-3">
+            <div className="flex items-start gap-2 mb-2">
+              <span className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded ${priorityBadge(step.priority)}`}>
+                {step.priority}
+              </span>
+              <h3 className="text-sm font-medium leading-tight">{step.title}</h3>
+            </div>
+            <p className="text-xs text-secondary mb-2">{step.description}</p>
+            <div className="bg-stone-50 border border-border rounded p-2">
+              <span className="text-[10px] font-mono text-accent uppercase tracking-wider">Try this</span>
+              <p className="text-xs text-secondary mt-1">{step.technique}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
