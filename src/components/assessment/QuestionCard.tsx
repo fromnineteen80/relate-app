@@ -25,7 +25,7 @@ export default function QuestionCard({ question, value, onAnswer }: Props) {
           <button
             onClick={() => onAnswer(question.id, 'A')}
             className={`text-left px-4 py-4 rounded-md border text-sm transition-colors ${
-              value === 'A' ? 'border-accent bg-orange-50' : 'border-border hover:border-accent'
+              value === 'A' ? 'border-accent bg-orange-50 text-accent font-medium' : 'border-border hover:border-accent text-secondary'
             }`}
           >
             {question.optionA}
@@ -33,7 +33,7 @@ export default function QuestionCard({ question, value, onAnswer }: Props) {
           <button
             onClick={() => onAnswer(question.id, 'B')}
             className={`text-left px-4 py-4 rounded-md border text-sm transition-colors ${
-              value === 'B' ? 'border-accent bg-orange-50' : 'border-border hover:border-accent'
+              value === 'B' ? 'border-accent bg-orange-50 text-accent font-medium' : 'border-border hover:border-accent text-secondary'
             }`}
           >
             {question.optionB}
@@ -43,7 +43,7 @@ export default function QuestionCard({ question, value, onAnswer }: Props) {
     );
   }
 
-  // Likert scale (direct, behavioral, or generic likert)
+  // All likert questions across M1-M4 are agreement statements
   return (
     <div>
       <p className="text-lg mb-6">{question.text}</p>
@@ -52,12 +52,12 @@ export default function QuestionCard({ question, value, onAnswer }: Props) {
           <button
             key={v}
             onClick={() => onAnswer(question.id, v)}
-            className={`flex-1 flex flex-col items-center gap-2 py-3 px-1 rounded-md border text-xs transition-colors ${
+            className={`flex-1 flex flex-col items-center gap-1.5 py-3 px-1 rounded-md border text-xs transition-colors ${
               value === v ? 'border-accent bg-orange-50 text-accent font-medium' : 'border-border hover:border-accent text-secondary'
             }`}
           >
             <span className="font-mono text-base">{v}</span>
-            <span className="hidden sm:block text-center leading-tight">{label}</span>
+            <span className="text-center leading-tight text-[10px] sm:text-xs">{label}</span>
           </button>
         ))}
       </div>

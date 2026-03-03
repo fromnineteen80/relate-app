@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useState, useCallback } from 'react';
+import { Suspense, useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,6 +10,7 @@ import { getMockPaymentStatus, mockPurchase } from '@/lib/mock/payments';
 import { fetchPaymentTier, refreshPaymentTier } from '@/lib/payments';
 import { getProfile } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
+import { TestAccessCard } from '@/components/TestAccessCard';
 
 type Demographics = { age?: number; gender?: string; relationshipStatus?: string; seeking?: string; [key: string]: unknown };
 
@@ -205,8 +206,9 @@ function AccountPage() {
   }, [authLoading, user, router]);
 
   // Fetch dating market data when demographics are available
+  const marketFetchedRef = useRef(false);
   useEffect(() => {
-    if (!user || marketData || marketLoading) return;
+    if (!user || marketData || marketFetchedRef.current) return;
 
     // Check for cached market data first
     const cached = localStorage.getItem('relate_market_data');
@@ -221,6 +223,7 @@ function AccountPage() {
     let demo: Demographics;
     try { demo = JSON.parse(demoStr); } catch { return; }
 
+    marketFetchedRef.current = true;
     setMarketLoading(true);
     fetch('/api/demographics-market', {
       method: 'POST',
@@ -273,7 +276,7 @@ function AccountPage() {
       })
       .catch(() => { /* silent fail — market data is optional */ })
       .finally(() => setMarketLoading(false));
-  }, [user, marketData, marketLoading]);
+  }, [user, marketData]);
 
   async function handleSignOut() {
     await signOut();
@@ -411,6 +414,12 @@ function AccountPage() {
               </p>
             </div>
           </div>
+
+          {currentTier === 'free' && (
+            <div className="mb-3">
+              <TestAccessCard />
+            </div>
+          )}
 
           {currentTier !== 'couples' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
