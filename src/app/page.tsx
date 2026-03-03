@@ -10,25 +10,25 @@ const MODULES = [
     num: '01',
     title: 'What You Want',
     desc: 'Map your preferences across four dimensions: physical attraction, social energy, lifestyle pace, and core values. This isn\'t a wish list. It\'s a measurement of what actually holds your attention.',
-    time: '~40 min',
+    time: '40 minutes',
   },
   {
     num: '02',
     title: 'Who You Are',
     desc: 'The same four dimensions, turned inward. This is where your persona emerges as one of 32 types that describes how you show up in relationships, not who you wish you were.',
-    time: '~40 min',
+    time: '40 minutes',
   },
   {
     num: '03',
     title: 'How You Connect',
     desc: 'Measures your intimacy exchange: how much access you want versus how much you offer. This gap predicts satisfaction better than any compatibility quiz.',
-    time: '~10 min',
+    time: '10 minutes',
   },
   {
     num: '04',
     title: 'When Things Get Hard',
     desc: 'Conflict approach, emotional drivers, repair speed, capacity under stress, and a full Gottman Four Horsemen screening. This is the module that predicts longevity.',
-    time: '~20 min',
+    time: '20 minutes',
   },
 ];
 
