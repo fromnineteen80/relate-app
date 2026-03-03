@@ -21,7 +21,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Intelligence Layer ── */}
-      <section className="px-6 py-20 border-b border-border">
+      <section className="px-6 pt-6 pb-20 border-b border-border">
         <div className="max-w-3xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
