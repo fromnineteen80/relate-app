@@ -6,7 +6,12 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 
-export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'landing' | 'auth' }) {
+type SiteHeaderProps = {
+  variant?: 'default' | 'landing' | 'auth';
+  onSave?: () => void;
+};
+
+export function SiteHeader({ variant = 'default', onSave }: SiteHeaderProps) {
   const { user, signOut } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
@@ -75,15 +80,18 @@ export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'lan
                 )
               )}
               {user ? (
-                <ProfileAvatar
-                  initial={initial}
-                  photoUrl={profilePhoto}
-                  dropdownOpen={dropdownOpen}
-                  setDropdownOpen={setDropdownOpen}
-                  dropdownRef={dropdownRef}
-                  onSignOut={handleSignOut}
-                  router={router}
-                />
+                <div className="flex items-center">
+                  {onSave && <SaveButton onSave={onSave} />}
+                  <ProfileAvatar
+                    initial={initial}
+                    photoUrl={profilePhoto}
+                    dropdownOpen={dropdownOpen}
+                    setDropdownOpen={setDropdownOpen}
+                    dropdownRef={dropdownRef}
+                    onSignOut={handleSignOut}
+                    router={router}
+                  />
+                </div>
               ) : (
                 <div className="flex items-center gap-3">
                   <Link href="/auth/login" className="text-sm text-secondary hover:text-foreground transition-colors">
@@ -99,15 +107,18 @@ export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'lan
             {/* Mobile: hamburger + avatar */}
             <div className="flex md:hidden items-center gap-2">
               {user && (
-                <ProfileAvatar
-                  initial={initial}
-                  photoUrl={profilePhoto}
-                  dropdownOpen={dropdownOpen}
-                  setDropdownOpen={setDropdownOpen}
-                  dropdownRef={dropdownRef}
-                  onSignOut={handleSignOut}
-                  router={router}
-                />
+                <>
+                  {onSave && <SaveButton onSave={onSave} />}
+                  <ProfileAvatar
+                    initial={initial}
+                    photoUrl={profilePhoto}
+                    dropdownOpen={dropdownOpen}
+                    setDropdownOpen={setDropdownOpen}
+                    dropdownRef={dropdownRef}
+                    onSignOut={handleSignOut}
+                    router={router}
+                  />
+                </>
               )}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -171,6 +182,48 @@ export function SiteHeader({ variant = 'default' }: { variant?: 'default' | 'lan
         </div>
       )}
     </header>
+  );
+}
+
+function SaveButton({ onSave }: { onSave: () => void }) {
+  const [saved, setSaved] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function handleClick() {
+    onSave();
+    setSaved(true);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setSaved(false), 2000);
+  }
+
+  useEffect(() => {
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, []);
+
+  return (
+    <button
+      onClick={handleClick}
+      className="flex items-center gap-1.5 text-sm text-secondary hover:text-foreground transition-colors mr-2"
+      aria-label="Save progress"
+    >
+      {saved ? (
+        <>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-success">
+            <polyline points="3.5 8.5 6.5 11.5 12.5 4.5" />
+          </svg>
+          <span className="text-success text-xs font-medium">Saved</span>
+        </>
+      ) : (
+        <>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12.5 14H3.5C2.95 14 2.5 13.55 2.5 13V3C2.5 2.45 2.95 2 3.5 2H10.5L13.5 5V13C13.5 13.55 13.05 14 12.5 14Z" />
+            <path d="M11.5 14V9H4.5V14" />
+            <path d="M4.5 2V5.5H9.5" />
+          </svg>
+          <span className="hidden sm:inline text-xs">Save</span>
+        </>
+      )}
+    </button>
   );
 }
 

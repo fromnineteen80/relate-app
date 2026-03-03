@@ -82,6 +82,18 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
     saveToDb(updated);
   }, [storageKey, saveToDb]);
 
+  // Explicit save: flush immediately to localStorage + Supabase
+  const handleExplicitSave = useCallback(() => {
+    // Cancel any pending debounced save
+    if (dbSaveTimer.current) clearTimeout(dbSaveTimer.current);
+    // Save to localStorage (already there, but ensure it's current)
+    localStorage.setItem(storageKey, JSON.stringify(responses));
+    // Immediately save to Supabase
+    if (user) {
+      saveModuleResponses(user.id, moduleNumber, responses);
+    }
+  }, [storageKey, responses, user, moduleNumber]);
+
   function handleAnswer(questionId: string, value: number | string) {
     const updated = { ...responses, [questionId]: value };
     setResponses(updated);
@@ -199,7 +211,7 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SiteHeader />
+      <SiteHeader onSave={handleExplicitSave} />
 
       {/* Progress bar */}
       <div className="border-b border-border">
