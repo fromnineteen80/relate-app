@@ -11,7 +11,15 @@ import { fetchPaymentTier, refreshPaymentTier } from '@/lib/payments';
 import { getProfile } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
 
-type Demographics = { age?: number; gender?: string; relationshipStatus?: string; seeking?: string };
+type Demographics = { age?: number; gender?: string; relationshipStatus?: string; seeking?: string; [key: string]: unknown };
+
+type MarketData = {
+  location?: { cbsaName?: string; cbsaLabel?: string; population?: number };
+  relateScore?: { score: number; components?: Record<string, { national?: number; local?: number; score?: number; weight: number }> };
+  matchPool?: { localSinglePool: number; realisticPool: number; preferredPool: number; idealPool: number; funnel?: { stage: string; count: number; isMilestone?: boolean }[] };
+  matchProbability?: { rate: number; percentage: string };
+  matchCount?: number;
+};
 
 type M1Scored = {
   result?: {
@@ -40,21 +48,32 @@ type M3Scored = {
     offerScore?: number;
     wantOfferGap?: number;
     typeName?: string;
+    typeDescription?: string;
+    typeDetails?: {
+      strengths?: string[];
+      challenges?: string[];
+    };
+  };
+  attentiveness?: {
+    level?: string;
+    score?: number;
   };
 };
 
 type M4Scored = {
   result?: {
     conflictApproach?: { approach?: string; score?: number };
-    emotionalDrivers?: { primary?: string; secondary?: string };
+    emotionalDrivers?: { primary?: string; secondary?: string; scores?: Record<string, number>; primaryScore?: number };
     repairRecovery?: {
-      speed?: { style?: string };
-      mode?: { style?: string };
+      speed?: { style?: string; score?: number };
+      mode?: { style?: string; score?: number };
     };
     emotionalCapacity?: { level?: string; score?: number };
     gottmanScreener?: {
-      horsemen?: Record<string, { score?: number; riskLevel?: string }>;
+      horsemen?: Record<string, { score?: number; riskLevel?: string; antidote?: string }>;
       overallRisk?: string;
+      coachingPriority?: string;
+      primary?: string;
     };
   };
 };
@@ -111,6 +130,12 @@ function AccountPage() {
   const [matches, setMatches] = useState<MatchResult[]>([]);
   const [downloading, setDownloading] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  // Full results for richer graphics / coaching
+  const [fullM3, setFullM3] = useState<M3Scored['result'] | null>(null);
+  const [fullM4, setFullM4] = useState<M4Scored['result'] | null>(null);
+  // Market data
+  const [marketData, setMarketData] = useState<MarketData | null>(null);
+  const [marketLoading, setMarketLoading] = useState(false);
 
   // Fetch payment tier (works in both mock and real mode)
   useEffect(() => {
@@ -168,6 +193,8 @@ function AccountPage() {
       try {
         const results = JSON.parse(resultsStr);
         setMatches(results.matches || []);
+        if (results.m3) setFullM3(results.m3);
+        if (results.m4) setFullM4(results.m4);
       } catch { /* ignore */ }
     }
 
@@ -176,6 +203,77 @@ function AccountPage() {
     setPartnerEmail(localStorage.getItem('relate_partner_email'));
     setProfileData(getProfile());
   }, [authLoading, user, router]);
+
+  // Fetch dating market data when demographics are available
+  useEffect(() => {
+    if (!user || marketData || marketLoading) return;
+
+    // Check for cached market data first
+    const cached = localStorage.getItem('relate_market_data');
+    if (cached) {
+      try { setMarketData(JSON.parse(cached)); return; } catch { /* fetch fresh */ }
+    }
+
+    const demoStr = localStorage.getItem('relate_demographics');
+    const profile = getProfile();
+    if (!demoStr || !profile?.zipCode) return;
+
+    let demo: Demographics;
+    try { demo = JSON.parse(demoStr); } catch { return; }
+
+    setMarketLoading(true);
+    fetch('/api/demographics-market', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: user.id,
+        demographics: {
+          zipCode: profile.zipCode,
+          gender: demo.gender,
+          age: demo.age,
+          ethnicity: (demo as Record<string, unknown>).ethnicity || 'White',
+          orientation: (demo as Record<string, unknown>).orientation || 'Straight',
+          income: (demo as Record<string, unknown>).income || 50000,
+          education: (demo as Record<string, unknown>).education || "Bachelor's Degree",
+          height: (demo as Record<string, unknown>).height || null,
+          bodyType: (demo as Record<string, unknown>).body_type || 'Average',
+          fitness: (demo as Record<string, unknown>).fitness_level || '2 to 3 days a week',
+          political: (demo as Record<string, unknown>).political || 'Moderate',
+          smoking: (demo as Record<string, unknown>).smoking || false,
+          hasKids: (demo as Record<string, unknown>).has_kids || false,
+          wantKids: (demo as Record<string, unknown>).want_kids || 'Not sure',
+          relationshipStatus: demo.relationshipStatus || 'Single',
+        },
+        preferences: {
+          prefAgeMin: (demo as Record<string, unknown>).pref_age_min || ((demo.age || 30) - 5),
+          prefAgeMax: (demo as Record<string, unknown>).pref_age_max || ((demo.age || 30) + 5),
+          prefIncomeMin: (demo as Record<string, unknown>).pref_income_min || 0,
+          prefHeightMin: (demo as Record<string, unknown>).pref_height_min || null,
+          prefBodyTypes: (demo as Record<string, unknown>).pref_body_types || ['No preference'],
+          prefFitnessLevels: (demo as Record<string, unknown>).pref_fitness_levels || ['No preference'],
+          prefPolitical: (demo as Record<string, unknown>).pref_political || ['No preference'],
+          prefHasKids: (demo as Record<string, unknown>).pref_has_kids || 'No preference',
+          prefSmoking: (demo as Record<string, unknown>).pref_smoking || 'No preference',
+        },
+      }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const md: MarketData = {
+            location: data.location,
+            relateScore: data.relateScore,
+            matchPool: data.matchPool,
+            matchProbability: data.matchProbability,
+            matchCount: data.matchCount,
+          };
+          setMarketData(md);
+          localStorage.setItem('relate_market_data', JSON.stringify(md));
+        }
+      })
+      .catch(() => { /* silent fail — market data is optional */ })
+      .finally(() => setMarketLoading(false));
+  }, [user, marketData, marketLoading]);
 
   async function handleSignOut() {
     await signOut();
@@ -390,9 +488,25 @@ function AccountPage() {
             </Link>
           )}
           {assessmentComplete && (currentTier === 'premium' || currentTier === 'couples') && (
-            <p className="text-xs text-secondary mt-2 text-center">
-              As a {PRICING[currentTier].label} member, you can retake the assessment at any time.
-            </p>
+            <button
+              onClick={() => {
+                if (!confirm('This will clear your current assessment progress. Your existing results will still be available until you generate new ones. Continue?')) return;
+                for (let m = 1; m <= 4; m++) {
+                  localStorage.removeItem(`relate_m${m}_responses`);
+                  localStorage.removeItem(`relate_m${m}_completed`);
+                  localStorage.removeItem(`relate_m${m}_scored`);
+                }
+                setModuleProgress({});
+                setM1Data(null);
+                setM2Data(null);
+                setM3Data(null);
+                setM4Data(null);
+                router.push('/assessment');
+              }}
+              className="btn-secondary w-full text-center mt-2"
+            >
+              Retake Assessment
+            </button>
           )}
         </section>
 
@@ -539,6 +653,24 @@ function AccountPage() {
               </div>
             )}
           </section>
+        )}
+
+        {/* ── Want vs Offer Graphic ── */}
+        {(m3Data?.result || fullM3) && (
+          <WantOfferGraphic m3={fullM3 || m3Data?.result || null} />
+        )}
+
+        {/* ── Growth Plan / Coaching ── */}
+        {(fullM3 || fullM4 || m3Data?.result || m4Data?.result) && (
+          <GrowthPlan
+            m3={fullM3 || m3Data?.result || null}
+            m4={fullM4 || m4Data?.result || null}
+          />
+        )}
+
+        {/* ── Dating Market ── */}
+        {(marketData || marketLoading) && (
+          <DatingMarketViz data={marketData} loading={marketLoading} />
         )}
 
         {/* ── Compatibility Rankings ── */}
@@ -710,6 +842,439 @@ function AccountPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+// ── Dating Market Visualization ──
+function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: boolean }) {
+  if (loading) {
+    return (
+      <section className="card mb-4">
+        <h2 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h2>
+        <p className="text-xs text-secondary mb-4">Analyzing your local market...</p>
+        <div className="flex items-center justify-center py-8">
+          <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+        </div>
+      </section>
+    );
+  }
+
+  if (!data) return null;
+
+  const score = data.relateScore?.score ?? 0;
+  const pool = data.matchPool;
+  const metro = data.location?.cbsaLabel || data.location?.cbsaName || 'Your Metro';
+  const metroPop = data.location?.population || 0;
+  const prob = data.matchProbability;
+  const matchCount = data.matchCount ?? 0;
+
+  // Score tier label
+  function scoreTier(s: number) {
+    if (s >= 80) return { label: 'Exceptional', color: 'text-success' };
+    if (s >= 65) return { label: 'Strong', color: 'text-success' };
+    if (s >= 50) return { label: 'Above Average', color: 'text-accent' };
+    if (s >= 35) return { label: 'Average', color: 'text-warning' };
+    return { label: 'Below Average', color: 'text-danger' };
+  }
+
+  const tier = scoreTier(score);
+
+  // Component score bars
+  const components = data.relateScore?.components || {};
+  const compOrder = ['income', 'education', 'age', 'ethnicity', 'children'];
+  const compLabels: Record<string, string> = {
+    income: 'Income', education: 'Education', age: 'Age', ethnicity: 'Ethnicity', children: 'Children',
+  };
+
+  // Format big numbers
+  function fmt(n: number) {
+    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+    if (n >= 1000) return (n / 1000).toFixed(0) + 'k';
+    return String(n);
+  }
+
+  // Funnel milestones
+  const milestones = [
+    { label: 'Metro Population', value: metroPop },
+    { label: 'Single Pool', value: pool?.localSinglePool || 0 },
+    { label: 'Realistic Pool', value: pool?.realisticPool || 0 },
+    { label: 'Preferred Pool', value: pool?.preferredPool || 0 },
+    { label: 'Ideal Pool', value: pool?.idealPool || 0 },
+  ];
+
+  return (
+    <section className="card mb-4">
+      <h2 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h2>
+      <p className="text-xs text-secondary mb-5">{metro}</p>
+
+      {/* Relate Score Gauge */}
+      <div className="mb-6">
+        <div className="flex items-end justify-between mb-2">
+          <div>
+            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Relate Score</span>
+            <div className="flex items-baseline gap-2 mt-1">
+              <span className="font-mono text-3xl font-semibold">{score.toFixed(0)}</span>
+              <span className={`text-sm font-medium ${tier.color}`}>{tier.label}</span>
+            </div>
+          </div>
+          <span className="text-xs text-secondary font-mono">/100</span>
+        </div>
+
+        {/* Score bar */}
+        <div className="relative h-3 bg-stone-200 rounded-full overflow-hidden">
+          <div
+            className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out"
+            style={{
+              width: `${score}%`,
+              background: score >= 65 ? 'var(--color-success)' : score >= 50 ? 'var(--color-accent)' : score >= 35 ? 'var(--color-warning)' : 'var(--color-danger)',
+            }}
+          />
+          {/* Marker ticks */}
+          {[25, 50, 75].map(tick => (
+            <div key={tick} className="absolute top-0 bottom-0 w-px bg-white/50" style={{ left: `${tick}%` }} />
+          ))}
+        </div>
+        <p className="text-xs text-secondary mt-2">
+          How competitive you are in the {metro} dating market based on income, education, age, and demographics.
+        </p>
+      </div>
+
+      {/* Score Components */}
+      {Object.keys(components).length > 0 && (
+        <div className="mb-6">
+          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Score Breakdown</span>
+          <div className="space-y-2 mt-2">
+            {compOrder.map(key => {
+              const comp = components[key];
+              if (!comp) return null;
+              const val = comp.local ?? comp.score ?? comp.national ?? 50;
+              const weight = comp.weight ?? 0;
+              return (
+                <div key={key} className="flex items-center gap-3">
+                  <span className="text-xs text-secondary w-16">{compLabels[key]}</span>
+                  <div className="flex-1 h-1.5 bg-stone-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-accent rounded-full transition-all duration-700"
+                      style={{ width: `${Math.min(100, Math.max(0, val))}%` }}
+                    />
+                  </div>
+                  <span className="text-xs font-mono w-8 text-right">{Math.round(val)}</span>
+                  <span className="text-[10px] text-secondary w-6">{Math.round(weight * 100)}%</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Match Pool Funnel */}
+      {pool && (
+        <div className="mb-6">
+          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
+          <div className="mt-3 space-y-1">
+            {milestones.map((m, i) => {
+              const maxVal = milestones[0].value || 1;
+              const pct = (m.value / maxVal) * 100;
+              const isLast = i === milestones.length - 1;
+              return (
+                <div key={m.label}>
+                  <div className="flex items-center justify-between mb-0.5">
+                    <span className={`text-xs ${isLast ? 'font-medium' : 'text-secondary'}`}>{m.label}</span>
+                    <span className={`text-xs font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{fmt(m.value)}</span>
+                  </div>
+                  <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
+                    <div
+                      className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ${isLast ? 'bg-accent' : 'bg-stone-300'}`}
+                      style={{ width: `${Math.max(1, pct)}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Match Probability & Count */}
+      <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
+        <div className="text-center">
+          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Probability</span>
+          <p className="font-mono text-2xl font-semibold mt-1">{prob?.percentage || '—'}</p>
+          <p className="text-xs text-secondary mt-1">
+            Chance of matching with someone from your ideal pool
+          </p>
+        </div>
+        <div className="text-center">
+          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Estimated Matches</span>
+          <p className="font-mono text-2xl font-semibold mt-1">{fmt(matchCount)}</p>
+          <p className="text-xs text-secondary mt-1">
+            Compatible singles in {metro.split(',')[0] || 'your area'}
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Want vs Offer Bar Chart ──
+function WantOfferGraphic({ m3 }: { m3: M3Scored['result'] | null }) {
+  if (!m3) return null;
+  const want = m3.wantScore ?? 50;
+  const offer = m3.offerScore ?? 50;
+  const gap = m3.wantOfferGap ?? (want - offer);
+  const typeName = m3.typeName || '';
+
+  function gapLabel(g: number) {
+    if (g > 20) return 'You seek significantly more than you provide';
+    if (g > 5) return 'You seek slightly more than you provide';
+    if (g < -20) return 'You provide significantly more than you seek';
+    if (g < -5) return 'You provide slightly more than you seek';
+    return 'Your want and offer are well balanced';
+  }
+
+  function gapColor(g: number) {
+    const abs = Math.abs(g);
+    if (abs <= 5) return 'text-success';
+    if (abs <= 20) return 'text-warning';
+    return 'text-danger';
+  }
+
+  return (
+    <section className="card mb-4">
+      <h2 className="font-serif text-lg font-semibold mb-1">Connection Balance</h2>
+      <p className="text-xs text-secondary mb-5">What you seek in a partner vs. what you offer</p>
+
+      <div className="space-y-4">
+        {/* Want bar */}
+        <div>
+          <div className="flex justify-between items-baseline mb-1.5">
+            <span className="text-xs font-mono text-secondary uppercase tracking-wider">What You Want</span>
+            <span className="font-mono text-lg font-semibold">{want}</span>
+          </div>
+          <div className="relative h-3 bg-stone-200 rounded-full overflow-hidden">
+            <div
+              className="absolute inset-y-0 left-0 bg-accent rounded-full transition-all duration-1000 ease-out"
+              style={{ width: `${want}%` }}
+            />
+          </div>
+          <p className="text-xs text-secondary mt-1">
+            {want >= 60 ? 'You seek exclusive access — a partner with hidden depth' : 'You value consistency and transparency in a partner'}
+          </p>
+        </div>
+
+        {/* Offer bar */}
+        <div>
+          <div className="flex justify-between items-baseline mb-1.5">
+            <span className="text-xs font-mono text-secondary uppercase tracking-wider">What You Offer</span>
+            <span className="font-mono text-lg font-semibold">{offer}</span>
+          </div>
+          <div className="relative h-3 bg-stone-200 rounded-full overflow-hidden">
+            <div
+              className="absolute inset-y-0 left-0 bg-stone-600 rounded-full transition-all duration-1000 ease-out"
+              style={{ width: `${offer}%` }}
+            />
+          </div>
+          <p className="text-xs text-secondary mt-1">
+            {offer >= 60 ? 'You reveal different sides of yourself in different contexts' : 'You are the same person in every context'}
+          </p>
+        </div>
+
+        {/* Gap visualization */}
+        <div className="pt-3 border-t border-border">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Gap</span>
+            <span className={`font-mono text-sm font-semibold ${gapColor(gap)}`}>
+              {gap > 0 ? '+' : ''}{gap}
+            </span>
+          </div>
+
+          {/* Gap bar: center-anchored */}
+          <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
+            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-stone-300" />
+            {gap !== 0 && (
+              <div
+                className={`absolute top-0 bottom-0 rounded-full transition-all duration-700 ${gap > 0 ? 'bg-accent/60' : 'bg-stone-500/60'}`}
+                style={{
+                  left: gap > 0 ? '50%' : `${50 + (gap / 2)}%`,
+                  width: `${Math.abs(gap) / 2}%`,
+                }}
+              />
+            )}
+          </div>
+
+          <p className={`text-xs mt-2 ${gapColor(gap)}`}>{gapLabel(gap)}</p>
+        </div>
+
+        {/* Type badge */}
+        {typeName && (
+          <div className="flex items-center gap-2 pt-2">
+            <span className="text-xs font-mono text-secondary">Type:</span>
+            <span className="text-xs font-medium bg-stone-100 px-2 py-0.5 rounded">{typeName}</span>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ── Growth Plan / CBT Coaching ──
+function GrowthPlan({ m3, m4 }: { m3: M3Scored['result'] | null; m4: M4Scored['result'] | null }) {
+  // Build coaching steps from assessment data
+  const steps: { priority: 'high' | 'medium' | 'low'; title: string; description: string; technique: string }[] = [];
+
+  // M3-based coaching: Want/Offer gap
+  if (m3) {
+    const gap = m3.wantOfferGap ?? 0;
+    if (gap > 20) {
+      steps.push({
+        priority: 'high',
+        title: 'Close the Want/Offer Gap',
+        description: 'You want significantly more from a partner than you currently offer. This asymmetry can create relationship debt.',
+        technique: 'Practice reciprocity awareness: each week, identify one way you ask for connection and match it with something you give. Journal the exchange.',
+      });
+    } else if (gap < -20) {
+      steps.push({
+        priority: 'medium',
+        title: 'Set Boundaries on Giving',
+        description: 'You offer far more than you ask for. Generous, but watch for resentment if the balance stays skewed.',
+        technique: 'Practice asking for what you need before giving. Use the "request before offer" rule in conversations this week.',
+      });
+    }
+
+    // Type-specific challenge coaching
+    if (m3.typeDetails?.challenges && m3.typeDetails.challenges.length > 0) {
+      steps.push({
+        priority: 'low',
+        title: 'Work Your Growth Edge',
+        description: m3.typeDetails.challenges[0],
+        technique: 'Identify one relationship moment this week where this challenge showed up. Write down what happened, what you felt, and one alternative response.',
+      });
+    }
+  }
+
+  // M4-based coaching
+  if (m4) {
+    // Gottman horsemen — highest priority
+    const horsemen = m4.gottmanScreener?.horsemen;
+    if (horsemen) {
+      const highRisk = Object.entries(horsemen).filter(([, h]) => h.riskLevel === 'high');
+      const mediumRisk = Object.entries(horsemen).filter(([, h]) => h.riskLevel === 'medium');
+
+      for (const [name, data] of highRisk) {
+        steps.push({
+          priority: 'high',
+          title: `Address ${name.charAt(0).toUpperCase() + name.slice(1)}`,
+          description: `Your ${name} score is elevated. This is one of the strongest predictors of relationship difficulty.`,
+          technique: data.antidote || `Practice the antidote to ${name} daily. Notice when it arises and pause before responding.`,
+        });
+      }
+
+      for (const [name, data] of mediumRisk) {
+        steps.push({
+          priority: 'medium',
+          title: `Monitor ${name.charAt(0).toUpperCase() + name.slice(1)}`,
+          description: `Moderate ${name} tendency detected. Worth watching before it escalates under stress.`,
+          technique: data.antidote || `When you notice ${name} arising, take a breath and reframe your response.`,
+        });
+      }
+    }
+
+    // Emotional driver coaching
+    const driver = m4.emotionalDrivers?.primary;
+    if (driver) {
+      const driverCoaching: Record<string, { title: string; desc: string; technique: string }> = {
+        abandonment: {
+          title: 'Soothe Abandonment Anxiety',
+          desc: 'Your conflict behavior is driven by fear of being left. This can cause pursuit patterns that push partners away.',
+          technique: 'When you feel the urge to pursue during conflict, pause for 90 seconds. Name the fear ("I\'m afraid they\'ll leave") then check: is there actual evidence of leaving, or am I projecting?',
+        },
+        engulfment: {
+          title: 'Honor Your Need for Space',
+          desc: 'Your conflict behavior is driven by fear of losing autonomy. You may withdraw when you feel controlled.',
+          technique: 'Practice communicating your need for space proactively: "I need 20 minutes to process, then I\'ll come back." This prevents your partner from feeling abandoned.',
+        },
+        inadequacy: {
+          title: 'Challenge Inadequacy Beliefs',
+          desc: 'Your conflict behavior is driven by feeling "not good enough." This can cause collapse or overcompensation.',
+          technique: 'CBT thought record: when you feel inadequate during conflict, write the trigger, automatic thought, evidence for/against, and a balanced alternative thought.',
+        },
+        injustice: {
+          title: 'Reframe the Fairness Lens',
+          desc: 'Your conflict behavior is driven by perceived unfairness. This can turn disagreements into moral battles.',
+          technique: 'Before arguing your case, state your partner\'s perspective back to them. Ask: "Did I get that right?" This builds empathy before you advocate for yourself.',
+        },
+      };
+
+      const coaching = driverCoaching[driver];
+      if (coaching) {
+        steps.push({
+          priority: 'medium',
+          title: coaching.title,
+          description: coaching.desc,
+          technique: coaching.technique,
+        });
+      }
+    }
+
+    // Emotional capacity coaching
+    if (m4.emotionalCapacity?.level === 'low') {
+      steps.push({
+        priority: 'high',
+        title: 'Build Emotional Capacity',
+        description: 'You get overwhelmed quickly during conflict. This limits your ability to stay present and repair.',
+        technique: 'Practice the physiological sigh (double inhale through nose, long exhale through mouth) when you feel flooded. Build tolerance gradually: start with 2-minute difficult conversations and extend over time.',
+      });
+    }
+
+    // Repair mismatch awareness
+    if (m4.repairRecovery?.speed?.style === 'slow' && m4.conflictApproach?.approach === 'pursue') {
+      steps.push({
+        priority: 'low',
+        title: 'Align Repair Timing',
+        description: 'You pursue resolution immediately but need time to repair well. This internal contradiction can lead to premature, ineffective repair attempts.',
+        technique: 'When conflict arises, say: "I want to resolve this, and I also know I need a bit of time to do it well. Can we revisit in 30 minutes?"',
+      });
+    }
+  }
+
+  if (steps.length === 0) return null;
+
+  // Sort: high > medium > low
+  const priorityOrder = { high: 0, medium: 1, low: 2 };
+  steps.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+
+  function priorityBadge(p: 'high' | 'medium' | 'low') {
+    const styles = {
+      high: 'bg-danger/10 text-danger',
+      medium: 'bg-warning/10 text-warning',
+      low: 'bg-stone-100 text-secondary',
+    };
+    return styles[p];
+  }
+
+  return (
+    <section className="card mb-4">
+      <h2 className="font-serif text-lg font-semibold mb-1">Growth Plan</h2>
+      <p className="text-xs text-secondary mb-5">Evidence-based coaching steps from your assessment results</p>
+
+      <div className="space-y-4">
+        {steps.map((step, i) => (
+          <div key={i} className="border border-border rounded-md p-3">
+            <div className="flex items-start gap-2 mb-2">
+              <span className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded ${priorityBadge(step.priority)}`}>
+                {step.priority}
+              </span>
+              <h3 className="text-sm font-medium leading-tight">{step.title}</h3>
+            </div>
+            <p className="text-xs text-secondary mb-2">{step.description}</p>
+            <div className="bg-stone-50 border border-border rounded p-2">
+              <span className="text-[10px] font-mono text-accent uppercase tracking-wider">Try this</span>
+              <p className="text-xs text-secondary mt-1">{step.technique}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 

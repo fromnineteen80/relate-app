@@ -8,6 +8,7 @@ import { fetchPaymentTier } from '@/lib/payments';
 import { generateReferrals, Referral } from '@/lib/referrals';
 import { useAuth } from '@/lib/auth-context';
 import { SiteHeader } from '@/components/SiteHeader';
+import { loadAndHydrateProgress } from '@/lib/supabase/progress';
 
 type ResultsReport = {
   persona: { code: string; name: string; traits: string; datingBehavior: string[]; mostAttractive: string[]; leastAttractive: string[] };
@@ -43,12 +44,30 @@ export default function ResultsDashboard() {
   const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem('relate_results');
-    if (!stored) { router.push('/assessment'); return; }
-    const parsedReport = JSON.parse(stored);
-    setReport(parsedReport);
-    setReferrals(generateReferrals(parsedReport));
-  }, [router]);
+    function tryLoad() {
+      const stored = localStorage.getItem('relate_results');
+      if (stored) {
+        const parsedReport = JSON.parse(stored);
+        setReport(parsedReport);
+        setReferrals(generateReferrals(parsedReport));
+        return true;
+      }
+      return false;
+    }
+
+    if (!tryLoad() && user) {
+      // No localStorage — try loading from Supabase
+      loadAndHydrateProgress(user.id).then((data) => {
+        if (data?.results) {
+          tryLoad(); // DB data now in localStorage
+        } else {
+          router.push('/assessment');
+        }
+      });
+    } else if (!user && !localStorage.getItem('relate_results')) {
+      router.push('/assessment');
+    }
+  }, [router, user]);
 
   useEffect(() => {
     if (!user) return;

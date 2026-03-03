@@ -2,6 +2,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
+import { DynamicCTA } from '@/components/DynamicCTA';
+import { TestAccessCard } from '@/components/TestAccessCard';
 
 const MODULES = [
   {
@@ -99,9 +101,7 @@ export default function LandingPage() {
             The most comprehensive relationship assessment ever built. Discover your persona, understand your dating patterns, and see who you&apos;re actually compatible with. Take meaningful steps with your partner to improve your relationship. All backed by clinical psychology and supported by Claude.ai.
           </p>
           <div className="flex items-center justify-center">
-            <Link href="/auth/signup" className="btn-primary text-base px-8 py-3">
-              Start Assessment
-            </Link>
+            <DynamicCTA />
           </div>
         </div>
       </section>
@@ -278,6 +278,10 @@ export default function LandingPage() {
             </p>
           </div>
 
+          <div className="max-w-lg mx-auto mb-8">
+            <TestAccessCard />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Free */}
             <div className="card flex flex-col">
@@ -297,7 +301,7 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-              <Link href="/auth/signup" className="btn-secondary w-full text-center">Start Free</Link>
+              <DynamicCTA className="btn-secondary w-full text-center" fallbackLabel="Start Free" />
             </div>
 
             {/* Plus */}
@@ -319,7 +323,7 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-              <Link href="/auth/signup" className="btn-secondary w-full text-center">Get Plus</Link>
+              <DynamicCTA className="btn-secondary w-full text-center" fallbackLabel="Get Plus" />
             </div>
 
             {/* Premium */}
@@ -343,7 +347,7 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-              <Link href="/auth/signup" className="btn-primary w-full text-center">Get Premium</Link>
+              <DynamicCTA className="btn-primary w-full text-center" fallbackLabel="Get Premium" />
             </div>
 
             {/* Couples */}
@@ -365,7 +369,7 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-              <Link href="/auth/signup" className="btn-secondary w-full text-center">Get Couples</Link>
+              <DynamicCTA className="btn-secondary w-full text-center" fallbackLabel="Get Couples" />
             </div>
           </div>
         </div>
@@ -398,9 +402,7 @@ export default function LandingPage() {
           <p className="text-secondary mb-8 max-w-md mx-auto">
             The assessment is free, saves your progress, and takes about 100 minutes across 4 modules. Your persona is waiting.
           </p>
-          <Link href="/auth/signup" className="btn-primary text-base px-8 py-3">
-            Begin the Assessment
-          </Link>
+          <DynamicCTA fallbackLabel="Begin the Assessment" />
         </div>
       </section>
 

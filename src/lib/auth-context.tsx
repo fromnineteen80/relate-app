@@ -119,6 +119,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signOut() {
+    // Clear all RELATE localStorage data to prevent privacy leaks on shared devices
+    const relateKeys = Object.keys(localStorage).filter(k => k.startsWith('relate_'));
+    relateKeys.forEach(k => localStorage.removeItem(k));
+    // Clear sessionStorage (advisor messages, etc.)
+    sessionStorage.clear();
+
     if (config.useMockAuth) {
       mockSignOut();
       setUser(null);

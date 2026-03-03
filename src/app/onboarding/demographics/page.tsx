@@ -42,6 +42,7 @@ type FormData = {
   prefFitnessLevels: string[];
   prefPolitical: string[];
   prefHasKids: string;
+  prefWantKids: string;
   prefSmoking: string;
   seeking: string;
 };
@@ -72,7 +73,7 @@ export default function DemographicsPage() {
     political: '', smoking: '', hasKids: '', wantKids: '', relationshipStatus: '',
     prefAgeMin: '', prefAgeMax: '', prefIncome: 0, prefHeight: '',
     prefBodyTypes: [], prefFitnessLevels: [], prefPolitical: [],
-    prefHasKids: '', prefSmoking: '', seeking: '',
+    prefHasKids: '', prefWantKids: '', prefSmoking: '', seeking: '',
   });
 
   // Load saved demographics on mount
@@ -129,7 +130,7 @@ export default function DemographicsPage() {
       case 2: {
         const base = form.prefAgeMin && form.prefAgeMax && form.prefBodyTypes.length > 0 &&
           form.prefFitnessLevels.length > 0 && form.prefPolitical.length > 0 &&
-          form.prefHasKids && form.prefSmoking;
+          form.prefHasKids && form.prefWantKids && form.prefSmoking;
         if (form.gender === 'Woman') return base && form.prefHeight;
         return base;
       }
@@ -176,7 +177,7 @@ export default function DemographicsPage() {
       pref_fitness_levels: form.prefFitnessLevels,
       pref_smoking: form.prefSmoking,
       pref_has_kids: form.prefHasKids,
-      pref_want_kids: form.wantKids,
+      pref_want_kids: form.prefWantKids,
       pref_ethnicities: [],
       pref_political: form.prefPolitical,
       pref_education_min: null,
@@ -400,6 +401,15 @@ export default function DemographicsPage() {
               <option value="No preference">No preference</option>
               <option value="No">No</option>
               <option value="Yes">Yes</option>
+            </select>
+          </div>
+          <div>
+            <label className="label">Does your partner need to want kids? *</label>
+            <select value={form.prefWantKids} onChange={e => updateField('prefWantKids', e.target.value)} className="input">
+              <option value="">Select...</option>
+              <option value="No preference">No preference</option>
+              <option value="Yes">Must want kids</option>
+              <option value="No">Must not want kids</option>
             </select>
           </div>
           <div>

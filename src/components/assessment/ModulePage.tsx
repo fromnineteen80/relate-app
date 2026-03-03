@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback, ReactNode } from 'react';
+import { useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { FlatQuestion } from '@/lib/questions';
+import { useAuth } from '@/lib/auth-context';
 import { SiteHeader } from '@/components/SiteHeader';
 import QuestionCard from './QuestionCard';
+import { saveModuleResponses, saveModuleCompleted, loadAndHydrateProgress } from '@/lib/supabase/progress';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -23,6 +25,7 @@ type Props = {
 
 export default function ModulePage({ moduleNumber, title, questions, nextPath, renderReward, onModuleComplete }: Props) {
   const router = useRouter();
+  const { user } = useAuth();
   const storageKey = `relate_m${moduleNumber}_responses`;
   const [responses, setResponses] = useState<Record<string, number | string>>({});
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -30,13 +33,13 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
   const [showComplete, setShowComplete] = useState(false);
   const [scoredData, setScoredData] = useState<any>(null);
   const [scoring, setScoring] = useState(false);
+  const dbSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Load saved responses
+  // Load saved responses — localStorage first, Supabase fallback
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const saved = localStorage.getItem(storageKey);
-    if (saved) {
-      const parsed = JSON.parse(saved);
+
+    function resumeFrom(parsed: Record<string, number | string>) {
       setResponses(parsed);
       const firstUnanswered = questions.findIndex(q => !(q.id in parsed));
       if (firstUnanswered >= 0) {
@@ -45,17 +48,39 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
       } else if (Object.keys(parsed).length >= questions.length) {
         setShowIntro(false);
         setShowComplete(true);
-        // Score if reward is available and we haven't scored yet
         if (onModuleComplete) {
           onModuleComplete(parsed).then(data => setScoredData(data));
         }
       }
     }
-  }, [storageKey, questions, onModuleComplete]);
+
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      resumeFrom(JSON.parse(saved));
+    } else if (user) {
+      // No local data — try loading from Supabase
+      loadAndHydrateProgress(user.id).then((data) => {
+        if (data) {
+          const dbSaved = localStorage.getItem(storageKey);
+          if (dbSaved) resumeFrom(JSON.parse(dbSaved));
+        }
+      });
+    }
+  }, [storageKey, questions, onModuleComplete, user]);
+
+  // Debounced save to Supabase (every 2 seconds of inactivity)
+  const saveToDb = useCallback((updated: Record<string, number | string>) => {
+    if (!user) return;
+    if (dbSaveTimer.current) clearTimeout(dbSaveTimer.current);
+    dbSaveTimer.current = setTimeout(() => {
+      saveModuleResponses(user.id, moduleNumber, updated);
+    }, 2000);
+  }, [user, moduleNumber]);
 
   const saveResponses = useCallback((updated: Record<string, number | string>) => {
     localStorage.setItem(storageKey, JSON.stringify(updated));
-  }, [storageKey]);
+    saveToDb(updated);
+  }, [storageKey, saveToDb]);
 
   function handleAnswer(questionId: string, value: number | string) {
     const updated = { ...responses, [questionId]: value };
@@ -66,13 +91,19 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
       if (currentIndex < questions.length - 1) {
         setCurrentIndex(currentIndex + 1);
       } else {
-        // Module complete
+        // Module complete — save immediately to both localStorage and Supabase
         localStorage.setItem(`relate_m${moduleNumber}_completed`, 'true');
+        if (user) {
+          // Flush debounced save immediately
+          if (dbSaveTimer.current) clearTimeout(dbSaveTimer.current);
+          saveModuleResponses(user.id, moduleNumber, updated);
+        }
 
         if (onModuleComplete) {
           setScoring(true);
           onModuleComplete(updated).then(data => {
             setScoredData(data);
+            if (user) saveModuleCompleted(user.id, moduleNumber, data);
             setScoring(false);
             setShowComplete(true);
           }).catch(() => {

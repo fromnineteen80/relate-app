@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useAuth } from '@/lib/auth-context';
 import { lookupZip } from '@/lib/zip-lookup';
 import { SiteHeader } from '@/components/SiteHeader';
+import { saveProfileToDb, loadProfileFromDb } from '@/lib/supabase/progress';
 
 export default function ProfileSetupPage() {
   const { user, loading, emailVerified } = useAuth();
@@ -23,26 +24,38 @@ export default function ProfileSetupPage() {
   const [savedToast, setSavedToast] = useState(false);
   const [zipLoading, setZipLoading] = useState(false);
 
-  // Load saved profile on mount
+  // Load saved profile on mount — localStorage first, Supabase fallback
   useEffect(() => {
-    const stored = localStorage.getItem('relate_profile');
-    if (stored) {
-      try {
-        const p = JSON.parse(stored);
-        setFirstName(p.firstName || '');
-        setLastName(p.lastName || '');
-        setZipCode(p.zipCode || '');
-        setCity(p.city || '');
-        setState(p.state || '');
-        setCounty(p.county || '');
-        setPhotoUrl(p.photoUrl || null);
-      } catch { /* ignore */ }
+    function hydrateFromLocal() {
+      const stored = localStorage.getItem('relate_profile');
+      if (stored) {
+        try {
+          const p = JSON.parse(stored);
+          setFirstName(p.firstName || '');
+          setLastName(p.lastName || '');
+          setZipCode(p.zipCode || '');
+          setCity(p.city || '');
+          setState(p.state || '');
+          setCounty(p.county || '');
+          setPhotoUrl(p.photoUrl || null);
+          return true;
+        } catch { /* ignore */ }
+      }
+      return false;
     }
+
+    if (!hydrateFromLocal() && user) {
+      // No localStorage data — try loading from Supabase
+      loadProfileFromDb(user.id).then((found) => {
+        if (found) hydrateFromLocal(); // DB data now in localStorage
+      });
+    }
+
     // Also load legacy photo
     const legacyPhoto = localStorage.getItem('relate_profile_photo');
-    if (legacyPhoto && !photoUrl) setPhotoUrl(legacyPhoto);
+    if (legacyPhoto) setPhotoUrl(legacyPhoto);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user]);
 
   // Guard: must be logged in and verified
   useEffect(() => {
@@ -56,12 +69,15 @@ export default function ProfileSetupPage() {
   const saveProfile = useCallback(() => {
     const profile = { firstName, lastName, zipCode, city, state, county, photoUrl };
     localStorage.setItem('relate_profile', JSON.stringify(profile));
-    // Also save name for legacy profile settings compat
     localStorage.setItem('relate_profile_name', `${firstName} ${lastName}`.trim());
     if (photoUrl) localStorage.setItem('relate_profile_photo', photoUrl);
+    // Persist to Supabase in background
+    if (user) {
+      saveProfileToDb(user.id, user.email, { firstName, lastName, zipCode, city, state, county });
+    }
     setSavedToast(true);
     setTimeout(() => setSavedToast(false), 1500);
-  }, [firstName, lastName, zipCode, city, state, county, photoUrl]);
+  }, [firstName, lastName, zipCode, city, state, county, photoUrl, user]);
 
   // Zip code lookup
   useEffect(() => {

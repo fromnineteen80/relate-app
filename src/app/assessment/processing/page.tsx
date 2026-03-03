@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth-context';
 import { SiteHeader } from '@/components/SiteHeader';
+import { saveResults } from '@/lib/supabase/progress';
 
 export default function ProcessingPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [status, setStatus] = useState('Collecting responses...');
   const [error, setError] = useState('');
   const [progress, setProgress] = useState(0);
@@ -54,6 +57,7 @@ export default function ProcessingPage() {
         setStatus('Building your report...');
 
         localStorage.setItem('relate_results', JSON.stringify(data.report));
+        if (user) saveResults(user.id, data.report);
 
         setProgress(100);
         setStatus('Complete');
@@ -65,7 +69,8 @@ export default function ProcessingPage() {
     }
 
     process();
-  }, [router]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router, user]);
 
   return (
     <div className="min-h-screen flex flex-col">
