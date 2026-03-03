@@ -390,9 +390,25 @@ function AccountPage() {
             </Link>
           )}
           {assessmentComplete && (currentTier === 'premium' || currentTier === 'couples') && (
-            <p className="text-xs text-secondary mt-2 text-center">
-              As a {PRICING[currentTier].label} member, you can retake the assessment at any time.
-            </p>
+            <button
+              onClick={() => {
+                if (!confirm('This will clear your current assessment progress. Your existing results will still be available until you generate new ones. Continue?')) return;
+                for (let m = 1; m <= 4; m++) {
+                  localStorage.removeItem(`relate_m${m}_responses`);
+                  localStorage.removeItem(`relate_m${m}_completed`);
+                  localStorage.removeItem(`relate_m${m}_scored`);
+                }
+                setModuleProgress({});
+                setM1Data(null);
+                setM2Data(null);
+                setM3Data(null);
+                setM4Data(null);
+                router.push('/assessment');
+              }}
+              className="btn-secondary w-full text-center mt-2"
+            >
+              Retake Assessment
+            </button>
           )}
         </section>
 

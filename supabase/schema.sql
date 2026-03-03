@@ -138,14 +138,14 @@ create table if not exists public.user_progress (
 -- Row Level Security (RLS)
 -- ============================================================
 
--- Disable RLS for testing (re-enable with policies for production)
-alter table public.users disable row level security;
-alter table public.partnerships disable row level security;
-alter table public.checkins disable row level security;
-alter table public.challenge_progress disable row level security;
-alter table public.payments disable row level security;
-alter table public.referral_clicks disable row level security;
-alter table public.user_progress disable row level security;
+-- Enable RLS — policies below control per-user access
+alter table public.users enable row level security;
+alter table public.partnerships enable row level security;
+alter table public.checkins enable row level security;
+alter table public.challenge_progress enable row level security;
+alter table public.payments enable row level security;
+alter table public.referral_clicks enable row level security;
+alter table public.user_progress enable row level security;
 
 -- USERS: read/write own record
 create policy "Users can read own profile"
