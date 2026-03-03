@@ -2,47 +2,13 @@
 
 import { FlatQuestion } from '@/lib/questions';
 
-const AGREE_LABELS = [
+const LIKERT_LABELS = [
   { value: 1, label: 'Strongly Disagree' },
   { value: 2, label: 'Disagree' },
   { value: 3, label: 'Neutral' },
   { value: 4, label: 'Agree' },
   { value: 5, label: 'Strongly Agree' },
 ];
-
-function getScaleLabels(question: FlatQuestion) {
-  // M3 want/offer sections use importance framing
-  if (question.section === 'want') {
-    return [
-      { value: 1, label: 'Not Important' },
-      { value: 2, label: 'Slightly' },
-      { value: 3, label: 'Moderate' },
-      { value: 4, label: 'Important' },
-      { value: 5, label: 'Essential' },
-    ];
-  }
-  if (question.section === 'offer') {
-    return [
-      { value: 1, label: 'Not at All' },
-      { value: 2, label: 'A Little' },
-      { value: 3, label: 'Somewhat' },
-      { value: 4, label: 'Often' },
-      { value: 5, label: 'Always' },
-    ];
-  }
-  // M3/M4 attentiveness uses frequency
-  if (question.section === 'attentiveness') {
-    return [
-      { value: 1, label: 'Never' },
-      { value: 2, label: 'Rarely' },
-      { value: 3, label: 'Sometimes' },
-      { value: 4, label: 'Often' },
-      { value: 5, label: 'Always' },
-    ];
-  }
-  // M4 conflict/emotional sections use agree/disagree
-  return AGREE_LABELS;
-}
 
 type Props = {
   question: FlatQuestion;
@@ -77,14 +43,12 @@ export default function QuestionCard({ question, value, onAnswer }: Props) {
     );
   }
 
-  // Likert scale (direct, behavioral, or generic likert)
-  const labels = getScaleLabels(question);
-
+  // All likert questions across M1-M4 are agreement statements
   return (
     <div>
       <p className="text-lg mb-6">{question.text}</p>
       <div className="flex gap-2 justify-between">
-        {labels.map(({ value: v, label }) => (
+        {LIKERT_LABELS.map(({ value: v, label }) => (
           <button
             key={v}
             onClick={() => onAnswer(question.id, v)}
