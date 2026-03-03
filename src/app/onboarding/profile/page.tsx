@@ -23,6 +23,11 @@ export default function ProfileSetupPage() {
   const [savedToast, setSavedToast] = useState(false);
   const [zipLoading, setZipLoading] = useState(false);
 
+  // Refs for autofill detection
+  const firstNameRef = useRef<HTMLInputElement>(null);
+  const lastNameRef = useRef<HTMLInputElement>(null);
+  const zipInputRef = useRef<HTMLInputElement>(null);
+
   // Load saved profile on mount — localStorage first, Supabase fallback
   useEffect(() => {
     function hydrateFromLocal() {
@@ -78,11 +83,17 @@ export default function ProfileSetupPage() {
     setTimeout(() => setSavedToast(false), 1500);
   }, [firstName, lastName, zipCode, city, state, county, photoUrl, user]);
 
-  // Zip code lookup
+  // Zip code lookup — clear stale metro/state when zip changes, re-lookup when 5 digits
   useEffect(() => {
-    if (zipCode.length !== 5) return;
+    if (zipCode.length !== 5) {
+      setCity('');
+      setState('');
+      return;
+    }
     let cancelled = false;
     setZipLoading(true);
+    setCity('');
+    setState('');
     lookupZip(zipCode).then(result => {
       if (cancelled) return;
       setZipLoading(false);
@@ -93,6 +104,40 @@ export default function ProfileSetupPage() {
     });
     return () => { cancelled = true; };
   }, [zipCode]);
+
+  // Detect browser autofill — browsers may set input values without firing React onChange
+  useEffect(() => {
+    function syncFromDom() {
+      if (firstNameRef.current?.value) {
+        setFirstName(prev => firstNameRef.current!.value !== prev ? firstNameRef.current!.value : prev);
+      }
+      if (lastNameRef.current?.value) {
+        setLastName(prev => lastNameRef.current!.value !== prev ? lastNameRef.current!.value : prev);
+      }
+      if (zipInputRef.current?.value) {
+        setZipCode(prev => {
+          const v = zipInputRef.current!.value.replace(/\D/g, '').slice(0, 5);
+          return v !== prev ? v : prev;
+        });
+      }
+    }
+
+    // Poll briefly after mount to catch browser autofill
+    const timers = [
+      setTimeout(syncFromDom, 200),
+      setTimeout(syncFromDom, 800),
+      setTimeout(syncFromDom, 2000),
+    ];
+
+    // Native change events fire on autofill in some browsers
+    const els = [firstNameRef.current, lastNameRef.current, zipInputRef.current];
+    els.forEach(el => el?.addEventListener('change', syncFromDom));
+
+    return () => {
+      timers.forEach(clearTimeout);
+      els.forEach(el => el?.removeEventListener('change', syncFromDom));
+    };
+  }, []);
 
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -186,7 +231,9 @@ export default function ProfileSetupPage() {
             <div>
               <label className="label">First Name *</label>
               <input
+                ref={firstNameRef}
                 type="text"
+                autoComplete="given-name"
                 value={firstName}
                 onChange={e => setFirstName(e.target.value)}
                 onBlur={saveProfile}
@@ -197,7 +244,9 @@ export default function ProfileSetupPage() {
             <div>
               <label className="label">Last Name *</label>
               <input
+                ref={lastNameRef}
                 type="text"
+                autoComplete="family-name"
                 value={lastName}
                 onChange={e => setLastName(e.target.value)}
                 onBlur={saveProfile}
@@ -212,7 +261,9 @@ export default function ProfileSetupPage() {
             <div>
               <label className="label">ZIP Code *</label>
               <input
+                ref={zipInputRef}
                 type="text"
+                autoComplete="postal-code"
                 value={zipCode}
                 onChange={e => setZipCode(e.target.value.replace(/\D/g, '').slice(0, 5))}
                 onBlur={saveProfile}
