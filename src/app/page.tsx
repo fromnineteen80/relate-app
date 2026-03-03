@@ -9,30 +9,26 @@ const MODULES = [
   {
     num: '01',
     title: 'What You Want',
-    subtitle: '134 questions',
     desc: 'Map your preferences across four dimensions: physical attraction, social energy, lifestyle pace, and core values. This isn\'t a wish list. It\'s a measurement of what actually holds your attention.',
-    time: '~38 min',
+    time: '~40 min',
   },
   {
     num: '02',
     title: 'Who You Are',
-    subtitle: '137 questions',
     desc: 'The same four dimensions, turned inward. This is where your persona emerges as one of 32 types that describes how you show up in relationships, not who you wish you were.',
-    time: '~39 min',
+    time: '~40 min',
   },
   {
     num: '03',
     title: 'How You Connect',
-    subtitle: '28 questions',
     desc: 'Measures your intimacy exchange: how much access you want versus how much you offer. This gap predicts satisfaction better than any compatibility quiz.',
-    time: '~8 min',
+    time: '~10 min',
   },
   {
     num: '04',
     title: 'When Things Get Hard',
-    subtitle: '68 questions',
     desc: 'Conflict approach, emotional drivers, repair speed, capacity under stress, and a full Gottman Four Horsemen screening. This is the module that predicts longevity.',
-    time: '~17 min',
+    time: '~20 min',
   },
 ];
 
@@ -94,7 +90,7 @@ export default function LandingPage() {
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-4">
             Fixing the match to partner journey for 112 million U.S. singles.
           </p>
-          <h1 className="font-serif text-5xl md:text-6xl font-semibold leading-[1.1] mb-6">
+          <h1 className="font-serif text-4xl md:text-5xl font-semibold leading-[1.1] mb-6">
             The First Dating Intelligence Layer
           </h1>
           <p className="text-lg text-secondary max-w-xl mx-auto mb-10 leading-relaxed">
@@ -149,7 +145,6 @@ export default function LandingPage() {
                   <span className="font-mono text-3xl font-light text-stone-300">{m.num}</span>
                   <div>
                     <h3 className="font-serif text-lg font-semibold">{m.title}</h3>
-                    <p className="text-xs text-secondary font-mono">{m.subtitle}</p>
                     <p className="text-xs text-secondary font-mono">{m.time}</p>
                   </div>
                 </div>
