@@ -89,7 +89,6 @@ export default function ProfileSetupPage() {
       if (result) {
         setCity(result.city);
         setState(result.state);
-        if (result.county) setCounty(result.county);
       }
     });
     return () => { cancelled = true; };
@@ -225,14 +224,13 @@ export default function ProfileSetupPage() {
             </div>
 
             <div>
-              <label className="label">City</label>
+              <label className="label">Metro Area</label>
               <input
                 type="text"
                 value={city}
-                onChange={e => setCity(e.target.value)}
-                onBlur={saveProfile}
-                className="input"
-                placeholder={zipCode.length === 5 ? 'Auto-filled from ZIP' : 'Enter ZIP code first'}
+                readOnly
+                className="input bg-stone-50"
+                placeholder="Auto-filled from ZIP"
               />
             </div>
 
@@ -255,7 +253,7 @@ export default function ProfileSetupPage() {
                 onChange={e => setCounty(e.target.value)}
                 onBlur={saveProfile}
                 className="input"
-                placeholder={zipCode.length === 5 ? 'Auto-filled from ZIP' : 'Enter ZIP code first'}
+                placeholder="e.g. Los Angeles County"
               />
             </div>
           </div>
