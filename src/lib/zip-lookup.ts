@@ -3,11 +3,11 @@
 type ZipResult = {
   city: string;
   state: string;
-  counties: string[];
+  county: string;
 };
 
 // Client-side zip code lookup using the free Zippopotam.us API
-// Falls back to a basic static mapping for offline/mock mode
+// County lookup via FCC Census Block API (lat/lng → county)
 let cache: Record<string, ZipResult> = {};
 
 export async function lookupZip(zip: string): Promise<ZipResult | null> {
@@ -25,16 +25,29 @@ export async function lookupZip(zip: string): Promise<ZipResult | null> {
 
     const state = places[0]['state abbreviation'] || '';
     const city = places[0]['place name'] || '';
-    // Collect unique county names from all places for this zip
-    const countySet = new Set<string>();
-    places.forEach((p: Record<string, string>) => { if (p['place name']) countySet.add(p['place name']); });
-    const counties = Array.from(countySet);
+    const lat = places[0]['latitude'];
+    const lng = places[0]['longitude'];
 
-    const result: ZipResult = { city, state, counties: counties.length > 0 ? counties : [city] };
+    // Look up county from lat/lng via FCC Census Block API
+    let county = '';
+    if (lat && lng) {
+      try {
+        const fccRes = await fetch(
+          `https://geo.fcc.gov/api/census/block/find?latitude=${lat}&longitude=${lng}&format=json`
+        );
+        if (fccRes.ok) {
+          const fccData = await fccRes.json();
+          county = fccData?.County?.name || '';
+        }
+      } catch {
+        // County lookup failed — user can enter manually
+      }
+    }
+
+    const result: ZipResult = { city, state, county };
     cache[zip] = result;
     return result;
   } catch {
-    // Fallback for offline/error scenarios
     return lookupZipOffline(zip);
   }
 }
@@ -71,13 +84,5 @@ function lookupZipOffline(zip: string): ZipResult | null {
   };
   const state = stateMap[prefix];
   if (!state) return null;
-  return { city: '', state, counties: [] };
-}
-
-// For looking up counties given a state (client-side API call)
-export async function lookupCounties(state: string): Promise<string[]> {
-  // Use Census Bureau or a simple mapping per state
-  // For now, return empty and let the API handle it
-  void state;
-  return [];
+  return { city: '', state, county: '' };
 }

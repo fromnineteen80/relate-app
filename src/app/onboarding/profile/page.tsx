@@ -19,7 +19,6 @@ export default function ProfileSetupPage() {
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [county, setCounty] = useState('');
-  const [counties, setCounties] = useState<string[]>([]);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [savedToast, setSavedToast] = useState(false);
   const [zipLoading, setZipLoading] = useState(false);
@@ -81,10 +80,7 @@ export default function ProfileSetupPage() {
 
   // Zip code lookup
   useEffect(() => {
-    if (zipCode.length !== 5) {
-      setCounties([]);
-      return;
-    }
+    if (zipCode.length !== 5) return;
     let cancelled = false;
     setZipLoading(true);
     lookupZip(zipCode).then(result => {
@@ -93,12 +89,7 @@ export default function ProfileSetupPage() {
       if (result) {
         setCity(result.city);
         setState(result.state);
-        setCounties(result.counties);
-        if (result.counties.length === 1) {
-          setCounty(result.counties[0]);
-        } else {
-          setCounty('');
-        }
+        if (result.county) setCounty(result.county);
       }
     });
     return () => { cancelled = true; };
@@ -258,26 +249,14 @@ export default function ProfileSetupPage() {
 
             <div>
               <label className="label">County *</label>
-              {counties.length > 1 ? (
-                <select
-                  value={county}
-                  onChange={e => { setCounty(e.target.value); }}
-                  onBlur={saveProfile}
-                  className="input"
-                >
-                  <option value="">Select your county...</option>
-                  {counties.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              ) : (
-                <input
-                  type="text"
-                  value={county}
-                  onChange={e => setCounty(e.target.value)}
-                  onBlur={saveProfile}
-                  className="input"
-                  placeholder={zipCode.length === 5 ? 'Auto-filled from ZIP' : 'Enter ZIP code first'}
-                />
-              )}
+              <input
+                type="text"
+                value={county}
+                onChange={e => setCounty(e.target.value)}
+                onBlur={saveProfile}
+                className="input"
+                placeholder={zipCode.length === 5 ? 'Auto-filled from ZIP' : 'Enter ZIP code first'}
+              />
             </div>
           </div>
         </div>
