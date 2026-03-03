@@ -11,7 +11,15 @@ import { fetchPaymentTier, refreshPaymentTier } from '@/lib/payments';
 import { getProfile } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
 
-type Demographics = { age?: number; gender?: string; relationshipStatus?: string; seeking?: string };
+type Demographics = { age?: number; gender?: string; relationshipStatus?: string; seeking?: string; [key: string]: unknown };
+
+type MarketData = {
+  location?: { cbsaName?: string; cbsaLabel?: string; population?: number };
+  relateScore?: { score: number; components?: Record<string, { national?: number; local?: number; score?: number; weight: number }> };
+  matchPool?: { localSinglePool: number; realisticPool: number; preferredPool: number; idealPool: number; funnel?: { stage: string; count: number; isMilestone?: boolean }[] };
+  matchProbability?: { rate: number; percentage: string };
+  matchCount?: number;
+};
 
 type M1Scored = {
   result?: {
@@ -125,6 +133,9 @@ function AccountPage() {
   // Full results for richer graphics / coaching
   const [fullM3, setFullM3] = useState<M3Scored['result'] | null>(null);
   const [fullM4, setFullM4] = useState<M4Scored['result'] | null>(null);
+  // Market data
+  const [marketData, setMarketData] = useState<MarketData | null>(null);
+  const [marketLoading, setMarketLoading] = useState(false);
 
   // Fetch payment tier (works in both mock and real mode)
   useEffect(() => {
@@ -192,6 +203,77 @@ function AccountPage() {
     setPartnerEmail(localStorage.getItem('relate_partner_email'));
     setProfileData(getProfile());
   }, [authLoading, user, router]);
+
+  // Fetch dating market data when demographics are available
+  useEffect(() => {
+    if (!user || marketData || marketLoading) return;
+
+    // Check for cached market data first
+    const cached = localStorage.getItem('relate_market_data');
+    if (cached) {
+      try { setMarketData(JSON.parse(cached)); return; } catch { /* fetch fresh */ }
+    }
+
+    const demoStr = localStorage.getItem('relate_demographics');
+    const profile = getProfile();
+    if (!demoStr || !profile?.zipCode) return;
+
+    let demo: Demographics;
+    try { demo = JSON.parse(demoStr); } catch { return; }
+
+    setMarketLoading(true);
+    fetch('/api/demographics-market', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: user.id,
+        demographics: {
+          zipCode: profile.zipCode,
+          gender: demo.gender,
+          age: demo.age,
+          ethnicity: (demo as Record<string, unknown>).ethnicity || 'White',
+          orientation: (demo as Record<string, unknown>).orientation || 'Straight',
+          income: (demo as Record<string, unknown>).income || 50000,
+          education: (demo as Record<string, unknown>).education || "Bachelor's Degree",
+          height: (demo as Record<string, unknown>).height || null,
+          bodyType: (demo as Record<string, unknown>).body_type || 'Average',
+          fitness: (demo as Record<string, unknown>).fitness_level || '2 to 3 days a week',
+          political: (demo as Record<string, unknown>).political || 'Moderate',
+          smoking: (demo as Record<string, unknown>).smoking || false,
+          hasKids: (demo as Record<string, unknown>).has_kids || false,
+          wantKids: (demo as Record<string, unknown>).want_kids || 'Not sure',
+          relationshipStatus: demo.relationshipStatus || 'Single',
+        },
+        preferences: {
+          prefAgeMin: (demo as Record<string, unknown>).pref_age_min || ((demo.age || 30) - 5),
+          prefAgeMax: (demo as Record<string, unknown>).pref_age_max || ((demo.age || 30) + 5),
+          prefIncomeMin: (demo as Record<string, unknown>).pref_income_min || 0,
+          prefHeightMin: (demo as Record<string, unknown>).pref_height_min || null,
+          prefBodyTypes: (demo as Record<string, unknown>).pref_body_types || ['No preference'],
+          prefFitnessLevels: (demo as Record<string, unknown>).pref_fitness_levels || ['No preference'],
+          prefPolitical: (demo as Record<string, unknown>).pref_political || ['No preference'],
+          prefHasKids: (demo as Record<string, unknown>).pref_has_kids || 'No preference',
+          prefSmoking: (demo as Record<string, unknown>).pref_smoking || 'No preference',
+        },
+      }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const md: MarketData = {
+            location: data.location,
+            relateScore: data.relateScore,
+            matchPool: data.matchPool,
+            matchProbability: data.matchProbability,
+            matchCount: data.matchCount,
+          };
+          setMarketData(md);
+          localStorage.setItem('relate_market_data', JSON.stringify(md));
+        }
+      })
+      .catch(() => { /* silent fail — market data is optional */ })
+      .finally(() => setMarketLoading(false));
+  }, [user, marketData, marketLoading]);
 
   async function handleSignOut() {
     await signOut();
@@ -586,6 +668,11 @@ function AccountPage() {
           />
         )}
 
+        {/* ── Dating Market ── */}
+        {(marketData || marketLoading) && (
+          <DatingMarketViz data={marketData} loading={marketLoading} />
+        )}
+
         {/* ── Compatibility Rankings ── */}
         {matches.length > 0 && (
           <section className="card mb-4">
@@ -755,6 +842,177 @@ function AccountPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+// ── Dating Market Visualization ──
+function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: boolean }) {
+  if (loading) {
+    return (
+      <section className="card mb-4">
+        <h2 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h2>
+        <p className="text-xs text-secondary mb-4">Analyzing your local market...</p>
+        <div className="flex items-center justify-center py-8">
+          <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+        </div>
+      </section>
+    );
+  }
+
+  if (!data) return null;
+
+  const score = data.relateScore?.score ?? 0;
+  const pool = data.matchPool;
+  const metro = data.location?.cbsaLabel || data.location?.cbsaName || 'Your Metro';
+  const metroPop = data.location?.population || 0;
+  const prob = data.matchProbability;
+  const matchCount = data.matchCount ?? 0;
+
+  // Score tier label
+  function scoreTier(s: number) {
+    if (s >= 80) return { label: 'Exceptional', color: 'text-success' };
+    if (s >= 65) return { label: 'Strong', color: 'text-success' };
+    if (s >= 50) return { label: 'Above Average', color: 'text-accent' };
+    if (s >= 35) return { label: 'Average', color: 'text-warning' };
+    return { label: 'Below Average', color: 'text-danger' };
+  }
+
+  const tier = scoreTier(score);
+
+  // Component score bars
+  const components = data.relateScore?.components || {};
+  const compOrder = ['income', 'education', 'age', 'ethnicity', 'children'];
+  const compLabels: Record<string, string> = {
+    income: 'Income', education: 'Education', age: 'Age', ethnicity: 'Ethnicity', children: 'Children',
+  };
+
+  // Format big numbers
+  function fmt(n: number) {
+    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+    if (n >= 1000) return (n / 1000).toFixed(0) + 'k';
+    return String(n);
+  }
+
+  // Funnel milestones
+  const milestones = [
+    { label: 'Metro Population', value: metroPop },
+    { label: 'Single Pool', value: pool?.localSinglePool || 0 },
+    { label: 'Realistic Pool', value: pool?.realisticPool || 0 },
+    { label: 'Preferred Pool', value: pool?.preferredPool || 0 },
+    { label: 'Ideal Pool', value: pool?.idealPool || 0 },
+  ];
+
+  return (
+    <section className="card mb-4">
+      <h2 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h2>
+      <p className="text-xs text-secondary mb-5">{metro}</p>
+
+      {/* Relate Score Gauge */}
+      <div className="mb-6">
+        <div className="flex items-end justify-between mb-2">
+          <div>
+            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Relate Score</span>
+            <div className="flex items-baseline gap-2 mt-1">
+              <span className="font-mono text-3xl font-semibold">{score.toFixed(0)}</span>
+              <span className={`text-sm font-medium ${tier.color}`}>{tier.label}</span>
+            </div>
+          </div>
+          <span className="text-xs text-secondary font-mono">/100</span>
+        </div>
+
+        {/* Score bar */}
+        <div className="relative h-3 bg-stone-200 rounded-full overflow-hidden">
+          <div
+            className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out"
+            style={{
+              width: `${score}%`,
+              background: score >= 65 ? 'var(--color-success)' : score >= 50 ? 'var(--color-accent)' : score >= 35 ? 'var(--color-warning)' : 'var(--color-danger)',
+            }}
+          />
+          {/* Marker ticks */}
+          {[25, 50, 75].map(tick => (
+            <div key={tick} className="absolute top-0 bottom-0 w-px bg-white/50" style={{ left: `${tick}%` }} />
+          ))}
+        </div>
+        <p className="text-xs text-secondary mt-2">
+          How competitive you are in the {metro} dating market based on income, education, age, and demographics.
+        </p>
+      </div>
+
+      {/* Score Components */}
+      {Object.keys(components).length > 0 && (
+        <div className="mb-6">
+          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Score Breakdown</span>
+          <div className="space-y-2 mt-2">
+            {compOrder.map(key => {
+              const comp = components[key];
+              if (!comp) return null;
+              const val = comp.local ?? comp.score ?? comp.national ?? 50;
+              const weight = comp.weight ?? 0;
+              return (
+                <div key={key} className="flex items-center gap-3">
+                  <span className="text-xs text-secondary w-16">{compLabels[key]}</span>
+                  <div className="flex-1 h-1.5 bg-stone-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-accent rounded-full transition-all duration-700"
+                      style={{ width: `${Math.min(100, Math.max(0, val))}%` }}
+                    />
+                  </div>
+                  <span className="text-xs font-mono w-8 text-right">{Math.round(val)}</span>
+                  <span className="text-[10px] text-secondary w-6">{Math.round(weight * 100)}%</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Match Pool Funnel */}
+      {pool && (
+        <div className="mb-6">
+          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
+          <div className="mt-3 space-y-1">
+            {milestones.map((m, i) => {
+              const maxVal = milestones[0].value || 1;
+              const pct = (m.value / maxVal) * 100;
+              const isLast = i === milestones.length - 1;
+              return (
+                <div key={m.label}>
+                  <div className="flex items-center justify-between mb-0.5">
+                    <span className={`text-xs ${isLast ? 'font-medium' : 'text-secondary'}`}>{m.label}</span>
+                    <span className={`text-xs font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{fmt(m.value)}</span>
+                  </div>
+                  <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
+                    <div
+                      className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ${isLast ? 'bg-accent' : 'bg-stone-300'}`}
+                      style={{ width: `${Math.max(1, pct)}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Match Probability & Count */}
+      <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
+        <div className="text-center">
+          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Probability</span>
+          <p className="font-mono text-2xl font-semibold mt-1">{prob?.percentage || '—'}</p>
+          <p className="text-xs text-secondary mt-1">
+            Chance of matching with someone from your ideal pool
+          </p>
+        </div>
+        <div className="text-center">
+          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Estimated Matches</span>
+          <p className="font-mono text-2xl font-semibold mt-1">{fmt(matchCount)}</p>
+          <p className="text-xs text-secondary mt-1">
+            Compatible singles in {metro.split(',')[0] || 'your area'}
+          </p>
+        </div>
+      </div>
+    </section>
   );
 }
 
