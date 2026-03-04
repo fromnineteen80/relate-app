@@ -87,6 +87,9 @@ function ResultsDashboard() {
   const [demographics, setDemographics] = useState<Demographics>({});
   const [hasResults, setHasResults] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [hasPartner, setHasPartner] = useState(false);
+  const [hasCouplesAccess, setHasCouplesAccess] = useState(false);
+  const [partnerName, setPartnerName] = useState<string | null>(null);
   const marketFetchedRef = useRef(false);
 
   // Load everything from localStorage / Supabase
@@ -122,7 +125,33 @@ function ResultsDashboard() {
 
   useEffect(() => {
     if (!user) return;
-    fetchPaymentTier(user.email).then(({ tier }) => setPricingTier(tier));
+    fetchPaymentTier(user.email).then(({ tier }) => {
+      setPricingTier(tier);
+      if (tier === 'couples') setHasCouplesAccess(true);
+    });
+  }, [user]);
+
+  // Load partner info
+  useEffect(() => {
+    if (!user) return;
+    const savedPartner = localStorage.getItem('relate_partner_results');
+    if (savedPartner) setHasPartner(true);
+    const savedDiscount = localStorage.getItem('relate_couples_discount');
+    if (savedDiscount) setHasCouplesAccess(true);
+
+    fetch(`/api/partner-lookup?userId=${user.id}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.partner) {
+          setHasPartner(true);
+          const name = data.partner.firstName
+            ? `${data.partner.firstName}${data.partner.lastName ? ` ${data.partner.lastName}` : ''}`
+            : data.partner.email;
+          setPartnerName(name);
+          localStorage.setItem('relate_partner_results', 'true');
+        }
+      })
+      .catch(() => { });
   }, [user]);
 
   // Fetch market data
@@ -962,10 +991,40 @@ function ResultsDashboard() {
         {hasResults && (
           <section className="card mb-6 border-accent">
             <h3 className="font-serif text-lg font-semibold mb-2">Couples Mode</h3>
-            <p className="text-sm text-secondary mb-4">
-              Invite your partner to take the assessment and unlock your compatibility report, growth plan, and shared advisor.
-            </p>
-            <Link href="/invite" className="btn-primary text-xs">Get Report</Link>
+            {hasPartner && hasCouplesAccess ? (
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center text-xs font-medium flex-shrink-0">
+                    {partnerName ? partnerName.charAt(0).toUpperCase() : '?'}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Connected with {partnerName || 'your partner'}</p>
+                    <p className="text-xs text-secondary">Couples access active</p>
+                  </div>
+                </div>
+                <Link href="/results/compare" className="btn-primary text-xs">View Couples Results</Link>
+              </div>
+            ) : hasPartner ? (
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center text-xs font-medium flex-shrink-0">
+                    {partnerName ? partnerName.charAt(0).toUpperCase() : '?'}
+                  </div>
+                  <p className="text-sm font-medium">Connected with {partnerName || 'your partner'}</p>
+                </div>
+                <p className="text-sm text-secondary mb-4">
+                  Activate Couples access to unlock your compatibility report, growth plan, and shared advisor.
+                </p>
+                <Link href="/invite" className="btn-primary text-xs">Activate Couples</Link>
+              </div>
+            ) : (
+              <div>
+                <p className="text-sm text-secondary mb-4">
+                  Connect with your partner to unlock your compatibility report, growth plan, and shared advisor.
+                </p>
+                <Link href="/invite" className="btn-primary text-xs">Connect Partner</Link>
+              </div>
+            )}
           </section>
         )}
       </main>

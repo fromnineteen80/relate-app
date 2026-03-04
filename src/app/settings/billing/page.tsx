@@ -28,6 +28,13 @@ function tierIndex(t: PricingTier) {
   return TIER_ORDER.indexOf(t);
 }
 
+type PartnerInfo = {
+  id: string;
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+};
+
 export default function BillingPage() {
   const { user } = useAuth();
   const [tier, setTier] = useState<PricingTier>('free');
@@ -37,6 +44,7 @@ export default function BillingPage() {
   const [loading, setLoading] = useState(true);
   const [portalLoading, setPortalLoading] = useState(false);
   const [isTestMode, setIsTestMode] = useState(false);
+  const [partner, setPartner] = useState<PartnerInfo | null>(null);
 
   const loadSubscription = useCallback(async () => {
     if (!user?.email) return;
@@ -56,6 +64,12 @@ export default function BillingPage() {
       setSubscription(data.subscription || null);
       setLegacyPayment(data.legacyPayment || false);
       setDiscountCode(data.discountCode || null);
+      // Load partner info
+      try {
+        const partnerRes = await fetch(`/api/partner-lookup?userId=${user.id}`);
+        const partnerData = await partnerRes.json();
+        if (partnerData.partner) setPartner(partnerData.partner);
+      } catch { /* ignore */ }
     } catch {
       // Fall back to simple tier check
       const { tier: t } = await fetchPaymentTier(user.email);
@@ -63,7 +77,7 @@ export default function BillingPage() {
     } finally {
       setLoading(false);
     }
-  }, [user?.email]);
+  }, [user?.email, user?.id]);
 
   useEffect(() => { loadSubscription(); }, [loadSubscription]);
 
@@ -225,6 +239,25 @@ export default function BillingPage() {
             </div>
           )}
         </div>
+
+        {/* ── Partner Connection ── */}
+        {tier === 'couples' && partner && (
+          <div className="card mb-4">
+            <h3 className="font-serif font-semibold mb-3">Couples Partner</h3>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-accent/10 text-accent flex items-center justify-center text-sm font-medium flex-shrink-0">
+                {partner.firstName ? partner.firstName.charAt(0).toUpperCase() : partner.email.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">
+                  {partner.firstName ? `${partner.firstName}${partner.lastName ? ` ${partner.lastName}` : ''}` : partner.email}
+                </p>
+                {partner.firstName && <p className="text-xs text-secondary truncate">{partner.email}</p>}
+              </div>
+              <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
+            </div>
+          </div>
+        )}
 
         {/* ── Payment Method ── */}
         {subscription?.paymentMethod && (
