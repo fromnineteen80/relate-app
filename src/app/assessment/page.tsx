@@ -11,8 +11,8 @@ import { loadAndHydrateProgress, loadProfileFromDb } from '@/lib/supabase/progre
 type ModuleStatus = { completed: boolean; questionIndex: number; total: number };
 
 const MODULES = [
-  { id: 1, title: 'What You Want', desc: 'Partner preferences across 4 dimensions', time: '~20 min', path: '/assessment/module-1' },
-  { id: 2, title: 'Who You Are', desc: 'Self-assessment with validation', time: '~20 min', path: '/assessment/module-2' },
+  { id: 1, title: 'What You Want', desc: 'Partner preferences across 4 dimensions', time: '~40 min', path: '/assessment/module-1' },
+  { id: 2, title: 'Who You Are', desc: 'Self-assessment with validation', time: '~40 min', path: '/assessment/module-2' },
   { id: 3, title: 'How You Connect', desc: 'Intimacy access patterns', time: '~10 min', path: '/assessment/module-3' },
   { id: 4, title: 'When Things Get Hard', desc: 'Conflict, repair, capacity', time: '~20 min', path: '/assessment/module-4' },
 ];

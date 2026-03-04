@@ -112,7 +112,7 @@ export default function AboutPage() {
             Ready to meet yourself?
           </h2>
           <p className="text-secondary mb-8 max-w-md mx-auto">
-            The assessment is free, saves your progress, and takes about 70 minutes across 4 modules. Your persona is waiting.
+            The assessment is free, saves your progress, and takes about 110 minutes across 4 modules. Your persona is waiting.
           </p>
           <Link href="/auth/signup" className="btn-primary text-base px-8 py-3">
             Begin the Assessment

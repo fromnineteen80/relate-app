@@ -77,7 +77,7 @@ export default function MethodologyPage() {
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">The Assessment</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">Four Modules, 367 Questions</h2>
           <p className="text-secondary mb-10">
-            The assessment takes approximately 70 minutes across four modules. Each module measures a distinct aspect of your relationship profile, and results build progressively as you complete each one.
+            The assessment takes approximately 110 minutes across four modules. Each module measures a distinct aspect of your relationship profile, and results build progressively as you complete each one.
           </p>
 
           {/* Module 1 */}
@@ -86,7 +86,7 @@ export default function MethodologyPage() {
               <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-mono text-lg">1</div>
               <div>
                 <h3 className="font-serif text-xl font-semibold">What You Want</h3>
-                <p className="text-xs text-secondary">134 questions, approximately 20 minutes</p>
+                <p className="text-xs text-secondary">134 questions, approximately 40 minutes</p>
               </div>
             </div>
             <div className="pl-13 space-y-3">
@@ -114,7 +114,7 @@ export default function MethodologyPage() {
               <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-mono text-lg">2</div>
               <div>
                 <h3 className="font-serif text-xl font-semibold">Who You Are</h3>
-                <p className="text-xs text-secondary">137 questions, approximately 20 minutes</p>
+                <p className="text-xs text-secondary">137 questions, approximately 40 minutes</p>
               </div>
             </div>
             <div className="pl-13 space-y-3">
@@ -401,7 +401,7 @@ export default function MethodologyPage() {
             Ready to discover your profile?
           </h2>
           <p className="text-secondary mb-8 max-w-md mx-auto">
-            The assessment is free, saves your progress, and takes about 70 minutes across 4 modules. Your persona is waiting.
+            The assessment is free, saves your progress, and takes about 110 minutes across 4 modules. Your persona is waiting.
           </p>
           <div className="flex gap-3 justify-center">
             <Link href="/auth/signup" className="btn-primary text-base px-8 py-3">
