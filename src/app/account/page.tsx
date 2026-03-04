@@ -924,26 +924,52 @@ function AccountPage() {
               <div className="mt-4 p-4 bg-accent/5 border border-accent/20 rounded-md">
                 <h3 className="text-sm font-semibold mb-2">How to Install Your RELATE Coach Skill</h3>
                 <p className="text-xs text-secondary mb-3">
-                  Your personalized coaching skill has been downloaded as <code className="bg-stone-100 px-1 rounded">relate-coach.zip</code>. This is a Claude Skill — a ready-to-use package that turns Claude into your personal relationship coach.
+                  Your personalized coaching skill has been downloaded as <code className="bg-stone-100 px-1 rounded">relate-coach.zip</code>. This is a Claude Skill — a complete coaching package with your assessment data, coaching workflows, response patterns, and a liability disclaimer.
                 </p>
-                <ol className="text-xs text-secondary space-y-2 list-decimal list-inside">
+
+                <div className="mb-3 p-2 bg-white border border-border rounded">
+                  <p className="text-[11px] font-medium mb-1">What&apos;s inside the ZIP:</p>
+                  <div className="text-[11px] text-secondary font-mono leading-relaxed">
+                    <p>relate-coach/</p>
+                    <p className="ml-3">SKILL.md — Coaching instructions + your key profile</p>
+                    <p className="ml-3">references/assessment-data.md — Full assessment results</p>
+                    <p className="ml-3">references/workflow.md — Step-by-step coaching workflows</p>
+                    <p className="ml-3">references/output-patterns.md — Response format examples</p>
+                    <p className="ml-3">LICENSE — Apache 2.0</p>
+                    <p className="ml-3">DISCLAIMER.md — Liability &amp; therapy disclaimer</p>
+                  </div>
+                </div>
+
+                <p className="text-[11px] font-medium mb-2">Option 1: Upload as a Skill (recommended)</p>
+                <ol className="text-xs text-secondary space-y-1.5 list-decimal list-inside mb-3">
                   <li>
-                    <strong>Go to <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai</a></strong> and sign in (free or Pro account)
+                    Go to <a href="https://claude.ai/customize/skills" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai/customize/skills</a> (or click your profile icon &rarr; Customize &rarr; Skills)
                   </li>
                   <li>
-                    <strong>Open Skills settings:</strong> Click your profile icon, go to <strong>Settings</strong>, then <strong>Skills</strong> (or navigate to Customize and find Skills)
+                    Click <strong>&quot;Add Skill&quot;</strong> and upload <code className="bg-stone-100 px-1 rounded">relate-coach.zip</code>
                   </li>
                   <li>
-                    <strong>Upload the ZIP file:</strong> Click <strong>&quot;Add Skill&quot;</strong> and select the <code className="bg-stone-100 px-1 rounded">relate-coach.zip</code> file you just downloaded. Claude will install the skill automatically
-                  </li>
-                  <li>
-                    <strong>Enable the skill:</strong> Make sure the <strong>relate-coach</strong> skill is toggled on
-                  </li>
-                  <li>
-                    <strong>Start chatting:</strong> Open any new conversation. Claude will automatically use your RELATE data when you ask about relationships, dating, conflict, or self-improvement. The skill contains your full assessment profile, dating market data, conflict patterns, attachment style, and compatibility matches
+                    Toggle <strong>relate-coach</strong> on — Claude will now automatically use your RELATE data in any conversation about relationships, dating, conflict, or self-improvement
                   </li>
                 </ol>
-                <div className="mt-3 p-2 bg-stone-50 border border-border rounded">
+
+                <p className="text-[11px] font-medium mb-2">Option 2: Use as a Project</p>
+                <ol className="text-xs text-secondary space-y-1.5 list-decimal list-inside mb-3">
+                  <li>
+                    Unzip the file on your computer
+                  </li>
+                  <li>
+                    In <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai</a>, create a new <strong>Project</strong> called &quot;RELATE Coach&quot;
+                  </li>
+                  <li>
+                    Add all files from the <code className="bg-stone-100 px-1 rounded">relate-coach/</code> folder as project knowledge
+                  </li>
+                  <li>
+                    Start a conversation within that project
+                  </li>
+                </ol>
+
+                <div className="p-2 bg-stone-50 border border-border rounded mb-2">
                   <p className="text-[11px] font-medium mb-1">What you can ask your coach:</p>
                   <p className="text-[11px] text-secondary">
                     &quot;Should I lower my income filter?&quot; &middot; &quot;I just had a fight about X — what happened?&quot; &middot;
@@ -952,11 +978,13 @@ function AccountPage() {
                     &quot;How do I improve my Relate Score?&quot; &middot; &quot;My partner did X — is that a red flag for my type?&quot;
                   </p>
                 </div>
-                <div className="mt-2 p-2 bg-stone-50 border border-border rounded">
+
+                <div className="p-2 bg-warning/5 border border-warning/20 rounded">
                   <p className="text-[11px] text-secondary">
-                    <strong>Alternative setup:</strong> If skill upload isn&apos;t available on your plan, unzip the file and create a new <strong>Project</strong> in Claude.ai. Add both <code className="bg-stone-100 px-1 rounded">SKILL.md</code> and <code className="bg-stone-100 px-1 rounded">references/assessment-data.md</code> as project knowledge files. Then start a conversation within that project.
+                    <strong>Note:</strong> This skill is not a substitute for licensed therapy. See DISCLAIMER.md in the download for full details. If you&apos;re in crisis, contact the 988 Suicide &amp; Crisis Lifeline or the National Domestic Violence Hotline (1-800-799-7233).
                   </p>
                 </div>
+
                 <button onClick={() => setShowCoachInfo(false)} className="mt-3 text-xs text-secondary hover:text-primary underline">
                   Dismiss
                 </button>
