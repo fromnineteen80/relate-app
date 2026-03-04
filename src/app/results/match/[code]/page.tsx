@@ -15,8 +15,8 @@ function tierLabel(tier: string) {
 
 function tierColor(tier: string) {
   const colors: Record<string, string> = {
-    ideal: 'bg-success', kismet: 'bg-success', effort: 'bg-warning',
-    longShot: 'bg-secondary', atRisk: 'bg-danger', incompatible: 'bg-danger',
+    ideal: 'bg-success', kismet: 'bg-success/70', effort: 'bg-warning',
+    longShot: 'bg-stone-400', atRisk: 'bg-danger/70', incompatible: 'bg-danger',
   };
   return colors[tier] || 'bg-secondary';
 }

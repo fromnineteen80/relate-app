@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateCouplesReport } from '@/lib/couples';
+import { calculateEnhancedCouplesCompatibility } from '@/lib/compatibility';
 import { RELATE_SYSTEM_PROMPT, RELATE_MODELS, RELATE_MAX_TOKENS } from '@/lib/prompts/relate-system';
 
 /* eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any */
@@ -141,10 +142,17 @@ Generate all 8 sections of the couples report as flowing prose narrative.`,
       }
     }
 
+    // Enhanced compatibility scoring (additive — no existing data modified)
+    let enhancedCompatibility = null;
+    try {
+      enhancedCompatibility = calculateEnhancedCouplesCompatibility(user1Results, user2Results);
+    } catch { /* enhanced compatibility is optional */ }
+
     return NextResponse.json({
       success: true,
       report: {
         ...couplesReport,
+        enhancedCompatibility,
         aiNarrative,
         tensionCompatibility,
         frameworkParallels: parallels,
