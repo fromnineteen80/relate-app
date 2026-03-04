@@ -300,7 +300,9 @@ function ResultsDashboard() {
   const canDownload = hasPaid;
   const m4Summary = report.m4?.summary || {};
   const freeMatchLimit = 3;
-  const visibleMatches = hasPaid ? report.matches : report.matches.slice(0, freeMatchLimit);
+  const matches = report.matches || [];
+  const visibleMatches = hasPaid ? matches : matches.slice(0, freeMatchLimit);
+  const dimensions = report.dimensions || {};
 
   // Get M3/M4 full data for MarketCoaching
   let fullM3: any = null;
@@ -337,7 +339,7 @@ function ResultsDashboard() {
         <section className="card mb-6">
           <h3 className="font-serif text-lg font-semibold mb-4">Dimension Scores</h3>
           <div className="space-y-3">
-            {Object.entries(report.dimensions || {}).map(([dim, data]) => {
+            {Object.entries(dimensions).map(([dim, data]) => {
               if (!data || typeof data !== 'object') return null;
               const d = data as { assignedPole?: string; poleAScore?: number; poleBScore?: number; strength?: number };
               return (
@@ -650,10 +652,10 @@ function ResultsDashboard() {
             </table>
           </div>
 
-          {!hasPaid && report.matches.length > freeMatchLimit && (
+          {!hasPaid && matches.length > freeMatchLimit && (
             <div className="mt-4 card border-accent text-center">
               <p className="text-sm mb-3">
-                {report.matches.length - freeMatchLimit} more matches available with Plus
+                {matches.length - freeMatchLimit} more matches available with Plus
               </p>
               <div className="flex gap-2 justify-center">
                 <Link href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary inline-block text-sm">
