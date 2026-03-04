@@ -432,6 +432,55 @@ function AccountPage() {
     }
   }, [marketData]);
 
+  const handleDownloadCoachMd = useCallback(async () => {
+    const resultsStr = localStorage.getItem('relate_results');
+    if (!resultsStr) return;
+    setDownloadingCoach(true);
+    try {
+      const report = JSON.parse(resultsStr);
+      const demoData = (() => { try { return JSON.parse(localStorage.getItem('relate_demographics') || '{}'); } catch { return {}; } })();
+      const m3Full = (() => { try { return JSON.parse(localStorage.getItem('relate_m3_scored') || '{}')?.result; } catch { return undefined; } })();
+      const m4Full = (() => { try { return JSON.parse(localStorage.getItem('relate_m4_scored') || '{}')?.result; } catch { return undefined; } })();
+      const couplesData = (() => { try { return JSON.parse(localStorage.getItem('relate_couples_report') || 'null'); } catch { return null; } })();
+
+      const res = await fetch('/api/generate-coach-prompt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          persona: report.persona,
+          dimensions: report.dimensions,
+          m3: m3Full || report.m3,
+          m4: m4Full || report.m4,
+          matches: report.matches,
+          individualCompatibility: report.individualCompatibility,
+          marketData: marketData || undefined,
+          demographics: demoData,
+          couplesReport: couplesData || undefined,
+          format: 'md',
+        }),
+      });
+
+      if (!res.ok) throw new Error('Failed to generate coach prompt');
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'relate-coach.md';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Coach .md download failed:', err);
+    } finally {
+      setDownloadingCoach(false);
+    }
+  }, [marketData]);
+
+  // Section refs for sub-navigation
+  const coachingSectionRef = useRef<HTMLDivElement>(null);
+
   if (authLoading) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
 
   const completedModules = Object.values(moduleProgress).filter(Boolean).length;
@@ -443,6 +492,20 @@ function AccountPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <SiteHeader />
+
+      {/* ── Sub-Navigation ── */}
+      <nav className="border-b border-border bg-background sticky top-0 z-10">
+        <div className="max-w-2xl mx-auto px-6 flex gap-1 overflow-x-auto">
+          <a href="#profile" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Profile</a>
+          <a href="#subscription" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Subscription</a>
+          <a href="#assessment" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Assessment</a>
+          {hasResults && <a href="#results" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Results</a>}
+          {(marketData || marketLoading) && <a href="#market" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Market</a>}
+          {hasResults && <a href="#downloads" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Downloads</a>}
+          <a href="#partner" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Partner</a>
+          {hasResults && canDownload && <a href="#coaching" className="text-xs font-medium text-accent hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap font-semibold">Ongoing Coaching</a>}
+        </div>
+      </nav>
 
       <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
         <h1 className="font-serif text-3xl font-semibold mb-8">Account</h1>
@@ -459,7 +522,7 @@ function AccountPage() {
         )}
 
         {/* ── Profile ── */}
-        <section className="card mb-4">
+        <section id="profile" className="card mb-4 scroll-mt-12">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-serif text-lg font-semibold">Profile</h2>
             <div className="flex gap-2">
@@ -495,7 +558,7 @@ function AccountPage() {
         </section>
 
         {/* ── Subscription ── */}
-        <section className="card mb-4">
+        <section id="subscription" className="card mb-4 scroll-mt-12">
           <h2 className="font-serif text-lg font-semibold mb-4">Subscription</h2>
 
           <div className={`flex items-center gap-3 p-3 mb-4 rounded-md border ${
@@ -579,7 +642,7 @@ function AccountPage() {
         </section>
 
         {/* ── Assessment Progress ── */}
-        <section className="card mb-4">
+        <section id="assessment" className="card mb-4 scroll-mt-12">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-serif text-lg font-semibold">Assessment Progress</h2>
             <span className="text-xs font-mono text-secondary">{completedModules}/4 modules</span>
@@ -648,7 +711,7 @@ function AccountPage() {
 
         {/* ── Progressive Module Results ── */}
         {(m1Data || m2Data || m3Data || m4Data) && (
-          <section className="card mb-4">
+          <section id="results" className="card mb-4 scroll-mt-12">
             <h2 className="font-serif text-lg font-semibold mb-4">Your Results</h2>
 
             {/* Module 1: Preference Profile */}
@@ -806,7 +869,9 @@ function AccountPage() {
 
         {/* ── Dating Market ── */}
         {(marketData || marketLoading) && (
-          <DatingMarketViz data={marketData} loading={marketLoading} />
+          <div id="market" className="scroll-mt-12">
+            <DatingMarketViz data={marketData} loading={marketLoading} />
+          </div>
         )}
 
         {/* ── Market Coaching ── */}
@@ -868,7 +933,7 @@ function AccountPage() {
 
         {/* ── Downloads ── */}
         {hasResults && (
-          <section className="card mb-4">
+          <section id="downloads" className="card mb-4 scroll-mt-12">
             <h2 className="font-serif text-lg font-semibold mb-4">Downloads</h2>
             <div className="space-y-3">
               <div className="flex items-center justify-between py-2 border-b border-border">
@@ -899,102 +964,12 @@ function AccountPage() {
                   </Link>
                 )}
               </div>
-              <div className="flex items-center justify-between py-2">
-                <div>
-                  <p className="text-sm font-medium">Claude AI Coach</p>
-                  <p className="text-xs text-secondary">
-                    {canDownload
-                      ? 'Personalized coaching prompt for Claude.ai — your results, market data, and patterns'
-                      : 'Available with Plus, Premium, or Couples'}
-                  </p>
-                </div>
-                {canDownload ? (
-                  <button onClick={handleDownloadCoach} disabled={downloadingCoach} className="btn-primary text-xs">
-                    {downloadingCoach ? 'Preparing...' : 'Download'}
-                  </button>
-                ) : (
-                  <Link href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary text-xs">
-                    Upgrade
-                  </Link>
-                )}
-              </div>
             </div>
-
-            {showCoachInfo && (
-              <div className="mt-4 p-4 bg-accent/5 border border-accent/20 rounded-md">
-                <h3 className="text-sm font-semibold mb-2">How to Install Your RELATE Coach Skill</h3>
-                <p className="text-xs text-secondary mb-3">
-                  Your personalized coaching skill has been downloaded as <code className="bg-stone-100 px-1 rounded">relate-coach.zip</code>. This is a Claude Skill — a complete coaching package with your assessment data, coaching workflows, response patterns, and a liability disclaimer.
-                </p>
-
-                <div className="mb-3 p-2 bg-white border border-border rounded">
-                  <p className="text-[11px] font-medium mb-1">What&apos;s inside the ZIP:</p>
-                  <div className="text-[11px] text-secondary font-mono leading-relaxed">
-                    <p>relate-coach/</p>
-                    <p className="ml-3">SKILL.md — Coaching instructions + your key profile</p>
-                    <p className="ml-3">references/assessment-data.md — Full assessment results</p>
-                    <p className="ml-3">references/workflow.md — Step-by-step coaching workflows</p>
-                    <p className="ml-3">references/output-patterns.md — Response format examples</p>
-                    <p className="ml-3">LICENSE — Apache 2.0</p>
-                    <p className="ml-3">DISCLAIMER.md — Liability &amp; therapy disclaimer</p>
-                  </div>
-                </div>
-
-                <p className="text-[11px] font-medium mb-2">Option 1: Upload as a Skill (recommended)</p>
-                <ol className="text-xs text-secondary space-y-1.5 list-decimal list-inside mb-3">
-                  <li>
-                    Go to <a href="https://claude.ai/customize/skills" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai/customize/skills</a> (or click your profile icon &rarr; Customize &rarr; Skills)
-                  </li>
-                  <li>
-                    Click <strong>&quot;Add Skill&quot;</strong> and upload <code className="bg-stone-100 px-1 rounded">relate-coach.zip</code>
-                  </li>
-                  <li>
-                    Toggle <strong>relate-coach</strong> on — Claude will now automatically use your RELATE data in any conversation about relationships, dating, conflict, or self-improvement
-                  </li>
-                </ol>
-
-                <p className="text-[11px] font-medium mb-2">Option 2: Use as a Project</p>
-                <ol className="text-xs text-secondary space-y-1.5 list-decimal list-inside mb-3">
-                  <li>
-                    Unzip the file on your computer
-                  </li>
-                  <li>
-                    In <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai</a>, create a new <strong>Project</strong> called &quot;RELATE Coach&quot;
-                  </li>
-                  <li>
-                    Add all files from the <code className="bg-stone-100 px-1 rounded">relate-coach/</code> folder as project knowledge
-                  </li>
-                  <li>
-                    Start a conversation within that project
-                  </li>
-                </ol>
-
-                <div className="p-2 bg-stone-50 border border-border rounded mb-2">
-                  <p className="text-[11px] font-medium mb-1">What you can ask your coach:</p>
-                  <p className="text-[11px] text-secondary">
-                    &quot;Should I lower my income filter?&quot; &middot; &quot;I just had a fight about X — what happened?&quot; &middot;
-                    &quot;Is this person a good match for me?&quot; &middot; &quot;Help me write a dating profile&quot; &middot;
-                    &quot;What should I work on this week?&quot; &middot; &quot;Analyze my last date&quot; &middot;
-                    &quot;How do I improve my Relate Score?&quot; &middot; &quot;My partner did X — is that a red flag for my type?&quot;
-                  </p>
-                </div>
-
-                <div className="p-2 bg-warning/5 border border-warning/20 rounded">
-                  <p className="text-[11px] text-secondary">
-                    <strong>Note:</strong> This skill is not a substitute for licensed therapy. See DISCLAIMER.md in the download for full details. If you&apos;re in crisis, contact the 988 Suicide &amp; Crisis Lifeline or the National Domestic Violence Hotline (1-800-799-7233).
-                  </p>
-                </div>
-
-                <button onClick={() => setShowCoachInfo(false)} className="mt-3 text-xs text-secondary hover:text-primary underline">
-                  Dismiss
-                </button>
-              </div>
-            )}
           </section>
         )}
 
         {/* ── Partner Connection ── */}
-        <section className="card mb-4">
+        <section id="partner" className="card mb-4 scroll-mt-12">
           <h2 className="font-serif text-lg font-semibold mb-4">Partner</h2>
 
           {hasPartner ? (
@@ -1091,6 +1066,122 @@ function AccountPage() {
           </button>
         </div>
       </main>
+
+      {/* ── Ongoing Coaching Section (darker background, outside main container) ── */}
+      {hasResults && canDownload && (
+        <div id="coaching" ref={coachingSectionRef} className="bg-stone-100 border-t border-border scroll-mt-12">
+          <div className="max-w-2xl mx-auto px-6 py-10">
+            <h2 className="font-serif text-2xl font-semibold mb-2">Ongoing Coaching</h2>
+            <p className="text-sm text-secondary mb-6">
+              Take your RELATE results with you. Download a personalized AI coaching prompt built from your assessment data, conflict patterns, dating market analysis, and compatibility profile.
+            </p>
+
+            {/* Download Options */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              {/* ZIP Skill */}
+              <div className="bg-white border border-border rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-mono bg-accent/10 text-accent px-1.5 py-0.5 rounded">ZIP</span>
+                  <h3 className="text-sm font-semibold">Claude Skill Package</h3>
+                </div>
+                <p className="text-xs text-secondary mb-3">
+                  Full skill with coaching workflows, response patterns, report summary, and disclaimer. Upload directly to Claude.ai as a Skill.
+                </p>
+                <div className="mb-3 text-[11px] text-secondary font-mono leading-relaxed bg-stone-50 p-2 rounded border border-border">
+                  <p>relate-coach/</p>
+                  <p className="ml-3">SKILL.md</p>
+                  <p className="ml-3">references/assessment-data.md</p>
+                  <p className="ml-3">references/report-summary.md</p>
+                  <p className="ml-3">references/workflow.md</p>
+                  <p className="ml-3">references/output-patterns.md</p>
+                  <p className="ml-3">LICENSE &middot; DISCLAIMER.md</p>
+                </div>
+                <button onClick={handleDownloadCoach} disabled={downloadingCoach} className="btn-primary text-xs w-full">
+                  {downloadingCoach ? 'Preparing...' : 'Download relate-coach.zip'}
+                </button>
+              </div>
+
+              {/* Basic .md */}
+              <div className="bg-white border border-border rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-mono bg-stone-200 text-secondary px-1.5 py-0.5 rounded">MD</span>
+                  <h3 className="text-sm font-semibold">Basic Coaching Prompt</h3>
+                </div>
+                <p className="text-xs text-secondary mb-3">
+                  Single markdown file with your coaching instructions and assessment data combined. Works with any AI — paste it into a chat or upload as a file.
+                </p>
+                <div className="mb-3 text-[11px] text-secondary bg-stone-50 p-2 rounded border border-border">
+                  <p>A single <code className="bg-stone-100 px-1 rounded">relate-coach.md</code> file containing your coaching prompt, report summary, and full assessment data. No setup required — just upload or paste.</p>
+                </div>
+                <button onClick={handleDownloadCoachMd} disabled={downloadingCoach} className="btn-secondary text-xs w-full">
+                  {downloadingCoach ? 'Preparing...' : 'Download relate-coach.md'}
+                </button>
+              </div>
+            </div>
+
+            {/* Setup Instructions */}
+            <div className="bg-white border border-border rounded-lg p-4 mb-6">
+              <h3 className="text-sm font-semibold mb-3">How to Use Your Coach</h3>
+
+              <div className="space-y-4">
+                <div>
+                  <p className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">Option 1: Claude.ai Skill (Best experience)</p>
+                  <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
+                    <li>Go to <a href="https://claude.ai/customize/skills" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai/customize/skills</a> (profile icon &rarr; Customize &rarr; Skills)</li>
+                    <li>Click <strong>&quot;Add Skill&quot;</strong> and upload <code className="bg-stone-100 px-1 rounded">relate-coach.zip</code></li>
+                    <li>Toggle <strong>relate-coach</strong> on — Claude automatically uses your data in any relationship conversation</li>
+                  </ol>
+                </div>
+
+                <div>
+                  <p className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">Option 2: Claude.ai Project</p>
+                  <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
+                    <li>Unzip the file, then create a new <strong>Project</strong> in <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai</a> called &quot;RELATE Coach&quot;</li>
+                    <li>Add all files from the <code className="bg-stone-100 px-1 rounded">relate-coach/</code> folder as project knowledge</li>
+                    <li>Start conversations within that project for coaching</li>
+                  </ol>
+                </div>
+
+                <div>
+                  <p className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">Option 3: Any AI (ChatGPT, Gemini, etc.)</p>
+                  <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
+                    <li>Download the <strong>.md file</strong> above</li>
+                    <li>Upload <code className="bg-stone-100 px-1 rounded">relate-coach.md</code> to any AI chat as a file attachment, or paste its contents as a message</li>
+                    <li>Say: &quot;Use this as my coaching profile and help me with dating/relationships&quot;</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+
+            {/* Example prompts */}
+            <div className="bg-white border border-border rounded-lg p-4 mb-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wider mb-2">What you can ask your coach</p>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  'Should I lower my income filter?',
+                  'I just had a fight — what happened?',
+                  'Is this person a good match for me?',
+                  'Help me write a dating profile',
+                  'What should I work on this week?',
+                  'How do I improve my Relate Score?',
+                  'Analyze my last date',
+                ].map((q, i) => (
+                  <span key={i} className="text-[11px] text-secondary bg-stone-50 border border-border px-2 py-1 rounded">
+                    &quot;{q}&quot;
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Disclaimer */}
+            <div className="p-3 bg-warning/5 border border-warning/20 rounded-lg">
+              <p className="text-[11px] text-secondary">
+                <strong>Not a therapist.</strong> This coaching tool references evidence-based frameworks but is not a substitute for licensed therapy. See DISCLAIMER.md in the download. If you&apos;re in crisis: <strong>988 Suicide &amp; Crisis Lifeline</strong> or <strong>National Domestic Violence Hotline (1-800-799-7233)</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

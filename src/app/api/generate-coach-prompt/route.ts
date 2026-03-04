@@ -18,6 +18,29 @@ export async function POST(request: NextRequest) {
     const assessmentRef = buildAssessmentReference(skillData);
     const workflowRef = buildWorkflowReference(skillData);
     const outputRef = buildOutputPatterns(skillData);
+    const reportSummary = buildReportSummary(skillData);
+
+    // Check if caller wants .md only (for non-claude.ai users / project use)
+    const format = body.format || 'zip';
+
+    if (format === 'md') {
+      // Return a single combined .md file for simple use
+      const combined = [
+        skillContent.replace(/^---[\s\S]*?---\n\n/, ''), // strip YAML frontmatter
+        '\n---\n',
+        reportSummary,
+        '\n---\n',
+        assessmentRef,
+      ].join('\n');
+
+      return new NextResponse(combined, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/markdown',
+          'Content-Disposition': 'attachment; filename="relate-coach.md"',
+        },
+      });
+    }
 
     // Package as a proper Claude skill ZIP
     const skillName = 'relate-coach';
@@ -25,6 +48,7 @@ export async function POST(request: NextRequest) {
     const folder = zip.folder(skillName)!;
     folder.file('SKILL.md', skillContent);
     folder.file('references/assessment-data.md', assessmentRef);
+    folder.file('references/report-summary.md', reportSummary);
     folder.file('references/workflow.md', workflowRef);
     folder.file('references/output-patterns.md', outputRef);
     folder.file('LICENSE', APACHE_LICENSE);
@@ -69,17 +93,21 @@ function buildSkillMd(data: {
   const driver = m4?.emotionalDrivers?.primary || 'unknown';
   const attachment = individualCompatibility?.attachment?.style || 'unknown';
 
-  // Sanitize for YAML — no angle brackets, keep under 1024 chars
-  const description = `Personalized relationship coach for ${persona.name} (${personaCode}). Use when they ask about dating, relationships, conflict, self-improvement, or their dating market. Draws from Gottman Method, Attachment Theory, EFT, IFS, and CBT. Knows their full RELATE assessment: ${attachment} attachment, ${driver} emotional driver, Relate Score ${score}, ${matchCount} estimated matches in ${metro}. References their actual data to give specific, evidence-based coaching.`.slice(0, 1024);
+  // Sanitize for YAML — no angle brackets, no quotes that break YAML, keep under 1024 chars
+  // Only valid frontmatter fields: name, description, version, disable-model-invocation, user-invocable, mode
+  const rawDescription = `Personalized relationship coach built from RELATE Assessment results. Use when user asks about dating, relationships, conflict, self-improvement, or their dating market. Draws from Gottman Method, Attachment Theory, EFT, IFS, and CBT. Knows their full assessment profile including ${attachment} attachment, ${driver} emotional driver, Relate Score ${score}, and ${matchCount} estimated matches in ${metro}. References their actual data to give specific, evidence-based coaching.`;
+  // Strip any characters that could break YAML parsing
+  const description = rawDescription
+    .replace(/[<>]/g, '')
+    .replace(/"/g, "'")
+    .replace(/\\/g, '')
+    .replace(/[\n\r]/g, ' ')
+    .slice(0, 1024);
 
   return `---
 name: relate-coach
 description: "${description}"
-license: Apache-2.0
-metadata:
-  author: RELATE Assessment Platform
-  version: "1.0"
-  website: https://relate.date
+version: "1.0"
 ---
 
 # RELATE Relationship Coach
@@ -896,6 +924,132 @@ For ongoing coaching, use this structure periodically:
 
 *These patterns are guidelines. Match the tone to the moment — more warmth in crisis, more directness in reality checks, more data in market analysis. But always reference their actual numbers. That's what separates this from generic advice.*
 `;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// references/report-summary.md — High-level report overview (size-conscious)
+// ────────────────────────────────────────────────────────────────────────────
+
+function buildReportSummary(data: SkillData): string {
+  const { persona, dimensions, m3, m4, matches, individualCompatibility, marketData, demographics, couplesReport } = data;
+
+  const sections: string[] = [];
+
+  sections.push(`# RELATE Report Summary
+
+> High-level overview of the user's complete assessment report. For detailed scores and data tables, see assessment-data.md.
+`);
+
+  // Key numbers at a glance
+  const score = marketData?.relateScore?.score ?? 0;
+  const matchCount = marketData?.matchCount ?? 0;
+  const metro = marketData?.location?.cbsaLabel || marketData?.location?.cbsaName || 'their metro';
+  const prob = marketData?.matchProbability;
+
+  sections.push(`## At a Glance
+
+| Metric | Value |
+|--------|-------|
+| Persona | ${persona?.name || '?'} (${persona?.code || '?'}) |
+| Attachment Style | ${individualCompatibility?.attachment?.style || '?'}${individualCompatibility?.attachment?.subtype ? ` (${individualCompatibility.attachment.subtype})` : ''} |
+| Emotional Driver | ${m4?.emotionalDrivers?.primary || '?'} |
+| Conflict Approach | ${m4?.conflictApproach?.approach || '?'} |
+| Want/Offer | ${m3?.wantScore ?? '?'} / ${m3?.offerScore ?? '?'} (gap: ${m3?.wantOfferGap !== undefined ? (m3.wantOfferGap > 0 ? '+' : '') + m3.wantOfferGap : '?'}) |
+| Relate Score | ${score}/100 |
+| Match Probability | ${prob?.percentage || '?'} |
+| Estimated Matches | ${matchCount.toLocaleString()} in ${metro} |
+| Repair Speed | ${m4?.repairRecovery?.speed?.style || '?'} |
+| Emotional Capacity | ${m4?.emotionalCapacity?.level || '?'} |
+| Gottman Risk | ${m4?.gottmanScreener?.overallRisk || '?'} |
+`);
+
+  // Strengths and growth areas
+  if (persona?.mostAttractive?.length || persona?.leastAttractive?.length) {
+    let sg = '## Strengths & Growth Areas\n\n';
+    if (persona.mostAttractive?.length) {
+      sg += `**Strengths:** ${persona.mostAttractive.slice(0, 5).join(', ')}\n\n`;
+    }
+    if (persona.leastAttractive?.length) {
+      sg += `**Growth Areas:** ${persona.leastAttractive.slice(0, 5).join(', ')}\n\n`;
+    }
+    sections.push(sg);
+  }
+
+  // Top 5 matches summary
+  if (matches?.length) {
+    let ms = '## Top Matches\n\n';
+    for (const m of matches.slice(0, 5)) {
+      ms += `${m.rank}. **${m.name}** (${m.code}) — ${m.tier}, ${m.compatibilityScore}%\n`;
+    }
+    if (matches.length > 5) ms += `\n*${matches.length - 5} additional matches in full data*\n`;
+    sections.push(ms);
+  }
+
+  // Market summary
+  if (marketData?.matchPool) {
+    const pool = marketData.matchPool;
+    let ms = '## Market Summary\n\n';
+    ms += `- **Metro:** ${metro}\n`;
+    ms += `- **Local Singles:** ${pool.localSinglePool?.toLocaleString()}\n`;
+    ms += `- **Ideal Pool:** ${pool.idealPool?.toLocaleString()}\n`;
+    ms += `- **Estimated Matches:** ${matchCount.toLocaleString()}\n`;
+    if (pool.localSinglePool > 0 && pool.idealPool > 0) {
+      ms += `- **Selectivity:** ${((pool.idealPool / pool.localSinglePool) * 100).toFixed(2)}% pass all filters\n`;
+    }
+
+    // Biggest bottleneck
+    const funnel = pool.funnel || [];
+    let biggestDrop = { stage: '', pct: 0 };
+    for (let i = 1; i < funnel.length; i++) {
+      const prev = funnel[i - 1], curr = funnel[i];
+      if (curr.isMilestone || prev.isMilestone || prev.count === 0) continue;
+      const lostPct = ((prev.count - curr.count) / prev.count) * 100;
+      if (lostPct > biggestDrop.pct) biggestDrop = { stage: curr.stage, pct: lostPct };
+    }
+    if (biggestDrop.stage) {
+      ms += `- **Biggest Bottleneck:** ${biggestDrop.stage} (${Math.round(biggestDrop.pct)}% elimination)\n`;
+    }
+    sections.push(ms);
+  }
+
+  // Dimension summary (compact — just the top-level poles)
+  if (dimensions) {
+    let ds = '## Dimension Summary\n\n';
+    for (const [dim, d] of Object.entries(dimensions) as [string, any][]) {
+      ds += `- **${dim}:** ${d.assignedPole || '?'} (${d.strength || 0}% strength)\n`;
+    }
+    sections.push(ds);
+  }
+
+  // Couples summary
+  if (couplesReport) {
+    let cs = '## Couples Summary\n\n';
+    if (couplesReport.compatibilityScore !== undefined) cs += `- Compatibility: ${couplesReport.compatibilityScore}%\n`;
+    if (couplesReport.archetype) cs += `- Archetype: ${couplesReport.archetype}\n`;
+    if (couplesReport.partnerPersona?.name) cs += `- Partner: ${couplesReport.partnerPersona.name} (${couplesReport.partnerPersona.code || '?'})\n`;
+    sections.push(cs);
+  }
+
+  // Demographics summary
+  if (demographics) {
+    const d = demographics as any;
+    let ds = '## Demographics\n\n';
+    if (d.gender) ds += `- Gender: ${d.gender}\n`;
+    if (d.age) ds += `- Age: ${d.age}\n`;
+    if (d.ethnicity) ds += `- Ethnicity: ${d.ethnicity}\n`;
+    if (d.income) ds += `- Income: $${Number(d.income).toLocaleString()}\n`;
+    if (d.education) ds += `- Education: ${d.education}\n`;
+    if (d.bodyType || d.body_type) ds += `- Body Type: ${d.bodyType || d.body_type}\n`;
+    if (d.fitness || d.fitness_level) ds += `- Fitness: ${d.fitness || d.fitness_level}\n`;
+    sections.push(ds);
+  }
+
+  sections.push(`---
+*This is a condensed summary. Full detailed data with scores, tables, and funnel breakdowns is in assessment-data.md.*
+*Generated by RELATE Assessment Platform on ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}*
+`);
+
+  return sections.join('\n');
 }
 
 // ────────────────────────────────────────────────────────────────────────────
