@@ -684,7 +684,7 @@ const MEN_MODULE1_QUESTIONS = {
         },
         {
           id: 'M1_LIFE_B_D04',
-          text: 'Surprisesâ€”even good onesâ€”stress me out.',
+          text: 'Surprises, even good ones, stress me out.',
           pole: 'B',
           type: QUESTION_TYPES.DIRECT,
           reverseCoded: false
@@ -845,7 +845,7 @@ const MEN_MODULE1_QUESTIONS = {
         },
         {
           id: 'M1_LIFE_B_B07',
-          text: 'Knowing someone completely has not killed my desire for themâ€”it has deepened it.',
+          text: 'Knowing someone completely has not killed my desire for them. It has deepened it.',
           pole: 'B',
           type: QUESTION_TYPES.BEHAVIORAL,
           reverseCoded: false
@@ -903,7 +903,7 @@ const MEN_MODULE1_QUESTIONS = {
       poleA: [
         {
           id: 'M1_VAL_A_D01',
-          text: 'I want to know who handles the money, who handles the home, who handles the social calendarâ€”and stick to it.',
+          text: 'I want to know who handles the money, who handles the home, who handles the social calendar, and stick to it.',
           pole: 'A',
           type: QUESTION_TYPES.DIRECT,
           reverseCoded: false
@@ -1758,7 +1758,7 @@ const WOMEN_MODULE1_QUESTIONS = {
         },
         {
           id: 'W1_LIFE_B_D04',
-          text: 'Surprisesâ€”even good onesâ€”stress me out.',
+          text: 'Surprises, even good ones, stress me out.',
           pole: 'B',
           type: QUESTION_TYPES.DIRECT,
           reverseCoded: false
@@ -1919,7 +1919,7 @@ const WOMEN_MODULE1_QUESTIONS = {
         },
         {
           id: 'W1_LIFE_B_B07',
-          text: 'Knowing someone completely has not killed my desire for themâ€”it has deepened it.',
+          text: 'Knowing someone completely has not killed my desire for them. It has deepened it.',
           pole: 'B',
           type: QUESTION_TYPES.BEHAVIORAL,
           reverseCoded: false
@@ -1978,7 +1978,7 @@ const WOMEN_MODULE1_QUESTIONS = {
       poleA: [
         {
           id: 'W1_VAL_A_D01',
-          text: 'I want to know who handles the money, who handles the home, who handles the social calendarâ€”and stick to it.',
+          text: 'I want to know who handles the money, who handles the home, who handles the social calendar, and stick to it.',
           pole: 'A',
           type: QUESTION_TYPES.DIRECT,
           reverseCoded: false
