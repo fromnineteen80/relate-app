@@ -728,7 +728,7 @@ function ResultsDashboard() {
                   <p className="ml-3">references/output-patterns.md</p>
                   <p className="ml-3">LICENSE &middot; DISCLAIMER.md</p>
                 </div>
-                <button onClick={handleDownloadCoach} disabled={downloadingCoach} className="btn-primary text-xs w-full">
+                <button onClick={handleDownloadCoach} disabled={downloadingCoach} className="btn-secondary text-xs w-full">
                   {downloadingCoach ? 'Preparing...' : 'Download relate-coach.zip'}
                 </button>
               </div>

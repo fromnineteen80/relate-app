@@ -57,7 +57,7 @@ export default function InvitePage() {
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
 
-      <main className="flex-1 max-w-md mx-auto px-6 py-12 w-full">
+      <main className="flex-1 max-w-2xl mx-auto px-6 py-12 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-2">Invite Your Partner</h2>
         <p className="text-sm text-secondary mb-8">
           When your partner completes the assessment, you&apos;ll unlock the couples compatibility report, growth plan, and shared advisor.

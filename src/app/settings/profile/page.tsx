@@ -111,129 +111,131 @@ export default function ProfileSettings() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
-      <main className="max-w-md mx-auto px-6 py-8 w-full">
+      <main className="max-w-2xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-6">Edit Profile</h2>
 
-        {/* Photo */}
-        <div className="card mb-4">
-          <p className="text-sm text-secondary mb-3">Profile Photo</p>
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 border-2 border-border">
-              {photoUrl ? (
-                <img src={photoUrl} alt="Profile" className="w-full h-full object-cover" />
-              ) : (
-                <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-xl font-medium">
-                  {initial}
-                </span>
-              )}
-            </div>
-            <div className="flex flex-col gap-2">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoChange}
-                className="hidden"
-              />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="btn-secondary text-xs"
-              >
-                {photoUrl ? 'Change Photo' : 'Upload Photo'}
-              </button>
-              {photoUrl && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          {/* Photo */}
+          <div className="card">
+            <p className="text-sm text-secondary mb-3">Profile Photo</p>
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 border-2 border-border">
+                {photoUrl ? (
+                  <img src={photoUrl} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-xl font-medium">
+                    {initial}
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-col gap-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                  className="hidden"
+                />
                 <button
-                  onClick={handleRemovePhoto}
-                  className="text-xs text-danger hover:underline text-left"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="btn-secondary text-xs"
                 >
-                  Remove
+                  {photoUrl ? 'Change Photo' : 'Upload Photo'}
                 </button>
-              )}
+                {photoUrl && (
+                  <button
+                    onClick={handleRemovePhoto}
+                    className="text-xs text-danger hover:underline text-left"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
             </div>
+            <p className="text-xs text-secondary mt-2">Max 2MB. JPG, PNG, or WebP.</p>
           </div>
-          <p className="text-xs text-secondary mt-2">Max 2MB. JPG, PNG, or WebP.</p>
+
+          {/* Name & Email */}
+          <div className="card">
+            <label className="text-sm text-secondary block mb-1">Display Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your name"
+              className="input mb-3"
+            />
+            <button onClick={handleSave} className="btn-secondary text-xs mb-4">
+              {saved ? 'Saved' : 'Save Name'}
+            </button>
+            <p className="text-sm text-secondary">Email</p>
+            <p className="font-mono text-sm">{user?.email || '-'}</p>
+          </div>
         </div>
 
-        {/* Name */}
-        <div className="card mb-4">
-          <label className="text-sm text-secondary block mb-1">Display Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your name"
-            className="input mb-3"
-          />
-          <button onClick={handleSave} className="btn-primary text-xs">
-            {saved ? 'Saved' : 'Save Name'}
-          </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          {/* Location (Step 1) */}
+          {profile && (
+            <div className="card">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm font-medium">Location</p>
+                <Link href="/onboarding/profile" className="text-xs text-accent hover:underline">Edit</Link>
+              </div>
+              <InfoRow label="City" value={profile.city} />
+              <InfoRow label="State" value={profile.state} />
+              <InfoRow label="County" value={profile.county} />
+              <InfoRow label="ZIP" value={profile.zipCode} />
+            </div>
+          )}
+
+          {/* About You (Step 2) */}
+          {demographics ? (
+            <div className="card">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm font-medium">About You</p>
+                <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">Edit</Link>
+              </div>
+              <InfoRow label="Gender" value={genderDisplay} />
+              <InfoRow label="Age" value={demographics.age?.toString()} />
+              <InfoRow label="Ethnicity" value={demographics.ethnicity} />
+              <InfoRow label="Orientation" value={demographics.orientation} />
+              <InfoRow label="Income" value={demographics.income != null ? formatCurrency(demographics.income) : null} />
+              <InfoRow label="Education" value={demographics.education} />
+              <InfoRow label="Height" value={demographics.height} />
+              <InfoRow label="Body Type" value={demographics.body_type} />
+              <InfoRow label="Fitness" value={demographics.fitness_level} />
+              <InfoRow label="Political" value={demographics.political} />
+              <InfoRow label="Smoking" value={smokingDisplay} />
+              <InfoRow label="Has Kids" value={hasKidsDisplay} />
+              <InfoRow label="Want Kids" value={demographics.want_kids} />
+              <InfoRow label="Status" value={demographics.relationship_status} />
+            </div>
+          ) : (
+            <Link href="/onboarding/demographics" className="btn-secondary block text-center">
+              Complete Demographics
+            </Link>
+          )}
         </div>
 
-        {/* Email (read-only) */}
-        <div className="card mb-4">
-          <p className="text-sm text-secondary">Email</p>
-          <p className="font-mono text-sm">{user?.email || '-'}</p>
-        </div>
-
-        {/* Location (Step 1) */}
-        {profile && (
-          <div className="card mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium">Location</p>
-              <Link href="/onboarding/profile" className="text-xs text-accent hover:underline">Edit</Link>
-            </div>
-            <InfoRow label="City" value={profile.city} />
-            <InfoRow label="State" value={profile.state} />
-            <InfoRow label="County" value={profile.county} />
-            <InfoRow label="ZIP" value={profile.zipCode} />
-          </div>
-        )}
-
-        {/* About You (Step 2) */}
-        {demographics ? (
-          <div className="card mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium">About You</p>
-              <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">Edit</Link>
-            </div>
-            <InfoRow label="Gender" value={genderDisplay} />
-            <InfoRow label="Age" value={demographics.age?.toString()} />
-            <InfoRow label="Ethnicity" value={demographics.ethnicity} />
-            <InfoRow label="Orientation" value={demographics.orientation} />
-            <InfoRow label="Income" value={demographics.income != null ? formatCurrency(demographics.income) : null} />
-            <InfoRow label="Education" value={demographics.education} />
-            <InfoRow label="Height" value={demographics.height} />
-            <InfoRow label="Body Type" value={demographics.body_type} />
-            <InfoRow label="Fitness" value={demographics.fitness_level} />
-            <InfoRow label="Political" value={demographics.political} />
-            <InfoRow label="Smoking" value={smokingDisplay} />
-            <InfoRow label="Has Kids" value={hasKidsDisplay} />
-            <InfoRow label="Want Kids" value={demographics.want_kids} />
-            <InfoRow label="Status" value={demographics.relationship_status} />
-          </div>
-        ) : (
-          <Link href="/onboarding/demographics" className="btn-secondary block text-center mb-4">
-            Complete Demographics
-          </Link>
-        )}
-
-        {/* Partner Preferences (Step 2 continued) */}
+        {/* Partner Preferences — full width */}
         {demographics?.pref_age_min != null && (
           <div className="card mb-4">
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm font-medium">Partner Preferences</p>
               <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">Edit</Link>
             </div>
-            <InfoRow label="Age Range" value={`${demographics.pref_age_min} – ${demographics.pref_age_max}`} />
-            <InfoRow label="Min Income" value={demographics.pref_income_min != null ? formatCurrency(demographics.pref_income_min) : null} />
-            <InfoRow label="Min Height" value={demographics.pref_height_min} />
-            <InfoRow label="Body Types" value={demographics.pref_body_types?.join(', ')} />
-            <InfoRow label="Fitness" value={demographics.pref_fitness_levels?.join(', ')} />
-            <InfoRow label="Political" value={demographics.pref_political?.join(', ')} />
-            <InfoRow label="Partner Has Kids" value={demographics.pref_has_kids} />
-            <InfoRow label="Partner Wants Kids" value={demographics.pref_want_kids} />
-            <InfoRow label="Partner Smokes" value={demographics.pref_smoking} />
-            <InfoRow label="Seeking" value={demographics.seeking} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
+              <InfoRow label="Age Range" value={`${demographics.pref_age_min} – ${demographics.pref_age_max}`} />
+              <InfoRow label="Min Income" value={demographics.pref_income_min != null ? formatCurrency(demographics.pref_income_min) : null} />
+              <InfoRow label="Min Height" value={demographics.pref_height_min} />
+              <InfoRow label="Body Types" value={demographics.pref_body_types?.join(', ')} />
+              <InfoRow label="Fitness" value={demographics.pref_fitness_levels?.join(', ')} />
+              <InfoRow label="Political" value={demographics.pref_political?.join(', ')} />
+              <InfoRow label="Partner Has Kids" value={demographics.pref_has_kids} />
+              <InfoRow label="Partner Wants Kids" value={demographics.pref_want_kids} />
+              <InfoRow label="Partner Smokes" value={demographics.pref_smoking} />
+              <InfoRow label="Seeking" value={demographics.seeking} />
+            </div>
           </div>
         )}
 

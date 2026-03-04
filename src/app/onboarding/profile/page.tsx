@@ -177,7 +177,7 @@ export default function ProfileSetupPage() {
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
 
-      <main className="flex-1 max-w-lg mx-auto px-6 py-8 w-full">
+      <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
         {/* Saved toast */}
         {savedToast && (
           <div className="fixed top-4 right-4 bg-success text-white text-xs px-3 py-1.5 rounded-md shadow-lg z-50 animate-fade-in">

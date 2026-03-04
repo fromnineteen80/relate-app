@@ -835,7 +835,7 @@ function AccountPage() {
                     {m2Data.result?.code && <span className="font-mono text-xs text-accent">{m2Data.result.code}</span>}
                   </div>
                   {m2Data.personaMetadata.traits && (
-                    <p className="text-xs text-secondary">{m2Data.personaMetadata.traits}</p>
+                    <p className="text-sm text-secondary">{m2Data.personaMetadata.traits}</p>
                   )}
                   {m2Data.result?.overallSelfPerceptionGap !== undefined && (
                     <p className="text-xs text-secondary">
@@ -1018,7 +1018,7 @@ function AccountPage() {
                   </p>
                 </div>
                 {canDownload ? (
-                  <button onClick={handleDownloadPDF} disabled={downloading} className="btn-primary text-xs flex-shrink-0">
+                  <button onClick={handleDownloadPDF} disabled={downloading} className="btn-secondary text-xs flex-shrink-0">
                     {downloading ? 'Preparing...' : 'Download'}
                   </button>
                 ) : (
@@ -1037,7 +1037,7 @@ function AccountPage() {
                   </p>
                 </div>
                 {canDownload ? (
-                  <button onClick={handleDownloadCoach} disabled={downloadingCoach} className="btn-primary text-xs flex-shrink-0">
+                  <button onClick={handleDownloadCoach} disabled={downloadingCoach} className="btn-secondary text-xs flex-shrink-0">
                     {downloadingCoach ? 'Preparing...' : 'Download'}
                   </button>
                 ) : (
@@ -1056,7 +1056,7 @@ function AccountPage() {
                   </p>
                 </div>
                 {canDownload ? (
-                  <button onClick={handleDownloadCoachMd} disabled={downloadingCoach} className="btn-primary text-xs flex-shrink-0">
+                  <button onClick={handleDownloadCoachMd} disabled={downloadingCoach} className="btn-secondary text-xs flex-shrink-0">
                     {downloadingCoach ? 'Preparing...' : 'Download'}
                   </button>
                 ) : (
@@ -1105,7 +1105,7 @@ function AccountPage() {
                   />
                   <Link
                     href={`/invite?email=${encodeURIComponent(partnerSearch)}`}
-                    className="btn-primary text-xs flex-shrink-0"
+                    className="btn-secondary text-xs flex-shrink-0"
                   >
                     Search
                   </Link>
@@ -1220,7 +1220,7 @@ function AccountPage() {
                   <p className="ml-3">references/output-patterns.md</p>
                   <p className="ml-3">LICENSE &middot; DISCLAIMER.md</p>
                 </div>
-                <button onClick={handleDownloadCoach} disabled={downloadingCoach} className="btn-primary text-xs w-full">
+                <button onClick={handleDownloadCoach} disabled={downloadingCoach} className="btn-secondary text-xs w-full">
                   {downloadingCoach ? 'Preparing...' : 'Download relate-coach.zip'}
                 </button>
               </div>

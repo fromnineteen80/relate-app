@@ -75,7 +75,7 @@ export default function FeedbackPage() {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <SiteHeader />
-        <main className="flex-1 max-w-lg mx-auto px-6 py-12 w-full text-center">
+        <main className="flex-1 max-w-2xl mx-auto px-6 py-12 w-full text-center">
           <div className="card">
             <div className="w-12 h-12 rounded-full bg-success/10 text-success flex items-center justify-center mx-auto mb-4 text-lg">
               ✓
@@ -103,7 +103,7 @@ export default function FeedbackPage() {
     <div className="min-h-screen flex flex-col bg-background">
       <SiteHeader />
 
-      <main className="flex-1 max-w-lg mx-auto px-6 py-8 w-full">
+      <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
         <h1 className="font-serif text-3xl font-semibold mb-2">Feedback</h1>
         <p className="text-sm text-secondary mb-8">
           Help us improve RELATE. Share your experience, report issues, or suggest features.
