@@ -138,6 +138,10 @@ function AccountPage() {
   // Market data
   const [marketData, setMarketData] = useState<MarketData | null>(null);
   const [marketLoading, setMarketLoading] = useState(false);
+  // Discount code
+  const [discountCode, setDiscountCode] = useState('');
+  const [discountSubmitting, setDiscountSubmitting] = useState(false);
+  const [discountResult, setDiscountResult] = useState<{ success?: boolean; message?: string; error?: string } | null>(null);
 
   // Fetch payment tier (works in both mock and real mode)
   useEffect(() => {
@@ -282,6 +286,37 @@ function AccountPage() {
   async function handleSignOut() {
     await signOut();
     router.push('/');
+  }
+
+  async function handleDiscountCode(e: React.FormEvent) {
+    e.preventDefault();
+    if (!discountCode.trim() || discountSubmitting) return;
+    setDiscountSubmitting(true);
+    setDiscountResult(null);
+    try {
+      const res = await fetch('/api/discount-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: discountCode.trim(), email: user?.email }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setDiscountResult({ success: true, message: data.message });
+        // Refresh payment tier after successful code redemption
+        if (data.percent === 100) {
+          localStorage.removeItem('relate_payment_tier');
+          const { tier } = await refreshPaymentTier(user?.email);
+          setCurrentTier(tier);
+        }
+        setDiscountCode('');
+      } else {
+        setDiscountResult({ error: data.error || 'Invalid code' });
+      }
+    } catch {
+      setDiscountResult({ error: 'Failed to process code. Try again.' });
+    } finally {
+      setDiscountSubmitting(false);
+    }
   }
 
   function handleMockUpgrade(tier: PricingTier) {
@@ -448,6 +483,33 @@ function AccountPage() {
               ))}
             </div>
           )}
+
+          {/* Discount Code */}
+          <div className="mt-4 pt-4 border-t border-border">
+            <p className="text-xs text-secondary mb-2">Have a discount code?</p>
+            <form onSubmit={handleDiscountCode} className="flex gap-2">
+              <input
+                type="text"
+                value={discountCode}
+                onChange={e => setDiscountCode(e.target.value.toUpperCase())}
+                placeholder="e.g. 100-PRO-MARCH-2026"
+                className="input flex-1 text-xs font-mono"
+              />
+              <button
+                type="submit"
+                disabled={discountSubmitting || !discountCode.trim()}
+                className="btn-secondary text-xs whitespace-nowrap"
+              >
+                {discountSubmitting ? 'Applying...' : 'Apply'}
+              </button>
+            </form>
+            {discountResult?.success && (
+              <p className="text-xs text-success mt-2">{discountResult.message}</p>
+            )}
+            {discountResult?.error && (
+              <p className="text-xs text-danger mt-2">{discountResult.error}</p>
+            )}
+          </div>
         </section>
 
         {/* ── Assessment Progress ── */}
@@ -839,6 +901,19 @@ function AccountPage() {
               <Link href="/advisor" className="text-sm text-accent hover:underline">AI Advisor</Link>
             )}
             <Link href="/couples" className="text-sm text-accent hover:underline">Couples Dashboard</Link>
+          </div>
+        </section>
+
+        {/* ── Feedback ── */}
+        <section className="card mb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="font-serif text-lg font-semibold">Feedback</h2>
+              <p className="text-xs text-secondary">Help us improve RELATE</p>
+            </div>
+            <Link href="/feedback" className="btn-secondary text-xs">
+              Send Feedback
+            </Link>
           </div>
         </section>
 
