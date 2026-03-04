@@ -11,6 +11,7 @@ import { fetchPaymentTier, refreshPaymentTier } from '@/lib/payments';
 import { getProfile } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
 import { TestAccessCard } from '@/components/TestAccessCard';
+import { clearAllProgress } from '@/lib/supabase/progress';
 
 type Demographics = { age?: number; gender?: string; relationshipStatus?: string; seeking?: string; [key: string]: unknown };
 
@@ -498,15 +499,11 @@ function AccountPage() {
               View Full Results
             </Link>
           )}
-          {assessmentComplete && (currentTier === 'premium' || currentTier === 'couples') && (
+          {assessmentComplete && (currentTier === 'premium' || currentTier === 'pro' || currentTier === 'couples') && (
             <button
-              onClick={() => {
-                if (!confirm('This will clear your current assessment progress. Your existing results will still be available until you generate new ones. Continue?')) return;
-                for (let m = 1; m <= 4; m++) {
-                  localStorage.removeItem(`relate_m${m}_responses`);
-                  localStorage.removeItem(`relate_m${m}_completed`);
-                  localStorage.removeItem(`relate_m${m}_scored`);
-                }
+              onClick={async () => {
+                if (!confirm('This will clear all your assessment answers and results. You will need to retake the full assessment. Continue?')) return;
+                if (user) await clearAllProgress(user.id);
                 setModuleProgress({});
                 setM1Data(null);
                 setM2Data(null);

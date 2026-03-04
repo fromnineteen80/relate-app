@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { isProfileComplete, hasDemographics } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
-import { loadAndHydrateProgress, loadProfileFromDb } from '@/lib/supabase/progress';
+import { loadAndHydrateProgress, loadProfileFromDb, clearAllProgress } from '@/lib/supabase/progress';
+import { fetchPaymentTier } from '@/lib/payments';
 
 type ModuleStatus = { completed: boolean; questionIndex: number; total: number };
 
@@ -22,6 +23,7 @@ export default function AssessmentHub() {
   const router = useRouter();
   const [statuses, setStatuses] = useState<Record<number, ModuleStatus>>({});
   const [gender, setGender] = useState<string | null>(null);
+  const [canRetake, setCanRetake] = useState(false);
 
   useEffect(() => {
     if (authLoading) return;
@@ -48,6 +50,12 @@ export default function AssessmentHub() {
         s[m] = { completed, questionIndex: saved ? Object.keys(JSON.parse(saved)).length : 0, total: 0 };
       }
       setStatuses(s);
+
+      // Check if user can retake (premium, pro, or couples tier)
+      const { tier } = await fetchPaymentTier();
+      if (tier === 'premium' || tier === 'pro' || tier === 'couples') {
+        setCanRetake(true);
+      }
     }
 
     loadProgress();
@@ -69,6 +77,7 @@ export default function AssessmentHub() {
   }
 
   const allCompleted = [1, 2, 3, 4].every(m => statuses[m]?.completed);
+  const hasAnyProgress = [1, 2, 3, 4].some(m => statuses[m]?.completed || statuses[m]?.questionIndex > 0);
 
   function getModuleState(moduleId: number) {
     if (statuses[moduleId]?.completed) return 'completed';
@@ -120,6 +129,22 @@ export default function AssessmentHub() {
             <Link href="/assessment/processing" className="btn-primary w-full block text-center">
               View Results
             </Link>
+          </div>
+        )}
+
+        {canRetake && hasAnyProgress && (
+          <div className="mt-6 text-center">
+            <button
+              onClick={async () => {
+                if (!confirm('This will clear all your assessment answers and results. You will need to retake the full assessment. Continue?')) return;
+                if (user) await clearAllProgress(user.id);
+                setStatuses({});
+                window.location.reload();
+              }}
+              className="text-sm text-secondary hover:text-danger transition-colors"
+            >
+              Start Over
+            </button>
           </div>
         )}
       </main>
