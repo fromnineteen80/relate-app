@@ -683,7 +683,7 @@ function EnhancedCompatibilitySection({ data, overview }: { data: any; overview:
   if (!data) return <p className="text-secondary">No enhanced compatibility data available.</p>;
 
   const tierColor = (tier: string) => {
-    const c: Record<string, string> = { ideal: 'text-success', kismet: 'text-success', effort: 'text-warning', longShot: 'text-secondary', atRisk: 'text-danger' };
+    const c: Record<string, string> = { ideal: 'text-success', kismet: 'text-success/70', effort: 'text-warning', longShot: 'text-stone-400', atRisk: 'text-danger/70', incompatible: 'text-danger' };
     return c[tier] || 'text-secondary';
   };
 
