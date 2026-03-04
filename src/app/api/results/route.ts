@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { buildIndividualCompatibilityProfile } from '@/lib/compatibility';
 
 /* eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any */
 const questionsModule = require('../../../../relate_questions.js');
@@ -213,6 +214,11 @@ export async function POST(request: NextRequest) {
         summary: generateMatchSummary(userResults, match),
       })),
     };
+
+    // Attach individual compatibility profile (additive — no existing data modified)
+    try {
+      (report as any).individualCompatibility = buildIndividualCompatibilityProfile(m3Result, m4Result);
+    } catch { /* compatibility scoring is optional */ }
 
     return NextResponse.json({ success: true, report });
   } catch (error: any) {
