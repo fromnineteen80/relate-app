@@ -503,9 +503,9 @@ function AccountPage() {
             { id: 'assessment', label: 'Assessment', show: true },
             { id: 'downloads', label: 'Downloads', show: hasResults },
             { id: 'partner', label: 'Partner', show: true },
-            { id: 'coaching', label: 'Ongoing Coaching', show: hasResults && canDownload, accent: true },
+            { id: 'coaching', label: 'Ongoing Coaching', show: hasResults && canDownload },
           ].filter(n => n.show).map(n => (
-            <a key={n.id} href={`#${n.id}`} className={`text-xs font-medium px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap ${n.accent ? 'text-accent font-semibold' : 'text-secondary hover:text-primary'}`}>{n.label}</a>
+            <a key={n.id} href={`#${n.id}`} className="text-xs font-medium px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap text-secondary hover:text-primary">{n.label}</a>
           ))}
         </div>
       </nav>
