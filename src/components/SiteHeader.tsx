@@ -22,16 +22,20 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
 
   const isAuth = variant === 'auth';
 
-  // Close dropdown when clicking outside
+  // Close dropdown when clicking/tapping outside (pointerdown works across mouse, touch, pen)
   useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
+    function handleClickOutside(e: PointerEvent | MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdownOpen(false);
       }
     }
     if (dropdownOpen) {
+      document.addEventListener('pointerdown', handleClickOutside);
       document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('pointerdown', handleClickOutside);
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
     }
   }, [dropdownOpen]);
 
@@ -246,24 +250,23 @@ function ProfileAvatar({
 
       {dropdownOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white border border-border rounded-md shadow-lg py-1 z-50">
-          <Link href="/account" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
-            Account
-          </Link>
-          <Link href="/assessment" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
-            Assessment
-          </Link>
-          <Link href="/results" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
-            Results
-          </Link>
-          <Link href="/settings/profile" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
-            Edit Profile
-          </Link>
-          <Link href="/settings/billing" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
-            Billing
-          </Link>
-          <Link href="/feedback" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
-            Feedback
-          </Link>
+          {[
+            { href: '/account', label: 'Account' },
+            { href: '/assessment', label: 'Assessment' },
+            { href: '/results', label: 'Results' },
+            { href: '/settings/profile', label: 'Edit Profile' },
+            { href: '/settings/billing', label: 'Billing' },
+            { href: '/feedback', label: 'Feedback' },
+          ].map(item => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setDropdownOpen(false)}
+              className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground cursor-pointer"
+            >
+              {item.label}
+            </Link>
+          ))}
           <div className="border-t border-border my-1" />
           <button
             onClick={() => { setDropdownOpen(false); onSignOut(); }}

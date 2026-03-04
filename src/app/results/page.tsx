@@ -34,13 +34,15 @@ type ComparisonData = {
 
 type MarketData = {
   location?: { cbsaName?: string; cbsaLabel?: string; population?: number };
-  relateScore?: { score: number };
+  relateScore?: { score: number; components?: Record<string, { national?: number; local?: number; score?: number; weight: number }>; marriagePremium?: number };
   matchPool?: { localSinglePool: number; realisticPool: number; preferredPool: number; idealPool: number; funnel?: FunnelStage[]; contextPools?: ContextPools };
   matchProbability?: { rate: number; percentage: string };
   matchCount?: number;
   stateComparison?: ComparisonData | null;
   nationalComparison?: ComparisonData | null;
 };
+
+type Demographics = { age?: number; gender?: string; relationshipStatus?: string; seeking?: string; [key: string]: unknown };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -79,31 +81,40 @@ export default function ResultsDashboard() {
   const [downloading, setDownloading] = useState(false);
   const [marketData, setMarketData] = useState<MarketData | null>(null);
   const [marketLoading, setMarketLoading] = useState(false);
+  const [demographics, setDemographics] = useState<Demographics>({});
+  const [assessmentIncomplete, setAssessmentIncomplete] = useState(false);
   const marketFetchedRef = useRef(false);
 
   useEffect(() => {
     function tryLoad() {
-      const stored = localStorage.getItem('relate_results');
-      if (stored) {
-        const parsedReport = JSON.parse(stored);
-        setReport(parsedReport);
-        setReferrals(generateReferrals(parsedReport));
-        return true;
-      }
+      try {
+        const stored = localStorage.getItem('relate_results');
+        if (stored) {
+          const parsedReport = JSON.parse(stored);
+          setReport(parsedReport);
+          try { setReferrals(generateReferrals(parsedReport)); } catch { /* silent */ }
+          return true;
+        }
+      } catch { /* corrupted localStorage */ }
       return false;
     }
 
+    // Load demographics
+    try {
+      const demoStr = localStorage.getItem('relate_demographics');
+      if (demoStr) setDemographics(JSON.parse(demoStr));
+    } catch { /* silent */ }
+
     if (!tryLoad() && user) {
-      // No localStorage — try loading from Supabase
       loadAndHydrateProgress(user.id).then((data) => {
         if (data?.results) {
-          tryLoad(); // DB data now in localStorage
+          tryLoad();
         } else {
-          router.push('/assessment');
+          setAssessmentIncomplete(true);
         }
       });
     } else if (!user && !localStorage.getItem('relate_results')) {
-      router.push('/assessment');
+      setAssessmentIncomplete(true);
     }
   }, [router, user]);
 
@@ -112,7 +123,7 @@ export default function ResultsDashboard() {
     fetchPaymentTier(user.email).then(({ tier }) => setPricingTier(tier));
   }, [user]);
 
-  // Fetch dating market data (likelihood of finding ideal match)
+  // Fetch dating market data
   useEffect(() => {
     if (!user || marketData || marketFetchedRef.current) return;
 
@@ -201,12 +212,10 @@ export default function ResultsDashboard() {
       });
       const data = await res.json();
       if (data.html) {
-        // Open in new window for print/save as PDF
         const win = window.open('', '_blank');
         if (win) {
           win.document.write(data.html);
           win.document.close();
-          // Trigger print dialog after a brief delay for rendering
           setTimeout(() => win.print(), 500);
         }
       }
@@ -217,14 +226,49 @@ export default function ResultsDashboard() {
     }
   }, [report, marketData]);
 
+  // Incomplete assessment state
+  if (assessmentIncomplete && !report) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <SiteHeader />
+        <main className="max-w-3xl mx-auto px-6 py-8 w-full flex-1">
+          <h1 className="font-serif text-3xl font-semibold mb-2">Results</h1>
+          <p className="text-sm text-secondary mb-8">Complete your assessment to unlock your results.</p>
+
+          <section className="card mb-6 text-center py-12">
+            <div className="mb-4">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" className="mx-auto text-secondary/30">
+                <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="2" />
+                <path d="M16 24h16M24 16v16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </div>
+            <h2 className="font-serif text-xl font-semibold mb-2">Assessment Not Complete</h2>
+            <p className="text-sm text-secondary mb-6 max-w-md mx-auto">
+              Your RELATE assessment has four modules. Complete all four to generate your persona, compatibility rankings, dating market analysis, and personalized coaching.
+            </p>
+            <Link href="/assessment" className="btn-primary text-sm inline-block">
+              Continue Assessment
+            </Link>
+          </section>
+        </main>
+      </div>
+    );
+  }
+
   if (!report) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
 
   const hasPaid = pricingTier !== 'free';
   const hasAdvisor = pricingTier === 'premium' || pricingTier === 'couples';
-  const canDownload = hasPaid; // Plus, Premium, Couples
+  const canDownload = hasPaid;
   const m4Summary = report.m4?.summary || {};
   const freeMatchLimit = 3;
   const visibleMatches = hasPaid ? report.matches : report.matches.slice(0, freeMatchLimit);
+
+  // Get M3/M4 full data for MarketCoaching
+  let fullM3: any = null;
+  let fullM4: any = null;
+  try { fullM3 = JSON.parse(localStorage.getItem('relate_m3_scored') || '{}')?.result || null; } catch { /* silent */ }
+  try { fullM4 = JSON.parse(localStorage.getItem('relate_m4_scored') || '{}')?.result || null; } catch { /* silent */ }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -236,8 +280,8 @@ export default function ResultsDashboard() {
           <div className="flex items-start justify-between mb-4">
             <div>
               <span className="font-mono text-xs text-secondary">Your Persona</span>
-              <h2 className="font-serif text-3xl font-semibold">{report.persona.name}</h2>
-              <span className="font-mono text-sm text-accent">{report.persona.code}</span>
+              <h2 className="font-serif text-3xl font-semibold">{report.persona?.name || 'Unknown'}</h2>
+              <span className="font-mono text-sm text-accent">{report.persona?.code || ''}</span>
             </div>
             <div className="flex gap-2">
               {canDownload && (
@@ -248,7 +292,7 @@ export default function ResultsDashboard() {
               <Link href="/results/persona" className="btn-secondary text-xs">Details</Link>
             </div>
           </div>
-          {report.persona.traits && <p className="text-sm text-secondary">{report.persona.traits}</p>}
+          {report.persona?.traits && <p className="text-sm text-secondary">{report.persona.traits}</p>}
         </section>
 
         {/* Dimensions */}
@@ -329,14 +373,16 @@ export default function ResultsDashboard() {
           </section>
         )}
 
-        {/* Intimacy Under Stress — M3 State Modeling */}
-        {report.individualCompatibility?.m3States && (() => {
-          const { states, insights } = report.individualCompatibility.m3States;
+        {/* Intimacy Under Stress */}
+        {report.individualCompatibility?.m3States?.states && (() => {
+          const states = report.individualCompatibility.m3States.states;
+          const insights = report.individualCompatibility.m3States.insights;
+          if (!states?.normal) return null;
           const stateList = [
             { key: 'normal', data: states.normal, color: 'bg-stone-400' },
             { key: 'conflict', data: states.conflict, color: 'bg-warning' },
             { key: 'repair', data: states.repair, color: 'bg-success' },
-          ];
+          ].filter(s => s.data);
           return (
             <section className="card mb-6">
               <h3 className="font-serif text-lg font-semibold mb-1">Your Intimacy Under Stress</h3>
@@ -353,7 +399,6 @@ export default function ResultsDashboard() {
                           Gap: {data.gap > 0 ? '+' : ''}{data.gap}
                         </span>
                       </div>
-                      {/* Want bar */}
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-[10px] text-secondary w-10">Want</span>
                         <div className="flex-1 h-2 bg-stone-100 rounded-full overflow-hidden">
@@ -366,7 +411,6 @@ export default function ResultsDashboard() {
                           </span>
                         )}
                       </div>
-                      {/* Offer bar */}
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] text-secondary w-10">Offer</span>
                         <div className="flex-1 h-2 bg-stone-100 rounded-full overflow-hidden">
@@ -384,33 +428,34 @@ export default function ResultsDashboard() {
                 })}
               </div>
 
-              {/* Insights */}
-              <div className="mt-4 pt-4 border-t border-border space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className={`text-xs font-mono px-2 py-0.5 rounded ${
-                    insights.gapExpansionLevel === 'HIGH' ? 'bg-danger/10 text-danger' :
-                    insights.gapExpansionLevel === 'MODERATE' ? 'bg-warning/10 text-warning' :
-                    'bg-success/10 text-success'
-                  }`}>
-                    Gap expansion: {insights.gapExpansion > 0 ? '+' : ''}{insights.gapExpansion} pts ({insights.gapExpansionLevel})
-                  </span>
+              {insights && (
+                <div className="mt-4 pt-4 border-t border-border space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+                      insights.gapExpansionLevel === 'HIGH' ? 'bg-danger/10 text-danger' :
+                      insights.gapExpansionLevel === 'MODERATE' ? 'bg-warning/10 text-warning' :
+                      'bg-success/10 text-success'
+                    }`}>
+                      Gap expansion: {insights.gapExpansion > 0 ? '+' : ''}{insights.gapExpansion} pts ({insights.gapExpansionLevel})
+                    </span>
+                  </div>
+                  <p className="text-xs text-secondary">
+                    {insights.gapExpansionLevel === 'HIGH'
+                      ? 'Under stress, your gap widens significantly. Partners may feel overwhelmed by increased demands while receiving less from you.'
+                      : insights.gapExpansionLevel === 'MODERATE'
+                      ? 'Your gap expands moderately under stress. Awareness of this pattern can help you manage it.'
+                      : 'Your gap stays relatively stable under stress. This indicates strong emotional regulation.'}
+                  </p>
+                  <p className="text-xs text-secondary">
+                    Repair effort: <span className={`font-mono ${insights.repairSustainable ? 'text-success' : 'text-warning'}`}>
+                      {insights.repairSustainable ? 'Sustainable' : 'High strain'}
+                    </span>
+                    {insights.repairSustainable
+                      ? ' — you can maintain elevated giving without burning out.'
+                      : ' — sustaining this level of effort may lead to exhaustion over time.'}
+                  </p>
                 </div>
-                <p className="text-xs text-secondary">
-                  {insights.gapExpansionLevel === 'HIGH'
-                    ? 'Under stress, your gap widens significantly. Partners may feel overwhelmed by increased demands while receiving less from you.'
-                    : insights.gapExpansionLevel === 'MODERATE'
-                    ? 'Your gap expands moderately under stress. Awareness of this pattern can help you manage it.'
-                    : 'Your gap stays relatively stable under stress. This indicates strong emotional regulation.'}
-                </p>
-                <p className="text-xs text-secondary">
-                  Repair effort: <span className={`font-mono ${insights.repairSustainable ? 'text-success' : 'text-warning'}`}>
-                    {insights.repairSustainable ? 'Sustainable' : 'High strain'}
-                  </span>
-                  {insights.repairSustainable
-                    ? ' — you can maintain elevated giving without burning out.'
-                    : ' — sustaining this level of effort may lead to exhaustion over time.'}
-                </p>
-              </div>
+              )}
             </section>
           );
         })()}
@@ -444,36 +489,42 @@ export default function ResultsDashboard() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-secondary mt-2">{report.individualCompatibility.attachmentTiers.recommendation}</p>
+              {report.individualCompatibility.attachmentTiers.recommendation && (
+                <p className="text-xs text-secondary mt-2">{report.individualCompatibility.attachmentTiers.recommendation}</p>
+              )}
             </div>
 
             {/* Driver tiers */}
-            <div className="mb-4 pt-4 border-t border-border">
-              <span className="text-xs font-mono text-secondary uppercase tracking-wider">Emotional Driver</span>
-              <p className="text-xs text-secondary mt-1 mb-2">
-                Your primary: <span className="font-mono capitalize text-foreground">{report.individualCompatibility.driverTiers.yourDriver.primary}</span>
-              </p>
-              <div className="space-y-1">
-                {[
-                  { label: 'Best', items: report.individualCompatibility.driverTiers.bestMatches, color: 'text-success' },
-                  { label: 'Good', items: report.individualCompatibility.driverTiers.goodMatches, color: 'text-accent' },
-                  { label: 'Workable', items: report.individualCompatibility.driverTiers.workableMatches, color: 'text-warning' },
-                  { label: 'Avoid', items: report.individualCompatibility.driverTiers.avoidMatches, color: 'text-danger' },
-                ].filter(g => g.items?.length > 0).map(group => (
-                  <div key={group.label} className="flex items-center gap-3 py-1">
-                    <span className={`text-xs w-16 ${group.color}`}>{group.label}</span>
-                    <div className="flex gap-2">
-                      {group.items.map((m: any) => (
-                        <span key={m.driver} className="text-xs font-mono capitalize bg-stone-50 px-2 py-0.5 rounded">
-                          {m.driver} ({m.score})
-                        </span>
-                      ))}
+            {report.individualCompatibility.driverTiers && (
+              <div className="mb-4 pt-4 border-t border-border">
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Emotional Driver</span>
+                <p className="text-xs text-secondary mt-1 mb-2">
+                  Your primary: <span className="font-mono capitalize text-foreground">{report.individualCompatibility.driverTiers.yourDriver?.primary || '-'}</span>
+                </p>
+                <div className="space-y-1">
+                  {[
+                    { label: 'Best', items: report.individualCompatibility.driverTiers.bestMatches, color: 'text-success' },
+                    { label: 'Good', items: report.individualCompatibility.driverTiers.goodMatches, color: 'text-accent' },
+                    { label: 'Workable', items: report.individualCompatibility.driverTiers.workableMatches, color: 'text-warning' },
+                    { label: 'Avoid', items: report.individualCompatibility.driverTiers.avoidMatches, color: 'text-danger' },
+                  ].filter(g => g.items?.length > 0).map(group => (
+                    <div key={group.label} className="flex items-center gap-3 py-1">
+                      <span className={`text-xs w-16 ${group.color}`}>{group.label}</span>
+                      <div className="flex gap-2">
+                        {group.items.map((m: any) => (
+                          <span key={m.driver} className="text-xs font-mono capitalize bg-stone-50 px-2 py-0.5 rounded">
+                            {m.driver} ({m.score})
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+                {report.individualCompatibility.driverTiers.recommendation && (
+                  <p className="text-xs text-secondary mt-2">{report.individualCompatibility.driverTiers.recommendation}</p>
+                )}
               </div>
-              <p className="text-xs text-secondary mt-2">{report.individualCompatibility.driverTiers.recommendation}</p>
-            </div>
+            )}
 
             {/* Horsemen insights */}
             {report.individualCompatibility.horsemenInsights && (
@@ -509,201 +560,20 @@ export default function ResultsDashboard() {
           </section>
         )}
 
-        {/* Dating Market / Likelihood */}
+        {/* ── Dating Market ── */}
         {(marketData || marketLoading) && (
-          <section className="card mb-6">
-            <h3 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h3>
-            <p className="text-xs text-secondary mb-3">Based on your demographics and preferences, here&apos;s how your local dating pool narrows from the total metro population to people who match what you&apos;re looking for.</p>
-            {marketLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-              </div>
-            ) : marketData && (() => {
-              const pool = marketData.matchPool;
-              const metro = marketData.location?.cbsaLabel || marketData.location?.cbsaName || 'Your Metro';
-              const prob = marketData.matchProbability;
-              const matchCount = marketData.matchCount ?? 0;
-              const score = marketData.relateScore?.score ?? 0;
-              const scoreTier = score >= 80 ? 'Exceptional' : score >= 65 ? 'Strong' : score >= 50 ? 'Above Average' : score >= 35 ? 'Average' : 'Below Average';
-              const fmt = (n: number) => n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' : n >= 1000 ? (n / 1000).toFixed(0) + 'k' : String(n);
+          <DatingMarketViz data={marketData} loading={marketLoading} />
+        )}
 
-              return (
-                <>
-                  <p className="text-xs text-secondary mb-4">{metro}</p>
-                  <div className="grid grid-cols-3 gap-4 text-center mb-5">
-                    <div>
-                      <span className="font-mono text-2xl font-semibold">{score.toFixed(0)}</span>
-                      <p className="text-xs text-secondary mt-1">Relate Score</p>
-                      <p className="text-[10px] text-secondary">{scoreTier}</p>
-                      <p className="text-[10px] text-secondary mt-0.5">Your overall desirability based on demographics</p>
-                    </div>
-                    <div>
-                      <span className="font-mono text-2xl font-semibold">{prob?.percentage || '—'}</span>
-                      <p className="text-xs text-secondary mt-1">Match Probability</p>
-                      <p className="text-[10px] text-secondary mt-0.5">Chance a given match leads to compatibility</p>
-                    </div>
-                    <div>
-                      <span className="font-mono text-2xl font-semibold">{fmt(matchCount)}</span>
-                      <p className="text-xs text-secondary mt-1">Estimated Matches</p>
-                      <p className="text-[10px] text-secondary mt-0.5">Compatible people in your metro area</p>
-                    </div>
-                  </div>
-                  {pool && (() => {
-                    const funnel: FunnelStage[] = pool.funnel || [];
-                    // Fallback to summary bars if funnel not available
-                    const stages = funnel.length > 0 ? funnel : [
-                      { stage: 'Metro Population', count: marketData.location?.population || 0 },
-                      { stage: 'LOCAL SINGLES', count: pool.localSinglePool, isMilestone: true },
-                      { stage: 'MEET YOUR BASICS', count: pool.realisticPool, isMilestone: true },
-                      { stage: 'MATCH YOUR LIFESTYLE', count: pool.preferredPool, isMilestone: true },
-                      { stage: 'YOUR IDEAL MATCH POOL', count: pool.idealPool, isMilestone: true },
-                    ];
-                    const maxCount = stages[0]?.count || 1;
-                    return (
-                      <div>
-                        <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
-                        <div className="mt-3 space-y-1.5">
-                          {stages.map((s, i) => {
-                            const pct = (s.count / maxCount) * 100;
-                            const isLast = i === stages.length - 1;
-                            const isMilestone = s.isMilestone;
-                            return (
-                              <div key={i} className={isMilestone ? 'pt-1' : ''}>
-                                <div className="flex items-center justify-between mb-0.5">
-                                  <span className={`text-xs ${isMilestone ? 'font-semibold uppercase font-mono tracking-wider' : isLast ? 'font-medium' : 'text-secondary'}`}>
-                                    {s.stage}
-                                  </span>
-                                  <div className="flex items-center gap-2">
-                                    {s.filter && <span className="text-[10px] text-secondary font-mono">{s.filter}</span>}
-                                    <span className={`text-xs font-mono ${isMilestone || isLast ? 'font-semibold' : 'text-secondary'}`}>{fmt(s.count)}</span>
-                                  </div>
-                                </div>
-                                <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
-                                  <div
-                                    className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ${isLast ? 'bg-accent' : isMilestone ? 'bg-accent/60' : 'bg-stone-300'}`}
-                                    style={{ width: `${Math.max(1, pct)}%` }}
-                                  />
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                        {stages[stages.length - 1]?.count === 0 && (
-                          <p className="text-xs text-warning mt-3">Your preferences narrow the pool to zero in this metro. Consider broadening age range, income, or lifestyle filters.</p>
-                        )}
-                        <p className="text-[10px] text-secondary mt-3">Estimates based on census and survey data for your metro area. Actual availability may vary.</p>
-                      </div>
-                    );
-                  })()}
-
-                  {/* State & National Comparison */}
-                  {(marketData.stateComparison || marketData.nationalComparison) && (() => {
-                    const metroIdeal = pool?.idealPool ?? 0;
-                    const state = marketData.stateComparison;
-                    const national = marketData.nationalComparison;
-                    const showExpandedFunnels = metroIdeal < 100;
-                    const ctx = pool?.contextPools;
-                    const pctOf = (ideal: number, base: number) => base > 0 ? ((ideal / base) * 100).toFixed(1) + '%' : '—';
-
-                    // Build comparison rows: metro, state, national
-                    const rows = [
-                      { label: metro, ideal: metroIdeal, matches: matchCount, pop: marketData.location?.population || 0, ctx, highlight: true },
-                      ...(state ? [{ label: `${state.label} (statewide)`, ideal: state.idealPool, matches: state.matchCount, pop: state.population, ctx: state.contextPools }] : []),
-                      ...(national ? [{ label: 'National', ideal: national.idealPool, matches: national.matchCount, pop: national.population, ctx: national.contextPools }] : []),
-                    ];
-
-                    const gLabel = ctx?.targetGenderLabel || 'target gender';
-                    const oLabel = ctx?.orientationLabel || 'orientation';
-                    const eLabel = ctx?.userEthnicity || 'ethnicity';
-                    const funnel2: FunnelStage[] = pool?.funnel || [];
-                    const ageStage = funnel2.find(s => s.stage.startsWith('Age '));
-                    const ageRange = ageStage ? ageStage.stage.replace('Age ', '') : 'your age range';
-
-                    return (
-                      <div className="mt-6">
-                        <span className="text-xs font-mono text-secondary uppercase tracking-wider">How You Compare</span>
-                        <div className="mt-2 border border-border rounded-md overflow-hidden overflow-x-auto">
-                          <table className="w-full text-xs">
-                            <thead>
-                              <tr className="border-b border-border bg-stone-50">
-                                <th className="text-left px-3 py-1.5 font-mono text-secondary">Scope</th>
-                                <th className="text-right px-3 py-1.5 font-mono text-secondary">Ideal Pool</th>
-                                <th className="text-right px-3 py-1.5 font-mono text-secondary">Matches</th>
-                                <th className="text-right px-3 py-1.5 font-mono text-secondary whitespace-nowrap">% of {gLabel}</th>
-                                <th className="text-right px-3 py-1.5 font-mono text-secondary whitespace-nowrap">% of eligible</th>
-                                <th className="text-right px-3 py-1.5 font-mono text-secondary whitespace-nowrap">% of {eLabel}</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {rows.map((r, i) => (
-                                <tr key={i} className={`${i < rows.length - 1 ? 'border-b border-border' : ''} ${r.highlight ? 'bg-orange-50/50' : ''}`}>
-                                  <td className={`px-3 py-1.5 ${r.highlight ? 'font-medium' : ''}`}>{r.label}</td>
-                                  <td className={`text-right px-3 py-1.5 font-mono ${r.highlight ? '' : 'text-secondary'}`}>{fmt(r.ideal)}</td>
-                                  <td className={`text-right px-3 py-1.5 font-mono ${r.highlight ? 'font-semibold' : 'text-secondary'}`}>{fmt(r.matches)}</td>
-                                  <td className={`text-right px-3 py-1.5 font-mono ${r.highlight ? '' : 'text-secondary'}`}>{r.ctx ? pctOf(r.ideal, r.ctx.allGender) : '—'}</td>
-                                  <td className={`text-right px-3 py-1.5 font-mono ${r.highlight ? '' : 'text-secondary'}`}>{r.ctx ? pctOf(r.ideal, r.ctx.eligiblePool) : '—'}</td>
-                                  <td className={`text-right px-3 py-1.5 font-mono ${r.highlight ? '' : 'text-secondary'}`}>{r.ctx ? pctOf(r.ideal, r.ctx.eligibleEthnicityPool) : '—'}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                        <div className="mt-1.5 space-y-1">
-                          <p className="text-[10px] text-secondary leading-relaxed"><span className="font-mono font-medium text-foreground">Ideal Pool</span> — The number of people in this area who meet every preference you specified: gender, orientation, age range, income, relationship status, lifestyle traits, and physical preferences. This is your fully-filtered pool before accounting for mutual interest.</p>
-                          <p className="text-[10px] text-secondary leading-relaxed"><span className="font-mono font-medium text-foreground">Matches</span> — Your ideal pool adjusted for the probability that someone in it would also be interested in you, based on your Relate Score. A higher Relate Score means a larger share of your ideal pool converts into realistic mutual matches.</p>
-                          <p className="text-[10px] text-secondary leading-relaxed"><span className="font-mono font-medium text-foreground">% of {gLabel}</span> — Your ideal pool expressed as a percentage of all {gLabel} (ages 18-64, excluding homeless) in the area. This is the broadest lens: of every {gLabel.slice(0, -1)} you could theoretically encounter, how many fit what you are looking for.</p>
-                          <p className="text-[10px] text-secondary leading-relaxed"><span className="font-mono font-medium text-foreground">% of eligible</span> — Your ideal pool as a percentage of {oLabel} {gLabel} aged {ageRange} with no criminal record. This filters out people who were never realistic candidates, giving you a truer sense of how selective your remaining preferences are.</p>
-                          <p className="text-[10px] text-secondary leading-relaxed"><span className="font-mono font-medium text-foreground">% of {eLabel}</span> — The same eligible pool narrowed further to {eLabel} {gLabel} only. Because felon rates, income distributions, and lifestyle patterns differ by ethnicity, this shows the most apples-to-apples view of your selectivity within the demographic group that most closely mirrors your own background.</p>
-                        </div>
-                        <p className="text-[10px] text-secondary/60 mt-2 leading-relaxed">Estimates derived from publicly available census, demographic, and survey datasets. See <a href="/methodology#ideal-match" className="underline">methodology</a> for sources and approach.</p>
-
-                        {/* Expanded fallback funnels when metro pool is small */}
-                        {showExpandedFunnels && (
-                          <div className="mt-4 space-y-4">
-                            <p className="text-xs text-warning">Your metro ideal pool is small. Here&apos;s what the funnel looks like at broader scale.</p>
-                            {[state, national].filter(Boolean).map((comp) => {
-                              const cFunnel: FunnelStage[] = comp!.funnel || [];
-                              if (cFunnel.length === 0) return null;
-                              const cMax = cFunnel[0]?.count || 1;
-                              return (
-                                <div key={comp!.label}>
-                                  <span className="text-xs font-mono text-secondary uppercase tracking-wider">{comp!.label} Funnel</span>
-                                  <div className="mt-2 space-y-1">
-                                    {cFunnel.map((s, i) => {
-                                      const cPct = (s.count / cMax) * 100;
-                                      const cIsLast = i === cFunnel.length - 1;
-                                      const cIsMilestone = s.isMilestone;
-                                      return (
-                                        <div key={i} className={cIsMilestone ? 'pt-1' : ''}>
-                                          <div className="flex items-center justify-between mb-0.5">
-                                            <span className={`text-xs ${cIsMilestone ? 'font-semibold uppercase font-mono tracking-wider' : cIsLast ? 'font-medium' : 'text-secondary'}`}>{s.stage}</span>
-                                            <div className="flex items-center gap-2">
-                                              {s.filter && <span className="text-[10px] text-secondary font-mono">{s.filter}</span>}
-                                              <span className={`text-xs font-mono ${cIsMilestone || cIsLast ? 'font-semibold' : 'text-secondary'}`}>{fmt(s.count)}</span>
-                                            </div>
-                                          </div>
-                                          <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
-                                            <div
-                                              className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ${cIsLast ? 'bg-accent' : cIsMilestone ? 'bg-accent/60' : 'bg-stone-300'}`}
-                                              style={{ width: `${Math.max(1, cPct)}%` }}
-                                            />
-                                          </div>
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })()}
-                </>
-              );
-            })()}
-          </section>
+        {/* ── Market Coaching ── */}
+        {marketData && (
+          <MarketCoaching
+            marketData={marketData}
+            demographics={demographics}
+            m3={fullM3}
+            m4={fullM4}
+            persona={report.persona || null}
+          />
         )}
 
         {/* Matches */}
@@ -782,10 +652,26 @@ export default function ResultsDashboard() {
                       <p className="text-sm font-medium">{ref.cta}</p>
                       <p className="text-xs text-secondary">{ref.reason}</p>
                     </div>
-                    <span className="text-accent text-sm">→</span>
+                    <span className="text-accent text-sm">&rarr;</span>
                   </div>
                 </a>
               ))}
+            </div>
+          </section>
+        )}
+
+        {/* Downloads */}
+        {canDownload && (
+          <section className="card mb-6">
+            <h2 className="font-serif text-lg font-semibold mb-4">Downloads</h2>
+            <div className="flex items-center gap-4 py-2">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium">Full PDF Report</p>
+                <p className="text-xs text-secondary">Complete assessment results, persona, matches, and market data</p>
+              </div>
+              <button onClick={handleDownloadPDF} disabled={downloading} className="btn-secondary text-xs flex-shrink-0">
+                {downloading ? 'Preparing...' : 'Download PDF'}
+              </button>
             </div>
           </section>
         )}
@@ -820,4 +706,454 @@ export default function ResultsDashboard() {
       </main>
     </div>
   );
+}
+
+// ── Dating Market Visualization ──
+function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: boolean }) {
+  if (loading) {
+    return (
+      <section className="card mb-6">
+        <h2 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h2>
+        <p className="text-xs text-secondary mb-4">Analyzing your local market...</p>
+        <div className="flex items-center justify-center py-8">
+          <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+        </div>
+      </section>
+    );
+  }
+
+  if (!data) return null;
+
+  const score = data.relateScore?.score ?? 0;
+  const pool = data.matchPool;
+  const metro = data.location?.cbsaLabel || data.location?.cbsaName || 'Your Metro';
+  const metroPop = data.location?.population || 0;
+  const prob = data.matchProbability;
+  const matchCount = data.matchCount ?? 0;
+
+  function scoreTier(s: number) {
+    if (s >= 80) return { label: 'Exceptional', color: 'text-success' };
+    if (s >= 65) return { label: 'Strong', color: 'text-success' };
+    if (s >= 50) return { label: 'Above Average', color: 'text-accent' };
+    if (s >= 35) return { label: 'Average', color: 'text-warning' };
+    return { label: 'Below Average', color: 'text-danger' };
+  }
+
+  const tier = scoreTier(score);
+  const components = data.relateScore?.components || {};
+  const compOrder = ['income', 'education', 'age', 'ethnicity', 'children'];
+  const compLabels: Record<string, string> = {
+    income: 'Income', education: 'Education', age: 'Age', ethnicity: 'Ethnicity', children: 'Children',
+  };
+
+  const milestones = [
+    { label: 'Metro Population', value: metroPop, desc: 'Total population in your metro area' },
+    { label: 'Singles Pool', value: pool?.localSinglePool || 0, desc: 'Unmarried adults of your preferred gender and orientation' },
+    { label: 'Your Realistic Match Pool', value: pool?.realisticPool || 0, desc: 'Singles within your age range and income preferences' },
+    { label: 'Your Preferred Pool', value: pool?.preferredPool || 0, desc: 'Realistic matches who also meet your lifestyle preferences' },
+    { label: 'Your Ideal Match Pool', value: pool?.idealPool || 0, desc: 'People who meet every preference you set' },
+  ];
+
+  return (
+    <section className="card mb-6">
+      <h2 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h2>
+      <p className="text-xs text-secondary mb-5">{metro}</p>
+
+      {/* Relate Score Gauge */}
+      <div className="mb-6">
+        <div className="flex items-end justify-between mb-2">
+          <div>
+            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Relate Score</span>
+            <div className="flex items-baseline gap-2 mt-1">
+              <span className="font-mono text-3xl font-semibold">{score.toFixed(0)}</span>
+              <span className={`text-sm font-medium ${tier.color}`}>{tier.label}</span>
+            </div>
+          </div>
+          <span className="text-xs text-secondary font-mono">/100</span>
+        </div>
+
+        <div className="relative h-3 bg-stone-200 rounded-full overflow-hidden">
+          <div
+            className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out"
+            style={{
+              width: `${score}%`,
+              background: score >= 65 ? 'var(--color-success)' : score >= 50 ? 'var(--color-accent)' : score >= 35 ? 'var(--color-warning)' : 'var(--color-danger)',
+            }}
+          />
+          {[25, 50, 75].map(tick => (
+            <div key={tick} className="absolute top-0 bottom-0 w-px bg-white/50" style={{ left: `${tick}%` }} />
+          ))}
+        </div>
+        <p className="text-xs text-secondary mt-2">
+          How competitive you are in the {metro} dating market based on income, education, age, and demographics.
+        </p>
+      </div>
+
+      {/* Score Components */}
+      {Object.keys(components).length > 0 && (
+        <div className="mb-6">
+          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Score Breakdown</span>
+          <div className="space-y-2 mt-2">
+            {compOrder.map(key => {
+              const comp = components[key];
+              if (!comp) return null;
+              const val = comp.local ?? comp.score ?? comp.national ?? 50;
+              const weight = comp.weight ?? 0;
+              return (
+                <div key={key} className="flex items-center gap-3">
+                  <span className="text-xs text-secondary w-16">{compLabels[key]}</span>
+                  <div className="flex-1 h-1.5 bg-stone-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-accent rounded-full transition-all duration-700"
+                      style={{ width: `${Math.min(100, Math.max(0, val))}%` }}
+                    />
+                  </div>
+                  <span className="text-xs font-mono w-8 text-right">{Math.round(val)}</span>
+                  <span className="text-[10px] text-secondary w-6">{Math.round(weight * 100)}%</span>
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-[11px] text-secondary mt-2">
+            Each bar shows your local percentile (0 = bottom, 100 = top) for that category. The percentage is how much that category weighs in your overall Relate Score.
+          </p>
+        </div>
+      )}
+
+      {/* Match Pool Funnel */}
+      {pool && (
+        <div className="mb-6">
+          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
+          <div className="mt-3 space-y-1">
+            {milestones.map((m, i) => {
+              const maxVal = milestones[0].value || 1;
+              const pct = (m.value / maxVal) * 100;
+              const isLast = i === milestones.length - 1;
+              return (
+                <div key={m.label}>
+                  <div className="flex items-center justify-between mb-0.5">
+                    <span className={`text-xs ${isLast ? 'font-medium' : 'text-secondary'}`}>{m.label}</span>
+                    <span className={`text-xs font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{m.value.toLocaleString()}</span>
+                  </div>
+                  <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
+                    <div
+                      className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ${isLast ? 'bg-accent' : 'bg-stone-300'}`}
+                      style={{ width: `${Math.max(1, pct)}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-3 space-y-1">
+            {milestones.map(m => (
+              <p key={m.label} className="text-[11px] text-secondary">
+                <span className="font-medium">{m.label}:</span> {m.desc}
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Match Probability & Count */}
+      <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
+        <div className="text-center">
+          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Probability</span>
+          <p className="font-mono text-2xl font-semibold mt-1">{prob?.percentage || '—'}</p>
+          <p className="text-xs text-secondary mt-1">
+            Chance of matching with someone from your ideal pool
+          </p>
+        </div>
+        <div className="text-center">
+          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Estimated Matches</span>
+          <p className="font-mono text-2xl font-semibold mt-1">{matchCount.toLocaleString()}</p>
+          <p className="text-xs text-secondary mt-1">
+            Compatible singles in the surrounding {metro} metro area
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Market Coaching ──
+function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
+  marketData: MarketData | null;
+  demographics: Demographics;
+  m3: any;
+  m4: any;
+  persona: { name?: string; datingBehavior?: string[]; mostAttractive?: string[]; leastAttractive?: string[] } | null;
+}) {
+  if (!marketData?.matchPool || !marketData?.relateScore) return null;
+
+  const pool = marketData.matchPool;
+  const score = marketData.relateScore;
+  const funnel = pool.funnel || [];
+  const matchCount = marketData.matchCount ?? 0;
+  const prob = marketData.matchProbability;
+  const metro = marketData.location?.cbsaLabel || marketData.location?.cbsaName || 'your area';
+  const national = marketData.nationalComparison;
+  const components = score.components || {};
+
+  type Insight = { priority: 'high' | 'medium' | 'low'; title: string; description: string; action: string; category: 'score' | 'funnel' | 'honesty' | 'expansion' };
+  const insights: Insight[] = [];
+
+  // 1. Relate Score Component Analysis
+  const compEntries = Object.entries(components).map(([k, v]: [string, any]) => ({
+    name: k,
+    local: v.local ?? v.score ?? 0,
+    weight: v.weight ?? 0,
+    weighted: (v.local ?? v.score ?? 0) * (v.weight ?? 0),
+  })).sort((a, b) => a.weighted - b.weighted);
+
+  const weakest = compEntries[0];
+  if (weakest && weakest.local < 40) {
+    const coaching: Record<string, { title: string; desc: string; action: string }> = {
+      income: {
+        title: 'Your Income Is Limiting You',
+        desc: `Your income ranks in the bottom ${Math.round(weakest.local)}% locally. For ${demographics.gender === 'Woman' ? 'women' : 'men'} in ${metro}, income carries ${Math.round(weakest.weight * 100)}% of your Relate Score weight.`,
+        action: 'Concrete paths: negotiate a raise at your current role, pursue a certification that increases earning power in your field, or explore a side income. Even a 20% income increase can move your score meaningfully.',
+      },
+      education: {
+        title: 'Education Is Holding You Back',
+        desc: `Your education level ranks in the bottom ${Math.round(weakest.local)}% locally. Higher education correlates with match probability and partner quality.`,
+        action: 'Consider professional certifications, online degrees, or skill-based credentials. Even one credential bump (e.g., associate to bachelor\'s, or adding a professional certification) shifts your percentile.',
+      },
+      age: {
+        title: 'Age Is Working Against You',
+        desc: `Your age score is ${Math.round(weakest.local)}. ${demographics.gender === 'Woman' ? 'For women, the dating market peaks younger and narrows faster. This is a structural reality, not a judgment.' : 'For men, age carries less weight but still matters. The market rewards established men in their 30s-40s most.'}`,
+        action: demographics.gender === 'Woman'
+          ? 'You can\'t change your age, but you can offset it: fitness, style, and a strong Relate profile matter more as you get older. Focus on what you control.'
+          : 'Offset age by maximizing income, fitness, and emotional maturity. Your assessment results are your edge. Lead with depth.',
+      },
+      children: {
+        title: 'Having Kids Is Narrowing Your Pool',
+        desc: `Your children score is ${Math.round(weakest.local)}. Many singles in your age range prefer partners without existing children.`,
+        action: 'You can\'t change this, but you can position it as a strength: demonstrate that you\'re a capable, present parent. On dating profiles, show (don\'t tell) that your life is full, not burdened.',
+      },
+      ethnicity: {
+        title: 'Your Demographic Is Competitive Here',
+        desc: `Your ethnicity score is ${Math.round(weakest.local)} in ${metro}. This reflects local representation. A smaller population share means fewer people who share or prefer your background.`,
+        action: national && national.relateScore > score.score + 5
+          ? `Your national score is ${national.relateScore} vs ${score.score} locally. Consider whether a metro with a larger ${demographics.ethnicity || 'similar'} population would shift your odds.`
+          : 'Focus on what you control: income, fitness, and being genuinely interesting. Demographic headwinds are real but they\'re one factor among many.',
+      },
+    };
+
+    const c = coaching[weakest.name];
+    if (c) {
+      insights.push({ priority: 'high', title: c.title, description: c.desc, action: c.action, category: 'score' });
+    }
+  }
+
+  const strongest = compEntries[compEntries.length - 1];
+  if (strongest && strongest.local >= 70) {
+    insights.push({
+      priority: 'low',
+      title: `${strongest.name.charAt(0).toUpperCase() + strongest.name.slice(1)} Is Your Biggest Asset`,
+      description: `Your ${strongest.name} ranks in the top ${Math.round(100 - strongest.local)}% in ${metro}. This is pulling your Relate Score up.`,
+      action: 'Lead with this. Make sure your dating profile and real-life presentation reflect this strength.',
+      category: 'score',
+    });
+  }
+
+  // 2. Funnel Bottleneck Analysis
+  const nonPreferenceFilters = /orientation|sexual|gender|base.*age|18.*64|eligible/i;
+  const drops: { from: string; to: string; lostPct: number; lostCount: number; stageName: string }[] = [];
+  for (let i = 1; i < funnel.length; i++) {
+    const prev = funnel[i - 1];
+    const curr = funnel[i];
+    if (curr.isMilestone || prev.isMilestone) continue;
+    if (prev.count === 0) continue;
+    if (nonPreferenceFilters.test(curr.stage) || nonPreferenceFilters.test(curr.filter || '')) continue;
+    const lostPct = ((prev.count - curr.count) / prev.count) * 100;
+    const lostCount = prev.count - curr.count;
+    if (lostPct > 5) {
+      drops.push({ from: prev.stage, to: curr.stage, lostPct, lostCount, stageName: curr.stage });
+    }
+  }
+  drops.sort((a, b) => b.lostPct - a.lostPct);
+
+  const biggestDrop = drops[0];
+  if (biggestDrop && biggestDrop.lostPct > 30) {
+    const isPhysical = /body type|fitness|height/i.test(biggestDrop.stageName);
+    const isIncome = /income/i.test(biggestDrop.stageName);
+    const isPolitical = /political/i.test(biggestDrop.stageName);
+
+    insights.push({
+      priority: 'high',
+      title: `Biggest Bottleneck: ${biggestDrop.stageName}`,
+      description: `This single filter eliminates ${Math.round(biggestDrop.lostPct)}% of your remaining pool (${biggestDrop.lostCount.toLocaleString()} people). Everything above this stage is fine. This is where your funnel chokes.`,
+      action: isPhysical
+        ? 'Physical preferences create the sharpest pool drops. Ask yourself: is this a genuine need, or a default? If you\'ve been happily attracted to people outside this filter before, consider expanding it.'
+        : isIncome
+        ? `You\'re requiring income levels that most people in ${metro} don\'t hit. If financial stability matters more than a specific number, consider lowering this threshold and screening for financial habits instead.`
+        : isPolitical
+        ? 'Political filters are binary eliminators. If you\'re filtering for agreement rather than values, consider including "Moderate." Many moderates are flexible on issues that matter to you.'
+        : `This filter removes a huge chunk of candidates. Evaluate whether it reflects a genuine dealbreaker or a nice-to-have masquerading as a requirement.`,
+      category: 'funnel',
+    });
+  }
+
+  if (drops[1] && drops[1].lostPct > 25) {
+    insights.push({
+      priority: 'medium',
+      title: `Secondary Bottleneck: ${drops[1].stageName}`,
+      description: `Removes another ${Math.round(drops[1].lostPct)}% of your pool (${drops[1].lostCount.toLocaleString()} people) at the ${drops[1].stageName} filter.`,
+      action: `Your top two bottlenecks are ${biggestDrop?.stageName || 'unknown'} and ${drops[1].stageName}. Together they account for the majority of your pool reduction. Evaluate whether ${drops[1].stageName} is a genuine dealbreaker or a preference you could be flexible on.`,
+      category: 'funnel',
+    });
+  }
+
+  // 3. Expansion Opportunity
+  if (pool.localSinglePool > 0 && pool.idealPool > 0) {
+    const selectivityPct = (pool.idealPool / pool.localSinglePool) * 100;
+    if (selectivityPct < 1) {
+      insights.push({
+        priority: 'high',
+        title: 'Your Preferences Filter Out 99%+ of Singles',
+        description: `Of ${pool.localSinglePool.toLocaleString()} local singles, only ${pool.idealPool.toLocaleString()} (${selectivityPct.toFixed(2)}%) meet all your criteria. You are selecting from the absolute tip of the distribution.`,
+        action: 'This level of selectivity is mathematically difficult. Not wrong, but it means you may need to meet hundreds of people to find one match. Review your funnel to see which filters you could relax without compromising what actually matters to you.',
+        category: 'expansion',
+      });
+    } else if (selectivityPct < 5) {
+      insights.push({
+        priority: 'medium',
+        title: 'You\'re Highly Selective',
+        description: `Only ${selectivityPct.toFixed(1)}% of local singles meet all your criteria. That\'s a small but real pool of ${pool.idealPool.toLocaleString()} people.`,
+        action: 'This is workable, but leave room for surprise. Some of your best matches might not check every box on paper.',
+        category: 'expansion',
+      });
+    }
+  }
+
+  // 4. Cross-Reference: Assessment vs Market Preferences
+  const wantScore = m3?.wantScore ?? 0;
+  const offerScore = m3?.offerScore ?? 0;
+  const gap = wantScore - offerScore;
+  const prefBodyTypes = (demographics as any).prefBodyTypes || (demographics as any).pref_body_types || [];
+  const prefFitness = (demographics as any).prefFitnessLevels || (demographics as any).pref_fitness_levels || [];
+  const userFitness = (demographics as any).fitness || (demographics as any).fitness_level || '';
+  const userBodyType = (demographics as any).bodyType || (demographics as any).body_type || '';
+
+  const wantsOnlyFit = prefBodyTypes.length > 0
+    && !prefBodyTypes.includes('No preference')
+    && prefBodyTypes.every((t: string) => t === 'Lean or Fit');
+  const wantsOnlyHighFitness = prefFitness.length > 0
+    && !prefFitness.includes('No preference')
+    && prefFitness.every((l: string) => ['4 to 6 days a week', 'Every day'].includes(l));
+
+  if ((wantsOnlyFit || wantsOnlyHighFitness) && gap > 15) {
+    const userIsntFitThemselves = !['Lean or Fit'].includes(userBodyType)
+      || !['4 to 6 days a week', 'Every day'].includes(userFitness);
+
+    if (userIsntFitThemselves) {
+      insights.push({
+        priority: 'high',
+        title: 'Honesty Check: Physical Standards vs. What You Offer',
+        description: `Your assessment shows a Want/Offer gap of +${gap}. You want significantly more than you offer. At the same time, you're filtering for only fit/lean partners who exercise intensely. But your own fitness and body type don't meet the standard you're setting for others.`,
+        action: 'Two paths: (1) Get in the gym. Seriously. Consistent exercise 4+ days a week for 6 months will change your body, your confidence, and your Relate Score. (2) Or expand your physical preferences. Attraction grows in person in ways a filter can\'t predict.',
+        category: 'honesty',
+      });
+    }
+  }
+
+  if (wantsOnlyFit && ['Never', '1 day a week'].includes(userFitness)) {
+    insights.push({
+      priority: 'high',
+      title: 'You Want Fit Partners but Don\'t Exercise',
+      description: `You\'re filtering for "Lean or Fit" body types, but you exercise ${userFitness === 'Never' ? 'never' : 'once a week'}. Attractive, fit people tend to date other fit people.`,
+      action: 'Start with 3 days a week of exercise, even walking. Build to 4 to 5 days. This is the single highest ROI change you can make: it improves your Relate Score, your health, your confidence, and your attractiveness to the people you want to date.',
+      category: 'honesty',
+    });
+  }
+
+  const prefIncome = (demographics as any).prefIncome ?? (demographics as any).pref_income_min ?? 0;
+  const userIncome = (demographics as any).income ?? 0;
+  const incomeComponent = components.income;
+  if (prefIncome > 0 && userIncome > 0 && prefIncome > userIncome * 1.5 && incomeComponent?.local && incomeComponent.local < 40) {
+    insights.push({
+      priority: 'medium',
+      title: 'You\'re Requiring Income You Don\'t Match',
+      description: `You require partners earning ${formatIncome(prefIncome)}+, but your own income puts you in the bottom ${Math.round(incomeComponent.local)}% locally. High earners typically partner with high earners.`,
+      action: 'Focus on increasing your own income first. Alternatively, lower your income floor and look for financial responsibility rather than a specific number. Someone who saves, invests, and lives within their means.',
+      category: 'honesty',
+    });
+  }
+
+  const driver = m4?.emotionalDrivers?.primary;
+  if (driver === 'abandonment' && matchCount < 50) {
+    insights.push({
+      priority: 'medium',
+      title: 'Small Pool + Abandonment Fear = Scarcity Spiral',
+      description: `With only ${matchCount} estimated matches and abandonment as your primary emotional driver, you\'re at risk of clinging to anyone who shows interest rather than choosing wisely.`,
+      action: 'Work on your abandonment patterns (see Growth Plan above) before actively dating. A small pool requires patience and confidence, not desperation. Therapy that targets attachment anxiety will serve you better than loosening your standards.',
+      category: 'honesty',
+    });
+  }
+
+  if (national && national.matchCount > matchCount * 3 && matchCount < 100) {
+    insights.push({
+      priority: 'low',
+      title: 'Your Market Is Better Elsewhere',
+      description: `Nationally, your estimated matches jump to ${national.matchCount.toLocaleString()} vs. ${matchCount.toLocaleString()} locally. ${metro} may not be the best market for what you\'re looking for.`,
+      action: 'If relocation is feasible, research metros with better demographics for your profile. Even within your state, a larger metro might triple your pool. Dating apps with wider radius settings can help in the short term.',
+      category: 'expansion',
+    });
+  }
+
+  if (prob && prob.rate < 0.05) {
+    insights.push({
+      priority: 'medium',
+      title: 'Your Match Probability Is Below 5%',
+      description: `Even within your ideal pool, only ${prob.percentage} of people would likely be mutually interested. This is driven by your Relate Score of ${score.score}.`,
+      action: 'Improve your Relate Score by focusing on your weakest component. A 10 point score improvement can nearly double your match probability due to the sigmoid curve. Small gains compound.',
+      category: 'score',
+    });
+  }
+
+  if (insights.length === 0) return null;
+
+  const priorityOrder = { high: 0, medium: 1, low: 2 };
+  insights.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+
+  function priorityBadge(p: 'high' | 'medium' | 'low') {
+    const styles = {
+      high: 'bg-danger/10 text-danger',
+      medium: 'bg-warning/10 text-warning',
+      low: 'bg-stone-100 text-secondary',
+    };
+    return styles[p];
+  }
+
+  return (
+    <section className="card mb-6">
+      <h2 className="font-serif text-lg font-semibold mb-1">Market Coaching</h2>
+      <p className="text-xs text-secondary mb-5">Actionable insights from your dating market data and assessment results</p>
+
+      <div className="space-y-4">
+        {insights.map((insight, i) => (
+          <div key={i} className="border border-border rounded-md p-3">
+            <div className="flex items-start gap-2 mb-2">
+              <span className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded flex-shrink-0 ${priorityBadge(insight.priority)}`}>
+                {insight.priority}
+              </span>
+              <h3 className="text-sm font-medium leading-tight">{insight.title}</h3>
+            </div>
+            <p className="text-xs text-secondary mb-2">{insight.description}</p>
+            <div className="bg-stone-50 border border-border rounded p-2">
+              <span className="text-[10px] font-mono text-accent uppercase tracking-wider">What to do</span>
+              <p className="text-xs text-secondary mt-1">{insight.action}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+function formatIncome(n: number): string {
+  if (n >= 1000) return `$${(n / 1000).toFixed(0)}k`;
+  return `$${n.toLocaleString()}`;
 }

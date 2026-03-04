@@ -501,8 +501,6 @@ function AccountPage() {
             { id: 'profile', label: 'Profile', show: true },
             { id: 'subscription', label: 'Subscription', show: true },
             { id: 'assessment', label: 'Assessment', show: true },
-            { id: 'results', label: 'Results', show: hasResults && (m1Data || m2Data || m3Data || m4Data) },
-            { id: 'market', label: 'Market', show: !!(marketData || marketLoading) },
             { id: 'downloads', label: 'Downloads', show: hasResults },
             { id: 'partner', label: 'Partner', show: true },
             { id: 'coaching', label: 'Ongoing Coaching', show: hasResults && canDownload, accent: true },
@@ -513,7 +511,12 @@ function AccountPage() {
       </nav>
 
       <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
-        <h1 className="font-serif text-3xl font-semibold mb-8">Account</h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="font-serif text-3xl font-semibold">Account</h1>
+          {hasResults && (
+            <Link href="/results" className="text-xs text-accent hover:underline">See Results</Link>
+          )}
+        </div>
 
         {/* ── Payment Success Toast ── */}
         {paymentSuccess && (
@@ -878,23 +881,7 @@ function AccountPage() {
           />
         )}
 
-        {/* ── Dating Market ── */}
-        {(marketData || marketLoading) && (
-          <div id="market" className="scroll-mt-12">
-            <DatingMarketViz data={marketData} loading={marketLoading} />
-          </div>
-        )}
-
-        {/* ── Market Coaching ── */}
-        {marketData && (
-          <MarketCoaching
-            marketData={marketData}
-            demographics={demographics}
-            m3={fullM3 || m3Data?.result || null}
-            m4={fullM4 || m4Data?.result || null}
-            persona={m2Data?.personaMetadata || null}
-          />
-        )}
+        {/* Dating Market and Market Coaching are on the Results page */}
 
         {/* ── Compatibility Rankings ── */}
         {matches.length > 0 && (
