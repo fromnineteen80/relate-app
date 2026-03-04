@@ -777,6 +777,145 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
 }
 
 // ── Market Coaching ──
+
+function humanizeBottleneck(
+  stageName: string,
+  lostPct: number,
+  lostCount: number,
+  metro: string,
+  gender: string | undefined,
+): { title: string; description: string; action: string } {
+  const pctStr = Math.round(lostPct);
+  const countStr = lostCount.toLocaleString();
+  const seeking = gender === 'Woman' ? 'men' : 'women';
+
+  // Has kids: No / Yes / Open to either
+  if (/^Has kids:/i.test(stageName)) {
+    const val = stageName.replace(/^Has kids:\s*/i, '').trim();
+    if (/no/i.test(val)) {
+      return {
+        title: 'You Want a Partner Without Children',
+        description: `Requiring a childless partner removes ${pctStr}% of your remaining pool — that's ${countStr} people in ${metro}. As singles move into their 30s and beyond, a growing majority already have children. This preference is one of the most common pool-shrinking filters in the dating market.`,
+        action: 'Ask yourself whether this is a firm boundary or a preference. If you\'d consider dating a great partner who happened to have kids, relaxing this single filter could dramatically expand your options. If it\'s non-negotiable, that\'s valid — but be aware you\'ll need to compensate with flexibility elsewhere.',
+      };
+    }
+    if (/yes/i.test(val)) {
+      return {
+        title: 'You Prefer Partners Who Already Have Children',
+        description: `Filtering for partners who have kids removes ${pctStr}% of your pool (${countStr} people). Younger singles are less likely to have children, so this filter becomes more costly in younger age brackets.`,
+        action: 'If you\'re looking for someone who understands parenting, that\'s a meaningful compatibility signal. Consider whether "open to either" might serve the same goal without cutting as many people.',
+      };
+    }
+    return {
+      title: 'Your Preference on Partner\'s Children',
+      description: `Your children preference removes ${pctStr}% of your pool (${countStr} people) in ${metro}.`,
+      action: 'Consider whether this reflects a core value or a soft preference. Even small flexibility here can meaningfully expand your match pool.',
+    };
+  }
+
+  // Wants kids: No / Yes
+  if (/^Wants kids:/i.test(stageName)) {
+    const val = stageName.replace(/^Wants kids:\s*/i, '').trim();
+    if (/no/i.test(val)) {
+      return {
+        title: 'You Want a Partner Who Doesn\'t Want Children',
+        description: `This removes ${pctStr}% of your remaining pool (${countStr} people). The majority of singles under 40 say they want children eventually, which makes this a significant filter — especially in family-oriented metros like ${metro}.`,
+        action: 'If you know you don\'t want kids, finding a partner who shares that conviction is important for long-term compatibility. This is worth keeping if it\'s a core life decision, but be honest with yourself about whether it\'s settled or still evolving.',
+      };
+    }
+    return {
+      title: 'You Want a Partner Who Wants Children',
+      description: `Filtering for partners who want children removes ${pctStr}% of your pool (${countStr} people). In older age brackets, more singles have either completed their families or decided against children, making this filter increasingly costly with age.`,
+      action: 'This is one of the most important long-term compatibility factors. Keep it — but if your timeline is flexible, widening your age range slightly can offset the pool reduction.',
+    };
+  }
+
+  // Smoking: No / Yes
+  if (/^Smoking:/i.test(stageName)) {
+    const val = stageName.replace(/^Smoking:\s*/i, '').trim();
+    if (/no/i.test(val)) {
+      return {
+        title: 'You Require a Non-Smoking Partner',
+        description: `Excluding smokers removes ${pctStr}% of your pool (${countStr} people) in ${metro}. Smoking rates vary significantly by region — in some metros this is barely noticeable, but in areas with higher smoking prevalence it can be a meaningful cut.`,
+        action: `In ${metro}, this filter costs you ${countStr} potential matches. For most people, non-smoking is a reasonable health and lifestyle boundary. If it's removing more than 15% of your pool, you're in a higher-smoking metro — but this is usually worth keeping.`,
+      };
+    }
+    return {
+      title: 'Your Smoking Preference Is Narrowing Your Pool',
+      description: `Your smoking preference removes ${pctStr}% of your pool (${countStr} people). The majority of the dating population doesn't smoke, so requiring a smoker significantly limits your options.`,
+      action: 'If smoking compatibility matters to you, consider broadening to "open to either" — you\'ll still encounter smokers but won\'t exclude non-smokers.',
+    };
+  }
+
+  // Height ≥ X
+  if (/^Height/i.test(stageName)) {
+    const heightVal = stageName.replace(/^Height[^0-9]*/i, '').trim();
+    return {
+      title: 'Your Minimum Height Preference Is Filtering Heavily',
+      description: `Requiring a partner ${heightVal} or taller eliminates ${pctStr}% of the remaining ${seeking} in your pool — ${countStr} people gone from one preference alone. Height follows a bell curve: each additional inch above average cuts the eligible pool roughly in half.`,
+      action: `Dropping your minimum by just 1-2 inches could recover thousands of potential matches. Many people find that in person, a partner slightly below their "ideal" height is a non-issue. If height is truly important to you, keep it — but recognize this is one of your most expensive filters.`,
+    };
+  }
+
+  // Body type: X, Y
+  if (/^Body type:/i.test(stageName)) {
+    const types = stageName.replace(/^Body type:\s*/i, '').trim();
+    return {
+      title: 'Your Body Type Preferences Are Narrowing Your Pool',
+      description: `Filtering for "${types}" body types removes ${pctStr}% of your remaining pool (${countStr} people). Body type preferences tend to compound with height and fitness filters — together, these physical preferences can eliminate the vast majority of otherwise compatible matches.`,
+      action: `Consider whether you're stacking physical filters. If you're also filtering on height and fitness level, the combined effect is much larger than any single filter suggests. Try keeping your strongest physical preference and relaxing the others — you may find that fitness level is a better proxy for what you actually care about than a self-reported body type label.`,
+    };
+  }
+
+  // Fitness: X
+  if (/^Fitness:/i.test(stageName)) {
+    const levels = stageName.replace(/^Fitness:\s*/i, '').trim();
+    return {
+      title: 'Your Fitness Level Preference Is Costly',
+      description: `Requiring "${levels}" fitness removes ${pctStr}% of your pool (${countStr} people). Only a minority of adults exercise at high frequency, and self-reported fitness levels tend to be optimistic — meaning the real pool of people who meet this standard is even smaller than the data suggests.`,
+      action: 'Fitness matters for lifestyle compatibility, but consider whether you need a gym partner or simply someone who takes care of themselves. Broadening from "daily" to "a few times a week" or accepting one tier lower can significantly expand your options without compromising on an active lifestyle.',
+    };
+  }
+
+  // Political: X, Y
+  if (/^Political:/i.test(stageName)) {
+    const views = stageName.replace(/^Political:\s*/i, '').trim();
+    return {
+      title: 'Your Political Compatibility Filter Is Expensive',
+      description: `Filtering for "${views}" political views removes ${pctStr}% of your pool (${countStr} people) in ${metro}. Political demographics vary dramatically by metro — this filter could cost you 10% in one city and 60% in another.`,
+      action: `In ${metro}, this preference eliminates ${countStr} people. If political alignment is essential for your relationship satisfaction, keep it. But if you'd be happy with someone who's politically moderate or simply not strongly opposed to your views, broadening this filter is one of the easiest ways to grow your pool.`,
+    };
+  }
+
+  // Age X-Y
+  if (/^Age \d/i.test(stageName)) {
+    const range = stageName.replace(/^Age\s*/i, '').trim();
+    return {
+      title: 'Your Age Range Is Limiting Your Options',
+      description: `Your preferred age range of ${range} removes ${pctStr}% of eligible singles (${countStr} people). Narrow age windows — especially ranges of 5 years or less — are one of the biggest hidden pool killers because they cut across every other filter you've set.`,
+      action: 'Widening your age range by even 2-3 years on either end can recover a significant number of matches. Research consistently shows that age-gap relationships of 5-7 years report similar satisfaction levels to same-age relationships. The "right" person might be just outside your current window.',
+    };
+  }
+
+  // Income ≥ $X
+  if (/^Income/i.test(stageName)) {
+    const threshold = stageName.replace(/^Income[^$]*/i, '').trim();
+    return {
+      title: 'Your Income Requirement Is a Major Filter',
+      description: `Requiring a partner earning ${threshold} or more eliminates ${pctStr}% of your pool (${countStr} people). Income distribution is heavily skewed — each step up the income ladder removes a disproportionately large share of people because far fewer earn above each threshold.`,
+      action: `Consider what income actually represents to you: financial stability, ambition, lifestyle compatibility? Someone earning slightly below your threshold may check all those boxes. Lowering your minimum by 15-20% could double or triple the number of people who pass this filter, because of how income distribution works at higher levels.`,
+    };
+  }
+
+  // Fallback for any unrecognized stage
+  const cleanName = stageName.replace(/:\s*.*$/, '').trim();
+  return {
+    title: `Your "${cleanName}" Preference Is Reducing Your Pool`,
+    description: `This preference removes ${pctStr}% of your remaining matches (${countStr} people) in ${metro}. Every filter you add compounds with the others, so even moderate individual cuts create large combined reductions.`,
+    action: 'Rank your preferences by importance. Keep your top 2-3 non-negotiables firm and consider adding flexibility to the rest. Small concessions on lower-priority preferences often recover more matches than you\'d expect.',
+  };
+}
+
 function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
   marketData: MarketData | null;
   demographics: Demographics;
@@ -803,52 +942,59 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
     weighted: (v.local ?? v.score ?? 0) * (v.weight ?? 0),
   })).sort((a, b) => a.weighted - b.weighted);
 
+  // ── Weakest Relate Score component ──
   const weakest = compEntries[0];
   if (weakest && weakest.local < 40) {
+    const pct = Math.round(weakest.local);
+    const weightPct = Math.round(weakest.weight * 100);
+    const genderLabel = demographics.gender === 'Woman' ? 'women' : 'men';
     const coaching: Record<string, { title: string; desc: string; action: string }> = {
       income: {
-        title: 'Your Income Is Limiting You',
-        desc: `Your income ranks in the bottom ${Math.round(weakest.local)}% locally. For ${demographics.gender === 'Woman' ? 'women' : 'men'} in ${metro}, income carries ${Math.round(weakest.weight * 100)}% of your Relate Score weight.`,
-        action: 'Concrete paths: negotiate a raise, pursue a certification, or explore side income. Even a 20% increase can move your score meaningfully.',
+        title: 'Your Income Is Limiting Your Competitiveness',
+        desc: `Your income puts you in the bottom ${pct}% of ${genderLabel} in ${metro}. Income carries ${weightPct}% of your overall Relate Score weight — meaning it's one of the strongest factors determining how competitive you are in this market. In practical terms, this means a significant share of potential matches who filter by income will never see your profile.`,
+        action: `Even a modest income increase can move your score meaningfully because the weight is so high (${weightPct}%). Concrete paths: negotiate a raise or promotion, pursue a professional certification that unlocks higher pay, or develop a side income stream. A 20% income increase in ${metro} could move your score by 5-10 points. Long-term, investing in earning power is the single highest-leverage move you can make for your dating market position.`,
       },
       education: {
-        title: 'Education Is Holding You Back',
-        desc: `Your education level ranks in the bottom ${Math.round(weakest.local)}% locally.`,
-        action: 'Consider professional certifications, online degrees, or skill-based credentials.',
+        title: 'Your Education Level Is Below the Local Average',
+        desc: `Your education ranks in the bottom ${pct}% of ${genderLabel} in ${metro}. Education affects your Relate Score because it correlates with the pool of people you're likely to meet and match with — higher-education metros tend to filter heavily on credentials, even unconsciously.`,
+        action: 'The good news is education is improvable. Professional certifications, online degrees from accredited programs, or specialized skill-based credentials can all shift your percentile. Even a single credential upgrade (e.g., associate\'s to bachelor\'s, or adding a professional cert) can meaningfully change how you\'re perceived in the dating market. Focus on credentials that also boost your income — that way you improve two score components at once.',
       },
       age: {
-        title: 'Age Is Working Against You',
-        desc: `Your age score is ${Math.round(weakest.local)}.`,
-        action: 'Focus on what you control: fitness, style, income, and emotional maturity.',
+        title: 'Age Is Working Against You in This Market',
+        desc: `Your age competitiveness score is ${pct} out of 100 in ${metro}. This doesn't mean your age is "wrong" — it means the singles you're seeking tend to prefer a different age range than yours. The dating market has well-documented age preferences, and your current position means you're competing against a larger pool of people in a more preferred age bracket.`,
+        action: 'Age is the one factor you can\'t change, but you can offset it by excelling in areas you control. Fitness and physical presentation become more important as age works against you — staying in strong physical shape can effectively "subtract" years from how competitive you are. Income and emotional maturity are also areas where age can become an advantage if you invest in them. Focus on being the most compelling version of yourself in the areas that are within your control.',
       },
       children: {
-        title: 'Having Kids Is Narrowing Your Pool',
-        desc: `Many singles in your age range prefer partners without existing children.`,
-        action: 'Position it as a strength: show that your life is full, not burdened.',
+        title: 'Having Children Is Narrowing Your Dating Pool',
+        desc: `Being a parent places you in a more competitive segment of the ${metro} dating market. Many singles — particularly those without children of their own — prefer partners without existing kids. This isn't a reflection of your worth as a parent; it's a market reality that affects how many people will consider you as a potential match.`,
+        action: 'Rather than hiding this part of your life, lead with it authentically. Singles who are open to partners with children tend to value maturity, stability, and family orientation — qualities you can highlight. On dating profiles, showing (not just telling) that your life is full and well-managed is more effective than downplaying your kids. Also consider that your best matches may be other parents — shared parenting experience creates immediate common ground and mutual understanding.',
       },
       ethnicity: {
-        title: 'Your Demographic Is Competitive Here',
-        desc: `Your ethnicity score is ${Math.round(weakest.local)} in ${metro}.`,
+        title: 'Your Demographic Profile Is Highly Competitive Here',
+        desc: `Your ethnicity competitiveness score is ${pct} in ${metro}. This reflects documented preference patterns in the local dating market — certain demographic groups face more competition for matches in specific metros based on population ratios and stated preferences. ${national && national.relateScore > score.score + 5 ? `Nationally, your score jumps to ${national.relateScore} (vs. ${score.score} locally), meaning your demographic is significantly more competitive in other markets.` : ''}`,
         action: national && national.relateScore > score.score + 5
-          ? `Your national score is ${national.relateScore} vs ${score.score} locally. Consider whether a different metro would shift your odds.`
-          : 'Focus on income, fitness, and being genuinely interesting.',
+          ? `Geography is working against you here. Your national Relate Score of ${national.relateScore} vs. your local score of ${score.score} tells you that other metros would give you a structural advantage. If relocation is on the table, research metros where the demographic composition works more in your favor. In the meantime, focus on the factors you control — income, fitness, and genuine charisma go a long way in any market.`
+          : 'Focus on maximizing the factors within your control: income, fitness, style, and emotional intelligence. People who score lower on demographic competitiveness but higher on personal development factors often outperform their "expected" match rate. Invest in being genuinely interesting — hobbies, travel, skills, and social proof all help differentiate you in a competitive market.',
       },
     };
     const c = coaching[weakest.name];
     if (c) insights.push({ priority: 'high', title: c.title, description: c.desc, action: c.action });
   }
 
+  // ── Strongest component ──
   const strongest = compEntries[compEntries.length - 1];
   if (strongest && strongest.local >= 70) {
+    const topPct = Math.round(100 - strongest.local);
+    const nameLabel = strongest.name.charAt(0).toUpperCase() + strongest.name.slice(1);
     insights.push({
       priority: 'low',
-      title: `${strongest.name.charAt(0).toUpperCase() + strongest.name.slice(1)} Is Your Biggest Asset`,
-      description: `Your ${strongest.name} ranks in the top ${Math.round(100 - strongest.local)}% in ${metro}.`,
-      action: 'Lead with this. Make sure your dating profile reflects this strength.',
+      title: `${nameLabel} Is Your Strongest Market Advantage`,
+      description: `Your ${strongest.name} ranks in the top ${topPct}% of singles in ${metro}. This is the component pulling your Relate Score up the most — it's what makes you competitive against others in your market. Potential matches who value ${strongest.name} will find you disproportionately attractive compared to the local average.`,
+      action: `Make this visible. Your dating profile, first-date conversations, and overall presentation should reflect this strength. If ${strongest.name} is your edge, don't be modest about it — let it do the work for you. People tend to underplay their strongest assets; lean into yours.`,
     });
   }
 
-  // Funnel bottleneck
+  // ── Funnel bottlenecks (humanized) ──
   const nonPreferenceFilters = /orientation|sexual|gender|base.*age|18.*64|eligible/i;
   const drops: { lostPct: number; lostCount: number; stageName: string }[] = [];
   for (let i = 1; i < funnel.length; i++) {
@@ -862,38 +1008,47 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
   drops.sort((a, b) => b.lostPct - a.lostPct);
 
   if (drops[0] && drops[0].lostPct > 30) {
-    insights.push({
-      priority: 'high',
-      title: `Biggest Bottleneck: ${drops[0].stageName}`,
-      description: `This filter eliminates ${Math.round(drops[0].lostPct)}% of your remaining pool (${drops[0].lostCount.toLocaleString()} people).`,
-      action: 'Evaluate whether this reflects a genuine dealbreaker or a nice-to-have.',
-    });
+    const h = humanizeBottleneck(drops[0].stageName, drops[0].lostPct, drops[0].lostCount, metro, demographics.gender);
+    insights.push({ priority: 'high', title: h.title, description: h.description, action: h.action });
   }
   if (drops[1] && drops[1].lostPct > 25) {
-    insights.push({
-      priority: 'medium',
-      title: `Secondary Bottleneck: ${drops[1].stageName}`,
-      description: `Removes another ${Math.round(drops[1].lostPct)}% (${drops[1].lostCount.toLocaleString()} people).`,
-      action: `Your top two bottlenecks are ${drops[0]?.stageName || 'unknown'} and ${drops[1].stageName}. Consider flexibility on ${drops[1].stageName}.`,
-    });
+    const h = humanizeBottleneck(drops[1].stageName, drops[1].lostPct, drops[1].lostCount, metro, demographics.gender);
+    insights.push({ priority: 'medium', title: h.title, description: h.description, action: h.action });
   }
 
-  // Selectivity
+  // ── Selectivity ──
   if (pool.localSinglePool > 0 && pool.idealPool > 0) {
     const pct = (pool.idealPool / pool.localSinglePool) * 100;
     if (pct < 1) {
-      insights.push({ priority: 'high', title: 'Your Preferences Filter Out 99%+ of Singles', description: `Only ${pool.idealPool.toLocaleString()} of ${pool.localSinglePool.toLocaleString()} local singles meet all your criteria.`, action: 'Review your funnel to see which filters you could relax.' });
+      const idealStr = pool.idealPool.toLocaleString();
+      const totalStr = pool.localSinglePool.toLocaleString();
+      insights.push({
+        priority: 'high',
+        title: 'Your Combined Preferences Filter Out Over 99% of Singles',
+        description: `After applying all your preferences, only ${idealStr} of ${totalStr} eligible singles in ${metro} remain — less than 1%. Each individual filter may seem reasonable on its own, but stacked together they create an extremely narrow funnel. This means you're not just being selective on one dimension; the compound effect of all your preferences is working against you.`,
+        action: 'You don\'t need to lower your standards across the board. Instead, identify your 2-3 true dealbreakers and hold firm on those while adding flexibility everywhere else. Look at your funnel breakdown to see which filters are doing the most damage — often, loosening just one or two secondary preferences can move you from dozens of potential matches to hundreds.',
+      });
     }
   }
 
-  // Match probability
+  // ── Match probability ──
   if (prob && prob.rate < 0.05) {
-    insights.push({ priority: 'medium', title: 'Match Probability Below 5%', description: `Only ${prob.percentage} of your ideal pool would likely be mutually interested.`, action: 'A 10 point score improvement can nearly double your match probability.' });
+    insights.push({
+      priority: 'medium',
+      title: 'Your Mutual Match Probability Is Below 5%',
+      description: `Of the people who meet all your criteria, only ${prob.percentage} would also find you competitive enough to match with. This is the "two-way" problem: it's not enough to want them — they have to want you back. A low mutual match rate usually means there's a gap between the caliber of partner you're seeking and your current market competitiveness.`,
+      action: 'There are two levers here: make yourself more competitive (improve your Relate Score by raising income, fitness, or presentation) or widen your preferences so you\'re fishing in a pool where you\'re more competitive. A 10-point Relate Score improvement can nearly double your match probability because you move up in the ranking of everyone\'s potential matches. Focus on your weakest score component — that\'s where improvement has the highest return.',
+    });
   }
 
-  // Geographic
+  // ── Geographic opportunity ──
   if (national && national.matchCount > matchCount * 3 && matchCount < 100) {
-    insights.push({ priority: 'low', title: 'Your Market Is Better Elsewhere', description: `Nationally, matches jump to ${national.matchCount.toLocaleString()} vs. ${matchCount.toLocaleString()} locally.`, action: 'If relocation is feasible, research metros with better demographics for your profile.' });
+    insights.push({
+      priority: 'low',
+      title: 'Your Dating Market Is Significantly Better in Other Cities',
+      description: `Nationally, your estimated match count jumps to ${national.matchCount.toLocaleString()} compared to just ${matchCount.toLocaleString()} in ${metro}. That's a ${Math.round(national.matchCount / Math.max(matchCount, 1))}x difference. This gap means the local population composition — age distribution, income levels, political leanings, and demographic mix — is working against your specific preference profile.`,
+      action: `If you have any flexibility on location, this is worth exploring seriously. Research metros where the demographics align better with what you're looking for. You don't necessarily need to move permanently — even expanding your search radius to nearby metros, or being open to long-distance for the right person, could dramatically change your odds. With only ${matchCount.toLocaleString()} estimated local matches, geography may be your single biggest constraint.`,
+    });
   }
 
   if (insights.length === 0) return null;
