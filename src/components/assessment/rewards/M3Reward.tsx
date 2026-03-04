@@ -193,7 +193,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
           <div className="relative h-3 bg-stone-200 rounded-full mb-4">
             <div
               className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-accent rounded-full border-2 border-white transition-all duration-1000"
-              style={{ left: `${Math.min(95, Math.max(5, score))}%` }}
+              style={{ left: `${Math.min(95, Math.max(5, 100 - score))}%` }}
             />
           </div>
           <div className="flex justify-between text-xs text-secondary mb-4">
