@@ -411,20 +411,20 @@ function AccountPage() {
           couplesReport: couplesData || undefined,
         }),
       });
-      const data = await res.json();
-      if (data.prompt) {
-        // Download as .md file
-        const blob = new Blob([data.prompt], { type: 'text/markdown' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = data.filename || 'RELATE-Coach.md';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        setShowCoachInfo(true);
-      }
+
+      if (!res.ok) throw new Error('Failed to generate coach skill');
+
+      // Response is a ZIP file
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'relate-coach.zip';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setShowCoachInfo(true);
     } catch (err) {
       console.error('Coach prompt download failed:', err);
     } finally {
@@ -922,29 +922,39 @@ function AccountPage() {
 
             {showCoachInfo && (
               <div className="mt-4 p-4 bg-accent/5 border border-accent/20 rounded-md">
-                <h3 className="text-sm font-semibold mb-2">How to Use Your Claude AI Coach</h3>
+                <h3 className="text-sm font-semibold mb-2">How to Install Your RELATE Coach Skill</h3>
                 <p className="text-xs text-secondary mb-3">
-                  Your personalized coaching file has been downloaded. Here&apos;s how to set it up:
+                  Your personalized coaching skill has been downloaded as <code className="bg-stone-100 px-1 rounded">relate-coach.zip</code>. This is a Claude Skill — a ready-to-use package that turns Claude into your personal relationship coach.
                 </p>
                 <ol className="text-xs text-secondary space-y-2 list-decimal list-inside">
                   <li>
                     <strong>Go to <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai</a></strong> and sign in (free or Pro account)
                   </li>
                   <li>
-                    <strong>Create a new Project:</strong> Click &quot;Projects&quot; in the sidebar, then &quot;Create Project&quot;. Name it something like &quot;RELATE Coach&quot;
+                    <strong>Open Skills settings:</strong> Click your profile icon, go to <strong>Settings</strong>, then <strong>Skills</strong> (or navigate to Customize and find Skills)
                   </li>
                   <li>
-                    <strong>Add your coach file:</strong> In the project, click &quot;Add content&quot; and upload the <code className="bg-stone-100 px-1 rounded">.md</code> file you just downloaded. This becomes Claude&apos;s permanent context for coaching you
+                    <strong>Upload the ZIP file:</strong> Click <strong>&quot;Add Skill&quot;</strong> and select the <code className="bg-stone-100 px-1 rounded">relate-coach.zip</code> file you just downloaded. Claude will install the skill automatically
                   </li>
                   <li>
-                    <strong>Start chatting:</strong> Open a new conversation within that project. Claude now knows your full assessment results, dating market data, conflict patterns, and relationship style
+                    <strong>Enable the skill:</strong> Make sure the <strong>relate-coach</strong> skill is toggled on
+                  </li>
+                  <li>
+                    <strong>Start chatting:</strong> Open any new conversation. Claude will automatically use your RELATE data when you ask about relationships, dating, conflict, or self-improvement. The skill contains your full assessment profile, dating market data, conflict patterns, attachment style, and compatibility matches
                   </li>
                 </ol>
                 <div className="mt-3 p-2 bg-stone-50 border border-border rounded">
+                  <p className="text-[11px] font-medium mb-1">What you can ask your coach:</p>
                   <p className="text-[11px] text-secondary">
-                    <strong>What you can ask:</strong> &quot;Should I lower my income filter?&quot; &middot; &quot;I just had a fight with my partner about X&quot; &middot;
+                    &quot;Should I lower my income filter?&quot; &middot; &quot;I just had a fight about X — what happened?&quot; &middot;
                     &quot;Is this person a good match for me?&quot; &middot; &quot;Help me write a dating profile&quot; &middot;
-                    &quot;What should I work on this week?&quot; &middot; &quot;We had our first conflict — analyze what happened&quot;
+                    &quot;What should I work on this week?&quot; &middot; &quot;Analyze my last date&quot; &middot;
+                    &quot;How do I improve my Relate Score?&quot; &middot; &quot;My partner did X — is that a red flag for my type?&quot;
+                  </p>
+                </div>
+                <div className="mt-2 p-2 bg-stone-50 border border-border rounded">
+                  <p className="text-[11px] text-secondary">
+                    <strong>Alternative setup:</strong> If skill upload isn&apos;t available on your plan, unzip the file and create a new <strong>Project</strong> in Claude.ai. Add both <code className="bg-stone-100 px-1 rounded">SKILL.md</code> and <code className="bg-stone-100 px-1 rounded">references/assessment-data.md</code> as project knowledge files. Then start a conversation within that project.
                   </p>
                 </div>
                 <button onClick={() => setShowCoachInfo(false)} className="mt-3 text-xs text-secondary hover:text-primary underline">
