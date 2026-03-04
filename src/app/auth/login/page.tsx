@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { getOnboardingRedirect } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
+import { loadProfileFromDb, loadAndHydrateProgress } from '@/lib/supabase/progress';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -19,12 +20,18 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
-    const { error } = await signIn(email, password);
+    const { error, user: signedInUser } = await signIn(email, password);
     if (error) {
       setError(error);
       setLoading(false);
     } else {
-      // Smart redirect based on where they are in the onboarding flow
+      // Hydrate localStorage from Supabase before deciding where to redirect
+      if (signedInUser?.id) {
+        await Promise.all([
+          loadProfileFromDb(signedInUser.id),
+          loadAndHydrateProgress(signedInUser.id),
+        ]);
+      }
       router.push(getOnboardingRedirect(emailVerified));
     }
   }

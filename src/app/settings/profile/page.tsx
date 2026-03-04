@@ -8,6 +8,23 @@ import { useRouter } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
 import { saveProfileToDb } from '@/lib/supabase/progress';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+function InfoRow({ label, value }: { label: string; value: string | null | undefined }) {
+  if (!value) return null;
+  return (
+    <div className="flex justify-between py-1.5 border-b border-border last:border-0">
+      <span className="text-xs text-secondary">{label}</span>
+      <span className="text-xs font-mono">{value}</span>
+    </div>
+  );
+}
+
+function formatCurrency(val: number) {
+  if (val >= 1000000) return '$1M+';
+  return '$' + val.toLocaleString();
+}
+
 export default function ProfileSettings() {
   const { user, signOut } = useAuth();
   const router = useRouter();
@@ -16,31 +33,42 @@ export default function ProfileSettings() {
   const [name, setName] = useState('');
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [profile, setProfile] = useState<any>(null);
+  const [demographics, setDemographics] = useState<any>(null);
 
   useEffect(() => {
     setName(localStorage.getItem('relate_profile_name') || '');
     setPhotoUrl(localStorage.getItem('relate_profile_photo') || null);
+
+    const storedProfile = localStorage.getItem('relate_profile');
+    if (storedProfile) {
+      try { setProfile(JSON.parse(storedProfile)); } catch { /* ignore */ }
+    }
+
+    const storedDemo = localStorage.getItem('relate_demographics');
+    if (storedDemo) {
+      try { setDemographics(JSON.parse(storedDemo)); } catch { /* ignore */ }
+    }
   }, []);
 
   function handleSave() {
     localStorage.setItem('relate_profile_name', name.trim());
-    // Also update relate_profile and persist to Supabase
     const stored = localStorage.getItem('relate_profile');
-    const profile = stored ? JSON.parse(stored) : {};
+    const p = stored ? JSON.parse(stored) : {};
     const parts = name.trim().split(/\s+/);
     const firstName = parts[0] || '';
     const lastName = parts.slice(1).join(' ') || '';
-    profile.firstName = firstName;
-    profile.lastName = lastName;
-    localStorage.setItem('relate_profile', JSON.stringify(profile));
+    p.firstName = firstName;
+    p.lastName = lastName;
+    localStorage.setItem('relate_profile', JSON.stringify(p));
     if (user) {
       saveProfileToDb(user.id, user.email, {
         firstName,
         lastName,
-        zipCode: profile.zipCode || '',
-        city: profile.city || '',
-        state: profile.state || '',
-        county: profile.county || '',
+        zipCode: p.zipCode || '',
+        city: p.city || '',
+        state: p.state || '',
+        county: p.county || '',
       });
     }
     setSaved(true);
@@ -75,6 +103,11 @@ export default function ProfileSettings() {
   }
 
   const initial = name ? name.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || '?';
+
+  // Format demographics display values
+  const genderDisplay = demographics?.gender === 'M' ? 'Man' : demographics?.gender === 'W' ? 'Woman' : demographics?.gender || null;
+  const smokingDisplay = demographics?.smoking === true ? 'Yes' : demographics?.smoking === false ? 'No' : demographics?.smoking || null;
+  const hasKidsDisplay = demographics?.has_kids === true ? 'Yes' : demographics?.has_kids === false ? 'No' : demographics?.has_kids || null;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -143,9 +176,68 @@ export default function ProfileSettings() {
           <p className="font-mono text-sm">{user?.email || '-'}</p>
         </div>
 
-        <Link href="/onboarding/demographics" className="btn-secondary block text-center mb-4">
-          Update Demographics
-        </Link>
+        {/* Location (Step 1) */}
+        {profile && (
+          <div className="card mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium">Location</p>
+              <Link href="/onboarding/profile" className="text-xs text-accent hover:underline">Edit</Link>
+            </div>
+            <InfoRow label="City" value={profile.city} />
+            <InfoRow label="State" value={profile.state} />
+            <InfoRow label="County" value={profile.county} />
+            <InfoRow label="ZIP" value={profile.zipCode} />
+          </div>
+        )}
+
+        {/* About You (Step 2) */}
+        {demographics ? (
+          <div className="card mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium">About You</p>
+              <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">Edit</Link>
+            </div>
+            <InfoRow label="Gender" value={genderDisplay} />
+            <InfoRow label="Age" value={demographics.age?.toString()} />
+            <InfoRow label="Ethnicity" value={demographics.ethnicity} />
+            <InfoRow label="Orientation" value={demographics.orientation} />
+            <InfoRow label="Income" value={demographics.income != null ? formatCurrency(demographics.income) : null} />
+            <InfoRow label="Education" value={demographics.education} />
+            <InfoRow label="Height" value={demographics.height} />
+            <InfoRow label="Body Type" value={demographics.body_type} />
+            <InfoRow label="Fitness" value={demographics.fitness_level} />
+            <InfoRow label="Political" value={demographics.political} />
+            <InfoRow label="Smoking" value={smokingDisplay} />
+            <InfoRow label="Has Kids" value={hasKidsDisplay} />
+            <InfoRow label="Want Kids" value={demographics.want_kids} />
+            <InfoRow label="Status" value={demographics.relationship_status} />
+          </div>
+        ) : (
+          <Link href="/onboarding/demographics" className="btn-secondary block text-center mb-4">
+            Complete Demographics
+          </Link>
+        )}
+
+        {/* Partner Preferences (Step 2 continued) */}
+        {demographics?.pref_age_min != null && (
+          <div className="card mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium">Partner Preferences</p>
+              <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">Edit</Link>
+            </div>
+            <InfoRow label="Age Range" value={`${demographics.pref_age_min} – ${demographics.pref_age_max}`} />
+            <InfoRow label="Min Income" value={demographics.pref_income_min != null ? formatCurrency(demographics.pref_income_min) : null} />
+            <InfoRow label="Min Height" value={demographics.pref_height_min} />
+            <InfoRow label="Body Types" value={demographics.pref_body_types?.join(', ')} />
+            <InfoRow label="Fitness" value={demographics.pref_fitness_levels?.join(', ')} />
+            <InfoRow label="Political" value={demographics.pref_political?.join(', ')} />
+            <InfoRow label="Partner Has Kids" value={demographics.pref_has_kids} />
+            <InfoRow label="Partner Wants Kids" value={demographics.pref_want_kids} />
+            <InfoRow label="Partner Smokes" value={demographics.pref_smoking} />
+            <InfoRow label="Seeking" value={demographics.seeking} />
+          </div>
+        )}
+
         <button onClick={handleSignOut} className="text-sm text-danger hover:underline">
           Sign out
         </button>

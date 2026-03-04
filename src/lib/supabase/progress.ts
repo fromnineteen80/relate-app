@@ -210,9 +210,9 @@ export async function loadProfileFromDb(userId: string): Promise<boolean> {
     if (name) localStorage.setItem('relate_profile_name', name);
   }
 
-  // Hydrate demographics localStorage
+  // Hydrate demographics localStorage (including preferences)
   if (data.gender) {
-    const demographics = {
+    const demographics: any = {
       gender: data.gender,
       age: data.age,
       zip_code: data.zip_code,
@@ -231,10 +231,77 @@ export async function loadProfileFromDb(userId: string): Promise<boolean> {
       has_kids: data.has_kids,
       want_kids: data.want_kids,
       relationship_status: data.relationship_status,
+      pref_age_min: data.pref_age_min,
+      pref_age_max: data.pref_age_max,
+      pref_income_min: data.pref_income_min,
+      pref_height_min: data.pref_height_min,
+      pref_body_types: data.pref_body_types,
+      pref_fitness_levels: data.pref_fitness_levels,
+      pref_political: data.pref_political,
+      pref_smoking: data.pref_smoking,
+      pref_has_kids: data.pref_has_kids,
+      pref_want_kids: data.pref_want_kids,
+      seeking: data.seeking,
     };
     localStorage.setItem('relate_demographics', JSON.stringify(demographics));
     localStorage.setItem('relate_gender', data.gender);
   }
 
   return true;
+}
+
+/**
+ * Save demographics form data to the users table (fire-and-forget).
+ * Converts form-format fields to DB column names.
+ */
+export function saveDemographicsToDb(
+  userId: string,
+  email: string,
+  form: any,
+) {
+  if (config.useMockAuth) return;
+  const supabase = getSupabase();
+  if (!supabase) return;
+
+  supabase.from('users').upsert({
+    id: userId,
+    email,
+    gender: form.gender === 'Man' ? 'M' : form.gender === 'Woman' ? 'W' : form.gender || null,
+    age: form.age ? parseInt(form.age) : null,
+    ethnicity: form.ethnicity || null,
+    orientation: form.orientation || null,
+    income: form.income ?? null,
+    education: form.education || null,
+    height: form.height || null,
+    body_type: form.bodyType || null,
+    fitness_level: form.fitness || null,
+    political: form.political || null,
+    smoking: form.smoking === 'Yes' ? true : form.smoking === 'No' ? false : null,
+    has_kids: form.hasKids === 'Yes' ? true : form.hasKids === 'No' ? false : null,
+    want_kids: form.wantKids || null,
+    relationship_status: form.relationshipStatus || null,
+    pref_age_min: form.prefAgeMin ? parseInt(form.prefAgeMin) : null,
+    pref_age_max: form.prefAgeMax ? parseInt(form.prefAgeMax) : null,
+    pref_income_min: form.prefIncome ?? null,
+    pref_height_min: form.prefHeight || null,
+    pref_body_types: form.prefBodyTypes?.length > 0 ? form.prefBodyTypes : null,
+    pref_fitness_levels: form.prefFitnessLevels?.length > 0 ? form.prefFitnessLevels : null,
+    pref_political: form.prefPolitical?.length > 0 ? form.prefPolitical : null,
+    pref_smoking: form.prefSmoking || null,
+    pref_has_kids: form.prefHasKids || null,
+    pref_want_kids: form.prefWantKids || null,
+    seeking: form.seeking || null,
+  }).then(({ error }) => {
+    if (error) console.warn('Failed to save demographics to DB:', error.message);
+  });
+}
+
+/**
+ * Load demographics from the users table and hydrate localStorage.
+ * Used by demographics page when localStorage is empty on login.
+ */
+export async function loadDemographicsFromDb(userId: string): Promise<boolean> {
+  // loadProfileFromDb already fetches from users table and hydrates both
+  // profile and demographics localStorage keys
+  return loadProfileFromDb(userId);
 }
