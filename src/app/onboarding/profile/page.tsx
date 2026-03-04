@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { useAuth } from '@/lib/auth-context';
 import { lookupZip } from '@/lib/zip-lookup';
 import { SiteHeader } from '@/components/SiteHeader';
@@ -178,7 +177,7 @@ export default function ProfileSetupPage() {
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
 
-      <main className="flex-1 max-w-lg mx-auto px-6 py-8 w-full">
+      <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
         {/* Saved toast */}
         {savedToast && (
           <div className="fixed top-4 right-4 bg-success text-white text-xs px-3 py-1.5 rounded-md shadow-lg z-50 animate-fade-in">
@@ -206,7 +205,7 @@ export default function ProfileSetupPage() {
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 border-2 border-border">
                 {photoUrl ? (
-                  <Image src={photoUrl} alt="Profile" width={64} height={64} className="w-full h-full object-cover" />
+                  <img src={photoUrl} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
                   <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-xl font-medium">
                     {initial}

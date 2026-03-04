@@ -81,6 +81,7 @@ function ResultsDashboard() {
   const [pricingTier, setPricingTier] = useState<PricingTier>('free');
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [downloading, setDownloading] = useState(false);
+  const [downloadingCoach, setDownloadingCoach] = useState(false);
   const [marketData, setMarketData] = useState<MarketData | null>(null);
   const [marketLoading, setMarketLoading] = useState(false);
   const [demographics, setDemographics] = useState<Demographics>({});
@@ -204,6 +205,66 @@ function ResultsDashboard() {
     finally { setDownloading(false); }
   }, [report, marketData]);
 
+  const handleDownloadCoach = useCallback(async () => {
+    const resultsStr = localStorage.getItem('relate_results');
+    if (!resultsStr) return;
+    setDownloadingCoach(true);
+    try {
+      const rpt = JSON.parse(resultsStr);
+      const demoData = (() => { try { return JSON.parse(localStorage.getItem('relate_demographics') || '{}'); } catch { return {}; } })();
+      const m3Full = (() => { try { return JSON.parse(localStorage.getItem('relate_m3_scored') || '{}')?.result; } catch { return undefined; } })();
+      const m4Full = (() => { try { return JSON.parse(localStorage.getItem('relate_m4_scored') || '{}')?.result; } catch { return undefined; } })();
+      const couplesData = (() => { try { return JSON.parse(localStorage.getItem('relate_couples_report') || 'null'); } catch { return null; } })();
+      const res = await fetch('/api/generate-coach-prompt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          persona: rpt.persona, dimensions: rpt.dimensions, m3: m3Full || rpt.m3, m4: m4Full || rpt.m4,
+          matches: rpt.matches, individualCompatibility: rpt.individualCompatibility,
+          marketData: marketData || undefined, demographics: demoData, couplesReport: couplesData || undefined,
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to generate coach skill');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'relate-coach.zip';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) { console.error('Coach prompt download failed:', err); }
+    finally { setDownloadingCoach(false); }
+  }, [marketData]);
+
+  const handleDownloadCoachMd = useCallback(async () => {
+    const resultsStr = localStorage.getItem('relate_results');
+    if (!resultsStr) return;
+    setDownloadingCoach(true);
+    try {
+      const rpt = JSON.parse(resultsStr);
+      const demoData = (() => { try { return JSON.parse(localStorage.getItem('relate_demographics') || '{}'); } catch { return {}; } })();
+      const m3Full = (() => { try { return JSON.parse(localStorage.getItem('relate_m3_scored') || '{}')?.result; } catch { return undefined; } })();
+      const m4Full = (() => { try { return JSON.parse(localStorage.getItem('relate_m4_scored') || '{}')?.result; } catch { return undefined; } })();
+      const couplesData = (() => { try { return JSON.parse(localStorage.getItem('relate_couples_report') || 'null'); } catch { return null; } })();
+      const res = await fetch('/api/generate-coach-prompt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          persona: rpt.persona, dimensions: rpt.dimensions, m3: m3Full || rpt.m3, m4: m4Full || rpt.m4,
+          matches: rpt.matches, individualCompatibility: rpt.individualCompatibility,
+          marketData: marketData || undefined, demographics: demoData, couplesReport: couplesData || undefined, format: 'md',
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to generate coach prompt');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'relate-coach.md';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) { console.error('Coach .md download failed:', err); }
+    finally { setDownloadingCoach(false); }
+  }, [marketData]);
+
   if (!loaded) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
 
   // Derived data — all guarded
@@ -234,6 +295,7 @@ function ResultsDashboard() {
     { id: 'market', label: 'Market', show: hasMarket },
     { id: 'matches', label: 'Matches', show: matches.length > 0 },
     { id: 'downloads', label: 'Downloads', show: canDownload },
+    { id: 'coaching', label: 'Ongoing Coaching', show: hasResults && canDownload },
   ].filter(n => n.show);
 
   return (
@@ -636,6 +698,119 @@ function ResultsDashboard() {
           </div>
         )}
       </main>
+
+      {/* ── Ongoing Coaching Section ── */}
+      {hasResults && canDownload && (
+        <div id="coaching" className="bg-stone-100 border-t border-border scroll-mt-12">
+          <div className="max-w-3xl mx-auto px-6 py-10">
+            <h2 className="font-serif text-2xl font-semibold mb-2">Ongoing Coaching</h2>
+            <p className="text-sm text-secondary mb-6">
+              Take your RELATE results with you. Download a personalized AI coaching prompt built from your assessment data, conflict patterns, dating market analysis, and compatibility profile.
+            </p>
+
+            {/* Download Options */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              {/* ZIP Skill */}
+              <div className="bg-white border border-border rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-mono bg-accent/10 text-accent px-1.5 py-0.5 rounded">ZIP</span>
+                  <h3 className="text-sm font-semibold">Claude Skill Package</h3>
+                </div>
+                <p className="text-xs text-secondary mb-3">
+                  Full skill with coaching workflows, response patterns, report summary, and disclaimer. Upload directly to Claude.ai as a Skill.
+                </p>
+                <div className="mb-3 text-[11px] text-secondary font-mono leading-relaxed bg-stone-50 p-2 rounded border border-border">
+                  <p>relate-coach/</p>
+                  <p className="ml-3">SKILL.md</p>
+                  <p className="ml-3">references/assessment-data.md</p>
+                  <p className="ml-3">references/report-summary.md</p>
+                  <p className="ml-3">references/workflow.md</p>
+                  <p className="ml-3">references/output-patterns.md</p>
+                  <p className="ml-3">LICENSE &middot; DISCLAIMER.md</p>
+                </div>
+                <button onClick={handleDownloadCoach} disabled={downloadingCoach} className="btn-secondary text-xs w-full">
+                  {downloadingCoach ? 'Preparing...' : 'Download relate-coach.zip'}
+                </button>
+              </div>
+
+              {/* Basic .md */}
+              <div className="bg-white border border-border rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-mono bg-stone-200 text-secondary px-1.5 py-0.5 rounded">MD</span>
+                  <h3 className="text-sm font-semibold">Basic Coaching Prompt</h3>
+                </div>
+                <p className="text-xs text-secondary mb-3">
+                  Single markdown file with your coaching instructions and assessment data combined. Works with any AI. Paste it into a chat or upload as a file.
+                </p>
+                <div className="mb-3 text-[11px] text-secondary bg-stone-50 p-2 rounded border border-border">
+                  <p>A single <code className="bg-stone-100 px-1 rounded">relate-coach.md</code> file containing your coaching prompt, report summary, and full assessment data. No setup required. Just upload or paste.</p>
+                </div>
+                <button onClick={handleDownloadCoachMd} disabled={downloadingCoach} className="btn-secondary text-xs w-full">
+                  {downloadingCoach ? 'Preparing...' : 'Download relate-coach.md'}
+                </button>
+              </div>
+            </div>
+
+            {/* Setup Instructions */}
+            <div className="bg-white border border-border rounded-lg p-4 mb-6">
+              <h3 className="text-sm font-semibold mb-3">How to Use Your Coach</h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">Option 1: Claude.ai Skill (Best experience)</p>
+                  <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
+                    <li>Go to <a href="https://claude.ai/customize/skills" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai/customize/skills</a> (profile icon &rarr; Customize &rarr; Skills)</li>
+                    <li>Click <strong>&quot;Add Skill&quot;</strong> and upload <code className="bg-stone-100 px-1 rounded">relate-coach.zip</code></li>
+                    <li>Toggle <strong>relate-coach</strong> on. Claude automatically uses your data in any relationship conversation</li>
+                  </ol>
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">Option 2: Claude.ai Project</p>
+                  <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
+                    <li>Unzip the file, then create a new <strong>Project</strong> in <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai</a> called &quot;RELATE Coach&quot;</li>
+                    <li>Add all files from the <code className="bg-stone-100 px-1 rounded">relate-coach/</code> folder as project knowledge</li>
+                    <li>Start conversations within that project for coaching</li>
+                  </ol>
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">Option 3: Any AI (ChatGPT, Gemini, etc.)</p>
+                  <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
+                    <li>Download the <strong>.md file</strong> above</li>
+                    <li>Upload <code className="bg-stone-100 px-1 rounded">relate-coach.md</code> to any AI chat as a file attachment, or paste its contents as a message</li>
+                    <li>Say: &quot;Use this as my coaching profile and help me with dating/relationships&quot;</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+
+            {/* Example prompts */}
+            <div className="bg-white border border-border rounded-lg p-4 mb-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wider mb-2">What you can ask your coach</p>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  'Should I lower my income filter?',
+                  'I just had a fight, what happened?',
+                  'Is this person a good match for me?',
+                  'Help me write a dating profile',
+                  'What should I work on this week?',
+                  'How do I improve my Relate Score?',
+                  'Analyze my last date',
+                ].map((q, i) => (
+                  <span key={i} className="text-[11px] text-secondary bg-stone-50 border border-border px-2 py-1 rounded">
+                    &quot;{q}&quot;
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Disclaimer */}
+            <div className="p-3 bg-warning/5 border border-warning/20 rounded-lg">
+              <p className="text-[11px] text-secondary">
+                <strong>Not a therapist.</strong> This coaching tool references evidence-based frameworks but is not a substitute for licensed therapy. See DISCLAIMER.md in the download. If you&apos;re in crisis: <strong>988 Suicide &amp; Crisis Lifeline</strong> or <strong>National Domestic Violence Hotline (1-800-799-7233)</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

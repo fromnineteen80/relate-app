@@ -12,7 +12,11 @@ export default function PersonaPage() {
   useEffect(() => {
     const stored = localStorage.getItem('relate_results');
     if (!stored) { router.push('/assessment'); return; }
-    setReport(JSON.parse(stored));
+    try {
+      const parsed = JSON.parse(stored);
+      if (!parsed.persona) { router.push('/assessment'); return; }
+      setReport(parsed);
+    } catch { router.push('/assessment'); }
   }, [router]);
 
   if (!report) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;

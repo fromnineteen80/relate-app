@@ -8,6 +8,10 @@
   --accent: #c2410c;
   --border: #e7e5e4;
   --secondary: #78716c;
+  --color-accent: #c2410c;
+  --color-success: #047857;
+  --color-warning: #d97706;
+  --color-danger: #be123c;
 }
 
 body {
