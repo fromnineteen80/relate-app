@@ -6,9 +6,11 @@ import ModulePage from '@/components/assessment/ModulePage';
 import M2Reward from '@/components/assessment/rewards/M2Reward';
 import { loadModuleQuestions } from '@/lib/question-data';
 import { FlatQuestion } from '@/lib/questions';
+import { useAuth } from '@/lib/auth-context';
 
 export default function Module2Page() {
   const router = useRouter();
+  const { user } = useAuth();
   const [questions, setQuestions] = useState<FlatQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [gender, setGender] = useState<string>('M');
@@ -17,9 +19,9 @@ export default function Module2Page() {
     const g = localStorage.getItem('relate_gender');
     if (!g) { router.push('/onboarding/demographics'); return; }
     setGender(g);
-    loadModuleQuestions(2, g).then(qs => { setQuestions(qs); setLoading(false); })
+    loadModuleQuestions(2, g, user?.id).then(qs => { setQuestions(qs); setLoading(false); })
       .catch(() => setLoading(false));
-  }, [router]);
+  }, [router, user]);
 
   const handleComplete = useCallback(async (responses: Record<string, number | string>) => {
     // Get M1 responses for comparison
