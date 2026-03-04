@@ -10,10 +10,12 @@ import { useAuth } from '@/lib/auth-context';
 import { SiteHeader } from '@/components/SiteHeader';
 import { loadAndHydrateProgress } from '@/lib/supabase/progress';
 
+type FunnelStage = { stage: string; count: number; filter?: string; percentage?: number; isMilestone?: boolean };
+
 type MarketData = {
   location?: { cbsaName?: string; cbsaLabel?: string; population?: number };
   relateScore?: { score: number };
-  matchPool?: { localSinglePool: number; realisticPool: number; preferredPool: number; idealPool: number };
+  matchPool?: { localSinglePool: number; realisticPool: number; preferredPool: number; idealPool: number; funnel?: FunnelStage[] };
   matchProbability?: { rate: number; percentage: string };
   matchCount?: number;
 };
@@ -101,9 +103,9 @@ export default function ResultsDashboard() {
     const gender = localStorage.getItem('relate_gender');
     if (!demoStr) return;
 
-    let demo: { age?: number; zipCode?: string; ethnicity?: string; orientation?: string; income?: number; education?: string; height?: string; bodyType?: string; fitness?: string; political?: string; smoking?: boolean; hasKids?: boolean; wantKids?: string; relationshipStatus?: string };
+    let demo: Record<string, any>;
     try { demo = JSON.parse(demoStr); } catch { return; }
-    if (!demo.zipCode) return;
+    if (!demo.zipCode && !demo.zip_code) return;
 
     marketFetchedRef.current = true;
     setMarketLoading(true);
@@ -112,8 +114,34 @@ export default function ResultsDashboard() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userId: user.id,
-        demographics: { gender, age: demo.age, zipCode: demo.zipCode, ethnicity: demo.ethnicity, orientation: demo.orientation, income: demo.income, education: demo.education, height: demo.height, bodyType: demo.bodyType, fitness: demo.fitness, political: demo.political, smoking: demo.smoking, hasKids: demo.hasKids, wantKids: demo.wantKids, relationshipStatus: demo.relationshipStatus },
-        preferences: {},
+        demographics: {
+          gender,
+          age: demo.age,
+          zipCode: demo.zipCode || demo.zip_code,
+          ethnicity: demo.ethnicity,
+          orientation: demo.orientation,
+          income: demo.income,
+          education: demo.education,
+          height: demo.height,
+          bodyType: demo.bodyType || demo.body_type,
+          fitness: demo.fitness || demo.fitness_level,
+          political: demo.political,
+          smoking: demo.smoking,
+          hasKids: demo.hasKids ?? demo.has_kids,
+          wantKids: demo.wantKids || demo.want_kids,
+          relationshipStatus: demo.relationshipStatus || demo.relationship_status,
+        },
+        preferences: {
+          prefAgeMin: demo.pref_age_min || demo.prefAgeMin,
+          prefAgeMax: demo.pref_age_max || demo.prefAgeMax,
+          prefIncomeMin: demo.pref_income_min ?? demo.prefIncome ?? 0,
+          prefHeightMin: demo.pref_height_min || demo.prefHeight || null,
+          prefBodyTypes: demo.pref_body_types || demo.prefBodyTypes || ['No preference'],
+          prefFitnessLevels: demo.pref_fitness_levels || demo.prefFitnessLevels || ['No preference'],
+          prefPolitical: demo.pref_political || demo.prefPolitical || ['No preference'],
+          prefHasKids: demo.pref_has_kids || demo.prefHasKids || 'No preference',
+          prefSmoking: demo.pref_smoking || demo.prefSmoking || 'No preference',
+        },
       }),
     })
       .then(r => r.json())
@@ -122,6 +150,7 @@ export default function ResultsDashboard() {
           const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount };
           setMarketData(md);
           localStorage.setItem('relate_market_data', JSON.stringify(md));
+          // Clear stale cache so new preferences are reflected next visit
         }
       })
       .catch(() => { /* silent fail */ })
@@ -489,38 +518,49 @@ export default function ResultsDashboard() {
                       <p className="text-xs text-secondary mt-1">Estimated Matches</p>
                     </div>
                   </div>
-                  {pool && (
-                    <div>
-                      <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
-                      <div className="mt-2 space-y-1">
-                        {[
-                          { label: 'Metro Population', value: marketData.location?.population || 0 },
-                          { label: 'Single Pool', value: pool.localSinglePool },
-                          { label: 'Realistic Pool', value: pool.realisticPool },
-                          { label: 'Preferred Pool', value: pool.preferredPool },
-                          { label: 'Ideal Pool', value: pool.idealPool },
-                        ].map((m, i, arr) => {
-                          const maxVal = arr[0].value || 1;
-                          const pct = (m.value / maxVal) * 100;
-                          const isLast = i === arr.length - 1;
-                          return (
-                            <div key={m.label}>
-                              <div className="flex items-center justify-between mb-0.5">
-                                <span className={`text-xs ${isLast ? 'font-medium' : 'text-secondary'}`}>{m.label}</span>
-                                <span className={`text-xs font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{fmt(m.value)}</span>
+                  {pool && (() => {
+                    const funnel: FunnelStage[] = pool.funnel || [];
+                    // Fallback to summary bars if funnel not available
+                    const stages = funnel.length > 0 ? funnel : [
+                      { stage: 'Metro Population', count: marketData.location?.population || 0 },
+                      { stage: 'LOCAL SINGLE POOL', count: pool.localSinglePool, isMilestone: true },
+                      { stage: 'REALISTIC POOL', count: pool.realisticPool, isMilestone: true },
+                      { stage: 'PREFERRED POOL', count: pool.preferredPool, isMilestone: true },
+                      { stage: 'IDEAL POOL', count: pool.idealPool, isMilestone: true },
+                    ];
+                    const maxCount = stages[0]?.count || 1;
+                    return (
+                      <div>
+                        <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
+                        <div className="mt-3 space-y-1.5">
+                          {stages.map((s, i) => {
+                            const pct = (s.count / maxCount) * 100;
+                            const isLast = i === stages.length - 1;
+                            const isMilestone = s.isMilestone;
+                            return (
+                              <div key={i} className={isMilestone ? 'pt-1' : ''}>
+                                <div className="flex items-center justify-between mb-0.5">
+                                  <span className={`text-xs ${isMilestone ? 'font-semibold uppercase font-mono tracking-wider' : isLast ? 'font-medium' : 'text-secondary'}`}>
+                                    {s.stage}
+                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    {s.filter && <span className="text-[10px] text-secondary font-mono">{s.filter}</span>}
+                                    <span className={`text-xs font-mono ${isMilestone || isLast ? 'font-semibold' : 'text-secondary'}`}>{fmt(s.count)}</span>
+                                  </div>
+                                </div>
+                                <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
+                                  <div
+                                    className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ${isLast ? 'bg-accent' : isMilestone ? 'bg-accent/60' : 'bg-stone-300'}`}
+                                    style={{ width: `${Math.max(1, pct)}%` }}
+                                  />
+                                </div>
                               </div>
-                              <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
-                                <div
-                                  className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ${isLast ? 'bg-accent' : 'bg-stone-300'}`}
-                                  style={{ width: `${Math.max(1, pct)}%` }}
-                                />
-                              </div>
-                            </div>
-                          );
-                        })}
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
                 </>
               );
             })()}

@@ -981,20 +981,24 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
     filter: `${(orientationPct * 100).toFixed(1)}%`
   });
   
-  // Stage 4: Felon exclusion (stratified)
-  const felonRate = getFelonRate(seeking, 'White', userProfile.education); // Simplified
+  // Stage 4: Felon exclusion (weighted by CBSA ethnicity distribution)
+  const whitePct = (cbsa.ethnicity_white_cbsa || 60) / 100;
+  const pocPct = 1 - whitePct;
+  const felonRate = (whitePct * getFelonRate(seeking, 'White', userProfile.education))
+    + (pocPct * getFelonRate(seeking, 'POC', userProfile.education));
   pool = pool * (1 - felonRate);
-  funnel.push({ 
-    stage: 'Non-felon', 
+  funnel.push({
+    stage: 'Non-felon',
     count: Math.round(pool),
     filter: `${((1 - felonRate) * 100).toFixed(1)}%`
   });
-  
-  // Stage 5: Drug user exclusion (stratified)
-  const drugRate = getDrugRate(seeking, 'White', userProfile.education); // Simplified
+
+  // Stage 5: Drug user exclusion (weighted by CBSA ethnicity distribution)
+  const drugRate = (whitePct * getDrugRate(seeking, 'White', userProfile.education))
+    + (pocPct * getDrugRate(seeking, 'POC', userProfile.education));
   pool = pool * (1 - drugRate);
-  funnel.push({ 
-    stage: 'Non-drug user', 
+  funnel.push({
+    stage: 'Non-drug user',
     count: Math.round(pool),
     filter: `${((1 - drugRate) * 100).toFixed(1)}%`
   });

@@ -90,7 +90,10 @@ export async function POST(request: NextRequest) {
       success: true,
       location: result.location,
       relateScore: result.relateScore,
-      matchPool: result.matchPool,
+      matchPool: {
+        ...result.matchPool,
+        funnel: result.matchPool.funnel,
+      },
       matchProbability: result.matchProbability,
       matchCount: result.matchCount,
     });
