@@ -675,12 +675,14 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
   const compOrder = ['income', 'education', 'age', 'ethnicity', 'children'];
   const compLabels: Record<string, string> = { income: 'Income', education: 'Education', age: 'Age', ethnicity: 'Ethnicity', children: 'Children' };
 
+  const metroShort = metro.includes(',') ? metro.split(',')[0] : metro;
+
   const milestones = [
     { label: 'Metro Population', value: metroPop, desc: 'Total population in your metro area' },
-    { label: 'Singles Pool', value: pool?.localSinglePool || 0, desc: 'Unmarried adults of your preferred gender and orientation' },
-    { label: 'Your Realistic Match Pool', value: pool?.realisticPool || 0, desc: 'Singles within your age range and income preferences' },
-    { label: 'Your Preferred Pool', value: pool?.preferredPool || 0, desc: 'Realistic matches who also meet your lifestyle preferences' },
-    { label: 'Your Ideal Match Pool', value: pool?.idealPool || 0, desc: 'People who meet every preference you set' },
+    { label: 'Metro Singles Pool', value: pool?.localSinglePool || 0, desc: 'Unmarried adults of your preferred gender and orientation' },
+    { label: 'Your Realistic Match Pool', value: pool?.realisticPool || 0, desc: 'Singles within your age range and income requirements' },
+    { label: 'Your Preferred Pool', value: pool?.preferredPool || 0, desc: 'Singles who additionally meet your lifestyle preferences' },
+    { label: 'Your Ideal Match Pool', value: pool?.idealPool || 0, desc: 'Singles who meet every preference you set' },
   ];
 
   return (
@@ -722,12 +724,11 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
                     <div className="h-full bg-accent rounded-full transition-all duration-700" style={{ width: `${Math.min(100, Math.max(0, val))}%` }} />
                   </div>
                   <span className="text-xs font-mono w-8 text-right">{Math.round(val)}</span>
-                  <span className="text-[10px] text-secondary w-6">{Math.round(weight * 100)}%</span>
                 </div>
               );
             })}
           </div>
-          <p className="text-[11px] text-secondary mt-2">Each bar shows your local percentile (0 = bottom, 100 = top). The percentage is how much that category weighs in your overall Relate Score.</p>
+          <p className="text-[11px] text-secondary mt-2">Each bar shows your local percentile (0 = bottom, 100 = top).</p>
         </div>
       )}
 
@@ -739,11 +740,24 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
               const maxVal = milestones[0].value || 1;
               const pct = (m.value / maxVal) * 100;
               const isLast = i === milestones.length - 1;
+              const singlesPool = milestones[1].value || 1;
+              let pctOfSingles = '';
+              if (i >= 1) {
+                const raw = (m.value / singlesPool) * 100;
+                if (isLast) {
+                  // Use enough decimals to show a non-zero result
+                  let decimals = 1;
+                  while (decimals < 10 && Number(raw.toFixed(decimals)) === 0 && raw > 0) decimals++;
+                  pctOfSingles = `${raw.toFixed(decimals)}%`;
+                } else {
+                  pctOfSingles = `${raw.toFixed(1)}%`;
+                }
+              }
               return (
                 <div key={m.label}>
                   <div className="flex items-center justify-between mb-0.5">
                     <span className={`text-xs ${isLast ? 'font-medium' : 'text-secondary'}`}>{m.label}</span>
-                    <span className={`text-xs font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{m.value.toLocaleString()}</span>
+                    <span className={`text-xs font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{m.value.toLocaleString()}{pctOfSingles ? ` (${pctOfSingles})` : ''}</span>
                   </div>
                   <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
                     <div className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ${isLast ? 'bg-accent' : 'bg-stone-300'}`} style={{ width: `${Math.max(1, pct)}%` }} />
@@ -769,7 +783,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
         <div className="text-center">
           <span className="text-xs font-mono text-secondary uppercase tracking-wider">Estimated Matches</span>
           <p className="font-mono text-2xl font-semibold mt-1">{matchCount.toLocaleString()}</p>
-          <p className="text-xs text-secondary mt-1">Compatible singles in the surrounding {metro} metro area</p>
+          <p className="text-xs text-secondary mt-1">Number of Singles from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats</p>
         </div>
       </div>
     </section>
