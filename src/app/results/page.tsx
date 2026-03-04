@@ -38,7 +38,7 @@ class ResultsErrorBoundary extends Component<{ children: ReactNode }, { error: E
     if (this.state.error) {
       return (
         <div className="min-h-screen flex flex-col">
-          <div className="max-w-3xl mx-auto px-6 py-16 w-full text-center">
+          <div className="max-w-2xl mx-auto px-6 py-16 w-full text-center">
             <h1 className="font-serif text-2xl font-semibold mb-4">Something went wrong</h1>
             <p className="text-sm text-secondary mb-4">{this.state.error.message}</p>
             <pre className="text-xs text-left bg-stone-100 p-4 rounded overflow-auto max-h-48 mb-6">{this.state.error.stack}</pre>
@@ -339,7 +339,7 @@ function ResultsDashboard() {
       {/* Sub-Navigation */}
       {navItems.length > 0 && (
         <nav className="border-b border-border bg-background sticky top-[65px] z-10">
-          <div className="max-w-3xl mx-auto px-6 flex gap-1 overflow-x-auto">
+          <div className="max-w-2xl mx-auto px-6 flex gap-1 overflow-x-auto">
             {navItems.map(n => (
               <a key={n.id} href={`#${n.id}`} className="text-xs font-medium px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap text-secondary hover:text-primary">{n.label}</a>
             ))}
@@ -347,7 +347,7 @@ function ResultsDashboard() {
         </nav>
       )}
 
-      <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
+      <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
         <h1 className="font-serif text-3xl font-semibold mb-8">Results</h1>
 
         {/* ── Assessment Incomplete CTA ── */}
@@ -1032,7 +1032,7 @@ function ResultsDashboard() {
       {/* ── Ongoing Coaching Section ── */}
       {hasResults && canDownload && (
         <div id="coaching" className="bg-stone-100 border-t border-border scroll-mt-12">
-          <div className="max-w-3xl mx-auto px-6 py-10">
+          <div className="max-w-2xl mx-auto px-6 py-10">
             <h2 className="font-serif text-2xl font-semibold mb-2">Ongoing Coaching</h2>
             <p className="text-sm text-secondary mb-6">
               Take your RELATE results with you. Download a personalized AI coaching prompt built from your assessment data, conflict patterns, dating market analysis, and compatibility profile.

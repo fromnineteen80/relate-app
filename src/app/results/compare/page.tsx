@@ -155,7 +155,7 @@ export default function ComparePage() {
 
       {/* Section Navigation */}
       <div className="border-b border-border overflow-x-auto">
-        <div className="max-w-3xl mx-auto px-6 flex gap-1">
+        <div className="max-w-2xl mx-auto px-6 flex gap-1">
           {sections.map((s, i) => (
             <button
               key={s.key}
@@ -170,7 +170,7 @@ export default function ComparePage() {
         </div>
       </div>
 
-      <main className="max-w-3xl mx-auto px-6 py-8 w-full">
+      <main className="max-w-2xl mx-auto px-6 py-8 w-full">
         {activeSection === 0 && <OverviewSection data={report.overview} />}
         {activeSection === 1 && <AlignmentSection data={report.alignment} overview={report.overview} />}
         {activeSection === 2 && <ClashSection data={report.clashes} overview={report.overview} />}

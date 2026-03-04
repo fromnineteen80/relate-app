@@ -124,7 +124,7 @@ export default function PersonasPage() {
     <div className="min-h-screen flex flex-col bg-background">
       <SiteHeader />
 
-      <main className="flex-1 max-w-4xl mx-auto px-6 py-8 w-full">
+      <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
         {/* Header */}
         <div className="text-center mb-10">
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Reference Guide</p>
