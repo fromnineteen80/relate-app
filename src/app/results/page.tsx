@@ -611,6 +611,9 @@ export default function ResultsDashboard() {
                     const gLabel = ctx?.targetGenderLabel || 'target gender';
                     const oLabel = ctx?.orientationLabel || 'orientation';
                     const eLabel = ctx?.userEthnicity || 'ethnicity';
+                    const funnel2: FunnelStage[] = pool?.funnel || [];
+                    const ageStage = funnel2.find(s => s.stage.startsWith('Age '));
+                    const ageRange = ageStage ? ageStage.stage.replace('Age ', '') : 'your age range';
 
                     return (
                       <div className="mt-6">
@@ -641,11 +644,14 @@ export default function ResultsDashboard() {
                             </tbody>
                           </table>
                         </div>
-                        <div className="mt-1.5 space-y-0.5">
-                          <p className="text-[10px] text-secondary"><span className="font-mono">% of {gLabel}</span> — your ideal pool as a share of all {gLabel} in the area</p>
-                          <p className="text-[10px] text-secondary"><span className="font-mono">% of eligible</span> — share of {oLabel} {gLabel} with no criminal record, in your age range</p>
-                          <p className="text-[10px] text-secondary"><span className="font-mono">% of {eLabel}</span> — same as eligible, narrowed to {eLabel} {gLabel}</p>
+                        <div className="mt-1.5 space-y-1">
+                          <p className="text-[10px] text-secondary leading-relaxed"><span className="font-mono font-medium text-foreground">Ideal Pool</span> — The number of people in this area who meet every preference you specified: gender, orientation, age range, income, relationship status, lifestyle traits, and physical preferences. This is your fully-filtered pool before accounting for mutual interest.</p>
+                          <p className="text-[10px] text-secondary leading-relaxed"><span className="font-mono font-medium text-foreground">Matches</span> — Your ideal pool adjusted for the probability that someone in it would also be interested in you, based on your Relate Score. A higher Relate Score means a larger share of your ideal pool converts into realistic mutual matches.</p>
+                          <p className="text-[10px] text-secondary leading-relaxed"><span className="font-mono font-medium text-foreground">% of {gLabel}</span> — Your ideal pool expressed as a percentage of all {gLabel} (ages 18-64, excluding homeless) in the area. This is the broadest lens: of every {gLabel.slice(0, -1)} you could theoretically encounter, how many fit what you are looking for.</p>
+                          <p className="text-[10px] text-secondary leading-relaxed"><span className="font-mono font-medium text-foreground">% of eligible</span> — Your ideal pool as a percentage of {oLabel} {gLabel} aged {ageRange} with no criminal record. This filters out people who were never realistic candidates, giving you a truer sense of how selective your remaining preferences are.</p>
+                          <p className="text-[10px] text-secondary leading-relaxed"><span className="font-mono font-medium text-foreground">% of {eLabel}</span> — The same eligible pool narrowed further to {eLabel} {gLabel} only. Because felon rates, income distributions, and lifestyle patterns differ by ethnicity, this shows the most apples-to-apples view of your selectivity within the demographic group that most closely mirrors your own background.</p>
                         </div>
+                        <p className="text-[10px] text-secondary/60 mt-2 leading-relaxed">Estimates derived from publicly available census, demographic, and survey datasets. See <a href="/methodology#ideal-match" className="underline">methodology</a> for sources and approach.</p>
 
                         {/* Expanded fallback funnels when metro pool is small */}
                         {showExpandedFunnels && (
