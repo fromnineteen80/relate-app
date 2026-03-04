@@ -261,6 +261,9 @@ function ProfileAvatar({
           <Link href="/settings/billing" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
             Billing
           </Link>
+          <Link href="/feedback" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
+            Feedback
+          </Link>
           <div className="border-t border-border my-1" />
           <button
             onClick={() => { setDropdownOpen(false); onSignOut(); }}

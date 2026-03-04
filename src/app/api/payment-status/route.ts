@@ -6,7 +6,8 @@ const TIER_PRIORITY: Record<string, number> = {
   free: 0,
   plus: 1,
   premium: 2,
-  couples: 3,
+  pro: 3,
+  couples: 4,
 };
 
 export async function GET(request: NextRequest) {
