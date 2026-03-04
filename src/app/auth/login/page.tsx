@@ -13,7 +13,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn, emailVerified } = useAuth();
+  const { signIn } = useAuth();
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
@@ -32,7 +32,8 @@ export default function LoginPage() {
           loadAndHydrateProgress(signedInUser.id),
         ]);
       }
-      router.push(getOnboardingRedirect(emailVerified));
+      // User just signed in successfully — email is verified at this point
+      router.push(getOnboardingRedirect(true));
     }
   }
 

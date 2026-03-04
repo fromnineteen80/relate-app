@@ -88,8 +88,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error, user: null };
     }
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    const signedInUser = data?.user ? { id: data.user.id, email: data.user.email! } : null;
-    return { error: error?.message || null, user: signedInUser };
+    if (data?.user) {
+      const signedInUser = { id: data.user.id, email: data.user.email! };
+      setUser(signedInUser);
+      setEmailVerified(true);
+      return { error: null, user: signedInUser };
+    }
+    return { error: error?.message || null, user: null };
   }
 
   async function signUp(email: string, password: string) {

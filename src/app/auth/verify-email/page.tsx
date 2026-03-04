@@ -7,6 +7,7 @@ import { config } from '@/lib/config';
 import { mockVerifyEmail } from '@/lib/mock/auth';
 import { supabase } from '@/lib/supabase/client';
 import { SiteHeader } from '@/components/SiteHeader';
+import { getOnboardingRedirect } from '@/lib/onboarding';
 
 export default function VerifyEmailPage() {
   const { user, loading, emailVerified, refreshVerification } = useAuth();
@@ -22,7 +23,7 @@ export default function VerifyEmailPage() {
 
   useEffect(() => {
     if (emailVerified) {
-      router.push('/onboarding/profile');
+      router.push(getOnboardingRedirect(true));
     }
   }, [emailVerified, router]);
 
@@ -32,7 +33,7 @@ export default function VerifyEmailPage() {
     const interval = setInterval(async () => {
       const verified = await refreshVerification();
       if (verified) {
-        router.push('/onboarding/profile');
+        router.push(getOnboardingRedirect(true));
       }
     }, 5000);
     return () => clearInterval(interval);

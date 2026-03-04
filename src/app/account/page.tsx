@@ -495,7 +495,7 @@ function AccountPage() {
       <SiteHeader />
 
       {/* ── Sub-Navigation ── */}
-      <nav className="border-b border-border bg-background sticky top-0 z-10">
+      <nav className="border-b border-border bg-background sticky top-[65px] z-10">
         <div className="max-w-2xl mx-auto px-6 flex gap-1 overflow-x-auto">
           {[
             { id: 'profile', label: 'Profile', show: true },
