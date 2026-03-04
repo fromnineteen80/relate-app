@@ -513,9 +513,7 @@ function AccountPage() {
       <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
         <div className="flex items-center justify-between mb-8">
           <h1 className="font-serif text-3xl font-semibold">Account</h1>
-          {hasResults && (
-            <Link href="/results" className="text-xs text-accent hover:underline">See Results</Link>
-          )}
+          <Link href="/results" className="text-sm text-accent hover:underline">See Results →</Link>
         </div>
 
         {/* ── Payment Success Toast ── */}
@@ -1096,8 +1094,8 @@ function AccountPage() {
         </section>
 
         {/* ── Sign Out ── */}
-        <div className="pt-4 border-t border-border">
-          <button onClick={handleSignOut} className="text-sm text-danger hover:underline">
+        <div className="pt-4 border-t border-border flex justify-end">
+          <button onClick={handleSignOut} className="btn-secondary text-xs">
             Sign out
           </button>
         </div>
