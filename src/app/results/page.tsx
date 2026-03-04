@@ -912,8 +912,8 @@ function ResultsDashboard() {
               <div className="mt-4 card border-accent text-center">
                 <p className="text-sm mb-3">{matches.length - freeMatchLimit} more matches available with Plus</p>
                 <div className="flex gap-2 justify-center">
-                  <Link href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary inline-block text-sm">Plus ($29.99)</Link>
-                  <Link href={`/api/checkout?product=premium&email=${encodeURIComponent(user?.email || '')}`} className="btn-primary inline-block text-sm">Premium ($49.99)</Link>
+                  <a href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary inline-block text-sm">Plus ($29.99/mo)</a>
+                  <a href={`/api/checkout?product=premium&email=${encodeURIComponent(user?.email || '')}`} className="btn-primary inline-block text-sm">Premium ($49.99/mo)</a>
                 </div>
               </div>
             )}

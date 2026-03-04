@@ -273,12 +273,12 @@ export default function BillingPage() {
                           {t === 'pro' && 'Everything in Premium + unlimited AI advisor.'}
                           {t === 'couples' && 'Pro for both + compatibility report + shared tools.'}
                         </p>
-                        <Link
+                        <a
                           href={`/api/checkout?product=${t}&email=${encodeURIComponent(user?.email || '')}`}
                           className={`text-xs w-full text-center block ${isUpgrade ? 'btn-secondary' : 'btn-secondary opacity-80'}`}
                         >
                           {isUpgrade ? `Upgrade to ${PRICING[t]?.label}` : `Downgrade to ${PRICING[t]?.label}`}
-                        </Link>
+                        </a>
                         {!isUpgrade && (
                           <p className="text-[10px] text-secondary mt-2 text-center">Takes effect at the start of your next billing period.</p>
                         )}
@@ -358,12 +358,12 @@ export default function BillingPage() {
                     {t === 'pro' && 'Everything in Premium + unlimited AI advisor.'}
                     {t === 'couples' && 'Pro for both + compatibility report + shared tools.'}
                   </p>
-                  <Link
+                  <a
                     href={`/api/checkout?product=${t}&email=${encodeURIComponent(user?.email || '')}`}
                     className={`text-xs w-full text-center block ${t === 'premium' ? 'btn-primary' : 'btn-secondary'}`}
                   >
                     Get {PRICING[t]?.label}
-                  </Link>
+                  </a>
                 </div>
               ))}
             </div>

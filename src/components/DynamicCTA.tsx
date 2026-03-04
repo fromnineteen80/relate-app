@@ -31,18 +31,20 @@ export function DynamicCTA({ className, fallbackLabel, product }: { className?: 
   const step = getOnboardingStep(emailVerified);
   const config = STEP_CONFIG[step];
 
-  // For paid products, once assessment is complete, go to checkout instead of results
+  // For paid products, once assessment is complete, go to checkout
+  // Use <a> tag (not Link) because checkout is an API route that redirects to Stripe
   if (product && step === 'complete') {
     return (
-      <Link href={`/api/checkout?product=${product}&email=${encodeURIComponent(user.email || '')}`} className={style}>
+      <a href={`/api/checkout?product=${product}&email=${encodeURIComponent(user.email || '')}`} className={style}>
         {fallbackLabel || `Get ${product.charAt(0).toUpperCase() + product.slice(1)}`}
-      </Link>
+      </a>
     );
   }
 
+  // If user hasn't completed assessment yet, route them through onboarding
   return (
     <Link href={config.href} className={style}>
-      {product && step !== 'complete' ? config.label : (config.label)}
+      {config.label}
     </Link>
   );
 }
