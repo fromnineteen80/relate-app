@@ -146,6 +146,7 @@ export default function ComparePage() {
     { key: 'repair', label: 'Repair' },
     { key: 'daily', label: 'Daily Life' },
     { key: 'ceiling', label: 'Potential' },
+    ...(report.enhancedCompatibility ? [{ key: 'enhanced', label: 'Deep Analysis' }] : []),
   ];
 
   return (
@@ -177,6 +178,9 @@ export default function ComparePage() {
         {activeSection === 4 && <RepairSection data={report.repairCompatibility} />}
         {activeSection === 5 && <DailyLifeSection data={report.dailyLife} />}
         {activeSection === 6 && <CeilingFloorSection data={report.ceilingFloor} />}
+        {activeSection === 7 && report.enhancedCompatibility && (
+          <EnhancedCompatibilitySection data={report.enhancedCompatibility} overview={report.overview} />
+        )}
 
         {/* Navigation */}
         <div className="flex justify-between mt-12 pt-6 border-t border-border">
@@ -671,6 +675,200 @@ function CeilingFloorSection({ data }: { data: any }) {
       <div className="card bg-stone-50">
         <p className="text-sm text-secondary italic">{data.narrative}</p>
       </div>
+    </div>
+  );
+}
+
+function EnhancedCompatibilitySection({ data, overview }: { data: any; overview: any }) {
+  if (!data) return <p className="text-secondary">No enhanced compatibility data available.</p>;
+
+  const tierColor = (tier: string) => {
+    const c: Record<string, string> = { ideal: 'text-success', kismet: 'text-success', effort: 'text-warning', longShot: 'text-secondary', atRisk: 'text-danger' };
+    return c[tier] || 'text-secondary';
+  };
+
+  const scoreColor = (score: number) => score >= 65 ? 'text-success' : score >= 45 ? 'text-warning' : 'text-danger';
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="font-serif text-2xl font-semibold mb-1">Deep Compatibility Analysis</h2>
+        <p className="text-sm text-secondary">9-dimension scoring across normal, conflict, and repair states</p>
+      </div>
+
+      {/* Overall score + state scores */}
+      <div className="card">
+        <div className="text-center mb-4">
+          <span className="font-mono text-4xl font-bold">{data.summary?.overallScore}</span>
+          <p className="text-xs text-secondary mt-1">
+            Overall Score — <span className={`font-mono capitalize ${tierColor(data.summary?.tier)}`}>{data.summary?.tier}</span>
+          </p>
+        </div>
+        <div className="grid grid-cols-3 gap-4">
+          {[
+            { label: 'Normal', state: data.summary?.normalState },
+            { label: 'Conflict', state: data.summary?.conflictState },
+            { label: 'Repair', state: data.summary?.repairState },
+          ].map(({ label, state }) => (
+            <div key={label} className="text-center p-3 bg-stone-50 rounded-md">
+              <span className={`font-mono text-xl font-semibold ${scoreColor(state?.score || 0)}`}>{state?.score}</span>
+              <p className="text-xs text-secondary mt-1">{label}</p>
+              <p className={`text-[10px] font-mono capitalize ${tierColor(state?.tier)}`}>{state?.tier}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 9 Dimensions */}
+      <div className="card">
+        <h3 className="font-serif text-sm font-semibold mb-4">Compatibility Dimensions</h3>
+        <div className="space-y-3">
+          {data.dimensions?.map((dim: any) => (
+            <div key={dim.name}>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-medium">{dim.name}</span>
+                <span className="text-[10px] text-secondary font-mono">{Math.round(dim.weight * 100)}% weight</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-2 bg-stone-100 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full ${dim.scores.normal >= 65 ? 'bg-success' : dim.scores.normal >= 45 ? 'bg-warning' : 'bg-danger'}`}
+                    style={{ width: `${dim.scores.normal}%` }}
+                  />
+                </div>
+                <span className="text-xs font-mono w-8 text-right">{dim.scores.normal}</span>
+              </div>
+              {dim.scores.conflict !== dim.scores.normal && (
+                <div className="flex items-center gap-2 mt-0.5">
+                  <div className="flex-1 h-1 bg-stone-100 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full bg-warning/60" style={{ width: `${dim.scores.conflict}%` }} />
+                  </div>
+                  <span className="text-[10px] font-mono text-secondary w-8 text-right">{dim.scores.conflict}</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Intimacy Dynamics — State comparison */}
+      {data.intimacyDynamics && (
+        <div className="card">
+          <h3 className="font-serif text-sm font-semibold mb-4">Intimacy Dynamics Across States</h3>
+          <div className="space-y-4">
+            {['normal', 'conflict', 'repair'].map(state => {
+              const d = data.intimacyDynamics.dynamics?.[state];
+              if (!d) return null;
+              const stateLabel = state === 'normal' ? 'Baseline' : state === 'conflict' ? 'Under Stress' : 'Making Effort';
+              return (
+                <div key={state} className="p-3 bg-stone-50 rounded-md">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium">{stateLabel}</span>
+                    <span className={`text-xs font-mono ${d.sustainable ? 'text-success' : 'text-warning'}`}>
+                      {d.sustainable ? 'Sustainable' : 'Strained'}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div>
+                      <span className="text-secondary">{overview?.user1?.name} satisfaction:</span>
+                      <span className={`font-mono ml-1 ${d.aSatisfaction >= 0 ? 'text-success' : 'text-warning'}`}>
+                        {d.aSatisfaction > 0 ? '+' : ''}{d.aSatisfaction}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-secondary">{overview?.user2?.name} satisfaction:</span>
+                      <span className={`font-mono ml-1 ${d.bSatisfaction >= 0 ? 'text-success' : 'text-warning'}`}>
+                        {d.bSatisfaction > 0 ? '+' : ''}{d.bSatisfaction}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 mt-1 text-[10px] text-secondary">
+                    <span>Mutual: <span className="font-mono">{d.mutualSatisfaction > 0 ? '+' : ''}{d.mutualSatisfaction}</span></span>
+                    <span>Asymmetry: <span className="font-mono">{d.asymmetry}</span></span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Conflict Choreography Detail */}
+      {data.conflictChoreography && (
+        <div className="card">
+          <h3 className="font-serif text-sm font-semibold mb-3">Conflict Choreography Detail</h3>
+          <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="p-2 bg-stone-50 rounded">
+              <span className="text-secondary">Approach Pairing</span>
+              <p className="font-mono mt-1 capitalize">{data.conflictChoreography.approachPairing?.pattern?.replace('_', ' + ')}</p>
+            </div>
+            <div className="p-2 bg-stone-50 rounded">
+              <span className="text-secondary">Driver Collision</span>
+              <p className={`font-mono mt-1 ${data.conflictChoreography.driverCollision?.risk === 'CRITICAL' ? 'text-danger' : ''}`}>
+                {data.conflictChoreography.driverCollision?.risk}
+              </p>
+            </div>
+            <div className="p-2 bg-stone-50 rounded">
+              <span className="text-secondary">Repair Match</span>
+              <p className="font-mono mt-1">
+                Speed: {data.conflictChoreography.repairCompatibility?.speedMatch ? 'Yes' : 'No'} | Mode: {data.conflictChoreography.repairCompatibility?.modeMatch ? 'Yes' : 'No'}
+              </p>
+            </div>
+            <div className="p-2 bg-stone-50 rounded">
+              <span className="text-secondary">Horsemen Loops</span>
+              <p className="font-mono mt-1 text-[10px]">
+                {data.conflictChoreography.horsemenRisk?.loops?.length > 0
+                  ? data.conflictChoreography.horsemenRisk.loops.join(', ')
+                  : 'None detected'}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Ideal Profile Comparison */}
+      {data.idealComparison && data.idealComparison.partnerAGetsFromB && (
+        <div className="card">
+          <h3 className="font-serif text-sm font-semibold mb-3">Ideal Partner Comparison</h3>
+          <div className="grid grid-cols-2 gap-4 mb-3">
+            <div className="text-center p-3 bg-stone-50 rounded-md">
+              <span className="font-mono text-2xl font-semibold">{data.idealComparison.partnerAGetsFromB.overall}%</span>
+              <p className="text-xs text-secondary mt-1">{overview?.user2?.name} matches {overview?.user1?.name}&apos;s ideal</p>
+            </div>
+            <div className="text-center p-3 bg-stone-50 rounded-md">
+              <span className="font-mono text-2xl font-semibold">{data.idealComparison.partnerBGetsFromA.overall}%</span>
+              <p className="text-xs text-secondary mt-1">{overview?.user1?.name} matches {overview?.user2?.name}&apos;s ideal</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4 text-center">
+            <div>
+              <span className="font-mono text-lg font-semibold">{data.idealComparison.mutualFit}%</span>
+              <p className="text-xs text-secondary">Mutual Fit</p>
+            </div>
+            <div>
+              <span className={`font-mono text-lg font-semibold ${data.idealComparison.asymmetry > 20 ? 'text-warning' : 'text-success'}`}>
+                {data.idealComparison.asymmetry}
+              </span>
+              <p className="text-xs text-secondary">Asymmetry</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* State Conflict Dynamics */}
+      {data.stateComparison?.conflictDynamics && (
+        <div className="card bg-stone-50">
+          <h3 className="font-serif text-sm font-semibold mb-2">Conflict Gap Dynamics</h3>
+          <p className="text-xs text-secondary">
+            {overview?.user1?.name} gap expansion: <span className="font-mono">{data.stateComparison.conflictDynamics.gapExpansionA > 0 ? '+' : ''}{data.stateComparison.conflictDynamics.gapExpansionA} pts</span>
+            {' | '}
+            {overview?.user2?.name} gap expansion: <span className="font-mono">{data.stateComparison.conflictDynamics.gapExpansionB > 0 ? '+' : ''}{data.stateComparison.conflictDynamics.gapExpansionB} pts</span>
+          </p>
+          {data.stateComparison.conflictDynamics.combinedRisk === 'HIGH' && (
+            <p className="text-xs text-warning mt-2">Both partners show significant gap expansion under stress. Conflict may compound rapidly without intentional de-escalation.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

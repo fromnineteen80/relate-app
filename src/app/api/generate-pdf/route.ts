@@ -5,14 +5,14 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { report, persona, dimensions, m3, m4, matches } = body;
+    const { report, persona, dimensions, m3, m4, matches, individualCompatibility } = body;
 
     if (!persona) {
       return NextResponse.json({ error: 'No report data provided' }, { status: 400 });
     }
 
     // Build a clean HTML report for PDF conversion
-    const html = buildReportHTML({ report, persona, dimensions, m3, m4, matches });
+    const html = buildReportHTML({ report, persona, dimensions, m3, m4, matches, individualCompatibility });
 
     // Return HTML that the client can use with window.print() or a client-side PDF library
     return NextResponse.json({
@@ -25,6 +25,8 @@ export async function POST(request: NextRequest) {
   }
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 function buildReportHTML(data: {
   report?: Record<string, string>;
   persona: { code: string; name: string; traits?: string; datingBehavior?: string[] };
@@ -32,8 +34,9 @@ function buildReportHTML(data: {
   m3?: { wantScore: number; offerScore: number; typeName?: string };
   m4?: { summary?: Record<string, string> };
   matches?: Array<{ rank: number; code: string; name: string; tier: string; compatibilityScore: number; summary?: string }>;
+  individualCompatibility?: any;
 }) {
-  const { persona, dimensions, m3, m4, matches, report } = data;
+  const { persona, dimensions, m3, m4, matches, report, individualCompatibility } = data;
 
   const dimensionRows = dimensions
     ? Object.entries(dimensions).map(([dim, d]) =>
@@ -111,6 +114,86 @@ function buildReportHTML(data: {
       ${Object.entries(m4Summary).map(([k, v]) => `<tr><td style="padding:8px;border-bottom:1px solid #e5e5e5;text-transform:capitalize">${k}</td><td style="padding:8px;border-bottom:1px solid #e5e5e5;font-family:monospace">${v}</td></tr>`).join('')}
     </tbody>
   </table>` : ''}
+
+  ${individualCompatibility?.attachment ? `
+  <h2>Attachment Style</h2>
+  <div class="grid" style="grid-template-columns: 1fr 1fr">
+    <div class="grid-item"><div class="value" style="text-transform:capitalize">${individualCompatibility.attachment.style}</div><div class="label">Style${individualCompatibility.attachment.subtype ? ` (${individualCompatibility.attachment.subtype})` : ''}${individualCompatibility.attachment.leaningToward ? ` — leaning ${individualCompatibility.attachment.leaningToward}` : ''}</div></div>
+    <div class="grid-item"><div class="value">${Math.round((individualCompatibility.attachment.confidence || 0) * 100)}%</div><div class="label">Confidence</div></div>
+  </div>
+  <p class="secondary">${individualCompatibility.attachment.description}</p>` : ''}
+
+  ${individualCompatibility?.m3States ? (() => {
+    const states = individualCompatibility.m3States.states;
+    const insights = individualCompatibility.m3States.insights;
+    const barStyle = (pct: number, color: string) => `display:inline-block;height:12px;border-radius:6px;background:${color};width:${pct}%`;
+    return `
+  <h2>Your Intimacy Under Stress</h2>
+  <p class="secondary" style="font-size:13px;margin-bottom:16px">How your Want and Offer shift across relationship states</p>
+  <table>
+    <thead><tr><th>State</th><th>Want</th><th>Offer</th><th>Gap</th></tr></thead>
+    <tbody>
+      <tr><td style="padding:8px;border-bottom:1px solid #e5e5e5">Baseline</td>
+          <td style="padding:8px;border-bottom:1px solid #e5e5e5"><span style="${barStyle(states.normal.want, '#a8a29e')}"></span> <span class="mono">${states.normal.want}</span></td>
+          <td style="padding:8px;border-bottom:1px solid #e5e5e5"><span style="${barStyle(states.normal.offer, '#a8a29e')}"></span> <span class="mono">${states.normal.offer}</span></td>
+          <td style="padding:8px;border-bottom:1px solid #e5e5e5" class="mono">${states.normal.gap > 0 ? '+' : ''}${states.normal.gap}</td></tr>
+      <tr><td style="padding:8px;border-bottom:1px solid #e5e5e5">Under Stress</td>
+          <td style="padding:8px;border-bottom:1px solid #e5e5e5"><span style="${barStyle(states.conflict.want, '#d97706')}"></span> <span class="mono">${states.conflict.want}</span></td>
+          <td style="padding:8px;border-bottom:1px solid #e5e5e5"><span style="${barStyle(states.conflict.offer, '#d97706')}"></span> <span class="mono">${states.conflict.offer}</span></td>
+          <td style="padding:8px;border-bottom:1px solid #e5e5e5" class="mono">${states.conflict.gap > 0 ? '+' : ''}${states.conflict.gap}</td></tr>
+      <tr><td style="padding:8px;border-bottom:1px solid #e5e5e5">Making Effort</td>
+          <td style="padding:8px;border-bottom:1px solid #e5e5e5"><span style="${barStyle(states.repair.want, '#16a34a')}"></span> <span class="mono">${states.repair.want}</span></td>
+          <td style="padding:8px;border-bottom:1px solid #e5e5e5"><span style="${barStyle(states.repair.offer, '#16a34a')}"></span> <span class="mono">${states.repair.offer}</span></td>
+          <td style="padding:8px;border-bottom:1px solid #e5e5e5" class="mono">${states.repair.gap > 0 ? '+' : ''}${states.repair.gap}</td></tr>
+    </tbody>
+  </table>
+  <p class="secondary" style="font-size:13px;margin-top:12px">Gap expansion: <strong>${insights.gapExpansion > 0 ? '+' : ''}${insights.gapExpansion} points (${insights.gapExpansionLevel})</strong> | Repair effort: <strong>${insights.repairSustainable ? 'Sustainable' : 'High strain'}</strong></p>`;
+  })() : ''}
+
+  ${individualCompatibility?.attachmentTiers ? (() => {
+    const at = individualCompatibility.attachmentTiers;
+    const dt = individualCompatibility.driverTiers;
+    const hi = individualCompatibility.horsemenInsights;
+    const tierRow = (label: string, items: any[], field: string) => items?.length > 0
+      ? `<tr><td style="padding:6px 8px;border-bottom:1px solid #e5e5e5">${label}</td><td style="padding:6px 8px;border-bottom:1px solid #e5e5e5;font-family:monospace">${items.map((i: any) => `${i[field]} (${i.score})`).join(', ')}</td></tr>`
+      : '';
+    return `
+  <h2>Your Ideal Partner Profile</h2>
+  <h3>Attachment Compatibility</h3>
+  <table>
+    <thead><tr><th>Tier</th><th>Styles</th></tr></thead>
+    <tbody>
+      ${tierRow('Best', at.bestMatches, 'style')}
+      ${tierRow('Good', at.goodMatches, 'style')}
+      ${tierRow('Workable', at.workableMatches, 'style')}
+      ${tierRow('Risky', at.riskyMatches, 'style')}
+      ${tierRow('Avoid', at.avoidMatches, 'style')}
+    </tbody>
+  </table>
+  <p class="secondary" style="font-size:13px">${at.recommendation}</p>
+
+  ${dt ? `
+  <h3>Emotional Driver Compatibility</h3>
+  <p class="secondary" style="font-size:13px;margin-bottom:8px">Your primary driver: <strong style="text-transform:capitalize">${dt.yourDriver.primary}</strong></p>
+  <table>
+    <thead><tr><th>Tier</th><th>Drivers</th></tr></thead>
+    <tbody>
+      ${tierRow('Best', dt.bestMatches, 'driver')}
+      ${tierRow('Good', dt.goodMatches, 'driver')}
+      ${tierRow('Workable', dt.workableMatches, 'driver')}
+      ${tierRow('Avoid', dt.avoidMatches, 'driver')}
+    </tbody>
+  </table>
+  <p class="secondary" style="font-size:13px">${dt.recommendation}</p>` : ''}
+
+  ${hi?.lookFor?.length > 0 || hi?.avoid?.length > 0 ? `
+  <h3>Conflict Behavior Guidance</h3>
+  ${hi.urgent ? `<p style="color:#dc2626;font-size:13px;margin-bottom:8px"><strong>${hi.urgent}</strong></p>` : ''}
+  ${hi.lookFor?.length > 0 ? `<p style="font-size:13px;margin-bottom:4px"><strong style="color:#16a34a">Look for:</strong></p>
+  ${hi.lookFor.map((i: any) => `<p class="secondary" style="font-size:13px;margin-left:16px">${i.partnerTrait} — ${i.reason}</p>`).join('')}` : ''}
+  ${hi.avoid?.length > 0 ? `<p style="font-size:13px;margin-top:8px;margin-bottom:4px"><strong style="color:#d97706">Avoid:</strong></p>
+  ${hi.avoid.map((i: any) => `<p class="secondary" style="font-size:13px;margin-left:16px">${i.partnerTrait} — ${i.reason}</p>`).join('')}` : ''}` : ''}`;
+  })() : ''}
 
   ${report?.m1DeepDive ? `<h2>What You Want</h2><p>${report.m1DeepDive}</p>` : ''}
   ${report?.m3DeepDive ? `<h2>How You Connect</h2><p>${report.m3DeepDive}</p>` : ''}

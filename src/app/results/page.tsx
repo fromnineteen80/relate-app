@@ -18,6 +18,8 @@ type MarketData = {
   matchCount?: number;
 };
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 type ResultsReport = {
   persona: { code: string; name: string; traits: string; datingBehavior: string[]; mostAttractive: string[]; leastAttractive: string[] };
   dimensions: Record<string, { assignedPole: string; poleAScore: number; poleBScore: number; strength: number }>;
@@ -25,6 +27,7 @@ type ResultsReport = {
   m4: { summary?: { approach: string; primaryDriver: string; repairSpeed: string; repairMode: string; capacity: string } };
   attentiveness: { level: string; score: number } | null;
   matches: Array<{ rank: number; code: string; name: string; tier: string; compatibilityScore: number; traits: string; summary: string }>;
+  individualCompatibility?: any;
 };
 
 function tierColor(tier: string) {
@@ -138,6 +141,7 @@ export default function ResultsDashboard() {
           m3: report.m3,
           m4: report.m4,
           matches: report.matches,
+          individualCompatibility: report.individualCompatibility,
         }),
       });
       const data = await res.json();
@@ -249,6 +253,206 @@ export default function ResultsDashboard() {
             ))}
           </div>
         </section>
+
+        {/* Attachment Style */}
+        {report.individualCompatibility?.attachment && (
+          <section className="card mb-6">
+            <h3 className="font-serif text-lg font-semibold mb-3">Attachment Style</h3>
+            <div className="flex items-center gap-4 mb-3">
+              <span className="font-mono text-2xl font-semibold capitalize">{report.individualCompatibility.attachment.style}</span>
+              {report.individualCompatibility.attachment.subtype && (
+                <span className="text-xs font-mono text-secondary">({report.individualCompatibility.attachment.subtype})</span>
+              )}
+              {report.individualCompatibility.attachment.leaningToward && (
+                <span className="text-xs font-mono text-secondary">leaning {report.individualCompatibility.attachment.leaningToward}</span>
+              )}
+              <span className="text-xs font-mono text-accent ml-auto">
+                {Math.round((report.individualCompatibility.attachment.confidence ?? 0) * 100)}% confidence
+              </span>
+            </div>
+            <p className="text-sm text-secondary">{report.individualCompatibility.attachment.description}</p>
+          </section>
+        )}
+
+        {/* Intimacy Under Stress — M3 State Modeling */}
+        {report.individualCompatibility?.m3States && (() => {
+          const { states, insights } = report.individualCompatibility.m3States;
+          const stateList = [
+            { key: 'normal', data: states.normal, color: 'bg-stone-400' },
+            { key: 'conflict', data: states.conflict, color: 'bg-warning' },
+            { key: 'repair', data: states.repair, color: 'bg-success' },
+          ];
+          return (
+            <section className="card mb-6">
+              <h3 className="font-serif text-lg font-semibold mb-1">Your Intimacy Under Stress</h3>
+              <p className="text-xs text-secondary mb-4">How your Want and Offer shift across relationship states</p>
+              <div className="space-y-5">
+                {stateList.map(({ key, data, color }) => {
+                  const wantDelta = key !== 'normal' ? data.want - states.normal.want : null;
+                  const offerDelta = key !== 'normal' ? data.offer - states.normal.offer : null;
+                  return (
+                    <div key={key}>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-medium">{data.label}</span>
+                        <span className="text-xs font-mono text-secondary">
+                          Gap: {data.gap > 0 ? '+' : ''}{data.gap}
+                        </span>
+                      </div>
+                      {/* Want bar */}
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-[10px] text-secondary w-10">Want</span>
+                        <div className="flex-1 h-2 bg-stone-100 rounded-full overflow-hidden">
+                          <div className={`h-full rounded-full ${color}`} style={{ width: `${data.want}%` }} />
+                        </div>
+                        <span className="text-xs font-mono w-8 text-right">{data.want}</span>
+                        {wantDelta !== null && (
+                          <span className={`text-[10px] font-mono w-8 ${wantDelta > 0 ? 'text-warning' : 'text-success'}`}>
+                            {wantDelta > 0 ? '+' : ''}{wantDelta}
+                          </span>
+                        )}
+                      </div>
+                      {/* Offer bar */}
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-secondary w-10">Offer</span>
+                        <div className="flex-1 h-2 bg-stone-100 rounded-full overflow-hidden">
+                          <div className={`h-full rounded-full ${color}`} style={{ width: `${data.offer}%` }} />
+                        </div>
+                        <span className="text-xs font-mono w-8 text-right">{data.offer}</span>
+                        {offerDelta !== null && (
+                          <span className={`text-[10px] font-mono w-8 ${offerDelta < 0 ? 'text-warning' : 'text-success'}`}>
+                            {offerDelta > 0 ? '+' : ''}{offerDelta}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Insights */}
+              <div className="mt-4 pt-4 border-t border-border space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+                    insights.gapExpansionLevel === 'HIGH' ? 'bg-danger/10 text-danger' :
+                    insights.gapExpansionLevel === 'MODERATE' ? 'bg-warning/10 text-warning' :
+                    'bg-success/10 text-success'
+                  }`}>
+                    Gap expansion: {insights.gapExpansion > 0 ? '+' : ''}{insights.gapExpansion} pts ({insights.gapExpansionLevel})
+                  </span>
+                </div>
+                <p className="text-xs text-secondary">
+                  {insights.gapExpansionLevel === 'HIGH'
+                    ? 'Under stress, your gap widens significantly. Partners may feel overwhelmed by increased demands while receiving less from you.'
+                    : insights.gapExpansionLevel === 'MODERATE'
+                    ? 'Your gap expands moderately under stress. Awareness of this pattern can help you manage it.'
+                    : 'Your gap stays relatively stable under stress. This indicates strong emotional regulation.'}
+                </p>
+                <p className="text-xs text-secondary">
+                  Repair effort: <span className={`font-mono ${insights.repairSustainable ? 'text-success' : 'text-warning'}`}>
+                    {insights.repairSustainable ? 'Sustainable' : 'High strain'}
+                  </span>
+                  {insights.repairSustainable
+                    ? ' — you can maintain elevated giving without burning out.'
+                    : ' — sustaining this level of effort may lead to exhaustion over time.'}
+                </p>
+              </div>
+            </section>
+          );
+        })()}
+
+        {/* Ideal Partner Profile */}
+        {report.individualCompatibility?.attachmentTiers && (
+          <section className="card mb-6">
+            <h3 className="font-serif text-lg font-semibold mb-1">Your Ideal Partner Profile</h3>
+            <p className="text-xs text-secondary mb-4">Based on your attachment, drivers, and conflict patterns</p>
+
+            {/* Attachment tiers */}
+            <div className="mb-4">
+              <span className="text-xs font-mono text-secondary uppercase tracking-wider">Attachment Style</span>
+              <div className="mt-2 space-y-1">
+                {[
+                  { label: 'Best', items: report.individualCompatibility.attachmentTiers.bestMatches, color: 'text-success' },
+                  { label: 'Good', items: report.individualCompatibility.attachmentTiers.goodMatches, color: 'text-accent' },
+                  { label: 'Workable', items: report.individualCompatibility.attachmentTiers.workableMatches, color: 'text-warning' },
+                  { label: 'Risky', items: report.individualCompatibility.attachmentTiers.riskyMatches, color: 'text-danger' },
+                  { label: 'Avoid', items: report.individualCompatibility.attachmentTiers.avoidMatches, color: 'text-danger' },
+                ].filter(g => g.items?.length > 0).map(group => (
+                  <div key={group.label} className="flex items-center gap-3 py-1">
+                    <span className={`text-xs w-16 ${group.color}`}>{group.label}</span>
+                    <div className="flex gap-2">
+                      {group.items.map((m: any) => (
+                        <span key={m.style} className="text-xs font-mono capitalize bg-stone-50 px-2 py-0.5 rounded">
+                          {m.style} ({m.score})
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-secondary mt-2">{report.individualCompatibility.attachmentTiers.recommendation}</p>
+            </div>
+
+            {/* Driver tiers */}
+            <div className="mb-4 pt-4 border-t border-border">
+              <span className="text-xs font-mono text-secondary uppercase tracking-wider">Emotional Driver</span>
+              <p className="text-xs text-secondary mt-1 mb-2">
+                Your primary: <span className="font-mono capitalize text-foreground">{report.individualCompatibility.driverTiers.yourDriver.primary}</span>
+              </p>
+              <div className="space-y-1">
+                {[
+                  { label: 'Best', items: report.individualCompatibility.driverTiers.bestMatches, color: 'text-success' },
+                  { label: 'Good', items: report.individualCompatibility.driverTiers.goodMatches, color: 'text-accent' },
+                  { label: 'Workable', items: report.individualCompatibility.driverTiers.workableMatches, color: 'text-warning' },
+                  { label: 'Avoid', items: report.individualCompatibility.driverTiers.avoidMatches, color: 'text-danger' },
+                ].filter(g => g.items?.length > 0).map(group => (
+                  <div key={group.label} className="flex items-center gap-3 py-1">
+                    <span className={`text-xs w-16 ${group.color}`}>{group.label}</span>
+                    <div className="flex gap-2">
+                      {group.items.map((m: any) => (
+                        <span key={m.driver} className="text-xs font-mono capitalize bg-stone-50 px-2 py-0.5 rounded">
+                          {m.driver} ({m.score})
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-secondary mt-2">{report.individualCompatibility.driverTiers.recommendation}</p>
+            </div>
+
+            {/* Horsemen insights */}
+            {report.individualCompatibility.horsemenInsights && (
+              <div className="pt-4 border-t border-border">
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Conflict Behavior</span>
+                {report.individualCompatibility.horsemenInsights.urgent && (
+                  <div className="mt-2 p-2 bg-danger/5 border border-danger/20 rounded text-xs text-danger">
+                    {report.individualCompatibility.horsemenInsights.urgent}
+                  </div>
+                )}
+                {report.individualCompatibility.horsemenInsights.lookFor?.length > 0 && (
+                  <div className="mt-2">
+                    <p className="text-xs text-success mb-1">Look for:</p>
+                    {report.individualCompatibility.horsemenInsights.lookFor.map((item: any, i: number) => (
+                      <p key={i} className="text-xs text-secondary ml-3">
+                        {item.partnerTrait} — {item.reason}
+                      </p>
+                    ))}
+                  </div>
+                )}
+                {report.individualCompatibility.horsemenInsights.avoid?.length > 0 && (
+                  <div className="mt-2">
+                    <p className="text-xs text-warning mb-1">Avoid:</p>
+                    {report.individualCompatibility.horsemenInsights.avoid.map((item: any, i: number) => (
+                      <p key={i} className="text-xs text-secondary ml-3">
+                        {item.partnerTrait} — {item.reason}
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Dating Market / Likelihood */}
         {(marketData || marketLoading) && (
