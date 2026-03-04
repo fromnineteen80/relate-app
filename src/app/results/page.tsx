@@ -140,6 +140,7 @@ export default function ResultsDashboard() {
           prefFitnessLevels: demo.pref_fitness_levels || demo.prefFitnessLevels || ['No preference'],
           prefPolitical: demo.pref_political || demo.prefPolitical || ['No preference'],
           prefHasKids: demo.pref_has_kids || demo.prefHasKids || 'No preference',
+          prefWantKids: demo.pref_want_kids || demo.prefWantKids || 'No preference',
           prefSmoking: demo.pref_smoking || demo.prefSmoking || 'No preference',
         },
       }),
@@ -487,6 +488,7 @@ export default function ResultsDashboard() {
         {(marketData || marketLoading) && (
           <section className="card mb-6">
             <h3 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h3>
+            <p className="text-xs text-secondary mb-3">Based on your demographics and preferences, here&apos;s how your local dating pool narrows from the total metro population to people who match what you&apos;re looking for.</p>
             {marketLoading ? (
               <div className="flex items-center justify-center py-8">
                 <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
@@ -508,14 +510,17 @@ export default function ResultsDashboard() {
                       <span className="font-mono text-2xl font-semibold">{score.toFixed(0)}</span>
                       <p className="text-xs text-secondary mt-1">Relate Score</p>
                       <p className="text-[10px] text-secondary">{scoreTier}</p>
+                      <p className="text-[10px] text-secondary mt-0.5">Your overall desirability based on demographics</p>
                     </div>
                     <div>
                       <span className="font-mono text-2xl font-semibold">{prob?.percentage || '—'}</span>
                       <p className="text-xs text-secondary mt-1">Match Probability</p>
+                      <p className="text-[10px] text-secondary mt-0.5">Chance a given match leads to compatibility</p>
                     </div>
                     <div>
                       <span className="font-mono text-2xl font-semibold">{fmt(matchCount)}</span>
                       <p className="text-xs text-secondary mt-1">Estimated Matches</p>
+                      <p className="text-[10px] text-secondary mt-0.5">Compatible people in your metro area</p>
                     </div>
                   </div>
                   {pool && (() => {
@@ -523,10 +528,10 @@ export default function ResultsDashboard() {
                     // Fallback to summary bars if funnel not available
                     const stages = funnel.length > 0 ? funnel : [
                       { stage: 'Metro Population', count: marketData.location?.population || 0 },
-                      { stage: 'LOCAL SINGLE POOL', count: pool.localSinglePool, isMilestone: true },
-                      { stage: 'REALISTIC POOL', count: pool.realisticPool, isMilestone: true },
-                      { stage: 'PREFERRED POOL', count: pool.preferredPool, isMilestone: true },
-                      { stage: 'IDEAL POOL', count: pool.idealPool, isMilestone: true },
+                      { stage: 'LOCAL SINGLES', count: pool.localSinglePool, isMilestone: true },
+                      { stage: 'MEET YOUR BASICS', count: pool.realisticPool, isMilestone: true },
+                      { stage: 'MATCH YOUR LIFESTYLE', count: pool.preferredPool, isMilestone: true },
+                      { stage: 'YOUR IDEAL MATCH POOL', count: pool.idealPool, isMilestone: true },
                     ];
                     const maxCount = stages[0]?.count || 1;
                     return (
@@ -558,6 +563,10 @@ export default function ResultsDashboard() {
                             );
                           })}
                         </div>
+                        {stages[stages.length - 1]?.count === 0 && (
+                          <p className="text-xs text-warning mt-3">Your preferences narrow the pool to zero in this metro. Consider broadening age range, income, or lifestyle filters.</p>
+                        )}
+                        <p className="text-[10px] text-secondary mt-3">Estimates based on census and survey data for your metro area. Actual availability may vary.</p>
                       </div>
                     );
                   })()}

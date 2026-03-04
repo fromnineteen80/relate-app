@@ -31,14 +31,15 @@ export async function POST(request: NextRequest) {
       wantKids: demographics.wantKids || 'Not sure',
       relationshipStatus: demographics.relationshipStatus || 'Single',
       // Preferences
-      ageMin: preferences?.prefAgeMin || (demographics.age - 5),
-      ageMax: preferences?.prefAgeMax || (demographics.age + 5),
-      minIncome: preferences?.prefIncomeMin || 0,
+      ageMin: Number.isFinite(Number(preferences?.prefAgeMin)) ? Number(preferences.prefAgeMin) : (demographics.age - 5),
+      ageMax: Number.isFinite(Number(preferences?.prefAgeMax)) ? Number(preferences.prefAgeMax) : (demographics.age + 5),
+      minIncome: Number(preferences?.prefIncomeMin) || 0,
       minHeight: preferences?.prefHeightMin || null,
       bodyTypes: preferences?.prefBodyTypes || ['No preference'],
       fitnessLevels: preferences?.prefFitnessLevels || ['No preference'],
       politicalViews: preferences?.prefPolitical || ['No preference'],
       partnerHasKids: preferences?.prefHasKids || 'No preference',
+      partnerWantKids: preferences?.prefWantKids || 'No preference',
       partnerSmoking: preferences?.prefSmoking || 'No preference',
     };
 

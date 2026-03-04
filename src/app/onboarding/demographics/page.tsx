@@ -263,6 +263,7 @@ export default function DemographicsPage() {
       localStorage.setItem('relate_demographics', JSON.stringify(userData));
       localStorage.setItem('relate_gender', userData.gender);
       localStorage.removeItem('relate_demographics_draft');
+      localStorage.removeItem('relate_market_data');
       router.push('/account');
       return;
     }
@@ -275,6 +276,7 @@ export default function DemographicsPage() {
       localStorage.setItem('relate_demographics', JSON.stringify(userData));
       localStorage.setItem('relate_gender', userData.gender);
       localStorage.removeItem('relate_demographics_draft');
+      localStorage.removeItem('relate_market_data');
       router.push('/account');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to save');

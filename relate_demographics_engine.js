@@ -988,7 +988,7 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
     + (pocPct * getFelonRate(seeking, 'POC', userProfile.education));
   pool = pool * (1 - felonRate);
   funnel.push({
-    stage: 'Non-felon',
+    stage: 'No criminal record',
     count: Math.round(pool),
     filter: `${((1 - felonRate) * 100).toFixed(1)}%`
   });
@@ -998,7 +998,7 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
     + (pocPct * getDrugRate(seeking, 'POC', userProfile.education));
   pool = pool * (1 - drugRate);
   funnel.push({
-    stage: 'Non-drug user',
+    stage: 'No substance issues',
     count: Math.round(pool),
     filter: `${((1 - drugRate) * 100).toFixed(1)}%`
   });
@@ -1009,7 +1009,7 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
   pool = pool * singlePct * singleLocal;
   const localSinglePool = pool;
   funnel.push({ 
-    stage: 'LOCAL SINGLE POOL', 
+    stage: 'LOCAL SINGLES', 
     count: Math.round(pool),
     filter: `${(singlePct * singleLocal * 100).toFixed(1)}%`,
     isMilestone: true
@@ -1033,7 +1033,7 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
     const incomePct = getIncomeAbovePercentage(preferences.minIncome, cbsa);
     pool = pool * incomePct;
     funnel.push({ 
-      stage: `Income â‰¥ ${formatCurrency(preferences.minIncome)}`, 
+      stage: `Income \u2265 ${formatCurrency(preferences.minIncome)}`, 
       count: Math.round(pool),
       filter: `${(incomePct * 100).toFixed(1)}%`
     });
@@ -1041,7 +1041,7 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
   
   const realisticPool = pool;
   funnel.push({ 
-    stage: 'REALISTIC POOL', 
+    stage: 'MEET YOUR BASICS', 
     count: Math.round(pool),
     isMilestone: true
   });
@@ -1068,13 +1068,29 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
     const kidsKey = preferences.partnerHasKids === 'No' ? 'have_kids_no_cbsa' : 'have_kids_yes_cbsa';
     const kidsPct = (cbsa[kidsKey] || 50) / 100;
     pool = pool * kidsPct;
-    funnel.push({ 
-      stage: `Has kids: ${preferences.partnerHasKids}`, 
+    funnel.push({
+      stage: `Has kids: ${preferences.partnerHasKids}`,
       count: Math.round(pool),
       filter: `${(kidsPct * 100).toFixed(1)}%`
     });
   }
-  
+
+  // Wants kids filter
+  if (preferences.partnerWantKids && preferences.partnerWantKids !== 'No preference') {
+    const wantKey = preferences.partnerWantKids === 'Yes' ? 'want_kids_yes_cbsa'
+      : preferences.partnerWantKids === 'No' ? 'want_kids_no_cbsa'
+      : null;
+    if (wantKey) {
+      const wantPct = (cbsa[wantKey] || 50) / 100;
+      pool = pool * wantPct;
+      funnel.push({
+        stage: `Wants kids: ${preferences.partnerWantKids}`,
+        count: Math.round(pool),
+        filter: `${(wantPct * 100).toFixed(1)}%`
+      });
+    }
+  }
+
   // Smoking filter
   if (preferences.partnerSmoking && preferences.partnerSmoking !== 'No preference') {
     const smokingKey = preferences.partnerSmoking === 'No' ? 'smoking_no_cbsa' : 'smoking_yes_cbsa';
@@ -1089,7 +1105,7 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
   
   const preferredPool = pool;
   funnel.push({ 
-    stage: 'PREFERRED POOL', 
+    stage: 'MATCH YOUR LIFESTYLE', 
     count: Math.round(pool),
     isMilestone: true
   });
@@ -1101,7 +1117,7 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
     const heightPct = getHeightAbovePercentage(preferences.minHeight, cbsa);
     pool = pool * heightPct;
     funnel.push({ 
-      stage: `Height â‰¥ ${preferences.minHeight}`, 
+      stage: `Height \u2265 ${preferences.minHeight}`, 
       count: Math.round(pool),
       filter: `${(heightPct * 100).toFixed(1)}%`
     });
@@ -1139,7 +1155,7 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
   
   const idealPool = pool;
   funnel.push({ 
-    stage: 'IDEAL POOL', 
+    stage: 'YOUR IDEAL MATCH POOL', 
     count: Math.round(pool),
     isMilestone: true
   });
@@ -1197,6 +1213,7 @@ async function processDemographics(userInputs) {
     fitnessLevels: userInputs.fitnessLevels,
     politicalViews: userInputs.politicalViews,
     partnerHasKids: userInputs.partnerHasKids,
+    partnerWantKids: userInputs.partnerWantKids,
     partnerSmoking: userInputs.partnerSmoking
   };
   
