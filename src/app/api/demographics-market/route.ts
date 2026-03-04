@@ -97,6 +97,8 @@ export async function POST(request: NextRequest) {
       },
       matchProbability: result.matchProbability,
       matchCount: result.matchCount,
+      stateComparison: result.stateComparison || null,
+      nationalComparison: result.nationalComparison || null,
     });
   } catch (error: any) {
     console.error('Demographics market error:', error);

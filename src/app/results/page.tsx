@@ -12,12 +12,24 @@ import { loadAndHydrateProgress } from '@/lib/supabase/progress';
 
 type FunnelStage = { stage: string; count: number; filter?: string; percentage?: number; isMilestone?: boolean };
 
+type ComparisonData = {
+  label: string;
+  population: number;
+  idealPool: number;
+  matchCount: number;
+  relateScore: number;
+  matchProbability: number;
+  funnel?: FunnelStage[];
+};
+
 type MarketData = {
   location?: { cbsaName?: string; cbsaLabel?: string; population?: number };
   relateScore?: { score: number };
   matchPool?: { localSinglePool: number; realisticPool: number; preferredPool: number; idealPool: number; funnel?: FunnelStage[] };
   matchProbability?: { rate: number; percentage: string };
   matchCount?: number;
+  stateComparison?: ComparisonData | null;
+  nationalComparison?: ComparisonData | null;
 };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -148,10 +160,9 @@ export default function ResultsDashboard() {
       .then(r => r.json())
       .then(data => {
         if (data.success) {
-          const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount };
+          const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount, stateComparison: data.stateComparison, nationalComparison: data.nationalComparison };
           setMarketData(md);
           localStorage.setItem('relate_market_data', JSON.stringify(md));
-          // Clear stale cache so new preferences are reflected next visit
         }
       })
       .catch(() => { /* silent fail */ })
@@ -567,6 +578,97 @@ export default function ResultsDashboard() {
                           <p className="text-xs text-warning mt-3">Your preferences narrow the pool to zero in this metro. Consider broadening age range, income, or lifestyle filters.</p>
                         )}
                         <p className="text-[10px] text-secondary mt-3">Estimates based on census and survey data for your metro area. Actual availability may vary.</p>
+                      </div>
+                    );
+                  })()}
+
+                  {/* State & National Comparison */}
+                  {(marketData.stateComparison || marketData.nationalComparison) && (() => {
+                    const metroIdeal = pool?.idealPool ?? 0;
+                    const state = marketData.stateComparison;
+                    const national = marketData.nationalComparison;
+                    const showExpandedFunnels = metroIdeal < 100;
+
+                    return (
+                      <div className="mt-6">
+                        <span className="text-xs font-mono text-secondary uppercase tracking-wider">How You Compare</span>
+                        <div className="mt-2 border border-border rounded-md overflow-hidden">
+                          <table className="w-full text-xs">
+                            <thead>
+                              <tr className="border-b border-border bg-stone-50">
+                                <th className="text-left px-3 py-1.5 font-mono text-secondary">Scope</th>
+                                <th className="text-right px-3 py-1.5 font-mono text-secondary">Population</th>
+                                <th className="text-right px-3 py-1.5 font-mono text-secondary">Ideal Pool</th>
+                                <th className="text-right px-3 py-1.5 font-mono text-secondary">Matches</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr className="border-b border-border bg-orange-50/50">
+                                <td className="px-3 py-1.5 font-medium">{metro}</td>
+                                <td className="text-right px-3 py-1.5 font-mono">{fmt(marketData.location?.population || 0)}</td>
+                                <td className="text-right px-3 py-1.5 font-mono">{fmt(metroIdeal)}</td>
+                                <td className="text-right px-3 py-1.5 font-mono font-semibold">{fmt(matchCount)}</td>
+                              </tr>
+                              {state && (
+                                <tr className="border-b border-border">
+                                  <td className="px-3 py-1.5">{state.label} (statewide)</td>
+                                  <td className="text-right px-3 py-1.5 font-mono text-secondary">{fmt(state.population)}</td>
+                                  <td className="text-right px-3 py-1.5 font-mono text-secondary">{fmt(state.idealPool)}</td>
+                                  <td className="text-right px-3 py-1.5 font-mono text-secondary">{fmt(state.matchCount)}</td>
+                                </tr>
+                              )}
+                              {national && (
+                                <tr>
+                                  <td className="px-3 py-1.5">National</td>
+                                  <td className="text-right px-3 py-1.5 font-mono text-secondary">{fmt(national.population)}</td>
+                                  <td className="text-right px-3 py-1.5 font-mono text-secondary">{fmt(national.idealPool)}</td>
+                                  <td className="text-right px-3 py-1.5 font-mono text-secondary">{fmt(national.matchCount)}</td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+
+                        {/* Expanded fallback funnels when metro pool is small */}
+                        {showExpandedFunnels && (
+                          <div className="mt-4 space-y-4">
+                            <p className="text-xs text-warning">Your metro ideal pool is small. Here&apos;s what the funnel looks like at broader scale.</p>
+                            {[state, national].filter(Boolean).map((comp) => {
+                              const cFunnel: FunnelStage[] = comp!.funnel || [];
+                              if (cFunnel.length === 0) return null;
+                              const cMax = cFunnel[0]?.count || 1;
+                              return (
+                                <div key={comp!.label}>
+                                  <span className="text-xs font-mono text-secondary uppercase tracking-wider">{comp!.label} Funnel</span>
+                                  <div className="mt-2 space-y-1">
+                                    {cFunnel.map((s, i) => {
+                                      const cPct = (s.count / cMax) * 100;
+                                      const cIsLast = i === cFunnel.length - 1;
+                                      const cIsMilestone = s.isMilestone;
+                                      return (
+                                        <div key={i} className={cIsMilestone ? 'pt-1' : ''}>
+                                          <div className="flex items-center justify-between mb-0.5">
+                                            <span className={`text-xs ${cIsMilestone ? 'font-semibold uppercase font-mono tracking-wider' : cIsLast ? 'font-medium' : 'text-secondary'}`}>{s.stage}</span>
+                                            <div className="flex items-center gap-2">
+                                              {s.filter && <span className="text-[10px] text-secondary font-mono">{s.filter}</span>}
+                                              <span className={`text-xs font-mono ${cIsMilestone || cIsLast ? 'font-semibold' : 'text-secondary'}`}>{fmt(s.count)}</span>
+                                            </div>
+                                          </div>
+                                          <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
+                                            <div
+                                              className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ${cIsLast ? 'bg-accent' : cIsMilestone ? 'bg-accent/60' : 'bg-stone-300'}`}
+                                              style={{ width: `${Math.max(1, cPct)}%` }}
+                                            />
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     );
                   })()}

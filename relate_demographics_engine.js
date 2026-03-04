@@ -677,6 +677,70 @@ async function getCBSAByCode(cbsaCode) {
   return Object.values(cbsas).find(c => c.cbsa === cbsaCode || c.cbsa === String(cbsaCode));
 }
 
+/**
+ * Build a population-weighted aggregate CBSA from a set of CBSAs.
+ * Numeric fields are averaged weighted by cbsa_population.
+ * The result is a synthetic CBSA object that can be passed to calculateMatchPool.
+ */
+function buildWeightedAggregate(cbsaList, label) {
+  const totalPop = cbsaList.reduce((s, c) => s + (c.cbsa_population || 0), 0);
+  if (totalPop === 0) return null;
+
+  const agg = { cbsa_population: totalPop, cbsa_label: label, cbsa_name: label };
+
+  // Collect all numeric keys from the first entry
+  const numericKeys = Object.keys(cbsaList[0]).filter(k => {
+    if (['lat', 'lng', 'cbsa', 'cbsa_population', 'rpp'].includes(k)) return false;
+    return typeof cbsaList[0][k] === 'number';
+  });
+
+  for (const key of numericKeys) {
+    let weightedSum = 0;
+    for (const c of cbsaList) {
+      const pop = c.cbsa_population || 0;
+      weightedSum += (c[key] || 0) * pop;
+    }
+    agg[key] = weightedSum / totalPop;
+  }
+
+  return agg;
+}
+
+/**
+ * Extract state abbreviation from cbsa_label (e.g., "Birmingham, AL" → "AL").
+ * For multi-state CBSAs (e.g., "Memphis, TN-MS-AR"), returns the first state.
+ */
+function extractState(cbsaLabel) {
+  if (!cbsaLabel) return null;
+  const parts = cbsaLabel.split(', ');
+  if (parts.length < 2) return null;
+  const stateStr = parts[parts.length - 1];
+  // Take first state if hyphenated (multi-state metro)
+  return stateStr.split('-')[0].trim();
+}
+
+/**
+ * Get a population-weighted state-level aggregate CBSA.
+ */
+async function getStateAggregate(stateAbbr) {
+  const cbsas = await loadCBSAData();
+  const stateCBSAs = Object.values(cbsas).filter(c =>
+    extractState(c.cbsa_label) === stateAbbr
+  );
+  if (stateCBSAs.length === 0) return null;
+  return buildWeightedAggregate(stateCBSAs, stateAbbr);
+}
+
+/**
+ * Get a population-weighted national aggregate CBSA.
+ */
+async function getNationalAggregate() {
+  const cbsas = await loadCBSAData();
+  const allCBSAs = Object.values(cbsas).filter(c => c.cbsa_population > 0);
+  if (allCBSAs.length === 0) return null;
+  return buildWeightedAggregate(allCBSAs, 'National');
+}
+
 // ============================================================================
 // RELATE SCORE CALCULATION
 // ============================================================================
@@ -1219,16 +1283,61 @@ async function processDemographics(userInputs) {
   
   // Calculate Relate Score
   const relateScore = calculateRelateScore(userProfile, cbsa);
-  
+
   // Calculate Match Pool
   const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
-  
+
   // Calculate match probability
   const matchProbability = getMatchProbability(relateScore.score);
-  
+
   // Calculate final match count
   const matchCount = Math.round(matchPool.idealPool * matchProbability);
-  
+
+  // Calculate state and national comparisons
+  const stateAbbr = extractState(cbsaResult.cbsaLabel);
+  let stateComparison = null;
+  let nationalComparison = null;
+
+  try {
+    const [stateAgg, nationalAgg] = await Promise.all([
+      stateAbbr ? getStateAggregate(stateAbbr) : Promise.resolve(null),
+      getNationalAggregate(),
+    ]);
+
+    if (stateAgg) {
+      const statePool = calculateMatchPool(userProfile, preferences, stateAgg);
+      const stateScore = calculateRelateScore(userProfile, stateAgg);
+      const stateProb = getMatchProbability(stateScore.score);
+      stateComparison = {
+        label: stateAbbr,
+        population: stateAgg.cbsa_population,
+        idealPool: statePool.idealPool,
+        matchCount: Math.round(statePool.idealPool * stateProb),
+        relateScore: stateScore.score,
+        matchProbability: stateProb,
+        funnel: statePool.funnel,
+      };
+    }
+
+    if (nationalAgg) {
+      const natPool = calculateMatchPool(userProfile, preferences, nationalAgg);
+      const natScore = calculateRelateScore(userProfile, nationalAgg);
+      const natProb = getMatchProbability(natScore.score);
+      nationalComparison = {
+        label: 'National',
+        population: nationalAgg.cbsa_population,
+        idealPool: natPool.idealPool,
+        matchCount: Math.round(natPool.idealPool * natProb),
+        relateScore: natScore.score,
+        matchProbability: natProb,
+        funnel: natPool.funnel,
+      };
+    }
+  } catch (e) {
+    // Non-critical — metro data is still valid
+    console.error('Failed to compute state/national comparisons:', e);
+  }
+
   return {
     location: {
       cbsa: cbsaResult.cbsa,
@@ -1256,6 +1365,8 @@ async function processDemographics(userInputs) {
       percentage: (matchProbability * 100).toFixed(1) + '%'
     },
     matchCount,
+    stateComparison,
+    nationalComparison,
     // Ready for persona/modifier integration
     demographicsForAssessment: {
       gender: userProfile.gender,
@@ -1445,6 +1556,10 @@ module.exports = {
   findCBSAFromZIP,
   getCBSAByCode,
   haversineDistance,
+  getStateAggregate,
+  getNationalAggregate,
+  buildWeightedAggregate,
+  extractState,
   
   // Calculations
   calculateRelateScore,
