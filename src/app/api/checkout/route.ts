@@ -28,6 +28,18 @@ export async function GET(request: NextRequest) {
       ? `${process.env.NEXT_PUBLIC_URL}/results/compare?canceled=true`
       : `${process.env.NEXT_PUBLIC_URL}/account?canceled=true`;
 
+    // Find or create a Stripe customer for this email
+    let customerId: string | undefined;
+    if (email) {
+      const customers = await stripe.customers.list({ email, limit: 1 });
+      if (customers.data.length > 0) {
+        customerId = customers.data[0].id;
+      } else {
+        const customer = await stripe.customers.create({ email });
+        customerId = customer.id;
+      }
+    }
+
     const sessionConfig: Record<string, unknown> = {
       payment_method_types: ['card'],
       line_items: [{
@@ -35,17 +47,22 @@ export async function GET(request: NextRequest) {
           currency: 'usd',
           product_data: { name: `RELATE ${tier.label}` },
           unit_amount: tier.stripeCents,
+          recurring: { interval: 'month' },
         },
         quantity: 1,
       }],
-      mode: 'payment',
+      mode: 'subscription',
       success_url: successUrl,
       cancel_url: cancelUrl,
       metadata: { product },
+      subscription_data: {
+        metadata: { product },
+      },
     };
 
-    // Pre-fill email in Stripe checkout if provided
-    if (email) {
+    if (customerId) {
+      sessionConfig.customer = customerId;
+    } else if (email) {
       sessionConfig.customer_email = email;
     }
 

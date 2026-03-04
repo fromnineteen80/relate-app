@@ -174,20 +174,6 @@ export default function ProfileSettings() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-          {/* Location (Step 1) */}
-          {profile && (
-            <div className="card">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-medium">Location</p>
-                <Link href="/onboarding/profile" className="text-xs text-accent hover:underline">Edit</Link>
-              </div>
-              <InfoRow label="City" value={profile.city} />
-              <InfoRow label="State" value={profile.state} />
-              <InfoRow label="County" value={profile.county} />
-              <InfoRow label="ZIP" value={profile.zipCode} />
-            </div>
-          )}
-
           {/* About You (Step 2) */}
           {demographics ? (
             <div className="card">
@@ -236,6 +222,20 @@ export default function ProfileSettings() {
               <InfoRow label="Partner Smokes" value={demographics.pref_smoking} />
               <InfoRow label="Seeking" value={demographics.seeking} />
             </div>
+          </div>
+        )}
+
+        {/* Location — last card */}
+        {profile && (
+          <div className="card mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium">Location</p>
+              <Link href="/onboarding/profile" className="text-xs text-accent hover:underline">Edit</Link>
+            </div>
+            <InfoRow label="City" value={profile.city} />
+            <InfoRow label="State" value={profile.state} />
+            <InfoRow label="County" value={profile.county} />
+            <InfoRow label="ZIP" value={profile.zipCode} />
           </div>
         )}
 
