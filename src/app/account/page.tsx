@@ -4,7 +4,6 @@ import { Component, Suspense, useEffect, useState, useCallback, useRef } from 'r
 import type { ReactNode, ErrorInfo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useAuth } from '@/lib/auth-context';
 import { config, PRICING, type PricingTier } from '@/lib/config';
 import { getMockPaymentStatus, mockPurchase } from '@/lib/mock/payments';
@@ -587,7 +586,7 @@ function AccountPage() {
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 border-2 border-border">
               {profileData?.photoUrl ? (
-                <Image src={profileData.photoUrl} alt="Profile" width={56} height={56} className="w-full h-full object-cover" />
+                <img src={profileData.photoUrl} alt="Profile" className="w-full h-full object-cover" />
               ) : (
                 <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-lg font-medium">
                   {initial}
@@ -649,8 +648,10 @@ function AccountPage() {
 
           {currentTier !== 'couples' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {TIER_ORDER.filter(t => t !== 'free' && tierIndex(t) > tierIndex(currentTier)).map(tier => (
-                <div key={tier} className="p-3 border rounded-md border-border">
+              {TIER_ORDER.filter(t => t !== 'free' && t !== currentTier).map(tier => {
+                const isUpgrade = tierIndex(tier) > tierIndex(currentTier);
+                return (
+                <div key={tier} className={`p-3 border rounded-md ${isUpgrade ? 'border-border' : 'border-border opacity-80'}`}>
                   <p className="text-sm font-medium">{(PRICING[tier]?.label || tier)}</p>
                   <p className="font-serif text-xl font-semibold my-1">{(PRICING[tier]?.priceDisplay || '')}</p>
                   <p className="text-xs text-secondary mb-3">
@@ -659,17 +660,32 @@ function AccountPage() {
                     {tier === 'pro' && 'Everything in Premium + unlimited AI advisor.'}
                     {tier === 'couples' && 'Pro for both + compatibility report + shared tools.'}
                   </p>
-                  {config.useMockPayments ? (
-                    <button onClick={() => handleMockUpgrade(tier)} className="text-xs w-full btn-secondary" disabled={mockUpgrading}>
-                      {mockUpgrading ? 'Processing...' : `Upgrade to ${(PRICING[tier]?.label || tier)}`}
-                    </button>
+                  {isUpgrade ? (
+                    config.useMockPayments ? (
+                      <button onClick={() => handleMockUpgrade(tier)} className="text-xs w-full btn-secondary" disabled={mockUpgrading}>
+                        {mockUpgrading ? 'Processing...' : `Upgrade to ${(PRICING[tier]?.label || tier)}`}
+                      </button>
+                    ) : (
+                      <Link href={`/api/checkout?product=${tier}&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
+                        Upgrade to {(PRICING[tier]?.label || tier)}
+                      </Link>
+                    )
                   ) : (
-                    <Link href={`/api/checkout?product=${tier}&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
-                      Upgrade to {(PRICING[tier]?.label || tier)}
-                    </Link>
+                    <button onClick={() => {
+                      if (confirm(`Downgrade to ${PRICING[tier]?.label || tier}? Your current plan features will remain active until the end of this billing period.`)) {
+                        localStorage.setItem('relate_payment_tier', JSON.stringify({ tier, timestamp: Date.now() }));
+                        setCurrentTier(tier);
+                      }
+                    }} className="text-xs w-full btn-secondary">
+                      Downgrade to {(PRICING[tier]?.label || tier)}
+                    </button>
+                  )}
+                  {!isUpgrade && (
+                    <p className="text-[10px] text-secondary mt-2 text-center">Takes effect at the start of your next billing period.</p>
                   )}
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
@@ -784,7 +800,9 @@ function AccountPage() {
                 </h3>
                 {m1Data.result.dimensions && (
                   <div className="space-y-2 pl-7">
-                    {Object.entries(m1Data.result.dimensions).map(([dim, data]) => (
+                    {Object.entries(m1Data.result.dimensions).map(([dim, data]) => {
+                      if (!data) return null;
+                      return (
                       <div key={dim} className="flex items-center gap-3">
                         <span className="text-xs text-secondary w-16 capitalize">{dim}</span>
                         <div className="flex-1 h-1.5 bg-stone-200 rounded-full overflow-hidden">
@@ -792,10 +810,11 @@ function AccountPage() {
                         </div>
                         <span className="text-xs font-mono w-20 text-right">{data.assignedPole || '-'}</span>
                       </div>
-                    ))}
+                      );
+                    })}
                     {m1Data.result.keyDriver && (
                       <p className="text-xs text-secondary mt-1">
-                        Key driver: {m1Data.result.keyDriver.dimension} ({m1Data.result.keyDriver.pole}, {m1Data.result.keyDriver.strength}% strength)
+                        Key driver: {m1Data.result.keyDriver.dimension || '?'} ({m1Data.result.keyDriver.pole || '?'}, {m1Data.result.keyDriver.strength ?? 0}% strength)
                       </p>
                     )}
                   </div>

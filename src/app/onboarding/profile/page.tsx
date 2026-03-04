@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { useAuth } from '@/lib/auth-context';
 import { lookupZip } from '@/lib/zip-lookup';
 import { SiteHeader } from '@/components/SiteHeader';
@@ -206,7 +205,7 @@ export default function ProfileSetupPage() {
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 border-2 border-border">
                 {photoUrl ? (
-                  <Image src={photoUrl} alt="Profile" width={64} height={64} className="w-full h-full object-cover" />
+                  <img src={photoUrl} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
                   <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-xl font-medium">
                     {initial}
