@@ -318,7 +318,7 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-              <DynamicCTA className="btn-secondary w-full text-center" fallbackLabel="Get Plus" product="plus" />
+              <Link href="/settings/billing" className="btn-secondary w-full text-center">Choose</Link>
             </div>
 
             {/* Premium */}
@@ -342,7 +342,7 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-              <DynamicCTA className="btn-primary w-full text-center" fallbackLabel="Get Premium" product="premium" />
+              <Link href="/settings/billing" className="btn-primary w-full text-center">Choose</Link>
             </div>
 
             {/* Pro */}
@@ -362,7 +362,7 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-              <DynamicCTA className="btn-secondary w-full text-center" fallbackLabel="Get Pro" product="pro" />
+              <Link href="/settings/billing" className="btn-secondary w-full text-center">Choose</Link>
             </div>
 
             {/* Couples */}
@@ -384,7 +384,7 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-              <DynamicCTA className="btn-secondary w-full text-center" fallbackLabel="Get Couples" product="couples" />
+              <Link href="/invite" className="btn-secondary w-full text-center">Get Report</Link>
             </div>
           </div>
         </div>

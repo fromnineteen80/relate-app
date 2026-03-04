@@ -47,6 +47,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
 
   const profileName = typeof window !== 'undefined' ? localStorage.getItem('relate_profile_name') : null;
   const profilePhoto = typeof window !== 'undefined' ? localStorage.getItem('relate_profile_photo') : null;
+  const hasPartner = typeof window !== 'undefined' ? !!localStorage.getItem('relate_partner_results') : false;
   const initial = profileName ? profileName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || '?';
 
   async function handleSignOut() {
@@ -106,6 +107,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
                   setDropdownOpen={setDropdownOpen}
                   dropdownRef={dropdownRef}
                   onSignOut={handleSignOut}
+                  hasPartner={hasPartner}
                 />
               </>
             )}
@@ -213,6 +215,7 @@ function ProfileAvatar({
   setDropdownOpen,
   dropdownRef,
   onSignOut,
+  hasPartner,
 }: {
   initial: string;
   photoUrl: string | null;
@@ -220,6 +223,7 @@ function ProfileAvatar({
   setDropdownOpen: (open: boolean) => void;
   dropdownRef: React.RefObject<HTMLDivElement>;
   onSignOut: () => void;
+  hasPartner: boolean;
 }) {
   return (
     <div className="relative ml-2" ref={dropdownRef}>
@@ -241,7 +245,8 @@ function ProfileAvatar({
           {[
             { href: '/account', label: 'Account' },
             { href: '/assessment', label: 'Assessment' },
-            { href: '/results', label: 'Results' },
+            { href: '/results', label: 'Your Results' },
+            ...(hasPartner ? [{ href: '/couples', label: 'Couples Results' }] : []),
             { href: '/settings/profile', label: 'Edit Profile' },
             { href: '/settings/billing', label: 'Billing' },
             { href: '/feedback', label: 'Feedback' },
