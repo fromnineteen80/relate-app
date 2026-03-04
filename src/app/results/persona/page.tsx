@@ -5,6 +5,24 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
 
+const CODE_TO_POLE: Record<string, 'A' | 'B'> = {
+  A: 'A', B: 'B', C: 'A', D: 'B', E: 'A', F: 'B', G: 'A', H: 'B',
+};
+
+const DIMS = ['physical', 'social', 'lifestyle', 'values'] as const;
+
+function getCodeKeys(code: string, m2Poles: any): Array<{ dim: string; pole: string; description: string }> {
+  if (!code || code.length !== 4) return [];
+  return DIMS.map((dim, i) => {
+    const letter = code[i];
+    const poleKey = CODE_TO_POLE[letter] || 'A';
+    const poleName = m2Poles?.[dim]?.[poleKey] || letter;
+    const descKey = poleKey === 'A' ? 'descriptionA' : 'descriptionB';
+    const description = m2Poles?.[dim]?.[descKey] || m2Poles?.[dim]?.description || '';
+    return { dim, pole: poleName, description };
+  });
+}
+
 export default function PersonaPage() {
   const router = useRouter();
   const [report, setReport] = useState<any>(null);
@@ -22,6 +40,7 @@ export default function PersonaPage() {
   if (!report) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
 
   const { persona } = report;
+  const codeKeys = getCodeKeys(persona.code, report.m2Poles);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -32,6 +51,25 @@ export default function PersonaPage() {
         <h2 className="font-serif text-3xl font-semibold mt-1 mb-1">{persona.name}</h2>
         <span className="font-mono text-sm text-accent">{persona.code}</span>
         {persona.traits && <p className="text-secondary mt-3 mb-6">{persona.traits}</p>}
+
+        {codeKeys.length > 0 && (
+          <section className="mb-6">
+            <h3 className="font-serif text-lg font-semibold mb-3">Code Key</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {codeKeys.map((k) => (
+                <div key={k.dim} className="card text-center">
+                  <span className="inline-block text-xs border border-border rounded-md px-3 py-1.5 mb-1.5 font-medium">
+                    {k.pole}
+                  </span>
+                  <p className="text-xs text-secondary capitalize mb-1">{k.dim}</p>
+                  {k.description && (
+                    <p className="text-[11px] text-secondary/80 leading-snug">{k.description}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {persona.datingBehavior?.length > 0 && (
           <section className="card mb-4">

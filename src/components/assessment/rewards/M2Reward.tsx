@@ -29,13 +29,24 @@ const PERSONA_TAGLINES: Record<string, string> = {
   BDFH: 'Constructs the future',
 };
 
-function getPolePairs(m2Poles: any, code: string): Array<{ dim: string; pole: string }> {
+// Map code letters back to their A/B pole key per dimension
+const CODE_TO_POLE: Record<string, 'A' | 'B'> = {
+  A: 'A', B: 'B', // physical
+  C: 'A', D: 'B', // social
+  E: 'A', F: 'B', // lifestyle
+  G: 'A', H: 'B', // values
+};
+
+function getPolePairs(m2Poles: any, code: string): Array<{ dim: string; pole: string; description: string }> {
   if (!code || code.length !== 4) return [];
   const dims = ['physical', 'social', 'lifestyle', 'values'];
   return dims.map((dim, i) => {
     const letter = code[i];
-    const poleName = m2Poles?.[dim]?.[letter] || letter;
-    return { dim, pole: poleName };
+    const poleKey = CODE_TO_POLE[letter] || 'A';
+    const poleName = m2Poles?.[dim]?.[poleKey] || letter;
+    const descKey = poleKey === 'A' ? 'descriptionA' : 'descriptionB';
+    const description = m2Poles?.[dim]?.[descKey] || m2Poles?.[dim]?.description || '';
+    return { dim, pole: poleName, description };
   });
 }
 
@@ -103,13 +114,19 @@ export default function M2Reward({ scoredData, onContinue }: Props) {
         </p>
 
         <div
-          className="flex justify-center gap-4 flex-wrap transition-all duration-700"
+          className="grid grid-cols-2 gap-3 transition-all duration-700"
           style={{ transitionDelay: '800ms', opacity: fadeIn ? 1 : 0 }}
         >
           {polePairs.map((p) => (
-            <span key={p.dim} className="text-xs border border-border rounded-md px-3 py-1.5">
-              {p.pole}
-            </span>
+            <div key={p.dim} className="text-center">
+              <span className="inline-block text-xs border border-border rounded-md px-3 py-1.5 mb-1.5">
+                {p.pole}
+              </span>
+              <p className="text-[10px] text-secondary capitalize">{p.dim}</p>
+              {p.description && (
+                <p className="text-[10px] text-secondary/70 mt-0.5 leading-tight">{p.description}</p>
+              )}
+            </div>
           ))}
         </div>
 

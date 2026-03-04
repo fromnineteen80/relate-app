@@ -186,7 +186,11 @@ export async function POST(request: NextRequest) {
       : personaModule.W2_PERSONA_METADATA?.[personaCode];
 
     // Build report
+    // Get M2 poles for code key display
+    const m2Poles = gender === 'M' ? questionsModule.MEN_M2_POLES : questionsModule.WOMEN_W2_POLES;
+
     const report = {
+      gender,
       persona: {
         code: personaCode,
         name: personaMetadata?.name || personaCode,
@@ -196,6 +200,7 @@ export async function POST(request: NextRequest) {
         mostAttractive: personaMetadata?.mostAttractive || [],
         leastAttractive: personaMetadata?.leastAttractive || [],
       },
+      m2Poles,
       dimensions: m2Result?.dimensions || m1Result?.dimensions || {},
       m1: m1Result,
       m2: m2Result,
