@@ -12,6 +12,15 @@ import { loadAndHydrateProgress } from '@/lib/supabase/progress';
 
 type FunnelStage = { stage: string; count: number; filter?: string; percentage?: number; isMilestone?: boolean };
 
+type ContextPools = {
+  allGender: number;
+  eligiblePool: number;
+  eligibleEthnicityPool: number;
+  userEthnicity: string;
+  targetGenderLabel: string;
+  orientationLabel: string;
+};
+
 type ComparisonData = {
   label: string;
   population: number;
@@ -20,12 +29,13 @@ type ComparisonData = {
   relateScore: number;
   matchProbability: number;
   funnel?: FunnelStage[];
+  contextPools?: ContextPools;
 };
 
 type MarketData = {
   location?: { cbsaName?: string; cbsaLabel?: string; population?: number };
   relateScore?: { score: number };
-  matchPool?: { localSinglePool: number; realisticPool: number; preferredPool: number; idealPool: number; funnel?: FunnelStage[] };
+  matchPool?: { localSinglePool: number; realisticPool: number; preferredPool: number; idealPool: number; funnel?: FunnelStage[]; contextPools?: ContextPools };
   matchProbability?: { rate: number; percentage: string };
   matchCount?: number;
   stateComparison?: ComparisonData | null;
@@ -588,45 +598,53 @@ export default function ResultsDashboard() {
                     const state = marketData.stateComparison;
                     const national = marketData.nationalComparison;
                     const showExpandedFunnels = metroIdeal < 100;
+                    const ctx = pool?.contextPools;
+                    const pctOf = (ideal: number, base: number) => base > 0 ? ((ideal / base) * 100).toFixed(1) + '%' : '—';
+
+                    // Build comparison rows: metro, state, national
+                    const rows = [
+                      { label: metro, ideal: metroIdeal, matches: matchCount, pop: marketData.location?.population || 0, ctx, highlight: true },
+                      ...(state ? [{ label: `${state.label} (statewide)`, ideal: state.idealPool, matches: state.matchCount, pop: state.population, ctx: state.contextPools }] : []),
+                      ...(national ? [{ label: 'National', ideal: national.idealPool, matches: national.matchCount, pop: national.population, ctx: national.contextPools }] : []),
+                    ];
+
+                    const gLabel = ctx?.targetGenderLabel || 'target gender';
+                    const oLabel = ctx?.orientationLabel || 'orientation';
+                    const eLabel = ctx?.userEthnicity || 'ethnicity';
 
                     return (
                       <div className="mt-6">
                         <span className="text-xs font-mono text-secondary uppercase tracking-wider">How You Compare</span>
-                        <div className="mt-2 border border-border rounded-md overflow-hidden">
+                        <div className="mt-2 border border-border rounded-md overflow-hidden overflow-x-auto">
                           <table className="w-full text-xs">
                             <thead>
                               <tr className="border-b border-border bg-stone-50">
                                 <th className="text-left px-3 py-1.5 font-mono text-secondary">Scope</th>
-                                <th className="text-right px-3 py-1.5 font-mono text-secondary">Population</th>
                                 <th className="text-right px-3 py-1.5 font-mono text-secondary">Ideal Pool</th>
                                 <th className="text-right px-3 py-1.5 font-mono text-secondary">Matches</th>
+                                <th className="text-right px-3 py-1.5 font-mono text-secondary whitespace-nowrap">% of {gLabel}</th>
+                                <th className="text-right px-3 py-1.5 font-mono text-secondary whitespace-nowrap">% of eligible</th>
+                                <th className="text-right px-3 py-1.5 font-mono text-secondary whitespace-nowrap">% of {eLabel}</th>
                               </tr>
                             </thead>
                             <tbody>
-                              <tr className="border-b border-border bg-orange-50/50">
-                                <td className="px-3 py-1.5 font-medium">{metro}</td>
-                                <td className="text-right px-3 py-1.5 font-mono">{fmt(marketData.location?.population || 0)}</td>
-                                <td className="text-right px-3 py-1.5 font-mono">{fmt(metroIdeal)}</td>
-                                <td className="text-right px-3 py-1.5 font-mono font-semibold">{fmt(matchCount)}</td>
-                              </tr>
-                              {state && (
-                                <tr className="border-b border-border">
-                                  <td className="px-3 py-1.5">{state.label} (statewide)</td>
-                                  <td className="text-right px-3 py-1.5 font-mono text-secondary">{fmt(state.population)}</td>
-                                  <td className="text-right px-3 py-1.5 font-mono text-secondary">{fmt(state.idealPool)}</td>
-                                  <td className="text-right px-3 py-1.5 font-mono text-secondary">{fmt(state.matchCount)}</td>
+                              {rows.map((r, i) => (
+                                <tr key={i} className={`${i < rows.length - 1 ? 'border-b border-border' : ''} ${r.highlight ? 'bg-orange-50/50' : ''}`}>
+                                  <td className={`px-3 py-1.5 ${r.highlight ? 'font-medium' : ''}`}>{r.label}</td>
+                                  <td className={`text-right px-3 py-1.5 font-mono ${r.highlight ? '' : 'text-secondary'}`}>{fmt(r.ideal)}</td>
+                                  <td className={`text-right px-3 py-1.5 font-mono ${r.highlight ? 'font-semibold' : 'text-secondary'}`}>{fmt(r.matches)}</td>
+                                  <td className={`text-right px-3 py-1.5 font-mono ${r.highlight ? '' : 'text-secondary'}`}>{r.ctx ? pctOf(r.ideal, r.ctx.allGender) : '—'}</td>
+                                  <td className={`text-right px-3 py-1.5 font-mono ${r.highlight ? '' : 'text-secondary'}`}>{r.ctx ? pctOf(r.ideal, r.ctx.eligiblePool) : '—'}</td>
+                                  <td className={`text-right px-3 py-1.5 font-mono ${r.highlight ? '' : 'text-secondary'}`}>{r.ctx ? pctOf(r.ideal, r.ctx.eligibleEthnicityPool) : '—'}</td>
                                 </tr>
-                              )}
-                              {national && (
-                                <tr>
-                                  <td className="px-3 py-1.5">National</td>
-                                  <td className="text-right px-3 py-1.5 font-mono text-secondary">{fmt(national.population)}</td>
-                                  <td className="text-right px-3 py-1.5 font-mono text-secondary">{fmt(national.idealPool)}</td>
-                                  <td className="text-right px-3 py-1.5 font-mono text-secondary">{fmt(national.matchCount)}</td>
-                                </tr>
-                              )}
+                              ))}
                             </tbody>
                           </table>
+                        </div>
+                        <div className="mt-1.5 space-y-0.5">
+                          <p className="text-[10px] text-secondary"><span className="font-mono">% of {gLabel}</span> — your ideal pool as a share of all {gLabel} in the area</p>
+                          <p className="text-[10px] text-secondary"><span className="font-mono">% of eligible</span> — share of {oLabel} {gLabel} with no criminal record, in your age range</p>
+                          <p className="text-[10px] text-secondary"><span className="font-mono">% of {eLabel}</span> — same as eligible, narrowed to {eLabel} {gLabel}</p>
                         </div>
 
                         {/* Expanded fallback funnels when metro pool is small */}

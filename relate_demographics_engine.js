@@ -1218,18 +1218,42 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
   }
   
   const idealPool = pool;
-  funnel.push({ 
-    stage: 'YOUR IDEAL MATCH POOL', 
+  funnel.push({
+    stage: 'YOUR IDEAL MATCH POOL',
     count: Math.round(pool),
     isMilestone: true
   });
-  
+
+  // Context denominators for percentage display
+  // 1. All target gender in area
+  const totalPop = cbsa.cbsa_population || 0;
+  const allGender = totalPop * (1 - EXCLUSION_RATES.universal) * genderPct * genderLocal;
+
+  // 2. Target orientation + gender, no felons, dating age, not homeless
+  const agePct = (preferences.ageMin && preferences.ageMax)
+    ? getAgeRangePercentage(preferences.ageMin, preferences.ageMax, cbsa)
+    : 1.0;
+  const eligiblePool = allGender * orientationPct * (1 - felonRate) * agePct;
+
+  // 3. Same as #2 but narrowed to user's ethnicity distribution
+  const ethnicityKey = DEMOGRAPHIC_QUESTIONS.identity.ethnicity.cbsaKeyMap[userProfile.ethnicity];
+  const ethnicityPct = ethnicityKey ? (cbsa[ethnicityKey] || 10) / 100 : 1.0;
+  const eligibleEthnicityPool = eligiblePool * ethnicityPct;
+
   return {
     localSinglePool: Math.round(localSinglePool),
     realisticPool: Math.round(realisticPool),
     preferredPool: Math.round(preferredPool),
     idealPool: Math.round(idealPool),
-    funnel
+    funnel,
+    contextPools: {
+      allGender: Math.round(allGender),
+      eligiblePool: Math.round(eligiblePool),
+      eligibleEthnicityPool: Math.round(eligibleEthnicityPool),
+      userEthnicity: userProfile.ethnicity,
+      targetGenderLabel: seeking === 'Woman' ? 'women' : 'men',
+      orientationLabel: userProfile.orientation.toLowerCase(),
+    }
   };
 }
 
@@ -1316,6 +1340,7 @@ async function processDemographics(userInputs) {
         relateScore: stateScore.score,
         matchProbability: stateProb,
         funnel: statePool.funnel,
+        contextPools: statePool.contextPools,
       };
     }
 
@@ -1331,6 +1356,7 @@ async function processDemographics(userInputs) {
         relateScore: natScore.score,
         matchProbability: natProb,
         funnel: natPool.funnel,
+        contextPools: natPool.contextPools,
       };
     }
   } catch (e) {
@@ -1358,7 +1384,8 @@ async function processDemographics(userInputs) {
       realisticPool: matchPool.realisticPool,
       preferredPool: matchPool.preferredPool,
       idealPool: matchPool.idealPool,
-      funnel: matchPool.funnel
+      funnel: matchPool.funnel,
+      contextPools: matchPool.contextPools,
     },
     matchProbability: {
       rate: matchProbability,
