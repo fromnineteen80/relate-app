@@ -43,7 +43,9 @@ export function getOnboardingRedirect(emailVerified: boolean): string {
     case 'verify-email': return '/auth/verify-email';
     case 'profile': return '/onboarding/profile';
     case 'demographics': return '/onboarding/demographics';
-    case 'assessment': return '/assessment';
-    case 'complete': return '/account';
+    // Once profile + demographics are done, go to account
+    case 'assessment':
+    case 'complete':
+      return '/account';
   }
 }

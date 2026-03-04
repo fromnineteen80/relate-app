@@ -69,8 +69,8 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
         </Link>
 
         {isAuth ? null : (
-          <>
-            {/* Desktop nav */}
+          <div className="flex items-center gap-2">
+            {/* Desktop nav links */}
             <nav className="hidden md:flex items-center gap-6">
               {navLinks.map(link =>
                 link.isAnchor ? (
@@ -83,19 +83,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
                   </Link>
                 )
               )}
-              {user ? (
-                <div className="flex items-center">
-                  {onSave && <SaveButton onSave={onSave} externalSaved={saveState} />}
-                  <ProfileAvatar
-                    initial={initial}
-                    photoUrl={profilePhoto}
-                    dropdownOpen={dropdownOpen}
-                    setDropdownOpen={setDropdownOpen}
-                    dropdownRef={dropdownRef}
-                    onSignOut={handleSignOut}
-                  />
-                </div>
-              ) : (
+              {!user && (
                 <div className="flex items-center gap-3">
                   <Link href="/auth/login" className="text-sm text-secondary hover:text-foreground transition-colors">
                     Log in
@@ -107,41 +95,41 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
               )}
             </nav>
 
-            {/* Mobile: hamburger + avatar */}
-            <div className="flex md:hidden items-center gap-2">
-              {user && (
-                <>
-                  {onSave && <SaveButton onSave={onSave} externalSaved={saveState} />}
-                  <ProfileAvatar
-                    initial={initial}
-                    photoUrl={profilePhoto}
-                    dropdownOpen={dropdownOpen}
-                    setDropdownOpen={setDropdownOpen}
-                    dropdownRef={dropdownRef}
-                    onSignOut={handleSignOut}
-                  />
-                </>
+            {/* Single ProfileAvatar instance shared by desktop & mobile */}
+            {user && (
+              <>
+                {onSave && <SaveButton onSave={onSave} externalSaved={saveState} />}
+                <ProfileAvatar
+                  initial={initial}
+                  photoUrl={profilePhoto}
+                  dropdownOpen={dropdownOpen}
+                  setDropdownOpen={setDropdownOpen}
+                  dropdownRef={dropdownRef}
+                  onSignOut={handleSignOut}
+                />
+              </>
+            )}
+
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden w-8 h-8 flex items-center justify-center text-secondary hover:text-foreground transition-colors"
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            >
+              {mobileMenuOpen ? (
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                  <line x1="4" y1="4" x2="16" y2="16" />
+                  <line x1="16" y1="4" x2="4" y2="16" />
+                </svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                  <line x1="3" y1="6" x2="17" y2="6" />
+                  <line x1="3" y1="10" x2="17" y2="10" />
+                  <line x1="3" y1="14" x2="17" y2="14" />
+                </svg>
               )}
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="w-8 h-8 flex items-center justify-center text-secondary hover:text-foreground transition-colors"
-                aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-              >
-                {mobileMenuOpen ? (
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                    <line x1="4" y1="4" x2="16" y2="16" />
-                    <line x1="16" y1="4" x2="4" y2="16" />
-                  </svg>
-                ) : (
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                    <line x1="3" y1="6" x2="17" y2="6" />
-                    <line x1="3" y1="10" x2="17" y2="10" />
-                    <line x1="3" y1="14" x2="17" y2="14" />
-                  </svg>
-                )}
-              </button>
-            </div>
-          </>
+            </button>
+          </div>
         )}
       </div>
 
