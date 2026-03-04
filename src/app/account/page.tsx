@@ -341,7 +341,8 @@ function AccountPage() {
   }
 
   function handleCopyLink() {
-    const url = `${config.appUrl}/u/${user?.id || ''}`;
+    const productionUrl = config.appUrl.includes('localhost') ? 'https://relate.date' : config.appUrl;
+    const url = `${productionUrl}/u/${user?.id || ''}`;
     navigator.clipboard.writeText(url);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2000);
@@ -496,14 +497,18 @@ function AccountPage() {
       {/* ── Sub-Navigation ── */}
       <nav className="border-b border-border bg-background sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-6 flex gap-1 overflow-x-auto">
-          <a href="#profile" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Profile</a>
-          <a href="#subscription" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Subscription</a>
-          <a href="#assessment" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Assessment</a>
-          {hasResults && <a href="#results" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Results</a>}
-          {(marketData || marketLoading) && <a href="#market" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Market</a>}
-          {hasResults && <a href="#downloads" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Downloads</a>}
-          <a href="#partner" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Partner</a>
-          {hasResults && canDownload && <a href="#coaching" className="text-xs font-medium text-accent hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap font-semibold">Ongoing Coaching</a>}
+          {[
+            { id: 'profile', label: 'Profile', show: true },
+            { id: 'subscription', label: 'Subscription', show: true },
+            { id: 'assessment', label: 'Assessment', show: true },
+            { id: 'results', label: 'Results', show: hasResults && (m1Data || m2Data || m3Data || m4Data) },
+            { id: 'market', label: 'Market', show: !!(marketData || marketLoading) },
+            { id: 'downloads', label: 'Downloads', show: hasResults },
+            { id: 'partner', label: 'Partner', show: true },
+            { id: 'coaching', label: 'Ongoing Coaching', show: hasResults && canDownload, accent: true },
+          ].filter(n => n.show).map(n => (
+            <a key={n.id} href={`#${n.id}`} className={`text-xs font-medium px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap ${n.accent ? 'text-accent font-semibold' : 'text-secondary hover:text-primary'}`}>{n.label}</a>
+          ))}
         </div>
       </nav>
 
@@ -552,6 +557,7 @@ function AccountPage() {
           <div className="space-y-3">
             <Row label="Gender" value={gender === 'M' ? 'Man' : gender === 'W' ? 'Woman' : '-'} />
             {demographics.age && <Row label="Age" value={String(demographics.age)} />}
+            {marketData?.location?.cbsaLabel && <Row label="Metro Area" value={marketData.location.cbsaLabel} />}
             {demographics.relationshipStatus && <Row label="Status" value={demographics.relationshipStatus} />}
             {demographics.seeking && <Row label="Seeking" value={demographics.seeking} />}
           </div>
@@ -559,7 +565,12 @@ function AccountPage() {
 
         {/* ── Subscription ── */}
         <section id="subscription" className="card mb-4 scroll-mt-12">
-          <h2 className="font-serif text-lg font-semibold mb-4">Subscription</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-serif text-lg font-semibold">Subscription</h2>
+            {currentTier !== 'free' && currentTier !== 'couples' && (
+              <a href="#subscription" className="text-xs text-accent hover:underline">Edit subscription</a>
+            )}
+          </div>
 
           <div className={`flex items-center gap-3 p-3 mb-4 rounded-md border ${
             currentTier !== 'free' ? 'bg-stone-50 border-stone-300' : 'bg-stone-50 border-border'
@@ -621,7 +632,7 @@ function AccountPage() {
                 type="text"
                 value={discountCode}
                 onChange={e => setDiscountCode(e.target.value.toUpperCase())}
-                placeholder="e.g. 100-PRO-MARCH-2026"
+                placeholder="Enter code"
                 className="input flex-1 text-xs font-mono"
               />
               <button
@@ -936,30 +947,68 @@ function AccountPage() {
           <section id="downloads" className="card mb-4 scroll-mt-12">
             <h2 className="font-serif text-lg font-semibold mb-4">Downloads</h2>
             <div className="space-y-3">
-              <div className="flex items-center justify-between py-2 border-b border-border">
-                <div>
+              <div className="flex items-center gap-4 py-2 border-b border-border">
+                <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium">Persona Card</p>
                   <p className="text-xs text-secondary">Your persona summary and key traits</p>
                 </div>
-                <Link href="/results/persona" className="btn-secondary text-xs">
+                <Link href="/results/persona" className="btn-secondary text-xs flex-shrink-0">
                   View
                 </Link>
               </div>
-              <div className="flex items-center justify-between py-2 border-b border-border">
-                <div>
+              <div className="flex items-center gap-4 py-2 border-b border-border">
+                <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium">Full PDF Report</p>
                   <p className="text-xs text-secondary">
                     {canDownload
-                      ? 'Persona, dimensions, matches, and conflict profile'
+                      ? 'Complete assessment report with market data'
                       : 'Available with Plus, Premium, or Couples'}
                   </p>
                 </div>
                 {canDownload ? (
-                  <button onClick={handleDownloadPDF} disabled={downloading} className="btn-primary text-xs">
+                  <button onClick={handleDownloadPDF} disabled={downloading} className="btn-primary text-xs flex-shrink-0">
                     {downloading ? 'Preparing...' : 'Download'}
                   </button>
                 ) : (
-                  <Link href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary text-xs">
+                  <Link href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary text-xs flex-shrink-0">
+                    Upgrade
+                  </Link>
+                )}
+              </div>
+              <div className="flex items-center gap-4 py-2 border-b border-border">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium">AI Coach Skill (.zip)</p>
+                  <p className="text-xs text-secondary">
+                    {canDownload
+                      ? 'Claude skill with coaching workflows and your data'
+                      : 'Available with Plus, Premium, or Couples'}
+                  </p>
+                </div>
+                {canDownload ? (
+                  <button onClick={handleDownloadCoach} disabled={downloadingCoach} className="btn-primary text-xs flex-shrink-0">
+                    {downloadingCoach ? 'Preparing...' : 'Download'}
+                  </button>
+                ) : (
+                  <Link href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary text-xs flex-shrink-0">
+                    Upgrade
+                  </Link>
+                )}
+              </div>
+              <div className="flex items-center gap-4 py-2">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium">AI Coach Prompt (.md)</p>
+                  <p className="text-xs text-secondary">
+                    {canDownload
+                      ? 'Basic coaching file for any AI platform'
+                      : 'Available with Plus, Premium, or Couples'}
+                  </p>
+                </div>
+                {canDownload ? (
+                  <button onClick={handleDownloadCoachMd} disabled={downloadingCoach} className="btn-primary text-xs flex-shrink-0">
+                    {downloadingCoach ? 'Preparing...' : 'Download'}
+                  </button>
+                ) : (
+                  <Link href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary text-xs flex-shrink-0">
                     Upgrade
                   </Link>
                 )}
@@ -1015,7 +1064,7 @@ function AccountPage() {
                 <p className="text-xs text-secondary mb-2">Your shareable profile link:</p>
                 <div className="flex items-center gap-2">
                   <code className="text-xs font-mono text-secondary bg-white px-2 py-1 rounded border border-border flex-1 truncate">
-                    {config.appUrl}/u/{user?.id || ''}
+                    {config.appUrl.includes('localhost') ? 'https://relate.date' : config.appUrl}/u/{user?.id || ''}
                   </code>
                   <button onClick={handleCopyLink} className="btn-secondary text-xs flex-shrink-0">
                     {copiedLink ? 'Copied' : 'Copy'}
@@ -1108,10 +1157,10 @@ function AccountPage() {
                   <h3 className="text-sm font-semibold">Basic Coaching Prompt</h3>
                 </div>
                 <p className="text-xs text-secondary mb-3">
-                  Single markdown file with your coaching instructions and assessment data combined. Works with any AI — paste it into a chat or upload as a file.
+                  Single markdown file with your coaching instructions and assessment data combined. Works with any AI. Paste it into a chat or upload as a file.
                 </p>
                 <div className="mb-3 text-[11px] text-secondary bg-stone-50 p-2 rounded border border-border">
-                  <p>A single <code className="bg-stone-100 px-1 rounded">relate-coach.md</code> file containing your coaching prompt, report summary, and full assessment data. No setup required — just upload or paste.</p>
+                  <p>A single <code className="bg-stone-100 px-1 rounded">relate-coach.md</code> file containing your coaching prompt, report summary, and full assessment data. No setup required. Just upload or paste.</p>
                 </div>
                 <button onClick={handleDownloadCoachMd} disabled={downloadingCoach} className="btn-secondary text-xs w-full">
                   {downloadingCoach ? 'Preparing...' : 'Download relate-coach.md'}
@@ -1129,7 +1178,7 @@ function AccountPage() {
                   <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
                     <li>Go to <a href="https://claude.ai/customize/skills" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai/customize/skills</a> (profile icon &rarr; Customize &rarr; Skills)</li>
                     <li>Click <strong>&quot;Add Skill&quot;</strong> and upload <code className="bg-stone-100 px-1 rounded">relate-coach.zip</code></li>
-                    <li>Toggle <strong>relate-coach</strong> on — Claude automatically uses your data in any relationship conversation</li>
+                    <li>Toggle <strong>relate-coach</strong> on. Claude automatically uses your data in any relationship conversation</li>
                   </ol>
                 </div>
 
@@ -1159,7 +1208,7 @@ function AccountPage() {
               <div className="flex flex-wrap gap-1.5">
                 {[
                   'Should I lower my income filter?',
-                  'I just had a fight — what happened?',
+                  'I just had a fight, what happened?',
                   'Is this person a good match for me?',
                   'Help me write a dating profile',
                   'What should I work on this week?',
@@ -1227,20 +1276,13 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
     income: 'Income', education: 'Education', age: 'Age', ethnicity: 'Ethnicity', children: 'Children',
   };
 
-  // Format big numbers
-  function fmt(n: number) {
-    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
-    if (n >= 1000) return (n / 1000).toFixed(0) + 'k';
-    return String(n);
-  }
-
   // Funnel milestones
   const milestones = [
-    { label: 'Metro Population', value: metroPop },
-    { label: 'Single Pool', value: pool?.localSinglePool || 0 },
-    { label: 'Realistic Pool', value: pool?.realisticPool || 0 },
-    { label: 'Preferred Pool', value: pool?.preferredPool || 0 },
-    { label: 'Ideal Pool', value: pool?.idealPool || 0 },
+    { label: 'Metro Population', value: metroPop, desc: 'Total population in your metro area' },
+    { label: 'Singles Pool', value: pool?.localSinglePool || 0, desc: 'Unmarried adults of your preferred gender and orientation' },
+    { label: 'Your Realistic Match Pool', value: pool?.realisticPool || 0, desc: 'Singles within your age range and income preferences' },
+    { label: 'Your Preferred Pool', value: pool?.preferredPool || 0, desc: 'Realistic matches who also meet your lifestyle preferences' },
+    { label: 'Your Ideal Match Pool', value: pool?.idealPool || 0, desc: 'People who meet every preference you set' },
   ];
 
   return (
@@ -1305,6 +1347,9 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
               );
             })}
           </div>
+          <p className="text-[11px] text-secondary mt-2">
+            Each bar shows your local percentile (0 = bottom, 100 = top) for that category. The percentage is how much that category weighs in your overall Relate Score.
+          </p>
         </div>
       )}
 
@@ -1321,7 +1366,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
                 <div key={m.label}>
                   <div className="flex items-center justify-between mb-0.5">
                     <span className={`text-xs ${isLast ? 'font-medium' : 'text-secondary'}`}>{m.label}</span>
-                    <span className={`text-xs font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{fmt(m.value)}</span>
+                    <span className={`text-xs font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{m.value.toLocaleString()}</span>
                   </div>
                   <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
                     <div
@@ -1332,6 +1377,13 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
                 </div>
               );
             })}
+          </div>
+          <div className="mt-3 space-y-1">
+            {milestones.map(m => (
+              <p key={m.label} className="text-[11px] text-secondary">
+                <span className="font-medium">{m.label}:</span> {m.desc}
+              </p>
+            ))}
           </div>
         </div>
       )}
@@ -1347,9 +1399,9 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
         </div>
         <div className="text-center">
           <span className="text-xs font-mono text-secondary uppercase tracking-wider">Estimated Matches</span>
-          <p className="font-mono text-2xl font-semibold mt-1">{fmt(matchCount)}</p>
+          <p className="font-mono text-2xl font-semibold mt-1">{matchCount.toLocaleString()}</p>
           <p className="text-xs text-secondary mt-1">
-            Compatible singles in {metro.split(',')[0] || 'your area'}
+            Compatible singles in the surrounding {metro} metro area
           </p>
         </div>
       </div>
@@ -1495,7 +1547,7 @@ function GrowthPlan({ m3, m4 }: { m3: M3Scored['result'] | null; m4: M4Scored['r
 
   // M4-based coaching
   if (m4) {
-    // Gottman horsemen — highest priority
+    // Gottman horsemen: highest priority
     const horsemen = m4.gottmanScreener?.horsemen;
     if (horsemen) {
       const highRisk = Object.entries(horsemen).filter(([, h]) => h.riskLevel === 'high');
@@ -1668,10 +1720,10 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
       },
       age: {
         title: 'Age Is Working Against You',
-        desc: `Your age score is ${Math.round(weakest.local)}. ${demographics.gender === 'Woman' ? 'For women, the dating market peaks younger and narrows faster — this is a structural reality, not a judgment.' : 'For men, age carries less weight but still matters. The market rewards established men in their 30s-40s most.'}`,
+        desc: `Your age score is ${Math.round(weakest.local)}. ${demographics.gender === 'Woman' ? 'For women, the dating market peaks younger and narrows faster. This is a structural reality, not a judgment.' : 'For men, age carries less weight but still matters. The market rewards established men in their 30s-40s most.'}`,
         action: demographics.gender === 'Woman'
           ? 'You can\'t change your age, but you can offset it: fitness, style, and a strong Relate profile matter more as you get older. Focus on what you control.'
-          : 'Offset age by maximizing income, fitness, and emotional maturity. Your assessment results are your edge — lead with depth.',
+          : 'Offset age by maximizing income, fitness, and emotional maturity. Your assessment results are your edge. Lead with depth.',
       },
       children: {
         title: 'Having Kids Is Narrowing Your Pool',
@@ -1680,7 +1732,7 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
       },
       ethnicity: {
         title: 'Your Demographic Is Competitive Here',
-        desc: `Your ethnicity score is ${Math.round(weakest.local)} in ${metro}. This reflects local representation — a smaller population share means fewer people who share or prefer your background.`,
+        desc: `Your ethnicity score is ${Math.round(weakest.local)} in ${metro}. This reflects local representation. A smaller population share means fewer people who share or prefer your background.`,
         action: national && national.relateScore > score.score + 5
           ? `Your national score is ${national.relateScore} vs ${score.score} locally. Consider whether a metro with a larger ${demographics.ethnicity || 'similar'} population would shift your odds.`
           : 'Focus on what you control: income, fitness, and being genuinely interesting. Demographic headwinds are real but they\'re one factor among many.',
@@ -1693,7 +1745,7 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
     }
   }
 
-  // Strongest component — acknowledge it
+  // Strongest component: acknowledge it
   const strongest = compEntries[compEntries.length - 1];
   if (strongest && strongest.local >= 70) {
     insights.push({
@@ -1707,13 +1759,17 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
 
   // ─── 2. Funnel Bottleneck Analysis ───
 
-  // Find biggest non-milestone drops
+  // Skip non-preference stages that users can't control (orientation, base age range, gender)
+  const nonPreferenceFilters = /orientation|sexual|gender|base.*age|18.*64|eligible/i;
+
+  // Find biggest non-milestone drops from user-controlled preference filters only
   const drops: { from: string; to: string; lostPct: number; lostCount: number; stageName: string }[] = [];
   for (let i = 1; i < funnel.length; i++) {
     const prev = funnel[i - 1];
     const curr = funnel[i];
     if (curr.isMilestone || prev.isMilestone) continue;
     if (prev.count === 0) continue;
+    if (nonPreferenceFilters.test(curr.stage) || nonPreferenceFilters.test(curr.filter || '')) continue;
     const lostPct = ((prev.count - curr.count) / prev.count) * 100;
     const lostCount = prev.count - curr.count;
     if (lostPct > 5) {
@@ -1732,13 +1788,13 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
     insights.push({
       priority: 'high',
       title: `Biggest Bottleneck: ${biggestDrop.stageName}`,
-      description: `This single filter eliminates ${Math.round(biggestDrop.lostPct)}% of your remaining pool (${biggestDrop.lostCount.toLocaleString()} people). Everything above this stage is fine — this is where your funnel chokes.`,
+      description: `This single filter eliminates ${Math.round(biggestDrop.lostPct)}% of your remaining pool (${biggestDrop.lostCount.toLocaleString()} people). Everything above this stage is fine. This is where your funnel chokes.`,
       action: isPhysical
         ? 'Physical preferences create the sharpest pool drops. Ask yourself: is this a genuine need, or a default? If you\'ve been happily attracted to people outside this filter before, consider expanding it.'
         : isIncome
         ? `You\'re requiring income levels that most people in ${metro} don\'t hit. If financial stability matters more than a specific number, consider lowering this threshold and screening for financial habits instead.`
         : isPolitical
-        ? 'Political filters are binary eliminators. If you\'re filtering for agreement rather than values, consider including "Moderate" — many moderates are flexible on issues that matter to you.'
+        ? 'Political filters are binary eliminators. If you\'re filtering for agreement rather than values, consider including "Moderate." Many moderates are flexible on issues that matter to you.'
         : `This filter removes a huge chunk of candidates. Evaluate whether it reflects a genuine dealbreaker or a nice-to-have masquerading as a requirement.`,
       category: 'funnel',
     });
@@ -1749,8 +1805,8 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
     insights.push({
       priority: 'medium',
       title: `Secondary Bottleneck: ${drops[1].stageName}`,
-      description: `Removes another ${Math.round(drops[1].lostPct)}% of your pool at that stage.`,
-      action: 'Combined with your primary bottleneck, these two filters account for most of your pool reduction. Relaxing just one could significantly improve your numbers.',
+      description: `Removes another ${Math.round(drops[1].lostPct)}% of your pool (${drops[1].lostCount.toLocaleString()} people) at the ${drops[1].stageName} filter.`,
+      action: `Your top two bottlenecks are ${biggestDrop?.stageName || 'unknown'} and ${drops[1].stageName}. Together they account for the majority of your pool reduction. Evaluate whether ${drops[1].stageName} is a genuine dealbreaker or a preference you could be flexible on.`,
       category: 'funnel',
     });
   }
@@ -1765,7 +1821,7 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
         priority: 'high',
         title: 'Your Preferences Filter Out 99%+ of Singles',
         description: `Of ${pool.localSinglePool.toLocaleString()} local singles, only ${pool.idealPool.toLocaleString()} (${selectivityPct.toFixed(2)}%) meet all your criteria. You are selecting from the absolute tip of the distribution.`,
-        action: 'This level of selectivity is mathematically difficult — not wrong, but it means you may need to meet hundreds of people to find one match. Review your funnel to see which filters you could relax without compromising what actually matters to you.',
+        action: 'This level of selectivity is mathematically difficult. Not wrong, but it means you may need to meet hundreds of people to find one match. Review your funnel to see which filters you could relax without compromising what actually matters to you.',
         category: 'expansion',
       });
     } else if (selectivityPct < 5) {
@@ -1799,7 +1855,7 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
     && prefFitness.every((l: string) => ['4 to 6 days a week', 'Every day'].includes(l));
 
   if ((wantsOnlyFit || wantsOnlyHighFitness) && gap > 15) {
-    // They want a lot but are very selective on physicals — possible mismatch
+    // They want a lot but are very selective on physicals: possible mismatch
     const userIsntFitThemselves = !['Lean or Fit'].includes(userBodyType)
       || !['4 to 6 days a week', 'Every day'].includes(userFitness);
 
@@ -1807,8 +1863,8 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
       insights.push({
         priority: 'high',
         title: 'Honesty Check: Physical Standards vs. What You Offer',
-        description: `Your assessment shows a Want/Offer gap of +${gap} — you want significantly more than you offer. At the same time, you\'re filtering for only fit/lean partners who exercise intensely. But your own fitness and body type don\'t meet the standard you\'re setting for others.`,
-        action: 'Two paths: (1) Get in the gym. Seriously. Consistent exercise 4+ days a week for 6 months will change your body, your confidence, and your Relate Score. (2) Or expand your physical preferences — attraction grows in person in ways a filter can\'t predict.',
+        description: `Your assessment shows a Want/Offer gap of +${gap}. You want significantly more than you offer. At the same time, you're filtering for only fit/lean partners who exercise intensely. But your own fitness and body type don't meet the standard you're setting for others.`,
+        action: 'Two paths: (1) Get in the gym. Seriously. Consistent exercise 4+ days a week for 6 months will change your body, your confidence, and your Relate Score. (2) Or expand your physical preferences. Attraction grows in person in ways a filter can\'t predict.',
         category: 'honesty',
       });
     }
@@ -1820,7 +1876,7 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
       priority: 'high',
       title: 'You Want Fit Partners but Don\'t Exercise',
       description: `You\'re filtering for "Lean or Fit" body types, but you exercise ${userFitness === 'Never' ? 'never' : 'once a week'}. Attractive, fit people tend to date other fit people.`,
-      action: 'Start with 3 days a week of exercise — even walking. Build to 4-5 days. This is the single highest-ROI change you can make: it improves your Relate Score, your health, your confidence, and your attractiveness to the people you want to date.',
+      action: 'Start with 3 days a week of exercise, even walking. Build to 4 to 5 days. This is the single highest ROI change you can make: it improves your Relate Score, your health, your confidence, and your attractiveness to the people you want to date.',
       category: 'honesty',
     });
   }
@@ -1834,7 +1890,7 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
       priority: 'medium',
       title: 'You\'re Requiring Income You Don\'t Match',
       description: `You require partners earning ${formatIncome(prefIncome)}+, but your own income puts you in the bottom ${Math.round(incomeComponent.local)}% locally. High earners typically partner with high earners.`,
-      action: 'Focus on increasing your own income first. Alternatively, lower your income floor and look for financial responsibility rather than a specific number — someone who saves, invests, and lives within their means.',
+      action: 'Focus on increasing your own income first. Alternatively, lower your income floor and look for financial responsibility rather than a specific number. Someone who saves, invests, and lives within their means.',
       category: 'honesty',
     });
   }
@@ -1846,7 +1902,7 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
       priority: 'medium',
       title: 'Small Pool + Abandonment Fear = Scarcity Spiral',
       description: `With only ${matchCount} estimated matches and abandonment as your primary emotional driver, you\'re at risk of clinging to anyone who shows interest rather than choosing wisely.`,
-      action: 'Work on your abandonment patterns (see Growth Plan above) before actively dating. A small pool requires patience and confidence — not desperation. Therapy that targets attachment anxiety will serve you better than loosening your standards.',
+      action: 'Work on your abandonment patterns (see Growth Plan above) before actively dating. A small pool requires patience and confidence, not desperation. Therapy that targets attachment anxiety will serve you better than loosening your standards.',
       category: 'honesty',
     });
   }
@@ -1868,7 +1924,7 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
       priority: 'medium',
       title: 'Your Match Probability Is Below 5%',
       description: `Even within your ideal pool, only ${prob.percentage} of people would likely be mutually interested. This is driven by your Relate Score of ${score.score}.`,
-      action: 'Improve your Relate Score by focusing on your weakest component. A 10-point score improvement can nearly double your match probability due to the sigmoid curve — small gains compound.',
+      action: 'Improve your Relate Score by focusing on your weakest component. A 10 point score improvement can nearly double your match probability due to the sigmoid curve. Small gains compound.',
       category: 'score',
     });
   }
@@ -1878,19 +1934,6 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
   // Sort: high > medium > low
   const priorityOrder = { high: 0, medium: 1, low: 2 };
   insights.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
-
-  const categoryIcon: Record<string, string> = {
-    score: 'S',
-    funnel: 'F',
-    honesty: '!',
-    expansion: '+',
-  };
-  const categoryLabel: Record<string, string> = {
-    score: 'Score',
-    funnel: 'Funnel',
-    honesty: 'Reality Check',
-    expansion: 'Opportunity',
-  };
 
   function priorityBadge(p: 'high' | 'medium' | 'low') {
     const styles = {
@@ -1910,11 +1953,8 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
         {insights.map((insight, i) => (
           <div key={i} className="border border-border rounded-md p-3">
             <div className="flex items-start gap-2 mb-2">
-              <span className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded ${priorityBadge(insight.priority)}`}>
+              <span className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded flex-shrink-0 ${priorityBadge(insight.priority)}`}>
                 {insight.priority}
-              </span>
-              <span className="text-[10px] font-mono text-secondary bg-stone-50 px-1.5 py-0.5 rounded">
-                {categoryIcon[insight.category]} {categoryLabel[insight.category]}
               </span>
               <h3 className="text-sm font-medium leading-tight">{insight.title}</h3>
             </div>

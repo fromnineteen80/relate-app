@@ -766,11 +766,17 @@ function getIncomePercentileNational(income, cbsa) {
 
 /**
  * Apply local adjustment to national percentile
- * localScore = 50 + (nationalPercentile - 50) Ã— (50 / localWeight)
+ * localScore = 50 + (nationalPercentile - 50) x (50 / localWeight)
+ * localWeight should be a relative index (typically 30-150 range).
+ * Guard: if localWeight looks like a raw dollar amount (>1000), skip adjustment.
+ * Final result is clamped to [0, 100].
  */
 function applyLocalAdjustment(nationalPercentile, localWeight) {
   if (!localWeight || localWeight === 0) return nationalPercentile;
-  return 50 + (nationalPercentile - 50) * (50 / localWeight);
+  // If localWeight looks like a raw dollar amount instead of an index, skip
+  if (localWeight > 1000) return nationalPercentile;
+  const adjusted = 50 + (nationalPercentile - 50) * (50 / localWeight);
+  return Math.max(0, Math.min(100, adjusted));
 }
 
 /**
@@ -870,7 +876,11 @@ function calculateRelateScore(userProfile, cbsa) {
   const weights = RELATE_SCORE_WEIGHTS[gender === 'Man' ? 'male' : 'female'];
   
   // Income score (locally adjusted)
-  const incomeNational = getIncomePercentileNational(userProfile.income, cbsa);
+  let incomeNational = getIncomePercentileNational(userProfile.income, cbsa);
+  // Safety floor: very high incomes should never show as low percentile
+  if (userProfile.income >= 500000 && incomeNational < 95) incomeNational = 95;
+  else if (userProfile.income >= 200000 && incomeNational < 85) incomeNational = 85;
+  else if (userProfile.income >= 100000 && incomeNational < 60) incomeNational = 60;
   const incomeLocal = applyLocalAdjustment(incomeNational, cbsa.income_cbsa);
   
   // Education score (locally adjusted)
