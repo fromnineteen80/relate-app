@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
 import { useAuth } from '@/lib/auth-context';
@@ -28,9 +28,10 @@ export default function FeedbackPage() {
   const [error, setError] = useState('');
 
   // Pre-fill email when user loads
-  useState(() => {
+  useEffect(() => {
     if (user?.email && !email) setEmail(user.email);
-  });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.email]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
