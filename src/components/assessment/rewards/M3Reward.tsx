@@ -72,10 +72,25 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
 
   // Screen 1: Connection Style
   if (screen === 1) {
+    const wantLabel = wantScore > 60
+      ? 'You want exclusive access to hidden sides of a partner'
+      : wantScore >= 40
+        ? 'You seek a balanced mix of depth and consistency from a partner'
+        : 'You value consistency and predictability over mystery';
+    const offerLabel = offerScore > 60
+      ? 'You reveal yourself in layers, showing different sides over time'
+      : offerScore >= 40
+        ? 'You offer a steady blend of openness and range to those close to you'
+        : 'You show up the same way in every context, what people see is what they get';
+
     return (
       <div className={`max-w-xl mx-auto transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
         <span className="font-mono text-xs text-secondary">Your Connection Style</span>
-        <h2 className="font-serif text-2xl font-semibold mt-1 mb-8">How You Connect</h2>
+        <h2 className="font-serif text-2xl font-semibold mt-1 mb-4">How You Connect</h2>
+
+        <p className="text-sm text-secondary mb-8 leading-relaxed">
+          These scores measure context switching: how much differentiated access you seek from a partner and how much you provide. Higher scores mean more range across situations. Lower scores mean more consistency. Neither is better; what matters is the balance between them.
+        </p>
 
         <div className="grid grid-cols-2 gap-6 mb-8">
           <div
@@ -90,9 +105,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
                 style={{ width: `${wantScore}%`, transitionDelay: '400ms' }}
               />
             </div>
-            <p className="text-xs text-secondary mt-2">
-              {wantScore > 60 ? 'You want exclusive access to hidden sides' : 'You value consistency over mystery'}
-            </p>
+            <p className="text-xs text-secondary mt-2">{wantLabel}</p>
           </div>
 
           <div
@@ -107,9 +120,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
                 style={{ width: `${offerScore}%`, transitionDelay: '600ms' }}
               />
             </div>
-            <p className="text-xs text-secondary mt-2">
-              {offerScore > 60 ? 'You reveal yourself in layers over time' : 'You are the same person in every context'}
-            </p>
+            <p className="text-xs text-secondary mt-2">{offerLabel}</p>
           </div>
         </div>
 
@@ -124,7 +135,11 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
   if (screen === 2) {
     return (
       <div className={`max-w-xl mx-auto transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-        <h3 className="font-serif text-xl font-semibold mb-6">Your Want/Offer Balance</h3>
+        <h3 className="font-serif text-xl font-semibold mb-4">Your Want/Offer Balance</h3>
+
+        <p className="text-sm text-secondary mb-6 leading-relaxed">
+          The gap between these two bars is the key insight. When they are close, you seek and give a similar level of emotional range. A large gap means one side of the exchange is carrying more weight, which creates friction over time.
+        </p>
 
         <div className="card mb-6">
           <div className="space-y-3">
