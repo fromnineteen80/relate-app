@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { Component, useEffect, useState, useCallback, useRef } from 'react';
+import type { ReactNode, ErrorInfo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { type PricingTier } from '@/lib/config';
@@ -72,7 +73,44 @@ function tierLabel(tier: string) {
   return labels[tier] || tier;
 }
 
-export default function ResultsDashboard() {
+// Error boundary to catch and display client-side errors
+class ResultsErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { error: null };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error('Results page error:', error, info);
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="min-h-screen flex flex-col">
+          <div className="max-w-3xl mx-auto px-6 py-16 w-full text-center">
+            <h1 className="font-serif text-2xl font-semibold mb-4">Something went wrong</h1>
+            <p className="text-sm text-secondary mb-4">{this.state.error.message}</p>
+            <pre className="text-xs text-left bg-stone-100 p-4 rounded overflow-auto max-h-48 mb-6">{this.state.error.stack}</pre>
+            <button onClick={() => this.setState({ error: null })} className="btn-primary text-sm">Try again</button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+export default function ResultsPage() {
+  return (
+    <ResultsErrorBoundary>
+      <ResultsDashboard />
+    </ResultsErrorBoundary>
+  );
+}
+
+function ResultsDashboard() {
   const router = useRouter();
   const { user } = useAuth();
   const [report, setReport] = useState<ResultsReport | null>(null);
