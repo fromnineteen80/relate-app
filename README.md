@@ -816,7 +816,7 @@ Track clicks in `referral_clicks` table.
 ```javascript
 const DATA_URLS = {
   cbsa: 'https://raw.githubusercontent.com/fromnineteen80/salaryarc/main/cbsa-data.js',
-  zip: 'https://raw.githubusercontent.com/fromnineteen80/salaryarc/main/zip-lat-lng.json'
+  zip: 'https://raw.githubusercontent.com/fromnineteen80/salaryarc/main/zip-centroids.js'
 };
 ```
 
