@@ -159,6 +159,7 @@ function AccountPage() {
   const [moduleProgress, setModuleProgress] = useState<Record<number, boolean>>({});
   const [mockUpgrading, setMockUpgrading] = useState(false);
   const [profileData, setProfileData] = useState<{ firstName: string; lastName: string; photoUrl: string | null } | null>(null);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [m1Data, setM1Data] = useState<M1Scored | null>(null);
   const [m2Data, setM2Data] = useState<M2Scored | null>(null);
   const [m3Data, setM3Data] = useState<M3Scored | null>(null);
@@ -255,6 +256,7 @@ function AccountPage() {
     setHasPartner(!!localStorage.getItem('relate_partner_results'));
     setPartnerEmail(localStorage.getItem('relate_partner_email'));
     setProfileData(getProfile());
+    setProfilePhoto(localStorage.getItem('relate_profile_photo'));
 
     // Load partner info from API
     if (user?.id) {
@@ -604,8 +606,8 @@ function AccountPage() {
           </div>
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 border-2 border-border">
-              {profileData?.photoUrl ? (
-                <img src={profileData.photoUrl} alt="Profile" className="w-full h-full object-cover" />
+              {profilePhoto ? (
+                <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" />
               ) : (
                 <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-lg font-medium">
                   {initial}
