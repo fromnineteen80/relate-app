@@ -33,6 +33,7 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
   const [showComplete, setShowComplete] = useState(false);
   const [scoredData, setScoredData] = useState<any>(null);
   const [scoring, setScoring] = useState(false);
+  const [saved, setSaved] = useState(false);
   const dbSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Load saved responses — localStorage first, Supabase fallback
@@ -68,30 +69,30 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
     }
   }, [storageKey, questions, onModuleComplete, user]);
 
-  // Debounced save to Supabase (every 2 seconds of inactivity)
+  // Auto-save to Supabase after 10 seconds of inactivity; mark as saved
   const saveToDb = useCallback((updated: Record<string, number | string>) => {
     if (!user) return;
     if (dbSaveTimer.current) clearTimeout(dbSaveTimer.current);
     dbSaveTimer.current = setTimeout(() => {
       saveModuleResponses(user.id, moduleNumber, updated);
-    }, 2000);
+      setSaved(true);
+    }, 10000);
   }, [user, moduleNumber]);
 
   const saveResponses = useCallback((updated: Record<string, number | string>) => {
     localStorage.setItem(storageKey, JSON.stringify(updated));
+    setSaved(false);
     saveToDb(updated);
   }, [storageKey, saveToDb]);
 
-  // Explicit save: flush immediately to localStorage + Supabase
+  // Explicit save: flush immediately to localStorage + Supabase, show saved
   const handleExplicitSave = useCallback(() => {
-    // Cancel any pending debounced save
     if (dbSaveTimer.current) clearTimeout(dbSaveTimer.current);
-    // Save to localStorage (already there, but ensure it's current)
     localStorage.setItem(storageKey, JSON.stringify(responses));
-    // Immediately save to Supabase
     if (user) {
       saveModuleResponses(user.id, moduleNumber, responses);
     }
+    setSaved(true);
   }, [storageKey, responses, user, moduleNumber]);
 
   function handleAnswer(questionId: string, value: number | string) {
@@ -106,10 +107,10 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
         // Module complete — save immediately to both localStorage and Supabase
         localStorage.setItem(`relate_m${moduleNumber}_completed`, 'true');
         if (user) {
-          // Flush debounced save immediately
           if (dbSaveTimer.current) clearTimeout(dbSaveTimer.current);
           saveModuleResponses(user.id, moduleNumber, updated);
         }
+        setSaved(true);
 
         if (onModuleComplete) {
           setScoring(true);
@@ -206,12 +207,14 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
     );
   }
 
-  const question = questions[currentIndex];
-  const progress = ((currentIndex + 1) / questions.length) * 100;
+  const safeIndex = Math.min(currentIndex, questions.length - 1);
+  const question = questions[safeIndex];
+  if (!question) return null;
+  const progress = ((safeIndex + 1) / questions.length) * 100;
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SiteHeader onSave={handleExplicitSave} />
+      <SiteHeader onSave={handleExplicitSave} saveState={saved} />
 
       {/* Progress bar */}
       <div className="border-b border-border">
@@ -220,7 +223,7 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
             <div className="h-full bg-accent rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
           </div>
           <span className="font-mono text-xs text-secondary whitespace-nowrap">
-            {currentIndex + 1} / {questions.length}
+            {safeIndex + 1} / {questions.length}
           </span>
         </div>
       </div>
@@ -253,4 +256,3 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
     </div>
   );
 }
-

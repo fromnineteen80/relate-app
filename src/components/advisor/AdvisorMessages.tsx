@@ -5,7 +5,7 @@ import { useAdvisor } from '@/lib/advisor-context';
 import AdvisorStarters from './AdvisorStarters';
 
 export default function AdvisorMessages() {
-  const { messages, loading, isLimited, messageCount } = useAdvisor();
+  const { messages, loading, isLimited, messageCount, messageLimit, paymentTier } = useAdvisor();
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,14 +47,27 @@ export default function AdvisorMessages() {
       {isLimited && (
         <div className="text-center py-4 px-2">
           <p className="text-xs text-secondary mb-2">
-            You&apos;ve used {messageCount} of 3 free messages.
+            You&apos;ve used {messageCount} of {messageLimit} messages.
           </p>
-          <p className="text-xs text-secondary mb-3">
-            Upgrade to Premium for unlimited AI advisor access.
-          </p>
-          <a href="/account" className="text-xs text-accent hover:underline font-medium">
-            Upgrade to Premium ($29.99)
-          </a>
+          {paymentTier === 'premium' ? (
+            <>
+              <p className="text-xs text-secondary mb-3">
+                Upgrade to Pro for unlimited AI advisor access.
+              </p>
+              <a href="/account" className="text-xs text-accent hover:underline font-medium">
+                Upgrade to Pro ($69.99)
+              </a>
+            </>
+          ) : (
+            <>
+              <p className="text-xs text-secondary mb-3">
+                Upgrade to Premium for AI advisor access, or Pro for unlimited.
+              </p>
+              <a href="/account" className="text-xs text-accent hover:underline font-medium">
+                View plans
+              </a>
+            </>
+          )}
         </div>
       )}
 

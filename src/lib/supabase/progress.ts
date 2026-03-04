@@ -114,6 +114,45 @@ export async function loadAndHydrateProgress(userId: string): Promise<any | null
 }
 
 /**
+ * Clear all assessment progress from both localStorage and Supabase.
+ * Used by "Start Over" / "Retake Assessment" to ensure a true clean slate.
+ */
+export async function clearAllProgress(userId: string) {
+  // Clear localStorage
+  for (let m = 1; m <= 4; m++) {
+    localStorage.removeItem(`relate_m${m}_responses`);
+    localStorage.removeItem(`relate_m${m}_completed`);
+    localStorage.removeItem(`relate_m${m}_scored`);
+  }
+  localStorage.removeItem('relate_results');
+
+  // Clear Supabase
+  if (config.useMockAuth) return;
+  const supabase = getSupabase();
+  if (!supabase) return;
+
+  const { error } = await supabase.from('user_progress').upsert({
+    user_id: userId,
+    m1_responses: null,
+    m1_completed: false,
+    m1_scored: null,
+    m2_responses: null,
+    m2_completed: false,
+    m2_scored: null,
+    m3_responses: null,
+    m3_completed: false,
+    m3_scored: null,
+    m4_responses: null,
+    m4_completed: false,
+    m4_scored: null,
+    results: null,
+    updated_at: new Date().toISOString(),
+  }, { onConflict: 'user_id' });
+
+  if (error) console.warn('Failed to clear progress in DB:', error.message);
+}
+
+/**
  * Save profile data to the users table.
  */
 export function saveProfileToDb(

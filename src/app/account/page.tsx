@@ -11,6 +11,7 @@ import { fetchPaymentTier, refreshPaymentTier } from '@/lib/payments';
 import { getProfile } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
 import { TestAccessCard } from '@/components/TestAccessCard';
+import { clearAllProgress } from '@/lib/supabase/progress';
 
 type Demographics = { age?: number; gender?: string; relationshipStatus?: string; seeking?: string; [key: string]: unknown };
 
@@ -81,7 +82,7 @@ type M4Scored = {
 
 type MatchResult = { rank: number; code: string; name: string; tier: string; compatibilityScore: number; traits: string; summary: string };
 
-const TIER_ORDER: PricingTier[] = ['free', 'plus', 'premium', 'couples'];
+const TIER_ORDER: PricingTier[] = ['free', 'plus', 'premium', 'pro', 'couples'];
 
 function tierIndex(t: PricingTier) { return TIER_ORDER.indexOf(t); }
 
@@ -397,10 +398,10 @@ function AccountPage() {
           <h2 className="font-serif text-lg font-semibold mb-4">Subscription</h2>
 
           <div className={`flex items-center gap-3 p-3 mb-4 rounded-md border ${
-            currentTier !== 'free' ? 'bg-success/5 border-success/20' : 'bg-stone-50 border-border'
+            currentTier !== 'free' ? 'bg-stone-50 border-stone-300' : 'bg-stone-50 border-border'
           }`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${
-              currentTier !== 'free' ? 'bg-success/10 text-success' : 'bg-stone-200 text-secondary'
+              currentTier !== 'free' ? 'bg-stone-200 text-stone-600' : 'bg-stone-200 text-secondary'
             }`}>
               {currentTier !== 'free' ? '✓' : '-'}
             </div>
@@ -409,7 +410,8 @@ function AccountPage() {
               <p className="text-xs text-secondary">
                 {currentTier === 'free' && 'Persona code, top 3 matches, 3 advisor messages.'}
                 {currentTier === 'plus' && 'Full report, all 16 matches, PDF download.'}
-                {currentTier === 'premium' && 'Full report, AI advisor, assessment retakes, PDF download.'}
+                {currentTier === 'premium' && 'Plus features + rate-limited AI advisor + retake assessment.'}
+                {currentTier === 'pro' && 'Everything in Premium + unlimited AI advisor.'}
                 {currentTier === 'couples' && 'Everything for both partners, couples report, shared advisor.'}
               </p>
             </div>
@@ -424,20 +426,21 @@ function AccountPage() {
           {currentTier !== 'couples' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {TIER_ORDER.filter(t => t !== 'free' && tierIndex(t) > tierIndex(currentTier)).map(tier => (
-                <div key={tier} className={`p-3 border rounded-md ${tier === 'premium' ? 'border-accent' : 'border-border'}`}>
+                <div key={tier} className="p-3 border rounded-md border-border">
                   <p className="text-sm font-medium">{PRICING[tier].label}</p>
                   <p className="font-serif text-xl font-semibold my-1">{PRICING[tier].priceDisplay}</p>
                   <p className="text-xs text-secondary mb-3">
                     {tier === 'plus' && 'All 16 matches, conflict analysis, growth path, PDF report.'}
-                    {tier === 'premium' && 'Plus features + AI advisor + retake assessment.'}
-                    {tier === 'couples' && 'Premium for both + compatibility report + shared tools.'}
+                    {tier === 'premium' && 'Plus features + rate-limited AI advisor + retake assessment.'}
+                    {tier === 'pro' && 'Everything in Premium + unlimited AI advisor.'}
+                    {tier === 'couples' && 'Pro for both + compatibility report + shared tools.'}
                   </p>
                   {config.useMockPayments ? (
-                    <button onClick={() => handleMockUpgrade(tier)} className={`text-xs w-full ${tier === 'premium' ? 'btn-primary' : 'btn-secondary'}`} disabled={mockUpgrading}>
+                    <button onClick={() => handleMockUpgrade(tier)} className="text-xs w-full btn-secondary" disabled={mockUpgrading}>
                       {mockUpgrading ? 'Processing...' : `Upgrade to ${PRICING[tier].label}`}
                     </button>
                   ) : (
-                    <Link href={`/api/checkout?product=${tier}&email=${encodeURIComponent(user?.email || '')}`} className={`text-xs w-full text-center block ${tier === 'premium' ? 'btn-primary' : 'btn-secondary'}`}>
+                    <Link href={`/api/checkout?product=${tier}&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
                       Upgrade to {PRICING[tier].label}
                     </Link>
                   )}
@@ -496,15 +499,11 @@ function AccountPage() {
               View Full Results
             </Link>
           )}
-          {assessmentComplete && (currentTier === 'premium' || currentTier === 'couples') && (
+          {assessmentComplete && (currentTier === 'premium' || currentTier === 'pro' || currentTier === 'couples') && (
             <button
-              onClick={() => {
-                if (!confirm('This will clear your current assessment progress. Your existing results will still be available until you generate new ones. Continue?')) return;
-                for (let m = 1; m <= 4; m++) {
-                  localStorage.removeItem(`relate_m${m}_responses`);
-                  localStorage.removeItem(`relate_m${m}_completed`);
-                  localStorage.removeItem(`relate_m${m}_scored`);
-                }
+              onClick={async () => {
+                if (!confirm('This will clear all your assessment answers and results. You will need to retake the full assessment. Continue?')) return;
+                if (user) await clearAllProgress(user.id);
                 setModuleProgress({});
                 setM1Data(null);
                 setM2Data(null);

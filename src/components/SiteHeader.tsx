@@ -9,9 +9,10 @@ import { useAuth } from '@/lib/auth-context';
 type SiteHeaderProps = {
   variant?: 'default' | 'landing' | 'auth';
   onSave?: () => void;
+  saveState?: boolean;
 };
 
-export function SiteHeader({ variant = 'default', onSave }: SiteHeaderProps) {
+export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeaderProps) {
   const { user, signOut } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
@@ -50,9 +51,9 @@ export function SiteHeader({ variant = 'default', onSave }: SiteHeaderProps) {
   }
 
   const navLinks = [
-    { href: '/about', label: 'About', isAnchor: false },
-    { href: pathname === '/' ? '#how-it-works' : '/#how-it-works', label: 'How It Works', isAnchor: true },
     { href: '/personas', label: 'Personas', isAnchor: false },
+    { href: pathname === '/' ? '#how-it-works' : '/#how-it-works', label: 'How It Works', isAnchor: true },
+    { href: '/about', label: 'About', isAnchor: false },
     { href: '/methodology', label: 'Methodology', isAnchor: false },
     { href: pathname === '/' ? '#pricing' : '/#pricing', label: 'Pricing', isAnchor: true },
   ];
@@ -81,7 +82,7 @@ export function SiteHeader({ variant = 'default', onSave }: SiteHeaderProps) {
               )}
               {user ? (
                 <div className="flex items-center">
-                  {onSave && <SaveButton onSave={onSave} />}
+                  {onSave && <SaveButton onSave={onSave} externalSaved={saveState} />}
                   <ProfileAvatar
                     initial={initial}
                     photoUrl={profilePhoto}
@@ -89,7 +90,6 @@ export function SiteHeader({ variant = 'default', onSave }: SiteHeaderProps) {
                     setDropdownOpen={setDropdownOpen}
                     dropdownRef={dropdownRef}
                     onSignOut={handleSignOut}
-                    router={router}
                   />
                 </div>
               ) : (
@@ -108,7 +108,7 @@ export function SiteHeader({ variant = 'default', onSave }: SiteHeaderProps) {
             <div className="flex md:hidden items-center gap-2">
               {user && (
                 <>
-                  {onSave && <SaveButton onSave={onSave} />}
+                  {onSave && <SaveButton onSave={onSave} externalSaved={saveState} />}
                   <ProfileAvatar
                     initial={initial}
                     photoUrl={profilePhoto}
@@ -116,7 +116,6 @@ export function SiteHeader({ variant = 'default', onSave }: SiteHeaderProps) {
                     setDropdownOpen={setDropdownOpen}
                     dropdownRef={dropdownRef}
                     onSignOut={handleSignOut}
-                    router={router}
                   />
                 </>
               )}
@@ -185,28 +184,17 @@ export function SiteHeader({ variant = 'default', onSave }: SiteHeaderProps) {
   );
 }
 
-function SaveButton({ onSave }: { onSave: () => void }) {
-  const [saved, setSaved] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  function handleClick() {
-    onSave();
-    setSaved(true);
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => setSaved(false), 2000);
-  }
-
-  useEffect(() => {
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, []);
+function SaveButton({ onSave, externalSaved }: { onSave: () => void; externalSaved?: boolean }) {
+  // Use external saved state (persistent) if provided, otherwise fall back to internal timer-based
+  const showSaved = externalSaved ?? false;
 
   return (
     <button
-      onClick={handleClick}
+      onClick={onSave}
       className="flex items-center gap-1.5 text-sm text-secondary hover:text-foreground transition-colors mr-2"
       aria-label="Save progress"
     >
-      {saved ? (
+      {showSaved ? (
         <>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-success">
             <polyline points="3.5 8.5 6.5 11.5 12.5 4.5" />
@@ -234,7 +222,6 @@ function ProfileAvatar({
   setDropdownOpen,
   dropdownRef,
   onSignOut,
-  router,
 }: {
   initial: string;
   photoUrl: string | null;
@@ -242,13 +229,7 @@ function ProfileAvatar({
   setDropdownOpen: (open: boolean) => void;
   dropdownRef: React.RefObject<HTMLDivElement>;
   onSignOut: () => void;
-  router: ReturnType<typeof useRouter>;
 }) {
-  function navigate(path: string) {
-    setDropdownOpen(false);
-    router.push(path);
-  }
-
   return (
     <div className="relative ml-2" ref={dropdownRef}>
       <button
@@ -266,21 +247,21 @@ function ProfileAvatar({
 
       {dropdownOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white border border-border rounded-md shadow-lg py-1 z-50">
-          <button onClick={() => navigate('/account')} className="block w-full text-left px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
+          <Link href="/account" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
             Account
-          </button>
-          <button onClick={() => navigate('/assessment')} className="block w-full text-left px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
+          </Link>
+          <Link href="/assessment" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
             Assessment
-          </button>
-          <button onClick={() => navigate('/results')} className="block w-full text-left px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
+          </Link>
+          <Link href="/results" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
             Results
-          </button>
-          <button onClick={() => navigate('/settings/profile')} className="block w-full text-left px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
+          </Link>
+          <Link href="/settings/profile" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
             Edit Profile
-          </button>
-          <button onClick={() => navigate('/settings/billing')} className="block w-full text-left px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
+          </Link>
+          <Link href="/settings/billing" className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground">
             Billing
-          </button>
+          </Link>
           <div className="border-t border-border my-1" />
           <button
             onClick={() => { setDropdownOpen(false); onSignOut(); }}

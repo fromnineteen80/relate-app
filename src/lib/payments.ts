@@ -7,7 +7,8 @@ const TIER_PRIORITY: Record<PricingTier, number> = {
   free: 0,
   plus: 1,
   premium: 2,
-  couples: 3,
+  pro: 3,
+  couples: 4,
 };
 
 /**
@@ -18,7 +19,7 @@ const TIER_PRIORITY: Record<PricingTier, number> = {
 export async function fetchPaymentTier(email?: string): Promise<{ paid: boolean; tier: PricingTier }> {
   // Test mode: bypass payments, grant full access. Stripe still works if used.
   if (config.testFullAccess) {
-    return { paid: true, tier: 'premium' };
+    return { paid: true, tier: 'pro' };
   }
 
   if (config.useMockPayments) {

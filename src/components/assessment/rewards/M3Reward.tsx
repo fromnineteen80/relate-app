@@ -208,7 +208,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
       </p>
       <button onClick={onContinue} className="btn-primary px-8 py-3">
         Continue to Module 4
-        <span className="text-xs opacity-70 ml-2">~17 min</span>
+        <span className="text-xs opacity-70 ml-2">~20 min</span>
       </button>
     </div>
   );

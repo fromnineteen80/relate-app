@@ -242,10 +242,10 @@ export default function ResultsDashboard() {
               </p>
               <div className="flex gap-2 justify-center">
                 <Link href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary inline-block text-sm">
-                  Plus ($19.99)
+                  Plus ($29.99)
                 </Link>
                 <Link href={`/api/checkout?product=premium&email=${encodeURIComponent(user?.email || '')}`} className="btn-primary inline-block text-sm">
-                  Premium ($29.99)
+                  Premium ($49.99)
                 </Link>
               </div>
             </div>
