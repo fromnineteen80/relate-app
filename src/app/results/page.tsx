@@ -193,6 +193,7 @@ export default function ResultsDashboard() {
           m4: report.m4,
           matches: report.matches,
           individualCompatibility: report.individualCompatibility,
+          marketData: marketData || undefined,
         }),
       });
       const data = await res.json();
@@ -211,7 +212,7 @@ export default function ResultsDashboard() {
     } finally {
       setDownloading(false);
     }
-  }, [report]);
+  }, [report, marketData]);
 
   if (!report) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
 
