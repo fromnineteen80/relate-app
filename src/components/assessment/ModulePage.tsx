@@ -207,8 +207,10 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
     );
   }
 
-  const question = questions[currentIndex];
-  const progress = ((currentIndex + 1) / questions.length) * 100;
+  const safeIndex = Math.min(currentIndex, questions.length - 1);
+  const question = questions[safeIndex];
+  if (!question) return null;
+  const progress = ((safeIndex + 1) / questions.length) * 100;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -221,7 +223,7 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
             <div className="h-full bg-accent rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
           </div>
           <span className="font-mono text-xs text-secondary whitespace-nowrap">
-            {currentIndex + 1} / {questions.length}
+            {safeIndex + 1} / {questions.length}
           </span>
         </div>
       </div>
