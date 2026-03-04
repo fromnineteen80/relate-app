@@ -53,7 +53,6 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
   const navLinks = [
     { href: '/about', label: 'About', isAnchor: false },
     { href: '/personas', label: 'Personas', isAnchor: false },
-    { href: pathname === '/' ? '#how-it-works' : '/#how-it-works', label: 'How It Works', isAnchor: true },
     { href: '/methodology', label: 'Methodology', isAnchor: false },
     { href: pathname === '/' ? '#pricing' : '/#pricing', label: 'Pricing', isAnchor: true },
   ];
