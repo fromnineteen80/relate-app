@@ -15,12 +15,24 @@ import { clearAllProgress } from '@/lib/supabase/progress';
 
 type Demographics = { age?: number; gender?: string; relationshipStatus?: string; seeking?: string; [key: string]: unknown };
 
+type MarketComparisonData = {
+  label: string;
+  population: number;
+  idealPool: number;
+  matchCount: number;
+  relateScore: number;
+  matchProbability: number;
+  contextPools?: { allGender: number; eligiblePool: number; eligibleEthnicityPool: number; userEthnicity: string; targetGenderLabel: string; orientationLabel: string };
+};
+
 type MarketData = {
   location?: { cbsaName?: string; cbsaLabel?: string; population?: number };
-  relateScore?: { score: number; components?: Record<string, { national?: number; local?: number; score?: number; weight: number }> };
-  matchPool?: { localSinglePool: number; realisticPool: number; preferredPool: number; idealPool: number; funnel?: { stage: string; count: number; isMilestone?: boolean }[] };
+  relateScore?: { score: number; components?: Record<string, { national?: number; local?: number; score?: number; weight: number }>; marriagePremium?: number };
+  matchPool?: { localSinglePool: number; realisticPool: number; preferredPool: number; idealPool: number; funnel?: { stage: string; count: number; filter?: string; isMilestone?: boolean }[]; contextPools?: { allGender: number; eligiblePool: number; eligibleEthnicityPool: number; userEthnicity: string; targetGenderLabel: string; orientationLabel: string } };
   matchProbability?: { rate: number; percentage: string };
   matchCount?: number;
+  stateComparison?: MarketComparisonData | null;
+  nationalComparison?: MarketComparisonData | null;
 };
 
 type M1Scored = {
@@ -131,6 +143,8 @@ function AccountPage() {
   const [m4Data, setM4Data] = useState<M4Scored | null>(null);
   const [matches, setMatches] = useState<MatchResult[]>([]);
   const [downloading, setDownloading] = useState(false);
+  const [downloadingCoach, setDownloadingCoach] = useState(false);
+  const [showCoachInfo, setShowCoachInfo] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   // Full results for richer graphics / coaching
   const [fullM3, setFullM3] = useState<M3Scored['result'] | null>(null);
@@ -348,7 +362,11 @@ function AccountPage() {
           m3: report.m3,
           m4: report.m4,
           matches: report.matches,
+          individualCompatibility: report.individualCompatibility,
           marketData: marketData || undefined,
+          demographics: (() => { try { return JSON.parse(localStorage.getItem('relate_demographics') || '{}'); } catch { return undefined; } })(),
+          fullM3: (() => { try { return JSON.parse(localStorage.getItem('relate_m3_scored') || '{}')?.result; } catch { return undefined; } })(),
+          fullM4: (() => { try { return JSON.parse(localStorage.getItem('relate_m4_scored') || '{}')?.result; } catch { return undefined; } })(),
         }),
       });
       const data = await res.json();
@@ -367,6 +385,102 @@ function AccountPage() {
     }
   }, [marketData]);
 
+  const handleDownloadCoach = useCallback(async () => {
+    const resultsStr = localStorage.getItem('relate_results');
+    if (!resultsStr) return;
+    setDownloadingCoach(true);
+    try {
+      const report = JSON.parse(resultsStr);
+      const demoData = (() => { try { return JSON.parse(localStorage.getItem('relate_demographics') || '{}'); } catch { return {}; } })();
+      const m3Full = (() => { try { return JSON.parse(localStorage.getItem('relate_m3_scored') || '{}')?.result; } catch { return undefined; } })();
+      const m4Full = (() => { try { return JSON.parse(localStorage.getItem('relate_m4_scored') || '{}')?.result; } catch { return undefined; } })();
+      const couplesData = (() => { try { return JSON.parse(localStorage.getItem('relate_couples_report') || 'null'); } catch { return null; } })();
+
+      const res = await fetch('/api/generate-coach-prompt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          persona: report.persona,
+          dimensions: report.dimensions,
+          m3: m3Full || report.m3,
+          m4: m4Full || report.m4,
+          matches: report.matches,
+          individualCompatibility: report.individualCompatibility,
+          marketData: marketData || undefined,
+          demographics: demoData,
+          couplesReport: couplesData || undefined,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Failed to generate coach skill');
+
+      // Response is a ZIP file
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'relate-coach.zip';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setShowCoachInfo(true);
+    } catch (err) {
+      console.error('Coach prompt download failed:', err);
+    } finally {
+      setDownloadingCoach(false);
+    }
+  }, [marketData]);
+
+  const handleDownloadCoachMd = useCallback(async () => {
+    const resultsStr = localStorage.getItem('relate_results');
+    if (!resultsStr) return;
+    setDownloadingCoach(true);
+    try {
+      const report = JSON.parse(resultsStr);
+      const demoData = (() => { try { return JSON.parse(localStorage.getItem('relate_demographics') || '{}'); } catch { return {}; } })();
+      const m3Full = (() => { try { return JSON.parse(localStorage.getItem('relate_m3_scored') || '{}')?.result; } catch { return undefined; } })();
+      const m4Full = (() => { try { return JSON.parse(localStorage.getItem('relate_m4_scored') || '{}')?.result; } catch { return undefined; } })();
+      const couplesData = (() => { try { return JSON.parse(localStorage.getItem('relate_couples_report') || 'null'); } catch { return null; } })();
+
+      const res = await fetch('/api/generate-coach-prompt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          persona: report.persona,
+          dimensions: report.dimensions,
+          m3: m3Full || report.m3,
+          m4: m4Full || report.m4,
+          matches: report.matches,
+          individualCompatibility: report.individualCompatibility,
+          marketData: marketData || undefined,
+          demographics: demoData,
+          couplesReport: couplesData || undefined,
+          format: 'md',
+        }),
+      });
+
+      if (!res.ok) throw new Error('Failed to generate coach prompt');
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'relate-coach.md';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Coach .md download failed:', err);
+    } finally {
+      setDownloadingCoach(false);
+    }
+  }, [marketData]);
+
+  // Section refs for sub-navigation
+  const coachingSectionRef = useRef<HTMLDivElement>(null);
+
   if (authLoading) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
 
   const completedModules = Object.values(moduleProgress).filter(Boolean).length;
@@ -378,6 +492,20 @@ function AccountPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <SiteHeader />
+
+      {/* ── Sub-Navigation ── */}
+      <nav className="border-b border-border bg-background sticky top-0 z-10">
+        <div className="max-w-2xl mx-auto px-6 flex gap-1 overflow-x-auto">
+          <a href="#profile" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Profile</a>
+          <a href="#subscription" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Subscription</a>
+          <a href="#assessment" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Assessment</a>
+          {hasResults && <a href="#results" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Results</a>}
+          {(marketData || marketLoading) && <a href="#market" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Market</a>}
+          {hasResults && <a href="#downloads" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Downloads</a>}
+          <a href="#partner" className="text-xs font-medium text-secondary hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap">Partner</a>
+          {hasResults && canDownload && <a href="#coaching" className="text-xs font-medium text-accent hover:text-primary px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap font-semibold">Ongoing Coaching</a>}
+        </div>
+      </nav>
 
       <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
         <h1 className="font-serif text-3xl font-semibold mb-8">Account</h1>
@@ -394,7 +522,7 @@ function AccountPage() {
         )}
 
         {/* ── Profile ── */}
-        <section className="card mb-4">
+        <section id="profile" className="card mb-4 scroll-mt-12">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-serif text-lg font-semibold">Profile</h2>
             <div className="flex gap-2">
@@ -430,7 +558,7 @@ function AccountPage() {
         </section>
 
         {/* ── Subscription ── */}
-        <section className="card mb-4">
+        <section id="subscription" className="card mb-4 scroll-mt-12">
           <h2 className="font-serif text-lg font-semibold mb-4">Subscription</h2>
 
           <div className={`flex items-center gap-3 p-3 mb-4 rounded-md border ${
@@ -514,7 +642,7 @@ function AccountPage() {
         </section>
 
         {/* ── Assessment Progress ── */}
-        <section className="card mb-4">
+        <section id="assessment" className="card mb-4 scroll-mt-12">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-serif text-lg font-semibold">Assessment Progress</h2>
             <span className="text-xs font-mono text-secondary">{completedModules}/4 modules</span>
@@ -583,7 +711,7 @@ function AccountPage() {
 
         {/* ── Progressive Module Results ── */}
         {(m1Data || m2Data || m3Data || m4Data) && (
-          <section className="card mb-4">
+          <section id="results" className="card mb-4 scroll-mt-12">
             <h2 className="font-serif text-lg font-semibold mb-4">Your Results</h2>
 
             {/* Module 1: Preference Profile */}
@@ -741,7 +869,20 @@ function AccountPage() {
 
         {/* ── Dating Market ── */}
         {(marketData || marketLoading) && (
-          <DatingMarketViz data={marketData} loading={marketLoading} />
+          <div id="market" className="scroll-mt-12">
+            <DatingMarketViz data={marketData} loading={marketLoading} />
+          </div>
+        )}
+
+        {/* ── Market Coaching ── */}
+        {marketData && (
+          <MarketCoaching
+            marketData={marketData}
+            demographics={demographics}
+            m3={fullM3 || m3Data?.result || null}
+            m4={fullM4 || m4Data?.result || null}
+            persona={m2Data?.personaMetadata || null}
+          />
         )}
 
         {/* ── Compatibility Rankings ── */}
@@ -792,7 +933,7 @@ function AccountPage() {
 
         {/* ── Downloads ── */}
         {hasResults && (
-          <section className="card mb-4">
+          <section id="downloads" className="card mb-4 scroll-mt-12">
             <h2 className="font-serif text-lg font-semibold mb-4">Downloads</h2>
             <div className="space-y-3">
               <div className="flex items-center justify-between py-2 border-b border-border">
@@ -804,7 +945,7 @@ function AccountPage() {
                   View
                 </Link>
               </div>
-              <div className="flex items-center justify-between py-2">
+              <div className="flex items-center justify-between py-2 border-b border-border">
                 <div>
                   <p className="text-sm font-medium">Full PDF Report</p>
                   <p className="text-xs text-secondary">
@@ -828,7 +969,7 @@ function AccountPage() {
         )}
 
         {/* ── Partner Connection ── */}
-        <section className="card mb-4">
+        <section id="partner" className="card mb-4 scroll-mt-12">
           <h2 className="font-serif text-lg font-semibold mb-4">Partner</h2>
 
           {hasPartner ? (
@@ -925,6 +1066,122 @@ function AccountPage() {
           </button>
         </div>
       </main>
+
+      {/* ── Ongoing Coaching Section (darker background, outside main container) ── */}
+      {hasResults && canDownload && (
+        <div id="coaching" ref={coachingSectionRef} className="bg-stone-100 border-t border-border scroll-mt-12">
+          <div className="max-w-2xl mx-auto px-6 py-10">
+            <h2 className="font-serif text-2xl font-semibold mb-2">Ongoing Coaching</h2>
+            <p className="text-sm text-secondary mb-6">
+              Take your RELATE results with you. Download a personalized AI coaching prompt built from your assessment data, conflict patterns, dating market analysis, and compatibility profile.
+            </p>
+
+            {/* Download Options */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              {/* ZIP Skill */}
+              <div className="bg-white border border-border rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-mono bg-accent/10 text-accent px-1.5 py-0.5 rounded">ZIP</span>
+                  <h3 className="text-sm font-semibold">Claude Skill Package</h3>
+                </div>
+                <p className="text-xs text-secondary mb-3">
+                  Full skill with coaching workflows, response patterns, report summary, and disclaimer. Upload directly to Claude.ai as a Skill.
+                </p>
+                <div className="mb-3 text-[11px] text-secondary font-mono leading-relaxed bg-stone-50 p-2 rounded border border-border">
+                  <p>relate-coach/</p>
+                  <p className="ml-3">SKILL.md</p>
+                  <p className="ml-3">references/assessment-data.md</p>
+                  <p className="ml-3">references/report-summary.md</p>
+                  <p className="ml-3">references/workflow.md</p>
+                  <p className="ml-3">references/output-patterns.md</p>
+                  <p className="ml-3">LICENSE &middot; DISCLAIMER.md</p>
+                </div>
+                <button onClick={handleDownloadCoach} disabled={downloadingCoach} className="btn-primary text-xs w-full">
+                  {downloadingCoach ? 'Preparing...' : 'Download relate-coach.zip'}
+                </button>
+              </div>
+
+              {/* Basic .md */}
+              <div className="bg-white border border-border rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-mono bg-stone-200 text-secondary px-1.5 py-0.5 rounded">MD</span>
+                  <h3 className="text-sm font-semibold">Basic Coaching Prompt</h3>
+                </div>
+                <p className="text-xs text-secondary mb-3">
+                  Single markdown file with your coaching instructions and assessment data combined. Works with any AI — paste it into a chat or upload as a file.
+                </p>
+                <div className="mb-3 text-[11px] text-secondary bg-stone-50 p-2 rounded border border-border">
+                  <p>A single <code className="bg-stone-100 px-1 rounded">relate-coach.md</code> file containing your coaching prompt, report summary, and full assessment data. No setup required — just upload or paste.</p>
+                </div>
+                <button onClick={handleDownloadCoachMd} disabled={downloadingCoach} className="btn-secondary text-xs w-full">
+                  {downloadingCoach ? 'Preparing...' : 'Download relate-coach.md'}
+                </button>
+              </div>
+            </div>
+
+            {/* Setup Instructions */}
+            <div className="bg-white border border-border rounded-lg p-4 mb-6">
+              <h3 className="text-sm font-semibold mb-3">How to Use Your Coach</h3>
+
+              <div className="space-y-4">
+                <div>
+                  <p className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">Option 1: Claude.ai Skill (Best experience)</p>
+                  <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
+                    <li>Go to <a href="https://claude.ai/customize/skills" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai/customize/skills</a> (profile icon &rarr; Customize &rarr; Skills)</li>
+                    <li>Click <strong>&quot;Add Skill&quot;</strong> and upload <code className="bg-stone-100 px-1 rounded">relate-coach.zip</code></li>
+                    <li>Toggle <strong>relate-coach</strong> on — Claude automatically uses your data in any relationship conversation</li>
+                  </ol>
+                </div>
+
+                <div>
+                  <p className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">Option 2: Claude.ai Project</p>
+                  <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
+                    <li>Unzip the file, then create a new <strong>Project</strong> in <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai</a> called &quot;RELATE Coach&quot;</li>
+                    <li>Add all files from the <code className="bg-stone-100 px-1 rounded">relate-coach/</code> folder as project knowledge</li>
+                    <li>Start conversations within that project for coaching</li>
+                  </ol>
+                </div>
+
+                <div>
+                  <p className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">Option 3: Any AI (ChatGPT, Gemini, etc.)</p>
+                  <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
+                    <li>Download the <strong>.md file</strong> above</li>
+                    <li>Upload <code className="bg-stone-100 px-1 rounded">relate-coach.md</code> to any AI chat as a file attachment, or paste its contents as a message</li>
+                    <li>Say: &quot;Use this as my coaching profile and help me with dating/relationships&quot;</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+
+            {/* Example prompts */}
+            <div className="bg-white border border-border rounded-lg p-4 mb-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wider mb-2">What you can ask your coach</p>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  'Should I lower my income filter?',
+                  'I just had a fight — what happened?',
+                  'Is this person a good match for me?',
+                  'Help me write a dating profile',
+                  'What should I work on this week?',
+                  'How do I improve my Relate Score?',
+                  'Analyze my last date',
+                ].map((q, i) => (
+                  <span key={i} className="text-[11px] text-secondary bg-stone-50 border border-border px-2 py-1 rounded">
+                    &quot;{q}&quot;
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Disclaimer */}
+            <div className="p-3 bg-warning/5 border border-warning/20 rounded-lg">
+              <p className="text-[11px] text-secondary">
+                <strong>Not a therapist.</strong> This coaching tool references evidence-based frameworks but is not a substitute for licensed therapy. See DISCLAIMER.md in the download. If you&apos;re in crisis: <strong>988 Suicide &amp; Crisis Lifeline</strong> or <strong>National Domestic Violence Hotline (1-800-799-7233)</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1360,6 +1617,323 @@ function GrowthPlan({ m3, m4 }: { m3: M3Scored['result'] | null; m4: M4Scored['r
       </div>
     </section>
   );
+}
+
+// ── Market Coaching ──
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
+  marketData: MarketData | null;
+  demographics: Demographics;
+  m3: M3Scored['result'] | null;
+  m4: M4Scored['result'] | null;
+  persona: { name?: string; datingBehavior?: string[]; mostAttractive?: string[]; leastAttractive?: string[] } | null;
+}) {
+  if (!marketData?.matchPool || !marketData?.relateScore) return null;
+
+  const pool = marketData.matchPool;
+  const score = marketData.relateScore;
+  const funnel = pool.funnel || [];
+  const matchCount = marketData.matchCount ?? 0;
+  const prob = marketData.matchProbability;
+  const metro = marketData.location?.cbsaLabel || marketData.location?.cbsaName || 'your area';
+  const national = marketData.nationalComparison;
+  const components = score.components || {};
+
+  type Insight = { priority: 'high' | 'medium' | 'low'; title: string; description: string; action: string; category: 'score' | 'funnel' | 'honesty' | 'expansion' };
+  const insights: Insight[] = [];
+
+  // ─── 1. Relate Score Component Analysis ───
+
+  const compEntries = Object.entries(components).map(([k, v]: [string, any]) => ({
+    name: k,
+    local: v.local ?? v.score ?? 0,
+    weight: v.weight ?? 0,
+    weighted: (v.local ?? v.score ?? 0) * (v.weight ?? 0),
+  })).sort((a, b) => a.weighted - b.weighted);
+
+  // Weakest component coaching
+  const weakest = compEntries[0];
+  if (weakest && weakest.local < 40) {
+    const coaching: Record<string, { title: string; desc: string; action: string }> = {
+      income: {
+        title: 'Your Income Is Limiting You',
+        desc: `Your income ranks in the bottom ${Math.round(weakest.local)}% locally. For ${demographics.gender === 'Woman' ? 'women' : 'men'} in ${metro}, income carries ${Math.round(weakest.weight * 100)}% of your Relate Score weight.`,
+        action: 'Concrete paths: negotiate a raise at your current role, pursue a certification that increases earning power in your field, or explore a side income. Even a 20% income increase can move your score meaningfully.',
+      },
+      education: {
+        title: 'Education Is Holding You Back',
+        desc: `Your education level ranks in the bottom ${Math.round(weakest.local)}% locally. Higher education correlates with match probability and partner quality.`,
+        action: 'Consider professional certifications, online degrees, or skill-based credentials. Even one credential bump (e.g., associate to bachelor\'s, or adding a professional certification) shifts your percentile.',
+      },
+      age: {
+        title: 'Age Is Working Against You',
+        desc: `Your age score is ${Math.round(weakest.local)}. ${demographics.gender === 'Woman' ? 'For women, the dating market peaks younger and narrows faster — this is a structural reality, not a judgment.' : 'For men, age carries less weight but still matters. The market rewards established men in their 30s-40s most.'}`,
+        action: demographics.gender === 'Woman'
+          ? 'You can\'t change your age, but you can offset it: fitness, style, and a strong Relate profile matter more as you get older. Focus on what you control.'
+          : 'Offset age by maximizing income, fitness, and emotional maturity. Your assessment results are your edge — lead with depth.',
+      },
+      children: {
+        title: 'Having Kids Is Narrowing Your Pool',
+        desc: `Your children score is ${Math.round(weakest.local)}. Many singles in your age range prefer partners without existing children.`,
+        action: 'You can\'t change this, but you can position it as a strength: demonstrate that you\'re a capable, present parent. On dating profiles, show (don\'t tell) that your life is full, not burdened.',
+      },
+      ethnicity: {
+        title: 'Your Demographic Is Competitive Here',
+        desc: `Your ethnicity score is ${Math.round(weakest.local)} in ${metro}. This reflects local representation — a smaller population share means fewer people who share or prefer your background.`,
+        action: national && national.relateScore > score.score + 5
+          ? `Your national score is ${national.relateScore} vs ${score.score} locally. Consider whether a metro with a larger ${demographics.ethnicity || 'similar'} population would shift your odds.`
+          : 'Focus on what you control: income, fitness, and being genuinely interesting. Demographic headwinds are real but they\'re one factor among many.',
+      },
+    };
+
+    const c = coaching[weakest.name];
+    if (c) {
+      insights.push({ priority: 'high', title: c.title, description: c.desc, action: c.action, category: 'score' });
+    }
+  }
+
+  // Strongest component — acknowledge it
+  const strongest = compEntries[compEntries.length - 1];
+  if (strongest && strongest.local >= 70) {
+    insights.push({
+      priority: 'low',
+      title: `${strongest.name.charAt(0).toUpperCase() + strongest.name.slice(1)} Is Your Biggest Asset`,
+      description: `Your ${strongest.name} ranks in the top ${Math.round(100 - strongest.local)}% in ${metro}. This is pulling your Relate Score up.`,
+      action: 'Lead with this. Make sure your dating profile and real-life presentation reflect this strength.',
+      category: 'score',
+    });
+  }
+
+  // ─── 2. Funnel Bottleneck Analysis ───
+
+  // Find biggest non-milestone drops
+  const drops: { from: string; to: string; lostPct: number; lostCount: number; stageName: string }[] = [];
+  for (let i = 1; i < funnel.length; i++) {
+    const prev = funnel[i - 1];
+    const curr = funnel[i];
+    if (curr.isMilestone || prev.isMilestone) continue;
+    if (prev.count === 0) continue;
+    const lostPct = ((prev.count - curr.count) / prev.count) * 100;
+    const lostCount = prev.count - curr.count;
+    if (lostPct > 5) {
+      drops.push({ from: prev.stage, to: curr.stage, lostPct, lostCount, stageName: curr.stage });
+    }
+  }
+  drops.sort((a, b) => b.lostPct - a.lostPct);
+
+  // Top bottleneck
+  const biggestDrop = drops[0];
+  if (biggestDrop && biggestDrop.lostPct > 30) {
+    const isPhysical = /body type|fitness|height/i.test(biggestDrop.stageName);
+    const isIncome = /income/i.test(biggestDrop.stageName);
+    const isPolitical = /political/i.test(biggestDrop.stageName);
+
+    insights.push({
+      priority: 'high',
+      title: `Biggest Bottleneck: ${biggestDrop.stageName}`,
+      description: `This single filter eliminates ${Math.round(biggestDrop.lostPct)}% of your remaining pool (${biggestDrop.lostCount.toLocaleString()} people). Everything above this stage is fine — this is where your funnel chokes.`,
+      action: isPhysical
+        ? 'Physical preferences create the sharpest pool drops. Ask yourself: is this a genuine need, or a default? If you\'ve been happily attracted to people outside this filter before, consider expanding it.'
+        : isIncome
+        ? `You\'re requiring income levels that most people in ${metro} don\'t hit. If financial stability matters more than a specific number, consider lowering this threshold and screening for financial habits instead.`
+        : isPolitical
+        ? 'Political filters are binary eliminators. If you\'re filtering for agreement rather than values, consider including "Moderate" — many moderates are flexible on issues that matter to you.'
+        : `This filter removes a huge chunk of candidates. Evaluate whether it reflects a genuine dealbreaker or a nice-to-have masquerading as a requirement.`,
+      category: 'funnel',
+    });
+  }
+
+  // Second biggest if also severe
+  if (drops[1] && drops[1].lostPct > 25) {
+    insights.push({
+      priority: 'medium',
+      title: `Secondary Bottleneck: ${drops[1].stageName}`,
+      description: `Removes another ${Math.round(drops[1].lostPct)}% of your pool at that stage.`,
+      action: 'Combined with your primary bottleneck, these two filters account for most of your pool reduction. Relaxing just one could significantly improve your numbers.',
+      category: 'funnel',
+    });
+  }
+
+  // ─── 3. Expansion Opportunity ───
+
+  // idealPool vs localSinglePool ratio
+  if (pool.localSinglePool > 0 && pool.idealPool > 0) {
+    const selectivityPct = (pool.idealPool / pool.localSinglePool) * 100;
+    if (selectivityPct < 1) {
+      insights.push({
+        priority: 'high',
+        title: 'Your Preferences Filter Out 99%+ of Singles',
+        description: `Of ${pool.localSinglePool.toLocaleString()} local singles, only ${pool.idealPool.toLocaleString()} (${selectivityPct.toFixed(2)}%) meet all your criteria. You are selecting from the absolute tip of the distribution.`,
+        action: 'This level of selectivity is mathematically difficult — not wrong, but it means you may need to meet hundreds of people to find one match. Review your funnel to see which filters you could relax without compromising what actually matters to you.',
+        category: 'expansion',
+      });
+    } else if (selectivityPct < 5) {
+      insights.push({
+        priority: 'medium',
+        title: 'You\'re Highly Selective',
+        description: `Only ${selectivityPct.toFixed(1)}% of local singles meet all your criteria. That\'s a small but real pool of ${pool.idealPool.toLocaleString()} people.`,
+        action: 'This is workable, but leave room for surprise. Some of your best matches might not check every box on paper.',
+        category: 'expansion',
+      });
+    }
+  }
+
+  // ─── 4. Cross-Reference: Assessment vs Market Preferences ───
+
+  // Want/Offer gap vs physical selectivity
+  const wantScore = m3?.wantScore ?? 0;
+  const offerScore = m3?.offerScore ?? 0;
+  const gap = wantScore - offerScore;
+  const prefBodyTypes = (demographics as any).prefBodyTypes || (demographics as any).pref_body_types || [];
+  const prefFitness = (demographics as any).prefFitnessLevels || (demographics as any).pref_fitness_levels || [];
+  const userFitness = (demographics as any).fitness || (demographics as any).fitness_level || '';
+  const userBodyType = (demographics as any).bodyType || (demographics as any).body_type || '';
+
+  // Wants hot partners but assessment says they want depth
+  const wantsOnlyFit = prefBodyTypes.length > 0
+    && !prefBodyTypes.includes('No preference')
+    && prefBodyTypes.every((t: string) => t === 'Lean or Fit');
+  const wantsOnlyHighFitness = prefFitness.length > 0
+    && !prefFitness.includes('No preference')
+    && prefFitness.every((l: string) => ['4 to 6 days a week', 'Every day'].includes(l));
+
+  if ((wantsOnlyFit || wantsOnlyHighFitness) && gap > 15) {
+    // They want a lot but are very selective on physicals — possible mismatch
+    const userIsntFitThemselves = !['Lean or Fit'].includes(userBodyType)
+      || !['4 to 6 days a week', 'Every day'].includes(userFitness);
+
+    if (userIsntFitThemselves) {
+      insights.push({
+        priority: 'high',
+        title: 'Honesty Check: Physical Standards vs. What You Offer',
+        description: `Your assessment shows a Want/Offer gap of +${gap} — you want significantly more than you offer. At the same time, you\'re filtering for only fit/lean partners who exercise intensely. But your own fitness and body type don\'t meet the standard you\'re setting for others.`,
+        action: 'Two paths: (1) Get in the gym. Seriously. Consistent exercise 4+ days a week for 6 months will change your body, your confidence, and your Relate Score. (2) Or expand your physical preferences — attraction grows in person in ways a filter can\'t predict.',
+        category: 'honesty',
+      });
+    }
+  }
+
+  // Wants physical attractiveness but doesn't exercise
+  if (wantsOnlyFit && ['Never', '1 day a week'].includes(userFitness)) {
+    insights.push({
+      priority: 'high',
+      title: 'You Want Fit Partners but Don\'t Exercise',
+      description: `You\'re filtering for "Lean or Fit" body types, but you exercise ${userFitness === 'Never' ? 'never' : 'once a week'}. Attractive, fit people tend to date other fit people.`,
+      action: 'Start with 3 days a week of exercise — even walking. Build to 4-5 days. This is the single highest-ROI change you can make: it improves your Relate Score, your health, your confidence, and your attractiveness to the people you want to date.',
+      category: 'honesty',
+    });
+  }
+
+  // Wants high income but has low income themselves
+  const prefIncome = (demographics as any).prefIncome ?? (demographics as any).pref_income_min ?? 0;
+  const userIncome = (demographics as any).income ?? 0;
+  const incomeComponent = components.income;
+  if (prefIncome > 0 && userIncome > 0 && prefIncome > userIncome * 1.5 && incomeComponent?.local && incomeComponent.local < 40) {
+    insights.push({
+      priority: 'medium',
+      title: 'You\'re Requiring Income You Don\'t Match',
+      description: `You require partners earning ${formatIncome(prefIncome)}+, but your own income puts you in the bottom ${Math.round(incomeComponent.local)}% locally. High earners typically partner with high earners.`,
+      action: 'Focus on increasing your own income first. Alternatively, lower your income floor and look for financial responsibility rather than a specific number — someone who saves, invests, and lives within their means.',
+      category: 'honesty',
+    });
+  }
+
+  // Conflict style coaching that affects dating
+  const driver = m4?.emotionalDrivers?.primary;
+  if (driver === 'abandonment' && matchCount < 50) {
+    insights.push({
+      priority: 'medium',
+      title: 'Small Pool + Abandonment Fear = Scarcity Spiral',
+      description: `With only ${matchCount} estimated matches and abandonment as your primary emotional driver, you\'re at risk of clinging to anyone who shows interest rather than choosing wisely.`,
+      action: 'Work on your abandonment patterns (see Growth Plan above) before actively dating. A small pool requires patience and confidence — not desperation. Therapy that targets attachment anxiety will serve you better than loosening your standards.',
+      category: 'honesty',
+    });
+  }
+
+  // Geographic arbitrage opportunity
+  if (national && national.matchCount > matchCount * 3 && matchCount < 100) {
+    insights.push({
+      priority: 'low',
+      title: 'Your Market Is Better Elsewhere',
+      description: `Nationally, your estimated matches jump to ${national.matchCount.toLocaleString()} vs. ${matchCount.toLocaleString()} locally. ${metro} may not be the best market for what you\'re looking for.`,
+      action: 'If relocation is feasible, research metros with better demographics for your profile. Even within your state, a larger metro might triple your pool. Dating apps with wider radius settings can help in the short term.',
+      category: 'expansion',
+    });
+  }
+
+  // Match probability coaching
+  if (prob && prob.rate < 0.05) {
+    insights.push({
+      priority: 'medium',
+      title: 'Your Match Probability Is Below 5%',
+      description: `Even within your ideal pool, only ${prob.percentage} of people would likely be mutually interested. This is driven by your Relate Score of ${score.score}.`,
+      action: 'Improve your Relate Score by focusing on your weakest component. A 10-point score improvement can nearly double your match probability due to the sigmoid curve — small gains compound.',
+      category: 'score',
+    });
+  }
+
+  if (insights.length === 0) return null;
+
+  // Sort: high > medium > low
+  const priorityOrder = { high: 0, medium: 1, low: 2 };
+  insights.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+
+  const categoryIcon: Record<string, string> = {
+    score: 'S',
+    funnel: 'F',
+    honesty: '!',
+    expansion: '+',
+  };
+  const categoryLabel: Record<string, string> = {
+    score: 'Score',
+    funnel: 'Funnel',
+    honesty: 'Reality Check',
+    expansion: 'Opportunity',
+  };
+
+  function priorityBadge(p: 'high' | 'medium' | 'low') {
+    const styles = {
+      high: 'bg-danger/10 text-danger',
+      medium: 'bg-warning/10 text-warning',
+      low: 'bg-stone-100 text-secondary',
+    };
+    return styles[p];
+  }
+
+  return (
+    <section className="card mb-4">
+      <h2 className="font-serif text-lg font-semibold mb-1">Market Coaching</h2>
+      <p className="text-xs text-secondary mb-5">Actionable insights from your dating market data and assessment results</p>
+
+      <div className="space-y-4">
+        {insights.map((insight, i) => (
+          <div key={i} className="border border-border rounded-md p-3">
+            <div className="flex items-start gap-2 mb-2">
+              <span className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded ${priorityBadge(insight.priority)}`}>
+                {insight.priority}
+              </span>
+              <span className="text-[10px] font-mono text-secondary bg-stone-50 px-1.5 py-0.5 rounded">
+                {categoryIcon[insight.category]} {categoryLabel[insight.category]}
+              </span>
+              <h3 className="text-sm font-medium leading-tight">{insight.title}</h3>
+            </div>
+            <p className="text-xs text-secondary mb-2">{insight.description}</p>
+            <div className="bg-stone-50 border border-border rounded p-2">
+              <span className="text-[10px] font-mono text-accent uppercase tracking-wider">What to do</span>
+              <p className="text-xs text-secondary mt-1">{insight.action}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+function formatIncome(n: number): string {
+  if (n >= 1000) return `$${(n / 1000).toFixed(0)}k`;
+  return `$${n.toLocaleString()}`;
 }
 
 function Row({ label, value }: { label: string; value: string }) {
