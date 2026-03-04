@@ -14,7 +14,7 @@ type AuthContextType = {
   user: User | null;
   loading: boolean;
   emailVerified: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: string | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: string | null; user: User | null }>;
   signUp: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshVerification: () => Promise<boolean>;
@@ -24,7 +24,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   emailVerified: false,
-  signIn: async () => ({ error: null }),
+  signIn: async () => ({ error: null, user: null }),
   signUp: async () => ({ error: null }),
   signOut: async () => {},
   refreshVerification: async () => false,
@@ -80,13 +80,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (config.useMockAuth) {
       const { error } = mockSignIn(email, password);
       if (!error) {
-        setUser(getMockUser());
+        const mockUser = getMockUser();
+        setUser(mockUser);
         setEmailVerified(isMockEmailVerified());
+        return { error: null, user: mockUser };
       }
-      return { error };
+      return { error, user: null };
     }
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error?.message || null };
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const signedInUser = data?.user ? { id: data.user.id, email: data.user.email! } : null;
+    return { error: error?.message || null, user: signedInUser };
   }
 
   async function signUp(email: string, password: string) {

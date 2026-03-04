@@ -10,13 +10,13 @@ const MODULES = [
     num: '01',
     title: 'What You Want',
     desc: 'Map your preferences across four dimensions: physical attraction, social energy, lifestyle pace, and core values. This isn\'t a wish list. It\'s a measurement of what actually holds your attention.',
-    time: '40 minutes',
+    time: '25 minutes',
   },
   {
     num: '02',
     title: 'Who You Are',
     desc: 'The same four dimensions, turned inward. This is where your persona emerges as one of 32 types that describes how you show up in relationships, not who you wish you were.',
-    time: '40 minutes',
+    time: '25 minutes',
   },
   {
     num: '03',
@@ -28,7 +28,7 @@ const MODULES = [
     num: '04',
     title: 'When Things Get Hard',
     desc: 'Conflict approach, emotional drivers, repair speed, capacity under stress, and a full Gottman Four Horsemen screening. This is the module that predicts longevity.',
-    time: '20 minutes',
+    time: '15 minutes',
   },
 ];
 
@@ -51,7 +51,7 @@ const FRAMEWORKS = [
 const FAQS = [
   {
     q: 'How long does the assessment take?',
-    a: 'About 110 minutes total across 4 modules. You can save progress and return anytime, so there is no need to complete it in one sitting.',
+    a: 'About 75 minutes total across 4 modules. You can save progress and return anytime, so there is no need to complete it in one sitting.',
   },
   {
     q: 'What do I get for free?',
@@ -415,7 +415,7 @@ export default function LandingPage() {
             Ready to meet yourself?
           </h2>
           <p className="text-secondary mb-8 max-w-md mx-auto">
-            The assessment is free, saves your progress, and takes about 110 minutes across 4 modules. Your persona is waiting.
+            The assessment is free, saves your progress, and takes about 75 minutes across 4 modules. Your persona is waiting.
           </p>
           <DynamicCTA fallbackLabel="Begin the Assessment" />
         </div>

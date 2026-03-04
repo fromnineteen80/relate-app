@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
 import { useAuth } from '@/lib/auth-context';
 import { config } from '@/lib/config';
 import { getSupabase } from '@/lib/supabase/client';
 import { isProfileComplete, getProfile } from '@/lib/onboarding';
+import { loadDemographicsFromDb, saveDemographicsToDb } from '@/lib/supabase/progress';
 
 const ETHNICITIES = ['White','Hispanic/Latino','Black','Asian','Native American','Pacific Islander','Other/Mixed'];
 const ORIENTATIONS = ['Straight','Gay/Lesbian','Bisexual','Other'];
@@ -76,16 +77,64 @@ export default function DemographicsPage() {
     prefHasKids: '', prefWantKids: '', prefSmoking: '', seeking: '',
   });
 
-  // Load saved demographics on mount
+  // Load saved demographics on mount — localStorage first, Supabase fallback
   useEffect(() => {
-    const stored = localStorage.getItem('relate_demographics_draft');
-    if (stored) {
-      try {
-        const d = JSON.parse(stored);
-        setForm(prev => ({ ...prev, ...d }));
-      } catch { /* ignore */ }
+    function hydrateFromLocal(): boolean {
+      // Try draft first (in-progress form data)
+      const draft = localStorage.getItem('relate_demographics_draft');
+      if (draft) {
+        try {
+          const d = JSON.parse(draft);
+          setForm(prev => ({ ...prev, ...d }));
+          return true;
+        } catch { /* ignore */ }
+      }
+      // Try completed demographics (DB format → form format)
+      const completed = localStorage.getItem('relate_demographics');
+      if (completed) {
+        try {
+          const d = JSON.parse(completed);
+          setForm(prev => ({
+            ...prev,
+            gender: d.gender === 'M' ? 'Man' : d.gender === 'W' ? 'Woman' : d.gender || '',
+            age: d.age?.toString() || '',
+            ethnicity: d.ethnicity || '',
+            orientation: d.orientation || 'Straight',
+            income: d.income ?? 50000,
+            education: d.education || '',
+            height: d.height || '',
+            bodyType: d.body_type || '',
+            fitness: d.fitness_level || '',
+            political: d.political || '',
+            smoking: d.smoking === true ? 'Yes' : d.smoking === false ? 'No' : d.smoking || '',
+            hasKids: d.has_kids === true ? 'Yes' : d.has_kids === false ? 'No' : d.has_kids || '',
+            wantKids: d.want_kids || '',
+            relationshipStatus: d.relationship_status || '',
+            prefAgeMin: d.pref_age_min?.toString() || '',
+            prefAgeMax: d.pref_age_max?.toString() || '',
+            prefIncome: d.pref_income_min ?? 0,
+            prefHeight: d.pref_height_min || '',
+            prefBodyTypes: d.pref_body_types || [],
+            prefFitnessLevels: d.pref_fitness_levels || [],
+            prefPolitical: d.pref_political || [],
+            prefHasKids: d.pref_has_kids || '',
+            prefWantKids: d.pref_want_kids || '',
+            prefSmoking: d.pref_smoking || '',
+            seeking: d.seeking || '',
+          }));
+          return true;
+        } catch { /* ignore */ }
+      }
+      return false;
     }
-  }, []);
+
+    if (!hydrateFromLocal() && user) {
+      loadDemographicsFromDb(user.id).then((found) => {
+        if (found) hydrateFromLocal();
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   // Guard: must be logged in, verified, and have profile completed
   useEffect(() => {
@@ -98,17 +147,43 @@ export default function DemographicsPage() {
     }
   }, [loading, user, emailVerified, router]);
 
+  const dbSaveTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const persistForm = useCallback((updated: FormData) => {
+    localStorage.setItem('relate_demographics_draft', JSON.stringify(updated));
+    // Debounced Supabase save
+    if (user && !config.useMockAuth) {
+      if (dbSaveTimer.current) clearTimeout(dbSaveTimer.current);
+      dbSaveTimer.current = setTimeout(() => {
+        saveDemographicsToDb(user.id, user.email, updated);
+      }, 5000);
+    }
+  }, [user]);
+
   function updateField(field: keyof FormData, value: string | number | string[]) {
-    setForm(prev => ({ ...prev, [field]: value }));
+    setForm(prev => {
+      const updated = { ...prev, [field]: value };
+      persistForm(updated);
+      return updated;
+    });
   }
 
   function toggleMultiSelect(field: 'prefBodyTypes' | 'prefFitnessLevels' | 'prefPolitical', value: string) {
     setForm(prev => {
       const current = prev[field];
-      if (value === 'No preference') return { ...prev, [field]: ['No preference'] };
-      const without = current.filter(v => v !== 'No preference');
-      if (without.includes(value)) return { ...prev, [field]: without.filter(v => v !== value) };
-      return { ...prev, [field]: [...without, value] };
+      let updated: FormData;
+      if (value === 'No preference') {
+        updated = { ...prev, [field]: ['No preference'] };
+      } else {
+        const without = current.filter(v => v !== 'No preference');
+        if (without.includes(value)) {
+          updated = { ...prev, [field]: without.filter(v => v !== value) };
+        } else {
+          updated = { ...prev, [field]: [...without, value] };
+        }
+      }
+      persistForm(updated);
+      return updated;
     });
   }
 
@@ -188,6 +263,7 @@ export default function DemographicsPage() {
       localStorage.setItem('relate_demographics', JSON.stringify(userData));
       localStorage.setItem('relate_gender', userData.gender);
       localStorage.removeItem('relate_demographics_draft');
+      localStorage.removeItem('relate_market_data');
       router.push('/account');
       return;
     }
@@ -200,6 +276,7 @@ export default function DemographicsPage() {
       localStorage.setItem('relate_demographics', JSON.stringify(userData));
       localStorage.setItem('relate_gender', userData.gender);
       localStorage.removeItem('relate_demographics_draft');
+      localStorage.removeItem('relate_market_data');
       router.push('/account');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to save');

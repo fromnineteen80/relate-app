@@ -34,8 +34,8 @@ const FEMALE_DIMENSION_LABELS: Record<string, string> = {
 
 function tierColor(tier: string) {
   const colors: Record<string, string> = {
-    ideal: 'text-success', kismet: 'text-success', effort: 'text-warning',
-    longShot: 'text-secondary', atRisk: 'text-danger', incompatible: 'text-danger',
+    ideal: 'text-success', kismet: 'text-success/70', effort: 'text-warning',
+    longShot: 'text-stone-400', atRisk: 'text-danger/70', incompatible: 'text-danger',
   };
   return colors[tier] || 'text-secondary';
 }
@@ -245,34 +245,38 @@ export default function PersonasPage() {
                       <p className="text-sm text-secondary italic">{persona.traits}</p>
                     )}
 
-                    {persona.datingBehavior.length > 0 && (
-                      <div>
-                        <h4 className="text-xs font-mono text-secondary uppercase tracking-wider mb-2">Dating Behavior</h4>
-                        <ul className="space-y-1.5">
-                          {persona.datingBehavior.map((item, i) => (
-                            <li key={i} className="text-sm flex items-start gap-2">
-                              <span className="text-accent mt-0.5 flex-shrink-0">&#8226;</span>
-                              <span>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                    {/* Row 1: Dating Behavior + In Relationships */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {persona.datingBehavior.length > 0 && (
+                        <div>
+                          <h4 className="text-xs font-mono text-secondary uppercase tracking-wider mb-2">Dating Behavior</h4>
+                          <ul className="space-y-1.5">
+                            {persona.datingBehavior.map((item, i) => (
+                              <li key={i} className="text-sm flex items-start gap-2">
+                                <span className="text-accent mt-0.5 flex-shrink-0">&#8226;</span>
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
 
-                    {persona.inRelationships.length > 0 && (
-                      <div>
-                        <h4 className="text-xs font-mono text-secondary uppercase tracking-wider mb-2">In Relationships</h4>
-                        <ul className="space-y-1.5">
-                          {persona.inRelationships.map((item, i) => (
-                            <li key={i} className="text-sm flex items-start gap-2">
-                              <span className="text-accent mt-0.5 flex-shrink-0">&#8226;</span>
-                              <span>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                      {persona.inRelationships.length > 0 && (
+                        <div>
+                          <h4 className="text-xs font-mono text-secondary uppercase tracking-wider mb-2">In Relationships</h4>
+                          <ul className="space-y-1.5">
+                            {persona.inRelationships.map((item, i) => (
+                              <li key={i} className="text-sm flex items-start gap-2">
+                                <span className="text-accent mt-0.5 flex-shrink-0">&#8226;</span>
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
 
+                    {/* Row 2: Strengths + Growth Areas */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {persona.mostAttractive.length > 0 && (
                         <div>
@@ -303,8 +307,9 @@ export default function PersonasPage() {
                       )}
                     </div>
 
+                    {/* Row 3: Shadow Side (centered) */}
                     {persona.struggles.length > 0 && (
-                      <div>
+                      <div className="md:w-1/2 md:mx-auto">
                         <h4 className="text-xs font-mono text-secondary uppercase tracking-wider mb-2">Shadow Side</h4>
                         <ul className="space-y-1.5">
                           {persona.struggles.map((item, i) => (

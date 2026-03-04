@@ -348,6 +348,7 @@ function AccountPage() {
           m3: report.m3,
           m4: report.m4,
           matches: report.matches,
+          marketData: marketData || undefined,
         }),
       });
       const data = await res.json();
@@ -364,7 +365,7 @@ function AccountPage() {
     } finally {
       setDownloading(false);
     }
-  }, []);
+  }, [marketData]);
 
   if (authLoading) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
 

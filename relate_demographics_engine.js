@@ -677,6 +677,70 @@ async function getCBSAByCode(cbsaCode) {
   return Object.values(cbsas).find(c => c.cbsa === cbsaCode || c.cbsa === String(cbsaCode));
 }
 
+/**
+ * Build a population-weighted aggregate CBSA from a set of CBSAs.
+ * Numeric fields are averaged weighted by cbsa_population.
+ * The result is a synthetic CBSA object that can be passed to calculateMatchPool.
+ */
+function buildWeightedAggregate(cbsaList, label) {
+  const totalPop = cbsaList.reduce((s, c) => s + (c.cbsa_population || 0), 0);
+  if (totalPop === 0) return null;
+
+  const agg = { cbsa_population: totalPop, cbsa_label: label, cbsa_name: label };
+
+  // Collect all numeric keys from the first entry
+  const numericKeys = Object.keys(cbsaList[0]).filter(k => {
+    if (['lat', 'lng', 'cbsa', 'cbsa_population', 'rpp'].includes(k)) return false;
+    return typeof cbsaList[0][k] === 'number';
+  });
+
+  for (const key of numericKeys) {
+    let weightedSum = 0;
+    for (const c of cbsaList) {
+      const pop = c.cbsa_population || 0;
+      weightedSum += (c[key] || 0) * pop;
+    }
+    agg[key] = weightedSum / totalPop;
+  }
+
+  return agg;
+}
+
+/**
+ * Extract state abbreviation from cbsa_label (e.g., "Birmingham, AL" → "AL").
+ * For multi-state CBSAs (e.g., "Memphis, TN-MS-AR"), returns the first state.
+ */
+function extractState(cbsaLabel) {
+  if (!cbsaLabel) return null;
+  const parts = cbsaLabel.split(', ');
+  if (parts.length < 2) return null;
+  const stateStr = parts[parts.length - 1];
+  // Take first state if hyphenated (multi-state metro)
+  return stateStr.split('-')[0].trim();
+}
+
+/**
+ * Get a population-weighted state-level aggregate CBSA.
+ */
+async function getStateAggregate(stateAbbr) {
+  const cbsas = await loadCBSAData();
+  const stateCBSAs = Object.values(cbsas).filter(c =>
+    extractState(c.cbsa_label) === stateAbbr
+  );
+  if (stateCBSAs.length === 0) return null;
+  return buildWeightedAggregate(stateCBSAs, stateAbbr);
+}
+
+/**
+ * Get a population-weighted national aggregate CBSA.
+ */
+async function getNationalAggregate() {
+  const cbsas = await loadCBSAData();
+  const allCBSAs = Object.values(cbsas).filter(c => c.cbsa_population > 0);
+  if (allCBSAs.length === 0) return null;
+  return buildWeightedAggregate(allCBSAs, 'National');
+}
+
 // ============================================================================
 // RELATE SCORE CALCULATION
 // ============================================================================
@@ -981,20 +1045,24 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
     filter: `${(orientationPct * 100).toFixed(1)}%`
   });
   
-  // Stage 4: Felon exclusion (stratified)
-  const felonRate = getFelonRate(seeking, 'White', userProfile.education); // Simplified
+  // Stage 4: Felon exclusion (weighted by CBSA ethnicity distribution)
+  const whitePct = (cbsa.ethnicity_white_cbsa || 60) / 100;
+  const pocPct = 1 - whitePct;
+  const felonRate = (whitePct * getFelonRate(seeking, 'White', userProfile.education))
+    + (pocPct * getFelonRate(seeking, 'POC', userProfile.education));
   pool = pool * (1 - felonRate);
-  funnel.push({ 
-    stage: 'Non-felon', 
+  funnel.push({
+    stage: 'No criminal record',
     count: Math.round(pool),
     filter: `${((1 - felonRate) * 100).toFixed(1)}%`
   });
-  
-  // Stage 5: Drug user exclusion (stratified)
-  const drugRate = getDrugRate(seeking, 'White', userProfile.education); // Simplified
+
+  // Stage 5: Drug user exclusion (weighted by CBSA ethnicity distribution)
+  const drugRate = (whitePct * getDrugRate(seeking, 'White', userProfile.education))
+    + (pocPct * getDrugRate(seeking, 'POC', userProfile.education));
   pool = pool * (1 - drugRate);
-  funnel.push({ 
-    stage: 'Non-drug user', 
+  funnel.push({
+    stage: 'No substance issues',
     count: Math.round(pool),
     filter: `${((1 - drugRate) * 100).toFixed(1)}%`
   });
@@ -1005,7 +1073,7 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
   pool = pool * singlePct * singleLocal;
   const localSinglePool = pool;
   funnel.push({ 
-    stage: 'LOCAL SINGLE POOL', 
+    stage: 'LOCAL SINGLES', 
     count: Math.round(pool),
     filter: `${(singlePct * singleLocal * 100).toFixed(1)}%`,
     isMilestone: true
@@ -1029,7 +1097,7 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
     const incomePct = getIncomeAbovePercentage(preferences.minIncome, cbsa);
     pool = pool * incomePct;
     funnel.push({ 
-      stage: `Income â‰¥ ${formatCurrency(preferences.minIncome)}`, 
+      stage: `Income \u2265 ${formatCurrency(preferences.minIncome)}`, 
       count: Math.round(pool),
       filter: `${(incomePct * 100).toFixed(1)}%`
     });
@@ -1037,7 +1105,7 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
   
   const realisticPool = pool;
   funnel.push({ 
-    stage: 'REALISTIC POOL', 
+    stage: 'MEET YOUR BASICS', 
     count: Math.round(pool),
     isMilestone: true
   });
@@ -1064,13 +1132,29 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
     const kidsKey = preferences.partnerHasKids === 'No' ? 'have_kids_no_cbsa' : 'have_kids_yes_cbsa';
     const kidsPct = (cbsa[kidsKey] || 50) / 100;
     pool = pool * kidsPct;
-    funnel.push({ 
-      stage: `Has kids: ${preferences.partnerHasKids}`, 
+    funnel.push({
+      stage: `Has kids: ${preferences.partnerHasKids}`,
       count: Math.round(pool),
       filter: `${(kidsPct * 100).toFixed(1)}%`
     });
   }
-  
+
+  // Wants kids filter
+  if (preferences.partnerWantKids && preferences.partnerWantKids !== 'No preference') {
+    const wantKey = preferences.partnerWantKids === 'Yes' ? 'want_kids_yes_cbsa'
+      : preferences.partnerWantKids === 'No' ? 'want_kids_no_cbsa'
+      : null;
+    if (wantKey) {
+      const wantPct = (cbsa[wantKey] || 50) / 100;
+      pool = pool * wantPct;
+      funnel.push({
+        stage: `Wants kids: ${preferences.partnerWantKids}`,
+        count: Math.round(pool),
+        filter: `${(wantPct * 100).toFixed(1)}%`
+      });
+    }
+  }
+
   // Smoking filter
   if (preferences.partnerSmoking && preferences.partnerSmoking !== 'No preference') {
     const smokingKey = preferences.partnerSmoking === 'No' ? 'smoking_no_cbsa' : 'smoking_yes_cbsa';
@@ -1085,7 +1169,7 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
   
   const preferredPool = pool;
   funnel.push({ 
-    stage: 'PREFERRED POOL', 
+    stage: 'MATCH YOUR LIFESTYLE', 
     count: Math.round(pool),
     isMilestone: true
   });
@@ -1097,7 +1181,7 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
     const heightPct = getHeightAbovePercentage(preferences.minHeight, cbsa);
     pool = pool * heightPct;
     funnel.push({ 
-      stage: `Height â‰¥ ${preferences.minHeight}`, 
+      stage: `Height \u2265 ${preferences.minHeight}`, 
       count: Math.round(pool),
       filter: `${(heightPct * 100).toFixed(1)}%`
     });
@@ -1134,18 +1218,42 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
   }
   
   const idealPool = pool;
-  funnel.push({ 
-    stage: 'IDEAL POOL', 
+  funnel.push({
+    stage: 'YOUR IDEAL MATCH POOL',
     count: Math.round(pool),
     isMilestone: true
   });
-  
+
+  // Context denominators for percentage display
+  // 1. All target gender in area
+  const totalPop = cbsa.cbsa_population || 0;
+  const allGender = totalPop * (1 - EXCLUSION_RATES.universal) * genderPct * genderLocal;
+
+  // 2. Target orientation + gender, no felons, dating age, not homeless
+  const agePct = (preferences.ageMin && preferences.ageMax)
+    ? getAgeRangePercentage(preferences.ageMin, preferences.ageMax, cbsa)
+    : 1.0;
+  const eligiblePool = allGender * orientationPct * (1 - felonRate) * agePct;
+
+  // 3. Same as #2 but narrowed to user's ethnicity distribution
+  const ethnicityKey = DEMOGRAPHIC_QUESTIONS.identity.ethnicity.cbsaKeyMap[userProfile.ethnicity];
+  const ethnicityPct = ethnicityKey ? (cbsa[ethnicityKey] || 10) / 100 : 1.0;
+  const eligibleEthnicityPool = eligiblePool * ethnicityPct;
+
   return {
     localSinglePool: Math.round(localSinglePool),
     realisticPool: Math.round(realisticPool),
     preferredPool: Math.round(preferredPool),
     idealPool: Math.round(idealPool),
-    funnel
+    funnel,
+    contextPools: {
+      allGender: Math.round(allGender),
+      eligiblePool: Math.round(eligiblePool),
+      eligibleEthnicityPool: Math.round(eligibleEthnicityPool),
+      userEthnicity: userProfile.ethnicity,
+      targetGenderLabel: seeking === 'Woman' ? 'women' : 'men',
+      orientationLabel: userProfile.orientation.toLowerCase(),
+    }
   };
 }
 
@@ -1193,21 +1301,69 @@ async function processDemographics(userInputs) {
     fitnessLevels: userInputs.fitnessLevels,
     politicalViews: userInputs.politicalViews,
     partnerHasKids: userInputs.partnerHasKids,
+    partnerWantKids: userInputs.partnerWantKids,
     partnerSmoking: userInputs.partnerSmoking
   };
   
   // Calculate Relate Score
   const relateScore = calculateRelateScore(userProfile, cbsa);
-  
+
   // Calculate Match Pool
   const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
-  
+
   // Calculate match probability
   const matchProbability = getMatchProbability(relateScore.score);
-  
+
   // Calculate final match count
   const matchCount = Math.round(matchPool.idealPool * matchProbability);
-  
+
+  // Calculate state and national comparisons
+  const stateAbbr = extractState(cbsaResult.cbsaLabel);
+  let stateComparison = null;
+  let nationalComparison = null;
+
+  try {
+    const [stateAgg, nationalAgg] = await Promise.all([
+      stateAbbr ? getStateAggregate(stateAbbr) : Promise.resolve(null),
+      getNationalAggregate(),
+    ]);
+
+    if (stateAgg) {
+      const statePool = calculateMatchPool(userProfile, preferences, stateAgg);
+      const stateScore = calculateRelateScore(userProfile, stateAgg);
+      const stateProb = getMatchProbability(stateScore.score);
+      stateComparison = {
+        label: stateAbbr,
+        population: stateAgg.cbsa_population,
+        idealPool: statePool.idealPool,
+        matchCount: Math.round(statePool.idealPool * stateProb),
+        relateScore: stateScore.score,
+        matchProbability: stateProb,
+        funnel: statePool.funnel,
+        contextPools: statePool.contextPools,
+      };
+    }
+
+    if (nationalAgg) {
+      const natPool = calculateMatchPool(userProfile, preferences, nationalAgg);
+      const natScore = calculateRelateScore(userProfile, nationalAgg);
+      const natProb = getMatchProbability(natScore.score);
+      nationalComparison = {
+        label: 'National',
+        population: nationalAgg.cbsa_population,
+        idealPool: natPool.idealPool,
+        matchCount: Math.round(natPool.idealPool * natProb),
+        relateScore: natScore.score,
+        matchProbability: natProb,
+        funnel: natPool.funnel,
+        contextPools: natPool.contextPools,
+      };
+    }
+  } catch (e) {
+    // Non-critical — metro data is still valid
+    console.error('Failed to compute state/national comparisons:', e);
+  }
+
   return {
     location: {
       cbsa: cbsaResult.cbsa,
@@ -1228,13 +1384,16 @@ async function processDemographics(userInputs) {
       realisticPool: matchPool.realisticPool,
       preferredPool: matchPool.preferredPool,
       idealPool: matchPool.idealPool,
-      funnel: matchPool.funnel
+      funnel: matchPool.funnel,
+      contextPools: matchPool.contextPools,
     },
     matchProbability: {
       rate: matchProbability,
       percentage: (matchProbability * 100).toFixed(1) + '%'
     },
     matchCount,
+    stateComparison,
+    nationalComparison,
     // Ready for persona/modifier integration
     demographicsForAssessment: {
       gender: userProfile.gender,
@@ -1424,6 +1583,10 @@ module.exports = {
   findCBSAFromZIP,
   getCBSAByCode,
   haversineDistance,
+  getStateAggregate,
+  getNationalAggregate,
+  buildWeightedAggregate,
+  extractState,
   
   // Calculations
   calculateRelateScore,

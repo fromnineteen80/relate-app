@@ -77,7 +77,7 @@ export default function MethodologyPage() {
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">The Assessment</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">Four Modules, 367 Questions</h2>
           <p className="text-secondary mb-10">
-            The assessment takes approximately 110 minutes across four modules. Each module measures a distinct aspect of your relationship profile, and results build progressively as you complete each one.
+            The assessment takes approximately 75 minutes across four modules. Each module measures a distinct aspect of your relationship profile, and results build progressively as you complete each one.
           </p>
 
           {/* Module 1 */}
@@ -86,7 +86,7 @@ export default function MethodologyPage() {
               <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-mono text-lg">1</div>
               <div>
                 <h3 className="font-serif text-xl font-semibold">What You Want</h3>
-                <p className="text-xs text-secondary">134 questions, approximately 40 minutes</p>
+                <p className="text-xs text-secondary">134 questions, approximately 25 minutes</p>
               </div>
             </div>
             <div className="pl-13 space-y-3">
@@ -114,7 +114,7 @@ export default function MethodologyPage() {
               <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-mono text-lg">2</div>
               <div>
                 <h3 className="font-serif text-xl font-semibold">Who You Are</h3>
-                <p className="text-xs text-secondary">137 questions, approximately 40 minutes</p>
+                <p className="text-xs text-secondary">137 questions, approximately 25 minutes</p>
               </div>
             </div>
             <div className="pl-13 space-y-3">
@@ -168,7 +168,7 @@ export default function MethodologyPage() {
               <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-mono text-lg">4</div>
               <div>
                 <h3 className="font-serif text-xl font-semibold">When Things Get Hard</h3>
-                <p className="text-xs text-secondary">68 questions, approximately 20 minutes</p>
+                <p className="text-xs text-secondary">68 questions, approximately 15 minutes</p>
               </div>
             </div>
             <div className="pl-13 space-y-3">
@@ -394,6 +394,95 @@ export default function MethodologyPage() {
         </div>
       </section>
 
+      {/* Finding Your Ideal Match */}
+      <section id="ideal-match" className="px-6 py-16 bg-stone-50 border-b border-border">
+        <div className="max-w-3xl mx-auto">
+          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Demographics</p>
+          <h2 className="font-serif text-3xl font-semibold mb-3">Finding Your Ideal Match Pool</h2>
+          <p className="text-secondary mb-8">
+            After completing the assessment, Relate estimates how many people in your area realistically match what you are looking for. This is a demographic funnel: we start with the full population and narrow it step by step using your preferences, publicly available population data, and standard demographic modeling techniques.
+          </p>
+
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-serif font-semibold mb-2">How the Funnel Works</h3>
+              <p className="text-sm text-secondary leading-relaxed mb-3">
+                The funnel applies your preferences as sequential filters against the population of your metro area (CBSA). Each step reduces the pool by the percentage of people who do not meet that criterion. The process follows the same elimination logic used in actuarial science, market sizing, and persona-based audience segmentation — standard approaches for estimating the size of a target population from known distributions.
+              </p>
+              <div className="space-y-2">
+                <FunnelStep number="1" title="Universal Exclusions" desc="Remove adults over 65 and the homeless population, who are outside the standard dating pool. This establishes the base adult population (18-64)." />
+                <FunnelStep number="2" title="Gender" desc="Filter to the gender you are seeking, using local CBSA gender distribution rather than assuming a 50/50 split. Metro areas vary meaningfully — some skew 52% female, others 48%." />
+                <FunnelStep number="3" title="Sexual Orientation" desc="Apply the proportion of the target gender who identify with a compatible orientation. Rates are drawn from national survey data and adjusted by metro-level estimates where available." />
+                <FunnelStep number="4" title="Criminal Record Exclusion" desc="Remove individuals with felony convictions. Incarceration and felony rates differ significantly by gender, ethnicity, and education level, so the model uses a weighted average based on the CBSA's ethnic composition rather than a single national rate." />
+                <FunnelStep number="5" title="Substance Issues" desc="Exclude individuals with active substance abuse issues using the same ethnicity-weighted approach. Rates are drawn from national health survey data." />
+                <FunnelStep number="6" title="Relationship Status" desc="Filter to singles using local CBSA relationship status data. This produces the Local Singles pool — the total number of available, eligible singles of the right gender and orientation in your area." />
+                <FunnelStep number="7" title="Your Preferences" desc="Apply your specific requirements: age range, minimum income, lifestyle preferences (smoking, drinking, children, religion, pets, diet), and physical preferences (height range, body type, fitness level). Each filter uses CBSA-level data where available or national distributions as a fallback." />
+              </div>
+              <p className="text-sm text-secondary leading-relaxed mt-3">
+                The result is your Ideal Match Pool: the estimated number of people who meet every criterion you specified. This number is then multiplied by your match probability (derived from your Relate Score) to produce your final match count — the number of people in your pool who would likely be a mutual fit.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Context Percentages</h3>
+              <p className="text-sm text-secondary leading-relaxed mb-3">
+                Raw pool numbers are hard to interpret on their own. Is 2,000 people a lot or a little? It depends on the size of the population you are drawing from and how many filters you have applied. To provide context, the results page shows your ideal pool as a percentage of three progressively narrower base populations:
+              </p>
+              <div className="space-y-2 text-sm text-secondary">
+                <p><span className="font-medium text-foreground">% of target gender:</span> Your ideal pool divided by all adults (18-64) of the gender you are seeking in the area. This is the broadest view — of every person of that gender you could encounter, what fraction fits all of your preferences.</p>
+                <p><span className="font-medium text-foreground">% of eligible:</span> Your ideal pool divided by the subset that shares the right orientation, has no criminal record, and falls within your preferred age range. This removes people who were never realistic candidates, isolating the effect of your lifestyle, income, and physical preferences.</p>
+                <p><span className="font-medium text-foreground">% of ethnicity match:</span> The eligible pool narrowed further to people of your own ethnic background. Because felon rates, income distributions, education levels, and lifestyle patterns vary by ethnicity, this provides the most directly comparable view of how selective your preferences are within a demographically similar group.</p>
+              </div>
+              <p className="text-sm text-secondary leading-relaxed mt-3">
+                All three percentages are computed independently for your metro area, your state, and the nation, so you can see how your selectivity plays out at different geographic scales.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">The Relate Score and Match Probability</h3>
+              <p className="text-sm text-secondary leading-relaxed">
+                The Relate Score (0-100) measures how well your profile aligns with the demographic realities of your metro area. It incorporates factors like gender ratio favorability, local single rates, income distributions, and lifestyle compatibility with the local population. A higher score means you are fishing in a pond that is well-stocked for someone like you. The match probability is a direct function of this score: it represents the likelihood that any given person in your ideal pool would also consider you a match based on the same demographic factors. Scores above 70 convert at higher rates; scores below 40 face significantly steeper odds.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Data Sources</h3>
+              <p className="text-sm text-secondary leading-relaxed mb-3">
+                All demographic data used in the funnel is sourced from publicly available datasets. No proprietary or paywalled data is used. The primary sources are:
+              </p>
+              <ul className="space-y-1.5 text-sm text-secondary">
+                <li className="flex items-start gap-2">
+                  <span className="text-accent mt-0.5">•</span>
+                  <span><span className="font-medium text-foreground">U.S. Census Bureau</span> — Population estimates, age distributions, gender ratios, household income, ethnic composition, and relationship status by CBSA, county, state, and nation (American Community Survey 5-Year Estimates).</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-accent mt-0.5">•</span>
+                  <span><span className="font-medium text-foreground">U.S. Centers for Disease Control and Prevention (CDC)</span> — National Health Interview Survey and Behavioral Risk Factor Surveillance System data for substance use rates, disability prevalence, and health behavior distributions.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-accent mt-0.5">•</span>
+                  <span><span className="font-medium text-foreground">Pew Research Center</span> — Survey data on sexual orientation, religious affiliation, lifestyle attitudes, and relationship patterns used to supplement Census data where granularity is needed.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-accent mt-0.5">•</span>
+                  <span><span className="font-medium text-foreground">Bureau of Justice Statistics</span> — Felony conviction and incarceration rates by gender, ethnicity, and age used in the criminal record exclusion step.</span>
+                </li>
+              </ul>
+              <p className="text-sm text-secondary leading-relaxed mt-3">
+                Where CBSA-level data is available, it is used directly. Where only state or national data exists, it is applied as a proportional estimate. All rates are static snapshots, not real-time data, and are updated periodically as new survey releases become available.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Limitations</h3>
+              <p className="text-sm text-secondary leading-relaxed">
+                These are estimates, not counts of real individuals. The model assumes statistical independence between filters (for example, that income and fitness level are uncorrelated), which is a simplification. Some preferences like body type and fitness level rely on national survey distributions rather than local data. The funnel does not account for whether someone is actively dating, on a dating app, or open to meeting new people — it estimates the theoretical pool. Actual availability will be smaller. The model is designed to give you a realistic order-of-magnitude sense of your dating market, not a precise headcount.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="px-6 py-20 bg-stone-50 border-t border-border">
         <div className="max-w-2xl mx-auto text-center">
@@ -401,7 +490,7 @@ export default function MethodologyPage() {
             Ready to discover your profile?
           </h2>
           <p className="text-secondary mb-8 max-w-md mx-auto">
-            The assessment is free, saves your progress, and takes about 110 minutes across 4 modules. Your persona is waiting.
+            The assessment is free, saves your progress, and takes about 75 minutes across 4 modules. Your persona is waiting.
           </p>
           <div className="flex gap-3 justify-center">
             <Link href="/auth/signup" className="btn-primary text-base px-8 py-3">
@@ -446,6 +535,18 @@ function ScoreComponent({ weight, label, desc }: { weight: string; label: string
       <span className="font-mono text-sm text-accent font-semibold w-10 flex-shrink-0">{weight}</span>
       <div>
         <p className="text-sm font-medium">{label}</p>
+        <p className="text-xs text-secondary mt-0.5">{desc}</p>
+      </div>
+    </div>
+  );
+}
+
+function FunnelStep({ number, title, desc }: { number: string; title: string; desc: string }) {
+  return (
+    <div className="flex items-start gap-3 p-3 bg-white border border-border rounded-md">
+      <span className="font-mono text-xs text-accent font-semibold w-5 flex-shrink-0 mt-0.5">{number}</span>
+      <div>
+        <p className="text-sm font-medium">{title}</p>
         <p className="text-xs text-secondary mt-0.5">{desc}</p>
       </div>
     </div>

@@ -10,12 +10,36 @@ import { useAuth } from '@/lib/auth-context';
 import { SiteHeader } from '@/components/SiteHeader';
 import { loadAndHydrateProgress } from '@/lib/supabase/progress';
 
+type FunnelStage = { stage: string; count: number; filter?: string; percentage?: number; isMilestone?: boolean };
+
+type ContextPools = {
+  allGender: number;
+  eligiblePool: number;
+  eligibleEthnicityPool: number;
+  userEthnicity: string;
+  targetGenderLabel: string;
+  orientationLabel: string;
+};
+
+type ComparisonData = {
+  label: string;
+  population: number;
+  idealPool: number;
+  matchCount: number;
+  relateScore: number;
+  matchProbability: number;
+  funnel?: FunnelStage[];
+  contextPools?: ContextPools;
+};
+
 type MarketData = {
   location?: { cbsaName?: string; cbsaLabel?: string; population?: number };
   relateScore?: { score: number };
-  matchPool?: { localSinglePool: number; realisticPool: number; preferredPool: number; idealPool: number };
+  matchPool?: { localSinglePool: number; realisticPool: number; preferredPool: number; idealPool: number; funnel?: FunnelStage[]; contextPools?: ContextPools };
   matchProbability?: { rate: number; percentage: string };
   matchCount?: number;
+  stateComparison?: ComparisonData | null;
+  nationalComparison?: ComparisonData | null;
 };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -101,9 +125,9 @@ export default function ResultsDashboard() {
     const gender = localStorage.getItem('relate_gender');
     if (!demoStr) return;
 
-    let demo: { age?: number; zipCode?: string; ethnicity?: string; orientation?: string; income?: number; education?: string; height?: string; bodyType?: string; fitness?: string; political?: string; smoking?: boolean; hasKids?: boolean; wantKids?: string; relationshipStatus?: string };
+    let demo: Record<string, any>;
     try { demo = JSON.parse(demoStr); } catch { return; }
-    if (!demo.zipCode) return;
+    if (!demo.zipCode && !demo.zip_code) return;
 
     marketFetchedRef.current = true;
     setMarketLoading(true);
@@ -112,14 +136,41 @@ export default function ResultsDashboard() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userId: user.id,
-        demographics: { gender, age: demo.age, zipCode: demo.zipCode, ethnicity: demo.ethnicity, orientation: demo.orientation, income: demo.income, education: demo.education, height: demo.height, bodyType: demo.bodyType, fitness: demo.fitness, political: demo.political, smoking: demo.smoking, hasKids: demo.hasKids, wantKids: demo.wantKids, relationshipStatus: demo.relationshipStatus },
-        preferences: {},
+        demographics: {
+          gender,
+          age: demo.age,
+          zipCode: demo.zipCode || demo.zip_code,
+          ethnicity: demo.ethnicity,
+          orientation: demo.orientation,
+          income: demo.income,
+          education: demo.education,
+          height: demo.height,
+          bodyType: demo.bodyType || demo.body_type,
+          fitness: demo.fitness || demo.fitness_level,
+          political: demo.political,
+          smoking: demo.smoking,
+          hasKids: demo.hasKids ?? demo.has_kids,
+          wantKids: demo.wantKids || demo.want_kids,
+          relationshipStatus: demo.relationshipStatus || demo.relationship_status,
+        },
+        preferences: {
+          prefAgeMin: demo.pref_age_min || demo.prefAgeMin,
+          prefAgeMax: demo.pref_age_max || demo.prefAgeMax,
+          prefIncomeMin: demo.pref_income_min ?? demo.prefIncome ?? 0,
+          prefHeightMin: demo.pref_height_min || demo.prefHeight || null,
+          prefBodyTypes: demo.pref_body_types || demo.prefBodyTypes || ['No preference'],
+          prefFitnessLevels: demo.pref_fitness_levels || demo.prefFitnessLevels || ['No preference'],
+          prefPolitical: demo.pref_political || demo.prefPolitical || ['No preference'],
+          prefHasKids: demo.pref_has_kids || demo.prefHasKids || 'No preference',
+          prefWantKids: demo.pref_want_kids || demo.prefWantKids || 'No preference',
+          prefSmoking: demo.pref_smoking || demo.prefSmoking || 'No preference',
+        },
       }),
     })
       .then(r => r.json())
       .then(data => {
         if (data.success) {
-          const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount };
+          const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount, stateComparison: data.stateComparison, nationalComparison: data.nationalComparison };
           setMarketData(md);
           localStorage.setItem('relate_market_data', JSON.stringify(md));
         }
@@ -142,6 +193,7 @@ export default function ResultsDashboard() {
           m4: report.m4,
           matches: report.matches,
           individualCompatibility: report.individualCompatibility,
+          marketData: marketData || undefined,
         }),
       });
       const data = await res.json();
@@ -160,7 +212,7 @@ export default function ResultsDashboard() {
     } finally {
       setDownloading(false);
     }
-  }, [report]);
+  }, [report, marketData]);
 
   if (!report) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
 
@@ -458,6 +510,7 @@ export default function ResultsDashboard() {
         {(marketData || marketLoading) && (
           <section className="card mb-6">
             <h3 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h3>
+            <p className="text-xs text-secondary mb-3">Based on your demographics and preferences, here&apos;s how your local dating pool narrows from the total metro population to people who match what you&apos;re looking for.</p>
             {marketLoading ? (
               <div className="flex items-center justify-center py-8">
                 <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
@@ -479,48 +532,171 @@ export default function ResultsDashboard() {
                       <span className="font-mono text-2xl font-semibold">{score.toFixed(0)}</span>
                       <p className="text-xs text-secondary mt-1">Relate Score</p>
                       <p className="text-[10px] text-secondary">{scoreTier}</p>
+                      <p className="text-[10px] text-secondary mt-0.5">Your overall desirability based on demographics</p>
                     </div>
                     <div>
                       <span className="font-mono text-2xl font-semibold">{prob?.percentage || '—'}</span>
                       <p className="text-xs text-secondary mt-1">Match Probability</p>
+                      <p className="text-[10px] text-secondary mt-0.5">Chance a given match leads to compatibility</p>
                     </div>
                     <div>
                       <span className="font-mono text-2xl font-semibold">{fmt(matchCount)}</span>
                       <p className="text-xs text-secondary mt-1">Estimated Matches</p>
+                      <p className="text-[10px] text-secondary mt-0.5">Compatible people in your metro area</p>
                     </div>
                   </div>
-                  {pool && (
-                    <div>
-                      <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
-                      <div className="mt-2 space-y-1">
-                        {[
-                          { label: 'Metro Population', value: marketData.location?.population || 0 },
-                          { label: 'Single Pool', value: pool.localSinglePool },
-                          { label: 'Realistic Pool', value: pool.realisticPool },
-                          { label: 'Preferred Pool', value: pool.preferredPool },
-                          { label: 'Ideal Pool', value: pool.idealPool },
-                        ].map((m, i, arr) => {
-                          const maxVal = arr[0].value || 1;
-                          const pct = (m.value / maxVal) * 100;
-                          const isLast = i === arr.length - 1;
-                          return (
-                            <div key={m.label}>
-                              <div className="flex items-center justify-between mb-0.5">
-                                <span className={`text-xs ${isLast ? 'font-medium' : 'text-secondary'}`}>{m.label}</span>
-                                <span className={`text-xs font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{fmt(m.value)}</span>
+                  {pool && (() => {
+                    const funnel: FunnelStage[] = pool.funnel || [];
+                    // Fallback to summary bars if funnel not available
+                    const stages = funnel.length > 0 ? funnel : [
+                      { stage: 'Metro Population', count: marketData.location?.population || 0 },
+                      { stage: 'LOCAL SINGLES', count: pool.localSinglePool, isMilestone: true },
+                      { stage: 'MEET YOUR BASICS', count: pool.realisticPool, isMilestone: true },
+                      { stage: 'MATCH YOUR LIFESTYLE', count: pool.preferredPool, isMilestone: true },
+                      { stage: 'YOUR IDEAL MATCH POOL', count: pool.idealPool, isMilestone: true },
+                    ];
+                    const maxCount = stages[0]?.count || 1;
+                    return (
+                      <div>
+                        <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
+                        <div className="mt-3 space-y-1.5">
+                          {stages.map((s, i) => {
+                            const pct = (s.count / maxCount) * 100;
+                            const isLast = i === stages.length - 1;
+                            const isMilestone = s.isMilestone;
+                            return (
+                              <div key={i} className={isMilestone ? 'pt-1' : ''}>
+                                <div className="flex items-center justify-between mb-0.5">
+                                  <span className={`text-xs ${isMilestone ? 'font-semibold uppercase font-mono tracking-wider' : isLast ? 'font-medium' : 'text-secondary'}`}>
+                                    {s.stage}
+                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    {s.filter && <span className="text-[10px] text-secondary font-mono">{s.filter}</span>}
+                                    <span className={`text-xs font-mono ${isMilestone || isLast ? 'font-semibold' : 'text-secondary'}`}>{fmt(s.count)}</span>
+                                  </div>
+                                </div>
+                                <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
+                                  <div
+                                    className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ${isLast ? 'bg-accent' : isMilestone ? 'bg-accent/60' : 'bg-stone-300'}`}
+                                    style={{ width: `${Math.max(1, pct)}%` }}
+                                  />
+                                </div>
                               </div>
-                              <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
-                                <div
-                                  className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ${isLast ? 'bg-accent' : 'bg-stone-300'}`}
-                                  style={{ width: `${Math.max(1, pct)}%` }}
-                                />
-                              </div>
-                            </div>
-                          );
-                        })}
+                            );
+                          })}
+                        </div>
+                        {stages[stages.length - 1]?.count === 0 && (
+                          <p className="text-xs text-warning mt-3">Your preferences narrow the pool to zero in this metro. Consider broadening age range, income, or lifestyle filters.</p>
+                        )}
+                        <p className="text-[10px] text-secondary mt-3">Estimates based on census and survey data for your metro area. Actual availability may vary.</p>
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
+
+                  {/* State & National Comparison */}
+                  {(marketData.stateComparison || marketData.nationalComparison) && (() => {
+                    const metroIdeal = pool?.idealPool ?? 0;
+                    const state = marketData.stateComparison;
+                    const national = marketData.nationalComparison;
+                    const showExpandedFunnels = metroIdeal < 100;
+                    const ctx = pool?.contextPools;
+                    const pctOf = (ideal: number, base: number) => base > 0 ? ((ideal / base) * 100).toFixed(1) + '%' : '—';
+
+                    // Build comparison rows: metro, state, national
+                    const rows = [
+                      { label: metro, ideal: metroIdeal, matches: matchCount, pop: marketData.location?.population || 0, ctx, highlight: true },
+                      ...(state ? [{ label: `${state.label} (statewide)`, ideal: state.idealPool, matches: state.matchCount, pop: state.population, ctx: state.contextPools }] : []),
+                      ...(national ? [{ label: 'National', ideal: national.idealPool, matches: national.matchCount, pop: national.population, ctx: national.contextPools }] : []),
+                    ];
+
+                    const gLabel = ctx?.targetGenderLabel || 'target gender';
+                    const oLabel = ctx?.orientationLabel || 'orientation';
+                    const eLabel = ctx?.userEthnicity || 'ethnicity';
+                    const funnel2: FunnelStage[] = pool?.funnel || [];
+                    const ageStage = funnel2.find(s => s.stage.startsWith('Age '));
+                    const ageRange = ageStage ? ageStage.stage.replace('Age ', '') : 'your age range';
+
+                    return (
+                      <div className="mt-6">
+                        <span className="text-xs font-mono text-secondary uppercase tracking-wider">How You Compare</span>
+                        <div className="mt-2 border border-border rounded-md overflow-hidden overflow-x-auto">
+                          <table className="w-full text-xs">
+                            <thead>
+                              <tr className="border-b border-border bg-stone-50">
+                                <th className="text-left px-3 py-1.5 font-mono text-secondary">Scope</th>
+                                <th className="text-right px-3 py-1.5 font-mono text-secondary">Ideal Pool</th>
+                                <th className="text-right px-3 py-1.5 font-mono text-secondary">Matches</th>
+                                <th className="text-right px-3 py-1.5 font-mono text-secondary whitespace-nowrap">% of {gLabel}</th>
+                                <th className="text-right px-3 py-1.5 font-mono text-secondary whitespace-nowrap">% of eligible</th>
+                                <th className="text-right px-3 py-1.5 font-mono text-secondary whitespace-nowrap">% of {eLabel}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {rows.map((r, i) => (
+                                <tr key={i} className={`${i < rows.length - 1 ? 'border-b border-border' : ''} ${r.highlight ? 'bg-orange-50/50' : ''}`}>
+                                  <td className={`px-3 py-1.5 ${r.highlight ? 'font-medium' : ''}`}>{r.label}</td>
+                                  <td className={`text-right px-3 py-1.5 font-mono ${r.highlight ? '' : 'text-secondary'}`}>{fmt(r.ideal)}</td>
+                                  <td className={`text-right px-3 py-1.5 font-mono ${r.highlight ? 'font-semibold' : 'text-secondary'}`}>{fmt(r.matches)}</td>
+                                  <td className={`text-right px-3 py-1.5 font-mono ${r.highlight ? '' : 'text-secondary'}`}>{r.ctx ? pctOf(r.ideal, r.ctx.allGender) : '—'}</td>
+                                  <td className={`text-right px-3 py-1.5 font-mono ${r.highlight ? '' : 'text-secondary'}`}>{r.ctx ? pctOf(r.ideal, r.ctx.eligiblePool) : '—'}</td>
+                                  <td className={`text-right px-3 py-1.5 font-mono ${r.highlight ? '' : 'text-secondary'}`}>{r.ctx ? pctOf(r.ideal, r.ctx.eligibleEthnicityPool) : '—'}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                        <div className="mt-1.5 space-y-1">
+                          <p className="text-[10px] text-secondary leading-relaxed"><span className="font-mono font-medium text-foreground">Ideal Pool</span> — The number of people in this area who meet every preference you specified: gender, orientation, age range, income, relationship status, lifestyle traits, and physical preferences. This is your fully-filtered pool before accounting for mutual interest.</p>
+                          <p className="text-[10px] text-secondary leading-relaxed"><span className="font-mono font-medium text-foreground">Matches</span> — Your ideal pool adjusted for the probability that someone in it would also be interested in you, based on your Relate Score. A higher Relate Score means a larger share of your ideal pool converts into realistic mutual matches.</p>
+                          <p className="text-[10px] text-secondary leading-relaxed"><span className="font-mono font-medium text-foreground">% of {gLabel}</span> — Your ideal pool expressed as a percentage of all {gLabel} (ages 18-64, excluding homeless) in the area. This is the broadest lens: of every {gLabel.slice(0, -1)} you could theoretically encounter, how many fit what you are looking for.</p>
+                          <p className="text-[10px] text-secondary leading-relaxed"><span className="font-mono font-medium text-foreground">% of eligible</span> — Your ideal pool as a percentage of {oLabel} {gLabel} aged {ageRange} with no criminal record. This filters out people who were never realistic candidates, giving you a truer sense of how selective your remaining preferences are.</p>
+                          <p className="text-[10px] text-secondary leading-relaxed"><span className="font-mono font-medium text-foreground">% of {eLabel}</span> — The same eligible pool narrowed further to {eLabel} {gLabel} only. Because felon rates, income distributions, and lifestyle patterns differ by ethnicity, this shows the most apples-to-apples view of your selectivity within the demographic group that most closely mirrors your own background.</p>
+                        </div>
+                        <p className="text-[10px] text-secondary/60 mt-2 leading-relaxed">Estimates derived from publicly available census, demographic, and survey datasets. See <a href="/methodology#ideal-match" className="underline">methodology</a> for sources and approach.</p>
+
+                        {/* Expanded fallback funnels when metro pool is small */}
+                        {showExpandedFunnels && (
+                          <div className="mt-4 space-y-4">
+                            <p className="text-xs text-warning">Your metro ideal pool is small. Here&apos;s what the funnel looks like at broader scale.</p>
+                            {[state, national].filter(Boolean).map((comp) => {
+                              const cFunnel: FunnelStage[] = comp!.funnel || [];
+                              if (cFunnel.length === 0) return null;
+                              const cMax = cFunnel[0]?.count || 1;
+                              return (
+                                <div key={comp!.label}>
+                                  <span className="text-xs font-mono text-secondary uppercase tracking-wider">{comp!.label} Funnel</span>
+                                  <div className="mt-2 space-y-1">
+                                    {cFunnel.map((s, i) => {
+                                      const cPct = (s.count / cMax) * 100;
+                                      const cIsLast = i === cFunnel.length - 1;
+                                      const cIsMilestone = s.isMilestone;
+                                      return (
+                                        <div key={i} className={cIsMilestone ? 'pt-1' : ''}>
+                                          <div className="flex items-center justify-between mb-0.5">
+                                            <span className={`text-xs ${cIsMilestone ? 'font-semibold uppercase font-mono tracking-wider' : cIsLast ? 'font-medium' : 'text-secondary'}`}>{s.stage}</span>
+                                            <div className="flex items-center gap-2">
+                                              {s.filter && <span className="text-[10px] text-secondary font-mono">{s.filter}</span>}
+                                              <span className={`text-xs font-mono ${cIsMilestone || cIsLast ? 'font-semibold' : 'text-secondary'}`}>{fmt(s.count)}</span>
+                                            </div>
+                                          </div>
+                                          <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
+                                            <div
+                                              className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ${cIsLast ? 'bg-accent' : cIsMilestone ? 'bg-accent/60' : 'bg-stone-300'}`}
+                                              style={{ width: `${Math.max(1, cPct)}%` }}
+                                            />
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </>
               );
             })()}
