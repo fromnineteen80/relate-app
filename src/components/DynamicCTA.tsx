@@ -12,7 +12,7 @@ const STEP_CONFIG: Record<string, { label: string; href: string }> = {
   'complete': { label: 'View My Assessment', href: '/results' },
 };
 
-export function DynamicCTA({ className, fallbackLabel }: { className?: string; fallbackLabel?: string }) {
+export function DynamicCTA({ className, fallbackLabel, product }: { className?: string; fallbackLabel?: string; product?: string }) {
   const { user, loading, emailVerified } = useAuth();
   const style = className || 'btn-primary text-base px-8 py-3';
 
@@ -31,9 +31,18 @@ export function DynamicCTA({ className, fallbackLabel }: { className?: string; f
   const step = getOnboardingStep(emailVerified);
   const config = STEP_CONFIG[step];
 
+  // For paid products, once assessment is complete, go to checkout instead of results
+  if (product && step === 'complete') {
+    return (
+      <Link href={`/api/checkout?product=${product}&email=${encodeURIComponent(user.email || '')}`} className={style}>
+        {fallbackLabel || `Get ${product.charAt(0).toUpperCase() + product.slice(1)}`}
+      </Link>
+    );
+  }
+
   return (
     <Link href={config.href} className={style}>
-      {config.label}
+      {product && step !== 'complete' ? config.label : (config.label)}
     </Link>
   );
 }

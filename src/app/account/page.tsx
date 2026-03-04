@@ -181,6 +181,7 @@ function AccountPage() {
   const [discountCode, setDiscountCode] = useState('');
   const [discountSubmitting, setDiscountSubmitting] = useState(false);
   const [discountResult, setDiscountResult] = useState<{ success?: boolean; message?: string; error?: string } | null>(null);
+  const [activeDiscountCode, setActiveDiscountCode] = useState<string | null>(null);
 
   // Fetch payment tier (works in both mock and real mode)
   useEffect(() => {
@@ -192,6 +193,14 @@ function AccountPage() {
       const { tier } = await fetcher(user!.email);
       setCurrentTier(tier);
       if (isSuccess) setPaymentSuccess(true);
+
+      // Also check for active discount code
+      try {
+        const res = await fetch(`/api/subscription-status?email=${encodeURIComponent(user!.email)}`);
+        const data = await res.json();
+        if (data.discountCode) setActiveDiscountCode(data.discountCode);
+        if (data.subscription?.discount) setActiveDiscountCode(data.subscription.discount.name);
+      } catch { /* ignore */ }
     }
     loadTier();
   }, [user, searchParams]);
@@ -616,7 +625,7 @@ function AccountPage() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-serif text-lg font-semibold">Subscription</h2>
             {currentTier !== 'free' && currentTier !== 'couples' && (
-              <a href="#subscription" className="text-xs text-accent hover:underline">Edit subscription</a>
+              <Link href="/settings/billing" className="text-xs text-accent hover:underline">Edit subscription</Link>
             )}
           </div>
 
@@ -691,28 +700,37 @@ function AccountPage() {
 
           {/* Discount Code */}
           <div className="mt-4 pt-4 border-t border-border">
-            <p className="text-xs text-secondary mb-2">Have a discount code?</p>
-            <form onSubmit={handleDiscountCode} className="flex gap-2">
-              <input
-                type="text"
-                value={discountCode}
-                onChange={e => setDiscountCode(e.target.value.toUpperCase())}
-                placeholder="Enter code"
-                className="input flex-1 text-xs font-mono"
-              />
-              <button
-                type="submit"
-                disabled={discountSubmitting || !discountCode.trim()}
-                className="btn-secondary text-xs whitespace-nowrap"
-              >
-                {discountSubmitting ? 'Applying...' : 'Apply'}
-              </button>
-            </form>
-            {discountResult?.success && (
-              <p className="text-xs text-success mt-2">{discountResult.message}</p>
-            )}
-            {discountResult?.error && (
-              <p className="text-xs text-danger mt-2">{discountResult.error}</p>
+            {activeDiscountCode ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded">Discount Active</span>
+                <span className="text-xs font-mono">{activeDiscountCode}</span>
+              </div>
+            ) : (
+              <>
+                <p className="text-xs text-secondary mb-2">Have a discount code?</p>
+                <form onSubmit={handleDiscountCode} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={discountCode}
+                    onChange={e => setDiscountCode(e.target.value.toUpperCase())}
+                    placeholder="Enter code"
+                    className="input flex-1 text-xs font-mono"
+                  />
+                  <button
+                    type="submit"
+                    disabled={discountSubmitting || !discountCode.trim()}
+                    className="btn-secondary text-xs whitespace-nowrap"
+                  >
+                    {discountSubmitting ? 'Applying...' : 'Apply'}
+                  </button>
+                </form>
+                {discountResult?.success && (
+                  <p className="text-xs text-success mt-2">{discountResult.message}</p>
+                )}
+                {discountResult?.error && (
+                  <p className="text-xs text-danger mt-2">{discountResult.error}</p>
+                )}
+              </>
             )}
           </div>
         </section>
