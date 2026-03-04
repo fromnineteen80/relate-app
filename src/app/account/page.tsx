@@ -157,9 +157,7 @@ function AccountPage() {
   const [partnerEmail, setPartnerEmail] = useState<string | null>(null);
   const [moduleProgress, setModuleProgress] = useState<Record<number, boolean>>({});
   const [mockUpgrading, setMockUpgrading] = useState(false);
-  const [partnerSearch, setPartnerSearch] = useState('');
   const [profileData, setProfileData] = useState<{ firstName: string; lastName: string; photoUrl: string | null } | null>(null);
-  const [copiedLink, setCopiedLink] = useState(false);
   const [m1Data, setM1Data] = useState<M1Scored | null>(null);
   const [m2Data, setM2Data] = useState<M2Scored | null>(null);
   const [m3Data, setM3Data] = useState<M3Scored | null>(null);
@@ -394,14 +392,6 @@ function AccountPage() {
     mockPurchase(tier);
     setCurrentTier(getMockPaymentStatus().tier);
     setTimeout(() => setMockUpgrading(false), 500);
-  }
-
-  function handleCopyLink() {
-    const productionUrl = config.appUrl.includes('localhost') ? 'https://relate.date' : config.appUrl;
-    const url = `${productionUrl}/u/${user?.id || ''}`;
-    navigator.clipboard.writeText(url);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
   }
 
   const handleDownloadPDF = useCallback(async () => {
@@ -1101,48 +1091,15 @@ function AccountPage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Link href="/results/compare" className="btn-primary text-xs">Couples Report</Link>
-                <Link href="/couples" className="btn-secondary text-xs">Couples Dashboard</Link>
+                <Link href="/couples" className="btn-primary text-xs">Couples Results</Link>
               </div>
             </div>
           ) : (
             <div className="space-y-4">
               <p className="text-sm text-secondary">
-                Find your partner by email or share your profile link.
+                Invite your partner by email to unlock your couples compatibility results.
               </p>
-
-              <div>
-                <label className="label">Find partner by email or profile URL</label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={partnerSearch}
-                    onChange={e => setPartnerSearch(e.target.value)}
-                    className="input flex-1"
-                    placeholder="partner@email.com or profile URL"
-                  />
-                  <Link
-                    href={`/invite?email=${encodeURIComponent(partnerSearch)}`}
-                    className="btn-secondary text-xs flex-shrink-0"
-                  >
-                    Search
-                  </Link>
-                </div>
-              </div>
-
-              <div className="p-3 bg-stone-50 border border-border rounded-md">
-                <p className="text-xs text-secondary mb-2">Your shareable profile link:</p>
-                <div className="flex items-center gap-2">
-                  <code className="text-xs font-mono text-secondary bg-white px-2 py-1 rounded border border-border flex-1 truncate">
-                    {config.appUrl.includes('localhost') ? 'https://relate.date' : config.appUrl}/u/{user?.id || ''}
-                  </code>
-                  <button onClick={handleCopyLink} className="btn-secondary text-xs flex-shrink-0">
-                    {copiedLink ? 'Copied' : 'Copy'}
-                  </button>
-                </div>
-              </div>
-
-              <Link href="/invite" className="btn-secondary text-xs inline-block">Send Invite</Link>
+              <Link href="/invite" className="btn-primary text-xs inline-block">Invite Partner</Link>
             </div>
           )}
         </section>

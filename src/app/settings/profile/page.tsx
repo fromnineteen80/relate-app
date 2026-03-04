@@ -201,16 +201,14 @@ export default function ProfileSettings() {
               Complete Demographics
             </Link>
           )}
-        </div>
 
-        {/* Partner Preferences — full width */}
-        {demographics?.pref_age_min != null && (
-          <div className="card mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium">Partner Preferences</p>
-              <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">Edit</Link>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
+          {/* Partner Preferences */}
+          {demographics?.pref_age_min != null && (
+            <div className="card">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm font-medium">Partner Preferences</p>
+                <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">Edit</Link>
+              </div>
               <InfoRow label="Age Range" value={`${demographics.pref_age_min} – ${demographics.pref_age_max}`} />
               <InfoRow label="Min Income" value={demographics.pref_income_min != null ? formatCurrency(demographics.pref_income_min) : null} />
               <InfoRow label="Min Height" value={demographics.pref_height_min} />
@@ -222,8 +220,8 @@ export default function ProfileSettings() {
               <InfoRow label="Partner Smokes" value={demographics.pref_smoking} />
               <InfoRow label="Seeking" value={demographics.seeking} />
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Location — last card */}
         {profile && (
