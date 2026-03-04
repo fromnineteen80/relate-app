@@ -15,12 +15,24 @@ import { clearAllProgress } from '@/lib/supabase/progress';
 
 type Demographics = { age?: number; gender?: string; relationshipStatus?: string; seeking?: string; [key: string]: unknown };
 
+type MarketComparisonData = {
+  label: string;
+  population: number;
+  idealPool: number;
+  matchCount: number;
+  relateScore: number;
+  matchProbability: number;
+  contextPools?: { allGender: number; eligiblePool: number; eligibleEthnicityPool: number; userEthnicity: string; targetGenderLabel: string; orientationLabel: string };
+};
+
 type MarketData = {
   location?: { cbsaName?: string; cbsaLabel?: string; population?: number };
-  relateScore?: { score: number; components?: Record<string, { national?: number; local?: number; score?: number; weight: number }> };
-  matchPool?: { localSinglePool: number; realisticPool: number; preferredPool: number; idealPool: number; funnel?: { stage: string; count: number; isMilestone?: boolean }[] };
+  relateScore?: { score: number; components?: Record<string, { national?: number; local?: number; score?: number; weight: number }>; marriagePremium?: number };
+  matchPool?: { localSinglePool: number; realisticPool: number; preferredPool: number; idealPool: number; funnel?: { stage: string; count: number; filter?: string; isMilestone?: boolean }[]; contextPools?: { allGender: number; eligiblePool: number; eligibleEthnicityPool: number; userEthnicity: string; targetGenderLabel: string; orientationLabel: string } };
   matchProbability?: { rate: number; percentage: string };
   matchCount?: number;
+  stateComparison?: MarketComparisonData | null;
+  nationalComparison?: MarketComparisonData | null;
 };
 
 type M1Scored = {
@@ -348,7 +360,11 @@ function AccountPage() {
           m3: report.m3,
           m4: report.m4,
           matches: report.matches,
+          individualCompatibility: report.individualCompatibility,
           marketData: marketData || undefined,
+          demographics: (() => { try { return JSON.parse(localStorage.getItem('relate_demographics') || '{}'); } catch { return undefined; } })(),
+          fullM3: (() => { try { return JSON.parse(localStorage.getItem('relate_m3_scored') || '{}')?.result; } catch { return undefined; } })(),
+          fullM4: (() => { try { return JSON.parse(localStorage.getItem('relate_m4_scored') || '{}')?.result; } catch { return undefined; } })(),
         }),
       });
       const data = await res.json();
@@ -742,6 +758,17 @@ function AccountPage() {
         {/* ── Dating Market ── */}
         {(marketData || marketLoading) && (
           <DatingMarketViz data={marketData} loading={marketLoading} />
+        )}
+
+        {/* ── Market Coaching ── */}
+        {marketData && (
+          <MarketCoaching
+            marketData={marketData}
+            demographics={demographics}
+            m3={fullM3 || m3Data?.result || null}
+            m4={fullM4 || m4Data?.result || null}
+            persona={m2Data?.personaMetadata || null}
+          />
         )}
 
         {/* ── Compatibility Rankings ── */}
@@ -1360,6 +1387,323 @@ function GrowthPlan({ m3, m4 }: { m3: M3Scored['result'] | null; m4: M4Scored['r
       </div>
     </section>
   );
+}
+
+// ── Market Coaching ──
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
+  marketData: MarketData | null;
+  demographics: Demographics;
+  m3: M3Scored['result'] | null;
+  m4: M4Scored['result'] | null;
+  persona: { name?: string; datingBehavior?: string[]; mostAttractive?: string[]; leastAttractive?: string[] } | null;
+}) {
+  if (!marketData?.matchPool || !marketData?.relateScore) return null;
+
+  const pool = marketData.matchPool;
+  const score = marketData.relateScore;
+  const funnel = pool.funnel || [];
+  const matchCount = marketData.matchCount ?? 0;
+  const prob = marketData.matchProbability;
+  const metro = marketData.location?.cbsaLabel || marketData.location?.cbsaName || 'your area';
+  const national = marketData.nationalComparison;
+  const components = score.components || {};
+
+  type Insight = { priority: 'high' | 'medium' | 'low'; title: string; description: string; action: string; category: 'score' | 'funnel' | 'honesty' | 'expansion' };
+  const insights: Insight[] = [];
+
+  // ─── 1. Relate Score Component Analysis ───
+
+  const compEntries = Object.entries(components).map(([k, v]: [string, any]) => ({
+    name: k,
+    local: v.local ?? v.score ?? 0,
+    weight: v.weight ?? 0,
+    weighted: (v.local ?? v.score ?? 0) * (v.weight ?? 0),
+  })).sort((a, b) => a.weighted - b.weighted);
+
+  // Weakest component coaching
+  const weakest = compEntries[0];
+  if (weakest && weakest.local < 40) {
+    const coaching: Record<string, { title: string; desc: string; action: string }> = {
+      income: {
+        title: 'Your Income Is Limiting You',
+        desc: `Your income ranks in the bottom ${Math.round(weakest.local)}% locally. For ${demographics.gender === 'Woman' ? 'women' : 'men'} in ${metro}, income carries ${Math.round(weakest.weight * 100)}% of your Relate Score weight.`,
+        action: 'Concrete paths: negotiate a raise at your current role, pursue a certification that increases earning power in your field, or explore a side income. Even a 20% income increase can move your score meaningfully.',
+      },
+      education: {
+        title: 'Education Is Holding You Back',
+        desc: `Your education level ranks in the bottom ${Math.round(weakest.local)}% locally. Higher education correlates with match probability and partner quality.`,
+        action: 'Consider professional certifications, online degrees, or skill-based credentials. Even one credential bump (e.g., associate to bachelor\'s, or adding a professional certification) shifts your percentile.',
+      },
+      age: {
+        title: 'Age Is Working Against You',
+        desc: `Your age score is ${Math.round(weakest.local)}. ${demographics.gender === 'Woman' ? 'For women, the dating market peaks younger and narrows faster — this is a structural reality, not a judgment.' : 'For men, age carries less weight but still matters. The market rewards established men in their 30s-40s most.'}`,
+        action: demographics.gender === 'Woman'
+          ? 'You can\'t change your age, but you can offset it: fitness, style, and a strong Relate profile matter more as you get older. Focus on what you control.'
+          : 'Offset age by maximizing income, fitness, and emotional maturity. Your assessment results are your edge — lead with depth.',
+      },
+      children: {
+        title: 'Having Kids Is Narrowing Your Pool',
+        desc: `Your children score is ${Math.round(weakest.local)}. Many singles in your age range prefer partners without existing children.`,
+        action: 'You can\'t change this, but you can position it as a strength: demonstrate that you\'re a capable, present parent. On dating profiles, show (don\'t tell) that your life is full, not burdened.',
+      },
+      ethnicity: {
+        title: 'Your Demographic Is Competitive Here',
+        desc: `Your ethnicity score is ${Math.round(weakest.local)} in ${metro}. This reflects local representation — a smaller population share means fewer people who share or prefer your background.`,
+        action: national && national.relateScore > score.score + 5
+          ? `Your national score is ${national.relateScore} vs ${score.score} locally. Consider whether a metro with a larger ${demographics.ethnicity || 'similar'} population would shift your odds.`
+          : 'Focus on what you control: income, fitness, and being genuinely interesting. Demographic headwinds are real but they\'re one factor among many.',
+      },
+    };
+
+    const c = coaching[weakest.name];
+    if (c) {
+      insights.push({ priority: 'high', title: c.title, description: c.desc, action: c.action, category: 'score' });
+    }
+  }
+
+  // Strongest component — acknowledge it
+  const strongest = compEntries[compEntries.length - 1];
+  if (strongest && strongest.local >= 70) {
+    insights.push({
+      priority: 'low',
+      title: `${strongest.name.charAt(0).toUpperCase() + strongest.name.slice(1)} Is Your Biggest Asset`,
+      description: `Your ${strongest.name} ranks in the top ${Math.round(100 - strongest.local)}% in ${metro}. This is pulling your Relate Score up.`,
+      action: 'Lead with this. Make sure your dating profile and real-life presentation reflect this strength.',
+      category: 'score',
+    });
+  }
+
+  // ─── 2. Funnel Bottleneck Analysis ───
+
+  // Find biggest non-milestone drops
+  const drops: { from: string; to: string; lostPct: number; lostCount: number; stageName: string }[] = [];
+  for (let i = 1; i < funnel.length; i++) {
+    const prev = funnel[i - 1];
+    const curr = funnel[i];
+    if (curr.isMilestone || prev.isMilestone) continue;
+    if (prev.count === 0) continue;
+    const lostPct = ((prev.count - curr.count) / prev.count) * 100;
+    const lostCount = prev.count - curr.count;
+    if (lostPct > 5) {
+      drops.push({ from: prev.stage, to: curr.stage, lostPct, lostCount, stageName: curr.stage });
+    }
+  }
+  drops.sort((a, b) => b.lostPct - a.lostPct);
+
+  // Top bottleneck
+  const biggestDrop = drops[0];
+  if (biggestDrop && biggestDrop.lostPct > 30) {
+    const isPhysical = /body type|fitness|height/i.test(biggestDrop.stageName);
+    const isIncome = /income/i.test(biggestDrop.stageName);
+    const isPolitical = /political/i.test(biggestDrop.stageName);
+
+    insights.push({
+      priority: 'high',
+      title: `Biggest Bottleneck: ${biggestDrop.stageName}`,
+      description: `This single filter eliminates ${Math.round(biggestDrop.lostPct)}% of your remaining pool (${biggestDrop.lostCount.toLocaleString()} people). Everything above this stage is fine — this is where your funnel chokes.`,
+      action: isPhysical
+        ? 'Physical preferences create the sharpest pool drops. Ask yourself: is this a genuine need, or a default? If you\'ve been happily attracted to people outside this filter before, consider expanding it.'
+        : isIncome
+        ? `You\'re requiring income levels that most people in ${metro} don\'t hit. If financial stability matters more than a specific number, consider lowering this threshold and screening for financial habits instead.`
+        : isPolitical
+        ? 'Political filters are binary eliminators. If you\'re filtering for agreement rather than values, consider including "Moderate" — many moderates are flexible on issues that matter to you.'
+        : `This filter removes a huge chunk of candidates. Evaluate whether it reflects a genuine dealbreaker or a nice-to-have masquerading as a requirement.`,
+      category: 'funnel',
+    });
+  }
+
+  // Second biggest if also severe
+  if (drops[1] && drops[1].lostPct > 25) {
+    insights.push({
+      priority: 'medium',
+      title: `Secondary Bottleneck: ${drops[1].stageName}`,
+      description: `Removes another ${Math.round(drops[1].lostPct)}% of your pool at that stage.`,
+      action: 'Combined with your primary bottleneck, these two filters account for most of your pool reduction. Relaxing just one could significantly improve your numbers.',
+      category: 'funnel',
+    });
+  }
+
+  // ─── 3. Expansion Opportunity ───
+
+  // idealPool vs localSinglePool ratio
+  if (pool.localSinglePool > 0 && pool.idealPool > 0) {
+    const selectivityPct = (pool.idealPool / pool.localSinglePool) * 100;
+    if (selectivityPct < 1) {
+      insights.push({
+        priority: 'high',
+        title: 'Your Preferences Filter Out 99%+ of Singles',
+        description: `Of ${pool.localSinglePool.toLocaleString()} local singles, only ${pool.idealPool.toLocaleString()} (${selectivityPct.toFixed(2)}%) meet all your criteria. You are selecting from the absolute tip of the distribution.`,
+        action: 'This level of selectivity is mathematically difficult — not wrong, but it means you may need to meet hundreds of people to find one match. Review your funnel to see which filters you could relax without compromising what actually matters to you.',
+        category: 'expansion',
+      });
+    } else if (selectivityPct < 5) {
+      insights.push({
+        priority: 'medium',
+        title: 'You\'re Highly Selective',
+        description: `Only ${selectivityPct.toFixed(1)}% of local singles meet all your criteria. That\'s a small but real pool of ${pool.idealPool.toLocaleString()} people.`,
+        action: 'This is workable, but leave room for surprise. Some of your best matches might not check every box on paper.',
+        category: 'expansion',
+      });
+    }
+  }
+
+  // ─── 4. Cross-Reference: Assessment vs Market Preferences ───
+
+  // Want/Offer gap vs physical selectivity
+  const wantScore = m3?.wantScore ?? 0;
+  const offerScore = m3?.offerScore ?? 0;
+  const gap = wantScore - offerScore;
+  const prefBodyTypes = (demographics as any).prefBodyTypes || (demographics as any).pref_body_types || [];
+  const prefFitness = (demographics as any).prefFitnessLevels || (demographics as any).pref_fitness_levels || [];
+  const userFitness = (demographics as any).fitness || (demographics as any).fitness_level || '';
+  const userBodyType = (demographics as any).bodyType || (demographics as any).body_type || '';
+
+  // Wants hot partners but assessment says they want depth
+  const wantsOnlyFit = prefBodyTypes.length > 0
+    && !prefBodyTypes.includes('No preference')
+    && prefBodyTypes.every((t: string) => t === 'Lean or Fit');
+  const wantsOnlyHighFitness = prefFitness.length > 0
+    && !prefFitness.includes('No preference')
+    && prefFitness.every((l: string) => ['4 to 6 days a week', 'Every day'].includes(l));
+
+  if ((wantsOnlyFit || wantsOnlyHighFitness) && gap > 15) {
+    // They want a lot but are very selective on physicals — possible mismatch
+    const userIsntFitThemselves = !['Lean or Fit'].includes(userBodyType)
+      || !['4 to 6 days a week', 'Every day'].includes(userFitness);
+
+    if (userIsntFitThemselves) {
+      insights.push({
+        priority: 'high',
+        title: 'Honesty Check: Physical Standards vs. What You Offer',
+        description: `Your assessment shows a Want/Offer gap of +${gap} — you want significantly more than you offer. At the same time, you\'re filtering for only fit/lean partners who exercise intensely. But your own fitness and body type don\'t meet the standard you\'re setting for others.`,
+        action: 'Two paths: (1) Get in the gym. Seriously. Consistent exercise 4+ days a week for 6 months will change your body, your confidence, and your Relate Score. (2) Or expand your physical preferences — attraction grows in person in ways a filter can\'t predict.',
+        category: 'honesty',
+      });
+    }
+  }
+
+  // Wants physical attractiveness but doesn't exercise
+  if (wantsOnlyFit && ['Never', '1 day a week'].includes(userFitness)) {
+    insights.push({
+      priority: 'high',
+      title: 'You Want Fit Partners but Don\'t Exercise',
+      description: `You\'re filtering for "Lean or Fit" body types, but you exercise ${userFitness === 'Never' ? 'never' : 'once a week'}. Attractive, fit people tend to date other fit people.`,
+      action: 'Start with 3 days a week of exercise — even walking. Build to 4-5 days. This is the single highest-ROI change you can make: it improves your Relate Score, your health, your confidence, and your attractiveness to the people you want to date.',
+      category: 'honesty',
+    });
+  }
+
+  // Wants high income but has low income themselves
+  const prefIncome = (demographics as any).prefIncome ?? (demographics as any).pref_income_min ?? 0;
+  const userIncome = (demographics as any).income ?? 0;
+  const incomeComponent = components.income;
+  if (prefIncome > 0 && userIncome > 0 && prefIncome > userIncome * 1.5 && incomeComponent?.local && incomeComponent.local < 40) {
+    insights.push({
+      priority: 'medium',
+      title: 'You\'re Requiring Income You Don\'t Match',
+      description: `You require partners earning ${formatIncome(prefIncome)}+, but your own income puts you in the bottom ${Math.round(incomeComponent.local)}% locally. High earners typically partner with high earners.`,
+      action: 'Focus on increasing your own income first. Alternatively, lower your income floor and look for financial responsibility rather than a specific number — someone who saves, invests, and lives within their means.',
+      category: 'honesty',
+    });
+  }
+
+  // Conflict style coaching that affects dating
+  const driver = m4?.emotionalDrivers?.primary;
+  if (driver === 'abandonment' && matchCount < 50) {
+    insights.push({
+      priority: 'medium',
+      title: 'Small Pool + Abandonment Fear = Scarcity Spiral',
+      description: `With only ${matchCount} estimated matches and abandonment as your primary emotional driver, you\'re at risk of clinging to anyone who shows interest rather than choosing wisely.`,
+      action: 'Work on your abandonment patterns (see Growth Plan above) before actively dating. A small pool requires patience and confidence — not desperation. Therapy that targets attachment anxiety will serve you better than loosening your standards.',
+      category: 'honesty',
+    });
+  }
+
+  // Geographic arbitrage opportunity
+  if (national && national.matchCount > matchCount * 3 && matchCount < 100) {
+    insights.push({
+      priority: 'low',
+      title: 'Your Market Is Better Elsewhere',
+      description: `Nationally, your estimated matches jump to ${national.matchCount.toLocaleString()} vs. ${matchCount.toLocaleString()} locally. ${metro} may not be the best market for what you\'re looking for.`,
+      action: 'If relocation is feasible, research metros with better demographics for your profile. Even within your state, a larger metro might triple your pool. Dating apps with wider radius settings can help in the short term.',
+      category: 'expansion',
+    });
+  }
+
+  // Match probability coaching
+  if (prob && prob.rate < 0.05) {
+    insights.push({
+      priority: 'medium',
+      title: 'Your Match Probability Is Below 5%',
+      description: `Even within your ideal pool, only ${prob.percentage} of people would likely be mutually interested. This is driven by your Relate Score of ${score.score}.`,
+      action: 'Improve your Relate Score by focusing on your weakest component. A 10-point score improvement can nearly double your match probability due to the sigmoid curve — small gains compound.',
+      category: 'score',
+    });
+  }
+
+  if (insights.length === 0) return null;
+
+  // Sort: high > medium > low
+  const priorityOrder = { high: 0, medium: 1, low: 2 };
+  insights.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+
+  const categoryIcon: Record<string, string> = {
+    score: 'S',
+    funnel: 'F',
+    honesty: '!',
+    expansion: '+',
+  };
+  const categoryLabel: Record<string, string> = {
+    score: 'Score',
+    funnel: 'Funnel',
+    honesty: 'Reality Check',
+    expansion: 'Opportunity',
+  };
+
+  function priorityBadge(p: 'high' | 'medium' | 'low') {
+    const styles = {
+      high: 'bg-danger/10 text-danger',
+      medium: 'bg-warning/10 text-warning',
+      low: 'bg-stone-100 text-secondary',
+    };
+    return styles[p];
+  }
+
+  return (
+    <section className="card mb-4">
+      <h2 className="font-serif text-lg font-semibold mb-1">Market Coaching</h2>
+      <p className="text-xs text-secondary mb-5">Actionable insights from your dating market data and assessment results</p>
+
+      <div className="space-y-4">
+        {insights.map((insight, i) => (
+          <div key={i} className="border border-border rounded-md p-3">
+            <div className="flex items-start gap-2 mb-2">
+              <span className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded ${priorityBadge(insight.priority)}`}>
+                {insight.priority}
+              </span>
+              <span className="text-[10px] font-mono text-secondary bg-stone-50 px-1.5 py-0.5 rounded">
+                {categoryIcon[insight.category]} {categoryLabel[insight.category]}
+              </span>
+              <h3 className="text-sm font-medium leading-tight">{insight.title}</h3>
+            </div>
+            <p className="text-xs text-secondary mb-2">{insight.description}</p>
+            <div className="bg-stone-50 border border-border rounded p-2">
+              <span className="text-[10px] font-mono text-accent uppercase tracking-wider">What to do</span>
+              <p className="text-xs text-secondary mt-1">{insight.action}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+function formatIncome(n: number): string {
+  if (n >= 1000) return `$${(n / 1000).toFixed(0)}k`;
+  return `$${n.toLocaleString()}`;
 }
 
 function Row({ label, value }: { label: string; value: string }) {

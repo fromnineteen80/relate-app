@@ -194,6 +194,9 @@ export default function ResultsDashboard() {
           matches: report.matches,
           individualCompatibility: report.individualCompatibility,
           marketData: marketData || undefined,
+          demographics: (() => { try { return JSON.parse(localStorage.getItem('relate_demographics') || '{}'); } catch { return undefined; } })(),
+          fullM3: (() => { try { return JSON.parse(localStorage.getItem('relate_m3_scored') || '{}')?.result; } catch { return undefined; } })(),
+          fullM4: (() => { try { return JSON.parse(localStorage.getItem('relate_m4_scored') || '{}')?.result; } catch { return undefined; } })(),
         }),
       });
       const data = await res.json();
