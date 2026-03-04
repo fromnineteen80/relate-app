@@ -675,9 +675,9 @@ function AccountPage() {
                         {mockUpgrading ? 'Processing...' : `Upgrade to ${(PRICING[tier]?.label || tier)}`}
                       </button>
                     ) : (
-                      <Link href={`/api/checkout?product=${tier}&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
+                      <a href={`/api/checkout?product=${tier}&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
                         Upgrade to {(PRICING[tier]?.label || tier)}
-                      </Link>
+                      </a>
                     )
                   ) : (
                     <button onClick={() => {
@@ -1040,9 +1040,9 @@ function AccountPage() {
                     {downloading ? 'Preparing...' : 'Download'}
                   </button>
                 ) : (
-                  <Link href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary text-xs flex-shrink-0">
+                  <a href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary text-xs flex-shrink-0">
                     Upgrade
-                  </Link>
+                  </a>
                 )}
               </div>
               <div className="flex items-center gap-4 py-2 border-b border-border">
@@ -1059,9 +1059,9 @@ function AccountPage() {
                     {downloadingCoach ? 'Preparing...' : 'Download'}
                   </button>
                 ) : (
-                  <Link href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary text-xs flex-shrink-0">
+                  <a href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary text-xs flex-shrink-0">
                     Upgrade
-                  </Link>
+                  </a>
                 )}
               </div>
               <div className="flex items-center gap-4 py-2">
@@ -1078,9 +1078,9 @@ function AccountPage() {
                     {downloadingCoach ? 'Preparing...' : 'Download'}
                   </button>
                 ) : (
-                  <Link href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary text-xs flex-shrink-0">
+                  <a href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary text-xs flex-shrink-0">
                     Upgrade
-                  </Link>
+                  </a>
                 )}
               </div>
             </div>

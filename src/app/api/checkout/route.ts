@@ -6,14 +6,15 @@ export async function GET(request: NextRequest) {
   const product = (searchParams.get('product') || 'plus') as PricingTier;
   const email = searchParams.get('email') || '';
   const useMockPayments = process.env.NEXT_PUBLIC_MOCK_PAYMENTS === 'true';
+  const origin = process.env.NEXT_PUBLIC_URL || new URL(request.url).origin;
 
   if (!PRICING[product] || product === 'free') {
-    return NextResponse.json({ error: 'Invalid product' }, { status: 400 });
+    return NextResponse.redirect(new URL('/account?error=invalid_product', origin));
   }
 
   if (useMockPayments) {
     const successPath = product === 'couples' ? '/results/compare?success=true' : '/account?success=true';
-    return NextResponse.redirect(new URL(`${successPath}&product=${product}`, request.url));
+    return NextResponse.redirect(new URL(`${successPath}&product=${product}`, origin));
   }
 
   try {
@@ -21,12 +22,12 @@ export async function GET(request: NextRequest) {
     const tier = PRICING[product];
 
     const successUrl = product === 'couples'
-      ? `${process.env.NEXT_PUBLIC_URL}/results/compare?success=true`
-      : `${process.env.NEXT_PUBLIC_URL}/account?success=true`;
+      ? `${origin}/results/compare?success=true`
+      : `${origin}/account?success=true`;
 
     const cancelUrl = product === 'couples'
-      ? `${process.env.NEXT_PUBLIC_URL}/results/compare?canceled=true`
-      : `${process.env.NEXT_PUBLIC_URL}/account?canceled=true`;
+      ? `${origin}/results/compare?canceled=true`
+      : `${origin}/account?canceled=true`;
 
     // Find or create a Stripe customer for this email
     let customerId: string | undefined;
@@ -68,9 +69,15 @@ export async function GET(request: NextRequest) {
 
     const session = await stripe.checkout.sessions.create(sessionConfig);
 
-    return NextResponse.redirect(session.url);
+    if (!session.url) {
+      return NextResponse.redirect(new URL('/account?error=checkout_no_url', origin));
+    }
+
+    // Use 303 See Other for the redirect to Stripe
+    return NextResponse.redirect(session.url, 303);
   } catch (error: unknown) {
     console.error('Checkout error:', error);
-    return NextResponse.json({ error: 'Checkout failed' }, { status: 500 });
+    // Never return raw JSON — redirect back with error flag
+    return NextResponse.redirect(new URL(`/account?error=checkout_failed`, origin));
   }
 }
