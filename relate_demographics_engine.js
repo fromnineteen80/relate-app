@@ -7,7 +7,7 @@
  * 
  * Data Sources:
  * - CBSA Data: https://raw.githubusercontent.com/fromnineteen80/salaryarc/main/cbsa-data.js
- * - ZIP Data: https://raw.githubusercontent.com/fromnineteen80/salaryarc/main/zip-lat-lng.json
+ * - ZIP Data: https://raw.githubusercontent.com/fromnineteen80/salaryarc/main/zip-centroids.js
  */
 
 // ============================================================================
@@ -16,7 +16,7 @@
 
 const DATA_URLS = {
   cbsa: 'https://raw.githubusercontent.com/fromnineteen80/salaryarc/main/cbsa-data.js',
-  zip: 'https://raw.githubusercontent.com/fromnineteen80/salaryarc/main/zip-lat-lng.json'
+  zip: 'https://raw.githubusercontent.com/fromnineteen80/salaryarc/main/zip-centroids.js'
 };
 
 // ============================================================================
@@ -570,23 +570,27 @@ let cbsaData = null;
 let zipData = null;
 
 /**
- * Load CBSA data from remote source
+ * Evaluate a JS data file and return the named variable.
+ * Handles files like: const SOME_VAR = { ... }; export { SOME_VAR }; module.exports = ...
+ */
+function evalJSDataFile(text, varName) {
+  // Strip ES module exports (export { ... }) which are syntax errors in Function()
+  const clean = text.replace(/export\s+\{[^}]*\}\s*;?/g, '');
+  // Provide a fake `module` so CommonJS exports don't error
+  const fn = new Function('module', clean + '\nreturn ' + varName + ';');
+  return fn({ exports: {} });
+}
+
+/**
+ * Load CBSA data from remote source — returns an object keyed by metro label
  */
 async function loadCBSAData() {
   if (cbsaData) return cbsaData;
-  
+
   try {
     const response = await fetch(DATA_URLS.cbsa);
     const text = await response.text();
-    // The file is a JS file, so we need to extract the data
-    // Assuming it exports an array or object
-    const match = text.match(/(?:module\.exports\s*=\s*|export\s+default\s+|const\s+\w+\s*=\s*)(\[[\s\S]*\]|\{[\s\S]*\})/);
-    if (match) {
-      cbsaData = JSON.parse(match[1].replace(/'/g, '"'));
-    } else {
-      // Try eval as fallback (only in controlled environment)
-      cbsaData = eval('(' + text.replace(/module\.exports\s*=\s*/, '').replace(/export\s+default\s+/, '') + ')');
-    }
+    cbsaData = evalJSDataFile(text, 'CBSA_DATA');
     return cbsaData;
   } catch (error) {
     console.error('Failed to load CBSA data:', error);
@@ -595,14 +599,15 @@ async function loadCBSAData() {
 }
 
 /**
- * Load ZIP code data from remote source
+ * Load ZIP code data from remote source — returns an object keyed by ZIP code
  */
 async function loadZIPData() {
   if (zipData) return zipData;
-  
+
   try {
     const response = await fetch(DATA_URLS.zip);
-    zipData = await response.json();
+    const text = await response.text();
+    zipData = evalJSDataFile(text, 'ZIP_CENTROIDS');
     return zipData;
   } catch (error) {
     console.error('Failed to load ZIP data:', error);
@@ -640,7 +645,7 @@ async function findCBSAFromZIP(zipCode) {
   let closestCBSA = null;
   let minDistance = Infinity;
   
-  for (const cbsa of cbsas) {
+  for (const cbsa of Object.values(cbsas)) {
     if (cbsa.lat && cbsa.lng) {
       const distance = haversineDistance(lat, lng, cbsa.lat, cbsa.lng);
       if (distance < minDistance) {
@@ -669,7 +674,7 @@ async function findCBSAFromZIP(zipCode) {
  */
 async function getCBSAByCode(cbsaCode) {
   const cbsas = await loadCBSAData();
-  return cbsas.find(c => c.cbsa === cbsaCode || c.cbsa === String(cbsaCode));
+  return Object.values(cbsas).find(c => c.cbsa === cbsaCode || c.cbsa === String(cbsaCode));
 }
 
 // ============================================================================
@@ -1263,7 +1268,7 @@ async function compareMetros(userProfile, preferences, cbsaCodes) {
   const results = [];
   
   for (const code of cbsaCodes) {
-    const cbsa = cbsas.find(c => c.cbsa === code || c.cbsa === String(code));
+    const cbsa = Object.values(cbsas).find(c => c.cbsa === code || c.cbsa === String(code));
     if (!cbsa) continue;
     
     const relateScore = calculateRelateScore(userProfile, cbsa);

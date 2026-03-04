@@ -83,23 +83,25 @@ export default function ProfileSetupPage() {
     setTimeout(() => setSavedToast(false), 1500);
   }, [firstName, lastName, zipCode, city, state, county, photoUrl, user]);
 
-  // Zip code lookup — clear stale metro/state when zip changes, re-lookup when 5 digits
+  // Zip code lookup — re-lookup when zip changes to a new 5-digit value
   useEffect(() => {
     if (zipCode.length !== 5) {
       setCity('');
       setState('');
+      setZipLoading(false);
       return;
     }
     let cancelled = false;
     setZipLoading(true);
-    setCity('');
-    setState('');
     lookupZip(zipCode).then(result => {
       if (cancelled) return;
       setZipLoading(false);
       if (result) {
         setCity(result.city);
         setState(result.state);
+      } else {
+        setCity('');
+        setState('');
       }
     });
     return () => { cancelled = true; };
