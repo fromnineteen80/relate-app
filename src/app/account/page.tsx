@@ -143,6 +143,8 @@ function AccountPage() {
   const [m4Data, setM4Data] = useState<M4Scored | null>(null);
   const [matches, setMatches] = useState<MatchResult[]>([]);
   const [downloading, setDownloading] = useState(false);
+  const [downloadingCoach, setDownloadingCoach] = useState(false);
+  const [showCoachInfo, setShowCoachInfo] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   // Full results for richer graphics / coaching
   const [fullM3, setFullM3] = useState<M3Scored['result'] | null>(null);
@@ -380,6 +382,53 @@ function AccountPage() {
       console.error('PDF download failed:', err);
     } finally {
       setDownloading(false);
+    }
+  }, [marketData]);
+
+  const handleDownloadCoach = useCallback(async () => {
+    const resultsStr = localStorage.getItem('relate_results');
+    if (!resultsStr) return;
+    setDownloadingCoach(true);
+    try {
+      const report = JSON.parse(resultsStr);
+      const demoData = (() => { try { return JSON.parse(localStorage.getItem('relate_demographics') || '{}'); } catch { return {}; } })();
+      const m3Full = (() => { try { return JSON.parse(localStorage.getItem('relate_m3_scored') || '{}')?.result; } catch { return undefined; } })();
+      const m4Full = (() => { try { return JSON.parse(localStorage.getItem('relate_m4_scored') || '{}')?.result; } catch { return undefined; } })();
+      const couplesData = (() => { try { return JSON.parse(localStorage.getItem('relate_couples_report') || 'null'); } catch { return null; } })();
+
+      const res = await fetch('/api/generate-coach-prompt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          persona: report.persona,
+          dimensions: report.dimensions,
+          m3: m3Full || report.m3,
+          m4: m4Full || report.m4,
+          matches: report.matches,
+          individualCompatibility: report.individualCompatibility,
+          marketData: marketData || undefined,
+          demographics: demoData,
+          couplesReport: couplesData || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (data.prompt) {
+        // Download as .md file
+        const blob = new Blob([data.prompt], { type: 'text/markdown' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = data.filename || 'RELATE-Coach.md';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        setShowCoachInfo(true);
+      }
+    } catch (err) {
+      console.error('Coach prompt download failed:', err);
+    } finally {
+      setDownloadingCoach(false);
     }
   }, [marketData]);
 
@@ -831,7 +880,7 @@ function AccountPage() {
                   View
                 </Link>
               </div>
-              <div className="flex items-center justify-between py-2">
+              <div className="flex items-center justify-between py-2 border-b border-border">
                 <div>
                   <p className="text-sm font-medium">Full PDF Report</p>
                   <p className="text-xs text-secondary">
@@ -850,7 +899,59 @@ function AccountPage() {
                   </Link>
                 )}
               </div>
+              <div className="flex items-center justify-between py-2">
+                <div>
+                  <p className="text-sm font-medium">Claude AI Coach</p>
+                  <p className="text-xs text-secondary">
+                    {canDownload
+                      ? 'Personalized coaching prompt for Claude.ai — your results, market data, and patterns'
+                      : 'Available with Plus, Premium, or Couples'}
+                  </p>
+                </div>
+                {canDownload ? (
+                  <button onClick={handleDownloadCoach} disabled={downloadingCoach} className="btn-primary text-xs">
+                    {downloadingCoach ? 'Preparing...' : 'Download'}
+                  </button>
+                ) : (
+                  <Link href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary text-xs">
+                    Upgrade
+                  </Link>
+                )}
+              </div>
             </div>
+
+            {showCoachInfo && (
+              <div className="mt-4 p-4 bg-accent/5 border border-accent/20 rounded-md">
+                <h3 className="text-sm font-semibold mb-2">How to Use Your Claude AI Coach</h3>
+                <p className="text-xs text-secondary mb-3">
+                  Your personalized coaching file has been downloaded. Here&apos;s how to set it up:
+                </p>
+                <ol className="text-xs text-secondary space-y-2 list-decimal list-inside">
+                  <li>
+                    <strong>Go to <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai</a></strong> and sign in (free or Pro account)
+                  </li>
+                  <li>
+                    <strong>Create a new Project:</strong> Click &quot;Projects&quot; in the sidebar, then &quot;Create Project&quot;. Name it something like &quot;RELATE Coach&quot;
+                  </li>
+                  <li>
+                    <strong>Add your coach file:</strong> In the project, click &quot;Add content&quot; and upload the <code className="bg-stone-100 px-1 rounded">.md</code> file you just downloaded. This becomes Claude&apos;s permanent context for coaching you
+                  </li>
+                  <li>
+                    <strong>Start chatting:</strong> Open a new conversation within that project. Claude now knows your full assessment results, dating market data, conflict patterns, and relationship style
+                  </li>
+                </ol>
+                <div className="mt-3 p-2 bg-stone-50 border border-border rounded">
+                  <p className="text-[11px] text-secondary">
+                    <strong>What you can ask:</strong> &quot;Should I lower my income filter?&quot; &middot; &quot;I just had a fight with my partner about X&quot; &middot;
+                    &quot;Is this person a good match for me?&quot; &middot; &quot;Help me write a dating profile&quot; &middot;
+                    &quot;What should I work on this week?&quot; &middot; &quot;We had our first conflict — analyze what happened&quot;
+                  </p>
+                </div>
+                <button onClick={() => setShowCoachInfo(false)} className="mt-3 text-xs text-secondary hover:text-primary underline">
+                  Dismiss
+                </button>
+              </div>
+            )}
           </section>
         )}
 
