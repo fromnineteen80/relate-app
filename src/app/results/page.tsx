@@ -274,12 +274,16 @@ function ResultsDashboard() {
   const dimensions = report?.dimensions || {};
   const hasDimensions = Object.keys(dimensions).length > 0;
   const m3 = report?.m3;
-  const m4Summary = report?.m4?.summary;
+  const m4 = report?.m4;
+  const m4Summary = m4?.summary;
   const matches = report?.matches || [];
   const freeMatchLimit = 3;
   const visibleMatches = hasPaid ? matches : matches.slice(0, freeMatchLimit);
   const ic = report?.individualCompatibility;
   const hasMarket = !!(marketData || marketLoading);
+  const tensionStacks = report?.tensionStacks;
+  const modifiers = report?.modifiers;
+  const gottman = m4?.gottmanScreener || m4?.gottmanScores;
 
   let fullM3: any = null;
   let fullM4: any = null;
@@ -292,6 +296,7 @@ function ResultsDashboard() {
     { id: 'dimensions', label: 'Dimensions', show: hasDimensions },
     { id: 'connection', label: 'Connection', show: !!m3 },
     { id: 'conflict', label: 'Conflict', show: !!m4Summary },
+    { id: 'insights', label: 'Insights', show: !!tensionStacks },
     { id: 'market', label: 'Market', show: hasMarket },
     { id: 'matches', label: 'Matches', show: matches.length > 0 },
     { id: 'downloads', label: 'Downloads', show: canDownload },
@@ -347,7 +352,57 @@ function ResultsDashboard() {
                 <Link href="/results/persona" className="btn-secondary text-xs">Details</Link>
               </div>
             </div>
-            {persona.traits && <p className="text-sm text-secondary">{persona.traits}</p>}
+            {persona.traits && <p className="text-sm text-secondary mb-4">{persona.traits}</p>}
+
+            {/* Dating Behavior */}
+            {persona.datingBehavior?.length > 0 && (
+              <div className="mb-4">
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Dating Behavior</span>
+                <ul className="mt-2 space-y-1.5">
+                  {persona.datingBehavior.map((b: string, i: number) => (
+                    <li key={i} className="text-sm flex gap-2"><span className="text-accent">&#8226;</span>{b}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Strengths & Growth */}
+            {(persona.mostAttractive?.length > 0 || persona.leastAttractive?.length > 0) && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {persona.mostAttractive?.length > 0 && (
+                  <div>
+                    <span className="text-xs font-mono text-success uppercase tracking-wider">Most Attractive Qualities</span>
+                    <ul className="mt-2 space-y-1">
+                      {persona.mostAttractive.map((item: string, i: number) => (
+                        <li key={i} className="text-sm text-secondary">{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {persona.leastAttractive?.length > 0 && (
+                  <div>
+                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Growth Areas</span>
+                    <ul className="mt-2 space-y-1">
+                      {persona.leastAttractive.map((item: string, i: number) => (
+                        <li key={i} className="text-sm text-secondary">{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* In Relationships */}
+            {persona.inRelationships?.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">In Relationships</span>
+                <ul className="mt-2 space-y-1.5">
+                  {persona.inRelationships.map((b: string, i: number) => (
+                    <li key={i} className="text-sm flex gap-2"><span className="text-accent">&#8226;</span>{b}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </section>
         )}
 
@@ -376,7 +431,7 @@ function ResultsDashboard() {
         {m3 && (
           <section id="connection" className="card mb-6 scroll-mt-28">
             <h3 className="font-serif text-lg font-semibold mb-3">Connection Style</h3>
-            <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="grid grid-cols-3 gap-4 text-center mb-4">
               <div>
                 <span className="font-mono text-2xl font-semibold">{m3.wantScore ?? '-'}</span>
                 <p className="text-xs text-secondary mt-1">Want Score</p>
@@ -390,6 +445,40 @@ function ResultsDashboard() {
                 <p className="text-xs text-secondary mt-1">Type</p>
               </div>
             </div>
+            {m3.wantOfferGap !== undefined && (
+              <p className="text-xs text-secondary text-center mb-4">
+                Gap: <span className={`font-mono ${Math.abs(m3.wantOfferGap) <= 5 ? 'text-success' : Math.abs(m3.wantOfferGap) <= 20 ? 'text-warning' : 'text-danger'}`}>
+                  {m3.wantOfferGap > 0 ? '+' : ''}{m3.wantOfferGap}
+                </span>
+              </p>
+            )}
+            {m3.typeDescription && (
+              <p className="text-sm text-secondary mb-4">{m3.typeDescription}</p>
+            )}
+            {m3.typeDetails && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border">
+                {m3.typeDetails.strengths?.length > 0 && (
+                  <div>
+                    <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
+                    <ul className="mt-2 space-y-1">
+                      {m3.typeDetails.strengths.map((s: string, i: number) => (
+                        <li key={i} className="text-sm text-secondary">{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {m3.typeDetails.challenges?.length > 0 && (
+                  <div>
+                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
+                    <ul className="mt-2 space-y-1">
+                      {m3.typeDetails.challenges.map((c: string, i: number) => (
+                        <li key={i} className="text-sm text-secondary">{c}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
           </section>
         )}
 
@@ -397,7 +486,7 @@ function ResultsDashboard() {
         {m4Summary && (
           <section id="conflict" className="card mb-6 scroll-mt-28">
             <h3 className="font-serif text-lg font-semibold mb-3">Conflict Profile</h3>
-            <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="grid grid-cols-2 gap-3 text-sm mb-4">
               {[
                 ['Approach', m4Summary.approach],
                 ['Primary Driver', m4Summary.primaryDriver],
@@ -411,6 +500,41 @@ function ResultsDashboard() {
                 </div>
               ))}
             </div>
+
+            {/* Gottman Four Horsemen */}
+            {gottman?.horsemen && Object.keys(gottman.horsemen).length > 0 && (
+              <div className="pt-4 border-t border-border">
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Gottman Four Horsemen</span>
+                {gottman.overallRisk && (
+                  <p className="text-xs mt-1 mb-3">
+                    Overall risk: <span className={`font-mono ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-warning' : 'text-success'}`}>
+                      {gottman.overallRisk}
+                    </span>
+                  </p>
+                )}
+                <div className="space-y-3">
+                  {Object.entries(gottman.horsemen).map(([name, data]: [string, any]) => {
+                    if (!data) return null;
+                    const riskColor = data.riskLevel === 'high' ? 'text-danger' : data.riskLevel === 'medium' ? 'text-warning' : 'text-success';
+                    const barColor = data.riskLevel === 'high' ? 'bg-danger' : data.riskLevel === 'medium' ? 'bg-warning' : 'bg-success';
+                    return (
+                      <div key={name}>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm capitalize font-medium">{name}</span>
+                          <span className={`text-xs font-mono ${riskColor}`}>{data.riskLevel || '-'} ({data.score ?? '-'})</span>
+                        </div>
+                        <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden mb-1">
+                          <div className={`h-full rounded-full ${barColor}`} style={{ width: `${Math.min(100, (data.score ?? 0) * 10)}%` }} />
+                        </div>
+                        {data.antidote && (
+                          <p className="text-xs text-secondary">Antidote: {data.antidote}</p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </section>
         )}
 
@@ -567,6 +691,177 @@ function ResultsDashboard() {
           </section>
         )}
 
+        {/* ── Tension Stacks / Insights ── */}
+        {tensionStacks && Object.keys(tensionStacks).length > 0 && (
+          <section id="insights" className="mb-6 scroll-mt-28">
+            <h3 className="font-serif text-lg font-semibold mb-4">Relationship Insights</h3>
+            <div className="space-y-4">
+              {Object.entries(tensionStacks).map(([key, stack]: [string, any]) => {
+                if (!stack || typeof stack !== 'object') return null;
+                const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, (s: string) => s.toUpperCase()).trim();
+                return (
+                  <div key={key} className="card">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
+                        {stack.patternName && <h4 className="text-sm font-semibold mt-1">{stack.patternName}</h4>}
+                      </div>
+                      {stack.tensionLevel !== undefined && (
+                        <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+                          stack.tensionLevel === 'high' ? 'bg-danger/10 text-danger' :
+                          stack.tensionLevel === 'medium' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
+                        }`}>
+                          {stack.tensionLevel}
+                        </span>
+                      )}
+                    </div>
+                    {stack.patternDescription && <p className="text-sm text-secondary mb-3">{stack.patternDescription}</p>}
+                    {stack.starterNarrative && <p className="text-sm mb-3">{stack.starterNarrative}</p>}
+                    {Array.isArray(stack.customizations) && stack.customizations.length > 0 && (
+                      <div className="mb-3">
+                        <span className="text-xs font-mono text-secondary uppercase tracking-wider">Key Patterns</span>
+                        <ul className="mt-1.5 space-y-1">
+                          {stack.customizations.map((c: string, i: number) => (
+                            <li key={i} className="text-sm flex gap-2"><span className="text-accent">&#8226;</span>{c}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {Array.isArray(stack.risks) && stack.risks.length > 0 && (
+                        <div>
+                          <span className="text-xs font-mono text-warning uppercase tracking-wider">Risks</span>
+                          <ul className="mt-1.5 space-y-1">
+                            {stack.risks.map((r: string, i: number) => (
+                              <li key={i} className="text-xs text-secondary">{r}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {stack.growthPath && (
+                        <div>
+                          <span className="text-xs font-mono text-success uppercase tracking-wider">Growth Path</span>
+                          {Array.isArray(stack.growthPath) ? (
+                            <ul className="mt-1.5 space-y-1">
+                              {stack.growthPath.map((g: string, i: number) => (
+                                <li key={i} className="text-xs text-secondary">{g}</li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="text-xs text-secondary mt-1.5">{stack.growthPath}</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    {stack.signals && (
+                      <div className="mt-3 pt-3 border-t border-border">
+                        <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
+                        {Array.isArray(stack.signals) ? (
+                          <ul className="mt-1.5 space-y-1">
+                            {stack.signals.map((s: string, i: number) => (
+                              <li key={i} className="text-xs text-secondary">{s}</li>
+                            ))}
+                          </ul>
+                        ) : typeof stack.signals === 'object' ? (
+                          <div className="mt-1.5 space-y-1">
+                            {Object.entries(stack.signals).map(([k, v]: [string, any]) => (
+                              <p key={k} className="text-xs text-secondary"><span className="font-mono capitalize">{k}:</span> {String(v)}</p>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-xs text-secondary mt-1.5">{String(stack.signals)}</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* ── Relationship Capacity / Modifiers ── */}
+        {modifiers && (
+          <section className="card mb-6">
+            <h3 className="font-serif text-lg font-semibold mb-3">Relationship Capacity</h3>
+            {modifiers.relationshipCapacity && (
+              <div className="mb-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="font-mono text-2xl font-semibold">
+                    {typeof modifiers.relationshipCapacity === 'object' ? modifiers.relationshipCapacity.score ?? modifiers.relationshipCapacity.level ?? '-' : modifiers.relationshipCapacity}
+                  </span>
+                  {modifiers.relationshipCapacity.level && (
+                    <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+                      modifiers.relationshipCapacity.level === 'high' ? 'bg-success/10 text-success' :
+                      modifiers.relationshipCapacity.level === 'medium' ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
+                    }`}>
+                      {modifiers.relationshipCapacity.level}
+                    </span>
+                  )}
+                </div>
+                {modifiers.relationshipCapacity.description && (
+                  <p className="text-sm text-secondary">{modifiers.relationshipCapacity.description}</p>
+                )}
+              </div>
+            )}
+            {Array.isArray(modifiers.strengths) && modifiers.strengths.length > 0 && (
+              <div className="mb-3">
+                <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
+                <ul className="mt-1.5 space-y-1">
+                  {modifiers.strengths.map((s: string, i: number) => (
+                    <li key={i} className="text-sm text-secondary">{s}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {Array.isArray(modifiers.growthAreas) && modifiers.growthAreas.length > 0 && (
+              <div className="mb-3">
+                <span className="text-xs font-mono text-warning uppercase tracking-wider">Growth Areas</span>
+                <ul className="mt-1.5 space-y-1">
+                  {modifiers.growthAreas.map((g: string, i: number) => (
+                    <li key={i} className="text-sm text-secondary">{g}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {Array.isArray(modifiers.coachingRecommendations) && modifiers.coachingRecommendations.length > 0 && (
+              <div className="pt-3 border-t border-border">
+                <span className="text-xs font-mono text-accent uppercase tracking-wider">Recommendations</span>
+                <ul className="mt-1.5 space-y-1.5">
+                  {modifiers.coachingRecommendations.map((rec: any, i: number) => (
+                    <li key={i} className="text-sm">
+                      {typeof rec === 'string' ? rec : (
+                        <div>
+                          {rec.title && <span className="font-medium">{rec.title}: </span>}
+                          <span className="text-secondary">{rec.description || rec.recommendation || JSON.stringify(rec)}</span>
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {modifiers.modifierList && Array.isArray(modifiers.modifierList) && modifiers.modifierList.length > 0 && (
+              <div className="mt-3 pt-3 border-t border-border">
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Active Modifiers</span>
+                <div className="mt-2 space-y-2">
+                  {modifiers.modifierList.map((mod: any, i: number) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <span className={`text-xs font-mono mt-0.5 ${mod.direction === 'positive' ? 'text-success' : mod.direction === 'negative' ? 'text-danger' : 'text-secondary'}`}>
+                        {mod.direction === 'positive' ? '+' : mod.direction === 'negative' ? '−' : '·'}
+                      </span>
+                      <div>
+                        <span className="text-sm font-medium">{mod.name || mod.label}</span>
+                        {mod.description && <p className="text-xs text-secondary">{mod.description}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
         {/* ── Dating Market ── */}
         {hasMarket && (
           <div id="market" className="scroll-mt-28">
@@ -592,32 +887,26 @@ function ResultsDashboard() {
               <h3 className="font-serif text-lg font-semibold">Compatibility Rankings</h3>
               {hasPaid && <Link href="/results/matches" className="text-xs text-accent hover:underline">View all</Link>}
             </div>
-            <div className="border border-border rounded-md overflow-hidden">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border bg-stone-50">
-                    <th className="text-left px-3 py-2 font-mono text-xs text-secondary">#</th>
-                    <th className="text-left px-3 py-2 font-mono text-xs text-secondary">Persona</th>
-                    <th className="text-left px-3 py-2 font-mono text-xs text-secondary hidden sm:table-cell">Tier</th>
-                    <th className="text-right px-3 py-2 font-mono text-xs text-secondary">Score</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {visibleMatches.map((match: any) => (
-                    <tr key={match.code} className="border-b border-border last:border-0 hover:bg-stone-50">
-                      <td className="px-3 py-2 font-mono text-secondary">{match.rank}</td>
-                      <td className="px-3 py-2">
-                        {hasPaid ? (
-                          <Link href={`/results/match/${match.code}`} className="text-accent hover:underline">{match.name}</Link>
-                        ) : match.name}
-                        <span className="font-mono text-xs text-secondary ml-1">{match.code}</span>
-                      </td>
-                      <td className={`px-3 py-2 text-xs font-medium hidden sm:table-cell ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</td>
-                      <td className="px-3 py-2 font-mono text-right">{match.compatibilityScore}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="space-y-3">
+              {visibleMatches.map((match: any) => (
+                <div key={match.code} className="card">
+                  <div className="flex items-start justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs text-secondary">#{match.rank}</span>
+                      {hasPaid ? (
+                        <Link href={`/results/match/${match.code}`} className="text-sm font-semibold text-accent hover:underline">{match.name}</Link>
+                      ) : <span className="text-sm font-semibold">{match.name}</span>}
+                      <span className="font-mono text-xs text-secondary">{match.code}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>
+                      <span className="font-mono text-sm font-semibold">{match.compatibilityScore}</span>
+                    </div>
+                  </div>
+                  {match.traits && <p className="text-xs text-secondary mb-1">{match.traits}</p>}
+                  {match.summary && <p className="text-sm text-secondary">{match.summary}</p>}
+                </div>
+              ))}
             </div>
             {!hasPaid && matches.length > freeMatchLimit && (
               <div className="mt-4 card border-accent text-center">
