@@ -46,12 +46,28 @@ function buildReportHTML(data: {
       ).join('')
     : '';
 
+  const pdfTierColor = (tier: string) => {
+    const colors: Record<string, string> = {
+      ideal: '#047857', kismet: '#4da88f', effort: '#d97706',
+      longShot: '#a8a29e', atRisk: '#d1546e', incompatible: '#be123c',
+    };
+    return colors[tier] || '#78716c';
+  };
+
+  const pdfTierLabel = (tier: string) => {
+    const labels: Record<string, string> = {
+      ideal: 'Ideal', kismet: 'Kismet', effort: 'Effort',
+      longShot: 'Long Shot', atRisk: 'At Risk', incompatible: 'Incompatible',
+    };
+    return labels[tier] || tier;
+  };
+
   const matchRows = matches
     ? matches.map(m =>
         `<tr><td style="padding:6px 8px;border-bottom:1px solid #e5e5e5;font-family:monospace">${m.rank}</td>
          <td style="padding:6px 8px;border-bottom:1px solid #e5e5e5">${m.name}</td>
          <td style="padding:6px 8px;border-bottom:1px solid #e5e5e5;font-family:monospace">${m.code}</td>
-         <td style="padding:6px 8px;border-bottom:1px solid #e5e5e5">${m.tier}</td>
+         <td style="padding:6px 8px;border-bottom:1px solid #e5e5e5;color:${pdfTierColor(m.tier)};font-weight:600">${pdfTierLabel(m.tier)}</td>
          <td style="padding:6px 8px;border-bottom:1px solid #e5e5e5;font-family:monospace">${m.compatibilityScore}%</td></tr>`
       ).join('')
     : '';
