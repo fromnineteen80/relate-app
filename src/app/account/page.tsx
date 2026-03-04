@@ -1,6 +1,7 @@
 'use client';
 
-import { Suspense, useEffect, useState, useCallback, useRef } from 'react';
+import { Component, Suspense, useEffect, useState, useCallback, useRef } from 'react';
+import type { ReactNode, ErrorInfo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -114,11 +115,34 @@ function tierLabel(tier: string) {
   return labels[tier] || tier;
 }
 
+class AccountErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode }) { super(props); this.state = { hasError: false }; }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(error: Error, info: ErrorInfo) { console.error('Account page error:', error, info); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-background px-6 text-center">
+          <h1 className="font-serif text-2xl font-semibold mb-2">Something went wrong</h1>
+          <p className="text-sm text-secondary mb-4">There was an error loading your account page. This is usually caused by stale cached data.</p>
+          <div className="flex gap-3">
+            <button onClick={() => { localStorage.removeItem('relate_payment_tier'); window.location.reload(); }} className="btn-primary text-xs">Clear Cache &amp; Reload</button>
+            <button onClick={() => window.location.href = '/results'} className="btn-secondary text-xs">Go to Results</button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function AccountPageWrapper() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>}>
-      <AccountPage />
-    </Suspense>
+    <AccountErrorBoundary>
+      <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>}>
+        <AccountPage />
+      </Suspense>
+    </AccountErrorBoundary>
   );
 }
 
@@ -146,6 +170,8 @@ function AccountPage() {
   const [downloadingCoach, setDownloadingCoach] = useState(false);
   const [showCoachInfo, setShowCoachInfo] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   // Full results for richer graphics / coaching
   const [fullM3, setFullM3] = useState<M3Scored['result'] | null>(null);
   const [fullM4, setFullM4] = useState<M4Scored['result'] | null>(null);
@@ -300,6 +326,28 @@ function AccountPage() {
   async function handleSignOut() {
     await signOut();
     router.push('/');
+  }
+
+  async function handleDeleteAccount() {
+    if (!user) return;
+    setDeleting(true);
+    try {
+      const res = await fetch('/api/delete-account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id }),
+      });
+      if (!res.ok) throw new Error('Delete failed');
+      // Clear all local data
+      const keys = Object.keys(localStorage).filter(k => k.startsWith('relate_'));
+      keys.forEach(k => localStorage.removeItem(k));
+      await signOut();
+      router.push('/');
+    } catch (err) {
+      console.error('Account deletion failed:', err);
+      setDeleting(false);
+      setShowDeleteConfirm(false);
+    }
   }
 
   async function handleDiscountCode(e: React.FormEvent) {
@@ -522,7 +570,7 @@ function AccountPage() {
             <span className="text-success text-lg">✓</span>
             <div>
               <p className="text-sm font-medium">Payment successful</p>
-              <p className="text-xs text-secondary">Your account has been upgraded to {PRICING[currentTier].label}.</p>
+              <p className="text-xs text-secondary">Your account has been upgraded to {(PRICING[currentTier]?.label || currentTier)}.</p>
             </div>
           </div>
         )}
@@ -582,7 +630,7 @@ function AccountPage() {
               {currentTier !== 'free' ? '✓' : '-'}
             </div>
             <div>
-              <p className="text-sm font-medium">{PRICING[currentTier].label}: Active</p>
+              <p className="text-sm font-medium">{(PRICING[currentTier]?.label || currentTier)}: Active</p>
               <p className="text-xs text-secondary">
                 {currentTier === 'free' && 'Persona code, top 3 matches, 3 advisor messages.'}
                 {currentTier === 'plus' && 'Full report, all 16 matches, PDF download.'}
@@ -603,8 +651,8 @@ function AccountPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {TIER_ORDER.filter(t => t !== 'free' && tierIndex(t) > tierIndex(currentTier)).map(tier => (
                 <div key={tier} className="p-3 border rounded-md border-border">
-                  <p className="text-sm font-medium">{PRICING[tier].label}</p>
-                  <p className="font-serif text-xl font-semibold my-1">{PRICING[tier].priceDisplay}</p>
+                  <p className="text-sm font-medium">{(PRICING[tier]?.label || tier)}</p>
+                  <p className="font-serif text-xl font-semibold my-1">{(PRICING[tier]?.priceDisplay || '')}</p>
                   <p className="text-xs text-secondary mb-3">
                     {tier === 'plus' && 'All 16 matches, conflict analysis, growth path, PDF report.'}
                     {tier === 'premium' && 'Plus features + rate-limited AI advisor + retake assessment.'}
@@ -613,11 +661,11 @@ function AccountPage() {
                   </p>
                   {config.useMockPayments ? (
                     <button onClick={() => handleMockUpgrade(tier)} className="text-xs w-full btn-secondary" disabled={mockUpgrading}>
-                      {mockUpgrading ? 'Processing...' : `Upgrade to ${PRICING[tier].label}`}
+                      {mockUpgrading ? 'Processing...' : `Upgrade to ${(PRICING[tier]?.label || tier)}`}
                     </button>
                   ) : (
                     <Link href={`/api/checkout?product=${tier}&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
-                      Upgrade to {PRICING[tier].label}
+                      Upgrade to {(PRICING[tier]?.label || tier)}
                     </Link>
                   )}
                 </div>
@@ -1093,12 +1141,35 @@ function AccountPage() {
           </div>
         </section>
 
-        {/* ── Sign Out ── */}
-        <div className="pt-4 border-t border-border flex justify-end">
+        {/* ── Sign Out & Delete ── */}
+        <div className="pt-4 border-t border-border flex justify-end gap-3">
+          <button onClick={() => setShowDeleteConfirm(true)} className="btn-secondary text-xs text-danger">
+            Delete Account
+          </button>
           <button onClick={handleSignOut} className="btn-secondary text-xs">
             Sign out
           </button>
         </div>
+
+        {/* ── Delete Confirmation Modal ── */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="bg-white rounded-lg shadow-lg max-w-sm mx-4 p-6">
+              <h3 className="font-serif text-lg font-semibold mb-2">Delete your account?</h3>
+              <p className="text-sm text-secondary mb-4">
+                This will permanently delete your account, assessment data, results, and all associated information. This action cannot be undone.
+              </p>
+              <div className="flex justify-end gap-3">
+                <button onClick={() => setShowDeleteConfirm(false)} disabled={deleting} className="btn-secondary text-xs">
+                  Cancel
+                </button>
+                <button onClick={handleDeleteAccount} disabled={deleting} className="bg-danger text-white text-xs font-medium px-4 py-2 rounded-md hover:opacity-90 transition-opacity">
+                  {deleting ? 'Deleting...' : 'Yes, delete my account'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* ── Ongoing Coaching Section (darker background, outside main container) ── */}

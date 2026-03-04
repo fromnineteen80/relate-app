@@ -238,9 +238,11 @@ export default function ProfileSettings() {
           </div>
         )}
 
-        <button onClick={handleSignOut} className="text-sm text-danger hover:underline">
-          Sign out
-        </button>
+        <div className="pt-4 border-t border-border flex justify-end">
+          <button onClick={handleSignOut} className="btn-secondary text-xs">
+            Sign out
+          </button>
+        </div>
       </main>
     </div>
   );
