@@ -62,7 +62,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-sm" style={{ overflow: 'visible' }}>
       <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link href="/" className="font-serif text-xl font-semibold tracking-tight">
           RELATE
