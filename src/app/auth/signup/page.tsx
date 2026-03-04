@@ -97,7 +97,7 @@ export default function SignUpPage() {
           <div className="mt-8 pt-6 border-t border-border">
             <div className="flex items-start gap-3 text-xs text-secondary">
               <span className="text-accent mt-0.5">&#8226;</span>
-              <span>The assessment takes ~100 minutes across 4 modules. Your progress is saved automatically.</span>
+              <span>The assessment takes ~70 minutes across 4 modules. Your progress is saved automatically.</span>
             </div>
             <div className="flex items-start gap-3 text-xs text-secondary mt-2">
               <span className="text-accent mt-0.5">&#8226;</span>

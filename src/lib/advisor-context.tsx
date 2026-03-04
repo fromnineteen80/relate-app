@@ -9,6 +9,9 @@ import { useAuth } from '@/lib/auth-context';
 
 type Message = { role: 'user' | 'assistant'; content: string };
 
+const FREE_MESSAGE_LIMIT = 3;
+const PREMIUM_MESSAGE_LIMIT = 25;
+
 type AdvisorContextType = {
   isOpen: boolean;
   open: () => void;
@@ -21,6 +24,8 @@ type AdvisorContextType = {
   setMode: (m: 'solo' | 'individual' | 'couples') => void;
   hasCouplesData: boolean;
   messageCount: number;
+  messageLimit: number;
+  paymentTier: string;
   isLimited: boolean;
   starters: string[];
 };
@@ -37,11 +42,11 @@ const AdvisorContext = createContext<AdvisorContextType>({
   setMode: () => {},
   hasCouplesData: false,
   messageCount: 0,
+  messageLimit: FREE_MESSAGE_LIMIT,
+  paymentTier: 'free',
   isLimited: false,
   starters: [],
 });
-
-const FREE_MESSAGE_LIMIT = 3;
 
 // Contextual starters based on current route
 function getStarters(pathname: string, hasCouples: boolean): string[] {
@@ -158,6 +163,7 @@ export function AdvisorProvider({ children }: { children: ReactNode }) {
   const [hasCouplesData, setHasCouplesData] = useState(false);
   const [messageCount, setMessageCount] = useState(0);
   const [hasPaid, setHasPaid] = useState(false);
+  const [paymentTier, setPaymentTier] = useState<string>('free');
 
   // Restore persisted state on mount
   useEffect(() => {
@@ -181,7 +187,7 @@ export function AdvisorProvider({ children }: { children: ReactNode }) {
   // Fetch payment status
   useEffect(() => {
     if (!user) return;
-    fetchPaymentTier(user.email).then(({ paid }) => setHasPaid(paid));
+    fetchPaymentTier(user.email).then(({ paid, tier }) => { setHasPaid(paid); setPaymentTier(tier); });
   }, [user]);
 
   // Persist messages to sessionStorage
@@ -196,7 +202,10 @@ export function AdvisorProvider({ children }: { children: ReactNode }) {
     sessionStorage.setItem('relate_advisor_mode', mode);
   }, [mode]);
 
-  const isLimited = !hasPaid && messageCount >= FREE_MESSAGE_LIMIT;
+  const messageLimit = paymentTier === 'pro' || paymentTier === 'couples' ? Infinity
+    : paymentTier === 'premium' ? PREMIUM_MESSAGE_LIMIT
+    : FREE_MESSAGE_LIMIT;
+  const isLimited = messageCount >= messageLimit;
   const starters = getStarters(pathname, hasCouplesData);
 
   const open = useCallback(() => setIsOpen(true), []);
@@ -270,7 +279,7 @@ export function AdvisorProvider({ children }: { children: ReactNode }) {
       isOpen, open, close, toggle,
       messages, sendMessage, loading,
       mode, setMode: handleSetMode,
-      hasCouplesData, messageCount,
+      hasCouplesData, messageCount, messageLimit, paymentTier,
       isLimited, starters,
     }}>
       {children}

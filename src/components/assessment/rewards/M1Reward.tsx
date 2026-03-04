@@ -142,7 +142,7 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
       </p>
       <button onClick={onContinue} className="btn-primary px-8 py-3">
         Continue to Module 2
-        <span className="text-xs opacity-70 ml-2">~39 min</span>
+        <span className="text-xs opacity-70 ml-2">~20 min</span>
       </button>
     </div>
   );

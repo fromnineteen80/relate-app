@@ -10,13 +10,13 @@ const MODULES = [
     num: '01',
     title: 'What You Want',
     desc: 'Map your preferences across four dimensions: physical attraction, social energy, lifestyle pace, and core values. This isn\'t a wish list. It\'s a measurement of what actually holds your attention.',
-    time: '40 minutes',
+    time: '20 minutes',
   },
   {
     num: '02',
     title: 'Who You Are',
     desc: 'The same four dimensions, turned inward. This is where your persona emerges as one of 32 types that describes how you show up in relationships, not who you wish you were.',
-    time: '40 minutes',
+    time: '20 minutes',
   },
   {
     num: '03',
@@ -51,15 +51,15 @@ const FRAMEWORKS = [
 const FAQS = [
   {
     q: 'How long does the assessment take?',
-    a: 'About 100 minutes total across 4 modules. You can save progress and return anytime, so there is no need to complete it in one sitting.',
+    a: 'About 70 minutes total across 4 modules. You can save progress and return anytime, so there is no need to complete it in one sitting.',
   },
   {
     q: 'What do I get for free?',
     a: 'Your persona code, traits description, top 3 compatibility matches, and 3 advisor messages. The free tier gives you a meaningful snapshot, but does not include the full report or PDF download.',
   },
   {
-    q: 'What is the difference between Plus and Premium?',
-    a: 'Plus ($19.99) gives you the full report with all 16 match rankings, conflict analysis, growth path, and a downloadable PDF. Premium ($29.99) adds unlimited access to the Claude AI relationship advisor and the ability to retake the assessment as your life evolves.',
+    q: 'What is the difference between Plus, Premium, and Pro?',
+    a: 'Plus ($29.99) gives you the full report with all 16 match rankings, conflict analysis, growth path, and a downloadable PDF. Premium ($49.99) adds a rate-limited AI advisor and the ability to retake the assessment. Pro ($69.99) unlocks unlimited AI advisor access.',
   },
   {
     q: 'Can I retake the assessment?',
@@ -67,7 +67,7 @@ const FAQS = [
   },
   {
     q: 'How does Couples Mode work?',
-    a: 'Both partners take the assessment independently. With the Couples tier ($49.99), you unlock a 7-section compatibility report, shared growth challenges, conversation cards, a couples advisor, and PDF reports for both partners.',
+    a: 'Both partners take the assessment independently. With the Couples tier ($119), you unlock a 7-section compatibility report, shared growth challenges, conversation cards, a couples advisor, and PDF reports for both partners.',
   },
   {
     q: 'Can I download my report?',
@@ -277,7 +277,7 @@ export default function LandingPage() {
             <TestAccessCard />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* Free */}
             <div className="card flex flex-col">
               <span className="font-mono text-xs text-secondary tracking-wider">FREE</span>
@@ -302,7 +302,7 @@ export default function LandingPage() {
             {/* Plus */}
             <div className="card flex flex-col">
               <span className="font-mono text-xs text-secondary tracking-wider">PLUS</span>
-              <p className="font-serif text-4xl font-semibold mt-2">$19.99</p>
+              <p className="font-serif text-4xl font-semibold mt-2">$29.99</p>
               <p className="text-sm text-secondary mt-3 mb-6">The complete picture.</p>
               <div className="space-y-2.5 mb-8 flex-1">
                 {[
@@ -327,12 +327,12 @@ export default function LandingPage() {
                 Most popular
               </div>
               <span className="font-mono text-xs text-accent tracking-wider">PREMIUM</span>
-              <p className="font-serif text-4xl font-semibold mt-2">$29.99</p>
-              <p className="text-sm text-secondary mt-3 mb-6">Full insight + AI coaching.</p>
+              <p className="font-serif text-4xl font-semibold mt-2">$49.99</p>
+              <p className="text-sm text-secondary mt-3 mb-6">Insight + AI coaching.</p>
               <div className="space-y-2.5 mb-8 flex-1">
                 {[
                   'Everything in Plus',
-                  'Unlimited AI advisor',
+                  'Rate-limited AI advisor',
                   'Retake the assessment',
                   'Downloadable PDF report',
                 ].map((item) => (
@@ -345,14 +345,34 @@ export default function LandingPage() {
               <DynamicCTA className="btn-primary w-full text-center" fallbackLabel="Get Premium" />
             </div>
 
+            {/* Pro */}
+            <div className="card flex flex-col">
+              <span className="font-mono text-xs text-secondary tracking-wider">PRO</span>
+              <p className="font-serif text-4xl font-semibold mt-2">$69.99</p>
+              <p className="text-sm text-secondary mt-3 mb-6">Unlimited AI coaching.</p>
+              <div className="space-y-2.5 mb-8 flex-1">
+                {[
+                  'Everything in Premium',
+                  'Unlimited AI advisor',
+                  'Priority support',
+                ].map((item) => (
+                  <div key={item} className="flex items-start gap-2 text-sm">
+                    <span className="text-secondary mt-0.5">&#8226;</span>
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+              <DynamicCTA className="btn-secondary w-full text-center" fallbackLabel="Get Pro" />
+            </div>
+
             {/* Couples */}
             <div className="card flex flex-col">
               <span className="font-mono text-xs text-secondary tracking-wider">COUPLES</span>
-              <p className="font-serif text-4xl font-semibold mt-2">$49.99</p>
+              <p className="font-serif text-4xl font-semibold mt-2">$119</p>
               <p className="text-sm text-secondary mt-3 mb-6">Two partners, full compatibility.</p>
               <div className="space-y-2.5 mb-8 flex-1">
                 {[
-                  'Everything in Premium (x2)',
+                  'Everything in Pro (x2)',
                   '7-section compatibility report',
                   'Growth challenges and levels',
                   'Conversation card decks',
@@ -395,7 +415,7 @@ export default function LandingPage() {
             Ready to meet yourself?
           </h2>
           <p className="text-secondary mb-8 max-w-md mx-auto">
-            The assessment is free, saves your progress, and takes about 100 minutes across 4 modules. Your persona is waiting.
+            The assessment is free, saves your progress, and takes about 70 minutes across 4 modules. Your persona is waiting.
           </p>
           <DynamicCTA fallbackLabel="Begin the Assessment" />
         </div>
