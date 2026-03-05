@@ -33,19 +33,19 @@ export function getM4Questions(gender: string) {
 }
 
 export function scoreModule1(gender: string, responses: Record<string, any>) {
-  return getModule().scoreModule1(gender === 'M' ? 'male' : 'female', responses);
+  return getModule().scoreModule1(gender === 'M' ? 'M' : 'W', responses);
 }
 
 export function scoreModule2(gender: string, responses: Record<string, any>) {
-  return getModule().scoreModule2(gender === 'M' ? 'male' : 'female', responses);
+  return getModule().scoreModule2(gender === 'M' ? 'M' : 'W', responses);
 }
 
 export function scoreModule3(gender: string, responses: Record<string, any>) {
-  return getModule().scoreModule3(gender === 'M' ? 'male' : 'female', responses);
+  return getModule().scoreModule3(gender === 'M' ? 'M' : 'W', responses);
 }
 
 export function scoreModule4(gender: string, responses: Record<string, any>) {
-  return getModule().scoreModule4(gender === 'M' ? 'male' : 'female', responses);
+  return getModule().scoreModule4(gender === 'M' ? 'M' : 'W', responses);
 }
 
 export function scoreAttentiveness(
@@ -55,13 +55,13 @@ export function scoreAttentiveness(
   gottmanScores: any,
   selfPerceptionGap: number
 ) {
-  return getModule().scoreAttentiveness(allResponses, gender === 'M' ? 'male' : 'female', m3Scores, gottmanScores, selfPerceptionGap);
+  return getModule().scoreAttentiveness(allResponses, gender === 'M' ? 'M' : 'W', m3Scores, gottmanScores, selfPerceptionGap);
 }
 
 export function validateResponses(responses: Record<string, any>, gender: string) {
-  return getModule().validateResponses(responses, gender === 'M' ? 'male' : 'female');
+  return getModule().validateResponses(responses, gender === 'M' ? 'M' : 'W');
 }
 
 export function getPersonaName(code: string, gender: string) {
-  return getModule().getPersonaName?.(code, gender === 'M' ? 'male' : 'female') || code;
+  return getModule().getPersonaName?.(code, gender === 'M' ? 'M' : 'W') || code;
 }

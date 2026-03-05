@@ -45,20 +45,50 @@ function getTierForMatch(tierAssignments: Record<string, string[]>, matchCode: s
   return 'incompatible';
 }
 
-function calculateDimensionAlignment(userDimensions: any, targetPersona: any): number {
-  // Simple alignment based on shared poles
-  let shared = 0;
-  const total = 4;
-  if (userDimensions && targetPersona) {
-    // Compare dimension assignments
-    const dims = ['physical', 'social', 'lifestyle', 'values'];
-    for (const dim of dims) {
-      if (userDimensions[dim]?.assignedPole && targetPersona.traits) {
-        shared += 0.5; // Base partial alignment
-      }
+// Decode a persona code letter to an A/B pole for a given dimension position
+function codeToPole(code: string, dimIndex: number): string | null {
+  const letter = code[dimIndex];
+  if (!letter) return null;
+  // A/B=physical(A/B), C/D=social(A/B), E/F=lifestyle(A/B), G/H=values(A/B)
+  const poleALetters = ['A', 'C', 'E', 'G'];
+  const poleBLetters = ['B', 'D', 'F', 'H'];
+  if (poleALetters.includes(letter)) return 'A';
+  if (poleBLetters.includes(letter)) return 'B';
+  return null;
+}
+
+function calculateDimensionAlignment(userDimensions: any, targetCode: string): number {
+  // Compare user's M2 dimension poles against target persona's code-derived poles
+  if (!userDimensions || !targetCode) return 50;
+  const dims = ['physical', 'social', 'lifestyle', 'values'];
+  let matched = 0;
+  let total = 0;
+  for (let i = 0; i < dims.length; i++) {
+    const userPole = userDimensions[dims[i]]?.direction;
+    const targetPole = codeToPole(targetCode, i);
+    if (userPole && targetPole) {
+      total++;
+      if (userPole === targetPole) matched++;
     }
   }
-  return Math.round((shared / total) * 100);
+  return total > 0 ? Math.round((matched / total) * 100) : 50;
+}
+
+function calculateM1PreferenceAlignment(userM1Dimensions: any, targetCode: string): number {
+  // Compare user's M1 wants (what they're looking for) against what the target persona IS
+  if (!userM1Dimensions || !targetCode) return 50;
+  const dims = ['physical', 'social', 'lifestyle', 'values'];
+  let matched = 0;
+  let total = 0;
+  for (let i = 0; i < dims.length; i++) {
+    const wantPole = userM1Dimensions[dims[i]]?.direction;
+    const targetPole = codeToPole(targetCode, i);
+    if (wantPole && targetPole) {
+      total++;
+      if (wantPole === targetPole) matched++;
+    }
+  }
+  return total > 0 ? Math.round((matched / total) * 100) : 50;
 }
 
 function calculateM3Compatibility(userM3: any, targetM3: any): number {
@@ -85,7 +115,7 @@ function calculateM4Compatibility(userM4: any, targetM4: any): number {
 }
 
 function rankCompatiblePersonas(userResults: any) {
-  const { gender, personaCode, m2, m3, m4 } = userResults;
+  const { gender, personaCode, m1, m2, m3, m4 } = userResults;
   const compatTable = gender === 'M' ? personaModule.M2_COMPATIBILITY_TABLE : personaModule.W2_COMPATIBILITY_TABLE;
   const targetPersonas = gender === 'M' ? personaModule.W2_PERSONA_METADATA : personaModule.M2_PERSONA_METADATA;
 
@@ -98,16 +128,22 @@ function rankCompatiblePersonas(userResults: any) {
   const matches = Object.entries(targetPersonas).map(([code, persona]: [string, any]) => {
     const tier = getTierForMatch(tierAssignments, code);
     const tierScore = TIER_BASE_SCORES[tier] || 2;
-    const dimensionScore = calculateDimensionAlignment(m2?.dimensions, persona);
+    const dimensionScore = calculateDimensionAlignment(m2?.dimensions, code);
+    const preferenceScore = calculateM1PreferenceAlignment(m1?.dimensions, code);
     const targetProfile = PERSONA_TYPICAL_PROFILES[code] || PERSONA_TYPICAL_PROFILES['BDFH'];
     const m3Score = calculateM3Compatibility(m3, targetProfile.m3);
     const m4Score = calculateM4Compatibility(m4, targetProfile.m4);
 
+    // Tier (who you are vs who they are): 35%
+    // Preference (what you want vs who they are): 20%
+    // Dimension alignment (M2 behavioral match): 15%
+    // M3 intimacy dynamics: 15%
+    // M4 conflict compatibility: 15%
     const compatibilityScore = Math.round(
-      tierScore * 0.50 + dimensionScore * 0.20 + m3Score * 0.15 + m4Score * 0.15
+      tierScore * 0.35 + preferenceScore * 0.20 + dimensionScore * 0.15 + m3Score * 0.15 + m4Score * 0.15
     );
 
-    return { code, persona, tier, tierScore, dimensionScore, m3Score, m4Score, compatibilityScore, rank: 0 };
+    return { code, persona, tier, tierScore, preferenceScore, dimensionScore, m3Score, m4Score, compatibilityScore, rank: 0 };
   });
 
   matches.sort((a, b) => b.compatibilityScore - a.compatibilityScore);
@@ -132,7 +168,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { gender, m1Responses, m2Responses, m3Responses, m4Responses, demographics } = body;
 
-    const genderArg = gender === 'M' ? 'male' : 'female';
+    // Scoring functions expect 'M' or 'W', not 'male'/'female'
+    const genderArg = gender === 'M' ? 'M' : 'W';
 
     // Score each module
     const m1Result = questionsModule.scoreModule1(genderArg, m1Responses);

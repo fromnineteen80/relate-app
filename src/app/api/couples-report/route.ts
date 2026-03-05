@@ -8,7 +8,8 @@ const questionsModule = require('../../../../relate_questions.js');
 const frameworksModule = require('../../../../relate_frameworks.js');
 
 function scoreUserResults(gender: string, m1Responses: any, m2Responses: any, m3Responses: any, m4Responses: any, demographics: any) {
-  const genderArg = gender === 'M' ? 'male' : 'female';
+  // Scoring functions expect 'M' or 'W', not 'male'/'female'
+  const genderArg = gender === 'M' ? 'M' : 'W';
 
   const m1Result = questionsModule.scoreModule1(genderArg, m1Responses);
   const m2Result = questionsModule.scoreModule2(genderArg, m2Responses);
