@@ -576,7 +576,7 @@ function AccountPage() {
       ]} />
 
       <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between gap-6 flex-wrap mb-8">
           <h1 className="font-serif text-3xl font-semibold">Account</h1>
           <Link href="/results" className="text-sm text-accent hover:underline">See Results →</Link>
         </div>
@@ -594,7 +594,7 @@ function AccountPage() {
 
         {/* ── Profile ── */}
         <section id="profile" className="card mb-4 scroll-mt-32">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between gap-6 flex-wrap mb-4">
             <h2 className="font-serif text-lg font-semibold">Profile</h2>
             <Link href="/onboarding/profile" className="text-xs text-accent hover:underline">Edit</Link>
           </div>
@@ -630,7 +630,7 @@ function AccountPage() {
         <div id="subscription" className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 scroll-mt-32">
           {/* Subscription Card */}
           <section className="card">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between gap-6 flex-wrap mb-4">
               <h2 className="font-serif text-lg font-semibold">Subscription</h2>
               {currentTier !== 'free' && currentTier !== 'couples' && (
                 <Link href="/settings/billing" className="text-xs text-accent hover:underline">Change</Link>
@@ -745,7 +745,7 @@ function AccountPage() {
 
           {/* Partner Card */}
           <section className="card">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between gap-6 flex-wrap mb-4">
               <h2 className="font-serif text-lg font-semibold">Partner</h2>
               {hasPartner && <Link href="/invite" className="text-xs text-accent hover:underline">Manage</Link>}
             </div>
@@ -789,7 +789,7 @@ function AccountPage() {
 
         {/* ── Assessment Progress ── */}
         <section id="assessment" className="card mb-4 scroll-mt-32">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between gap-6 flex-wrap mb-4">
             <h2 className="font-serif text-lg font-semibold">Assessment Progress</h2>
             <span className="text-xs font-mono text-secondary">{completedModules}/4 modules</span>
           </div>
@@ -951,7 +951,7 @@ function AccountPage() {
 
         {/* ── Feedback ── */}
         <section className="card mb-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-6 flex-wrap">
             <div>
               <h2 className="font-serif text-lg font-semibold">Feedback</h2>
               <p className="text-xs text-secondary">Help us improve RELATE</p>

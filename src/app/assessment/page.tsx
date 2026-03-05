@@ -70,7 +70,7 @@ export default function AssessmentHub() {
       <div className="min-h-screen flex flex-col">
         <SiteHeader />
         <SubNav />
-        <main className="flex-1 max-w-2xl mx-auto px-6 py-12 w-full">
+        <main className="flex-1 max-w-3xl mx-auto px-6 py-12 w-full">
           <h2 className="font-serif text-2xl font-semibold mb-4">Complete your profile first</h2>
           <p className="text-secondary mb-6">You need to fill in your profile and demographics before starting the assessment.</p>
           <Link href="/onboarding/profile" className="btn-primary">Go to Profile Setup</Link>
@@ -94,7 +94,7 @@ export default function AssessmentHub() {
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
       <SubNav />
-      <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
+      <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-3xl font-semibold mb-2">Assessment</h2>
         <p className="text-secondary mb-8">Complete all 4 modules to receive your persona and compatibility rankings.</p>
 
