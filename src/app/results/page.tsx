@@ -694,9 +694,9 @@ function ResultsDashboard() {
                       ) : <span className="text-sm font-semibold">{match.name}</span>}
                       <span className="font-mono text-xs text-secondary">{match.code}</span>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="text-center shrink-0">
+                      <span className="font-mono text-sm font-semibold block">{match.compatibilityScore}</span>
                       <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>
-                      <span className="font-mono text-sm font-semibold">{match.compatibilityScore}</span>
                     </div>
                   </div>
                   {match.traits && <p className="text-xs text-secondary mb-1">{match.traits}</p>}

@@ -89,11 +89,11 @@ export default function MatchDetailPage() {
             <h2 className="font-serif text-3xl font-semibold">{match.name}</h2>
             <span className="font-mono text-sm text-accent">{match.code}</span>
           </div>
-          <div className="text-right shrink-0">
-            <span className="font-mono text-3xl font-semibold">{match.compatibilityScore}</span>
-            <div className={`inline-block text-white text-xs px-3 py-1 rounded-full mt-1 ${tierColor(match.tier)}`}>
+          <div className="text-center shrink-0">
+            <span className="font-mono text-3xl font-semibold block">{match.compatibilityScore}</span>
+            <span className={`inline-block text-white text-xs px-3 py-1 rounded-full mt-1 ${tierColor(match.tier)}`}>
               {tierLabel(match.tier)}
-            </div>
+            </span>
           </div>
         </div>
 
