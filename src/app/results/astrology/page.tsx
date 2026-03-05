@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SubNav } from '@/components/SubNav';
 import { useAuth } from '@/lib/auth-context';
 import {
   calculateBirthChart,
@@ -155,6 +156,7 @@ export default function AstrologyPage() {
     return (
       <div className="min-h-screen flex flex-col">
         <SiteHeader />
+        <SubNav />
         <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full text-center">
           <h1 className="font-serif text-2xl font-semibold mb-4">Sun, Moon &amp; Rise</h1>
           <p className="text-sm text-secondary mb-6">
@@ -182,6 +184,7 @@ export default function AstrologyPage() {
     return (
       <div className="min-h-screen flex flex-col">
         <SiteHeader />
+        <SubNav />
         <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
           <div className="flex items-center justify-between mb-6">
             <div>

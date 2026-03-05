@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SubNav } from '@/components/SubNav';
 import { getPersonalizedDates, DATE_IDEAS } from '@/lib/couples';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -54,6 +55,7 @@ export default function DatesPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
+      <SubNav />
 
       <main className="max-w-2xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-1">Date Ideas</h2>

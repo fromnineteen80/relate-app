@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SubNav } from '@/components/SubNav';
 import { saveProfileToDb } from '@/lib/supabase/progress';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -111,6 +112,7 @@ export default function ProfileSettings() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
+      <SubNav />
       <main className="max-w-2xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-6">Edit Profile</h2>
 

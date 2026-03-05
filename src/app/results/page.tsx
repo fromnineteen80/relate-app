@@ -8,6 +8,7 @@ import { fetchPaymentTier } from '@/lib/payments';
 import { generateReferrals, Referral } from '@/lib/referrals';
 import { useAuth } from '@/lib/auth-context';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SubNav } from '@/components/SubNav';
 import { loadAndHydrateProgress } from '@/lib/supabase/progress';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -570,15 +571,7 @@ function ResultsDashboard() {
       <SiteHeader />
 
       {/* Sub-Navigation */}
-      {navItems.length > 0 && (
-        <nav className="border-b border-border bg-background sticky top-[65px] z-10">
-          <div className="max-w-3xl mx-auto px-6 flex gap-1 overflow-x-auto">
-            {navItems.map(n => (
-              <a key={n.id} href={`#${n.id}`} className="text-xs font-medium px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap text-secondary hover:text-primary">{n.label}</a>
-            ))}
-          </div>
-        </nav>
-      )}
+      <SubNav items={navItems.map(n => ({ ...n, href: `#${n.id}` }))} />
 
       <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
         <div className="flex items-baseline justify-between mb-8">

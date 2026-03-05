@@ -10,6 +10,7 @@ import { getMockPaymentStatus, mockPurchase } from '@/lib/mock/payments';
 import { fetchPaymentTier, refreshPaymentTier } from '@/lib/payments';
 import { getProfile } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SubNav } from '@/components/SubNav';
 import { TestAccessCard } from '@/components/TestAccessCard';
 import { clearAllProgress } from '@/lib/supabase/progress';
 
@@ -563,19 +564,13 @@ function AccountPage() {
       <SiteHeader />
 
       {/* ── Sub-Navigation ── */}
-      <nav className="border-b border-border bg-background sticky top-[65px] z-10">
-        <div className="max-w-2xl mx-auto px-6 flex gap-1 overflow-x-auto">
-          {[
-            { id: 'profile', label: 'Profile', show: true },
-            { id: 'subscription', label: 'Subscription', show: true },
-            { id: 'assessment', label: 'Assessment', show: true },
-            { id: 'downloads', label: 'Downloads', show: hasResults },
-            { id: 'partner', label: 'Partner', show: true },
-          ].filter(n => n.show).map(n => (
-            <a key={n.id} href={`#${n.id}`} className="text-xs font-medium px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap text-secondary hover:text-primary">{n.label}</a>
-          ))}
-        </div>
-      </nav>
+      <SubNav items={[
+        { id: 'profile', label: 'Profile', href: '#profile', show: true },
+        { id: 'subscription', label: 'Subscription', href: '#subscription', show: true },
+        { id: 'assessment', label: 'Assessment', href: '#assessment', show: true },
+        { id: 'downloads', label: 'Downloads', href: '#downloads', show: hasResults },
+        { id: 'partner', label: 'Partner', href: '#partner', show: true },
+      ]} />
 
       <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
         <div className="flex items-center justify-between mb-8">

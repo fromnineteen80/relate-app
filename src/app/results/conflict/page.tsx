@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SubNav } from '@/components/SubNav';
 
 export default function ConflictPage() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function ConflictPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
+      <SubNav />
 
       <main className="max-w-2xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-6">Conflict Profile</h2>

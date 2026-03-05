@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SubNav } from '@/components/SubNav';
 
 const CODE_TO_POLE: Record<string, 'A' | 'B'> = {
   A: 'A', B: 'B', C: 'A', D: 'B', E: 'A', F: 'B', G: 'A', H: 'B',
@@ -45,6 +46,7 @@ export default function PersonaPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
+      <SubNav />
 
       <main className="max-w-2xl mx-auto px-6 py-8 w-full">
         <span className="font-mono text-xs text-secondary">Your Persona</span>

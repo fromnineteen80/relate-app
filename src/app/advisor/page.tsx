@@ -4,6 +4,7 @@ import { useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SubNav } from '@/components/SubNav';
 import { useAdvisor } from '@/lib/advisor-context';
 
 function AdvisorRedirect() {
@@ -25,6 +26,7 @@ function AdvisorRedirect() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
+      <SubNav />
 
       <main className="flex-1 flex items-center justify-center px-6">
         <div className="max-w-md text-center">
