@@ -228,8 +228,8 @@ export default function BillingPage() {
               <p className="text-xs text-secondary">
                 {subscription.discount.percentOff && `${subscription.discount.percentOff}% off`}
                 {subscription.discount.amountOff && `$${(subscription.discount.amountOff / 100).toFixed(2)} off`}
-                {discountEnd && ` — expires ${discountEnd}`}
-                {!subscription.discount.end && ' — no expiration'}
+                {discountEnd && `, expires ${discountEnd}`}
+                {!subscription.discount.end && ', no expiration'}
               </p>
             </div>
           )}

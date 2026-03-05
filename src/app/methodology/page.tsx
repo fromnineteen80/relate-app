@@ -407,19 +407,19 @@ export default function MethodologyPage() {
             <div>
               <h3 className="font-serif font-semibold mb-2">How the Funnel Works</h3>
               <p className="text-sm text-secondary leading-relaxed mb-3">
-                The funnel applies your preferences as sequential filters against the population of your metro area (CBSA). Each step reduces the pool by the percentage of people who do not meet that criterion. The process follows the same elimination logic used in actuarial science, market sizing, and persona-based audience segmentation — standard approaches for estimating the size of a target population from known distributions.
+                The funnel applies your preferences as sequential filters against the population of your metro area (CBSA). Each step reduces the pool by the percentage of people who do not meet that criterion. The process follows the same elimination logic used in actuarial science, market sizing, and persona-based audience segmentation, standard approaches for estimating the size of a target population from known distributions.
               </p>
               <div className="space-y-2">
                 <FunnelStep number="1" title="Universal Exclusions" desc="Remove adults over 65 and the homeless population, who are outside the standard dating pool. This establishes the base adult population (18-64)." />
-                <FunnelStep number="2" title="Gender" desc="Filter to the gender you are seeking, using local CBSA gender distribution rather than assuming a 50/50 split. Metro areas vary meaningfully — some skew 52% female, others 48%." />
+                <FunnelStep number="2" title="Gender" desc="Filter to the gender you are seeking, using local CBSA gender distribution rather than assuming a 50/50 split. Metro areas vary meaningfully. Some skew 52% female, others 48%." />
                 <FunnelStep number="3" title="Sexual Orientation" desc="Apply the proportion of the target gender who identify with a compatible orientation. Rates are drawn from national survey data and adjusted by metro-level estimates where available." />
                 <FunnelStep number="4" title="Criminal Record Exclusion" desc="Remove individuals with felony convictions. Incarceration and felony rates differ significantly by gender, ethnicity, and education level, so the model uses a weighted average based on the CBSA's ethnic composition rather than a single national rate." />
                 <FunnelStep number="5" title="Substance Issues" desc="Exclude individuals with active substance abuse issues using the same ethnicity-weighted approach. Rates are drawn from national health survey data." />
-                <FunnelStep number="6" title="Relationship Status" desc="Filter to singles using local CBSA relationship status data. This produces the Local Singles pool — the total number of available, eligible singles of the right gender and orientation in your area." />
+                <FunnelStep number="6" title="Relationship Status" desc="Filter to singles using local CBSA relationship status data. This produces the Local Singles pool, the total number of available, eligible singles of the right gender and orientation in your area." />
                 <FunnelStep number="7" title="Your Preferences" desc="Apply your specific requirements: age range, minimum income, lifestyle preferences (smoking, drinking, children, religion, pets, diet), and physical preferences (height range, body type, fitness level). Each filter uses CBSA-level data where available or national distributions as a fallback." />
               </div>
               <p className="text-sm text-secondary leading-relaxed mt-3">
-                The result is your Ideal Match Pool: the estimated number of people who meet every criterion you specified. This number is then multiplied by your match probability (derived from your Relate Score) to produce your final match count — the number of people in your pool who would likely be a mutual fit.
+                The result is your Ideal Match Pool: the estimated number of people who meet every criterion you specified. This number is then multiplied by your match probability (derived from your Relate Score) to produce your final match count, the number of people in your pool who would likely be a mutual fit.
               </p>
             </div>
 
@@ -429,7 +429,7 @@ export default function MethodologyPage() {
                 Raw pool numbers are hard to interpret on their own. Is 2,000 people a lot or a little? It depends on the size of the population you are drawing from and how many filters you have applied. To provide context, the results page shows your ideal pool as a percentage of three progressively narrower base populations:
               </p>
               <div className="space-y-2 text-sm text-secondary">
-                <p><span className="font-medium text-foreground">% of target gender:</span> Your ideal pool divided by all adults (18-64) of the gender you are seeking in the area. This is the broadest view — of every person of that gender you could encounter, what fraction fits all of your preferences.</p>
+                <p><span className="font-medium text-foreground">% of target gender:</span> Your ideal pool divided by all adults (18-64) of the gender you are seeking in the area. This is the broadest view. Of every person of that gender you could encounter, what fraction fits all of your preferences.</p>
                 <p><span className="font-medium text-foreground">% of eligible:</span> Your ideal pool divided by the subset that shares the right orientation, has no criminal record, and falls within your preferred age range. This removes people who were never realistic candidates, isolating the effect of your lifestyle, income, and physical preferences.</p>
                 <p><span className="font-medium text-foreground">% of ethnicity match:</span> The eligible pool narrowed further to people of your own ethnic background. Because felon rates, income distributions, education levels, and lifestyle patterns vary by ethnicity, this provides the most directly comparable view of how selective your preferences are within a demographically similar group.</p>
               </div>
@@ -453,19 +453,19 @@ export default function MethodologyPage() {
               <ul className="space-y-1.5 text-sm text-secondary">
                 <li className="flex items-start gap-2">
                   <span className="text-accent mt-0.5">•</span>
-                  <span><span className="font-medium text-foreground">U.S. Census Bureau</span> — Population estimates, age distributions, gender ratios, household income, ethnic composition, and relationship status by CBSA, county, state, and nation (American Community Survey 5-Year Estimates).</span>
+                  <span><span className="font-medium text-foreground">U.S. Census Bureau</span>: Population estimates, age distributions, gender ratios, household income, ethnic composition, and relationship status by CBSA, county, state, and nation (American Community Survey 5-Year Estimates).</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-accent mt-0.5">•</span>
-                  <span><span className="font-medium text-foreground">U.S. Centers for Disease Control and Prevention (CDC)</span> — National Health Interview Survey and Behavioral Risk Factor Surveillance System data for substance use rates, disability prevalence, and health behavior distributions.</span>
+                  <span><span className="font-medium text-foreground">U.S. Centers for Disease Control and Prevention (CDC)</span>: National Health Interview Survey and Behavioral Risk Factor Surveillance System data for substance use rates, disability prevalence, and health behavior distributions.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-accent mt-0.5">•</span>
-                  <span><span className="font-medium text-foreground">Pew Research Center</span> — Survey data on sexual orientation, religious affiliation, lifestyle attitudes, and relationship patterns used to supplement Census data where granularity is needed.</span>
+                  <span><span className="font-medium text-foreground">Pew Research Center</span>: Survey data on sexual orientation, religious affiliation, lifestyle attitudes, and relationship patterns used to supplement Census data where granularity is needed.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-accent mt-0.5">•</span>
-                  <span><span className="font-medium text-foreground">Bureau of Justice Statistics</span> — Felony conviction and incarceration rates by gender, ethnicity, and age used in the criminal record exclusion step.</span>
+                  <span><span className="font-medium text-foreground">Bureau of Justice Statistics</span>: Felony conviction and incarceration rates by gender, ethnicity, and age used in the criminal record exclusion step.</span>
                 </li>
               </ul>
               <p className="text-sm text-secondary leading-relaxed mt-3">
@@ -476,7 +476,7 @@ export default function MethodologyPage() {
             <div>
               <h3 className="font-serif font-semibold mb-2">Limitations</h3>
               <p className="text-sm text-secondary leading-relaxed">
-                These are estimates, not counts of real individuals. The model assumes statistical independence between filters (for example, that income and fitness level are uncorrelated), which is a simplification. Some preferences like body type and fitness level rely on national survey distributions rather than local data. The funnel does not account for whether someone is actively dating, on a dating app, or open to meeting new people — it estimates the theoretical pool. Actual availability will be smaller. The model is designed to give you a realistic order-of-magnitude sense of your dating market, not a precise headcount.
+                These are estimates, not counts of real individuals. The model assumes statistical independence between filters (for example, that income and fitness level are uncorrelated), which is a simplification. Some preferences like body type and fitness level rely on national survey distributions rather than local data. The funnel does not account for whether someone is actively dating, on a dating app, or open to meeting new people. It estimates the theoretical pool. Actual availability will be smaller. The model is designed to give you a realistic order-of-magnitude sense of your dating market, not a precise headcount.
               </p>
             </div>
           </div>

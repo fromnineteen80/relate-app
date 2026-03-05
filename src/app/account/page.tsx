@@ -351,7 +351,7 @@ function AccountPage() {
           localStorage.setItem('relate_market_data', JSON.stringify(md));
         }
       })
-      .catch(() => { /* silent fail — market data is optional */ })
+      .catch(() => { /* silent fail, market data is optional */ })
       .finally(() => setMarketLoading(false));
   }, [user, marketData]);
 
@@ -576,10 +576,7 @@ function AccountPage() {
       ]} />
 
       <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
-        <div className="flex items-center justify-between gap-6 flex-wrap mb-8">
-          <h1 className="font-serif text-3xl font-semibold">Account</h1>
-          <Link href="/results" className="text-sm text-accent hover:underline">See Results →</Link>
-        </div>
+        <h1 className="font-serif text-3xl font-semibold mb-8">Account</h1>
 
         {/* ── Payment Success Toast ── */}
         {paymentSuccess && (
@@ -635,7 +632,7 @@ function AccountPage() {
               <Link href="/settings/billing" className="text-xs text-accent hover:underline">Change</Link>
             </div>
 
-            {/* Individual tier badge — shown for paid/test accounts */}
+            {/* Individual tier badge, shown for paid/test accounts */}
             {currentTier !== 'free' && (() => {
               // Determine the individual-level tier (strip couples to show its individual component)
               const individualTier: PricingTier = currentTier === 'couples' ? 'pro' : currentTier;
@@ -657,7 +654,7 @@ function AccountPage() {
               );
             })()}
 
-            {/* Couples tier badge — shown when user has couples */}
+            {/* Couples tier badge, shown when user has couples */}
             {currentTier === 'couples' && (
               <div className="flex items-center gap-3 p-3 mb-3 rounded-md border bg-stone-50 border-stone-300">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 bg-stone-200 text-stone-600">
@@ -670,7 +667,7 @@ function AccountPage() {
               </div>
             )}
 
-            {/* Couples upgrade option — shown for paid accounts that don't have couples yet */}
+            {/* Couples upgrade option, shown for paid accounts that don't have couples yet */}
             {currentTier !== 'free' && currentTier !== 'couples' && (
               <div className="p-3 border rounded-md border-border mt-1">
                 <p className="text-sm font-medium">Couples</p>
@@ -688,7 +685,7 @@ function AccountPage() {
               </div>
             )}
 
-            {/* Free tier — show current status + test access + upgrade options + discount code */}
+            {/* Free tier: show current status + test access + upgrade options + discount code */}
             {currentTier === 'free' && (
               <>
                 <div className="flex items-center gap-3 p-3 mb-3 rounded-md border bg-stone-50 border-border">
@@ -729,7 +726,7 @@ function AccountPage() {
                   ))}
                 </div>
 
-                {/* Discount Code — only for free users */}
+                {/* Discount Code, only for free users */}
                 <div className="mt-4 pt-4 border-t border-border">
                   {activeDiscountCode ? (
                     <div className="flex items-center gap-2">
@@ -1308,7 +1305,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
       <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
         <div className="text-center">
           <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Probability</span>
-          <p className="font-mono text-2xl font-semibold mt-1">{prob?.percentage || '—'}</p>
+          <p className="font-mono text-2xl font-semibold mt-1">{prob?.percentage || 'N/A'}</p>
           <p className="text-xs text-secondary mt-1">
             Chance of matching with someone from your ideal pool
           </p>

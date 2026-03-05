@@ -171,7 +171,7 @@ export default function FeedbackPage() {
               value={message}
               onChange={e => setMessage(e.target.value)}
               className="input w-full min-h-[160px] resize-y"
-              placeholder="Tell us what's on your mind. Be as detailed as you'd like — we read every submission."
+              placeholder="Tell us what's on your mind. Be as detailed as you'd like. We read every submission."
               required
             />
           </div>
