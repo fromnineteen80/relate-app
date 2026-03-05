@@ -14,7 +14,7 @@
  * - Strengths (complementary poles that create value)
  * - Six Tension Stacks (derived cross-module insights)
  * 
- * Committee: Esther Perel, BrenÃ© Brown, John Gottman, Helen Fisher,
+ * Committee: Esther Perel, Brené Brown, John Gottman, Helen Fisher,
  *            Isabel Briggs Myers, Patti Stanger, Hinge/Raya Engineer
  */
 
@@ -346,7 +346,7 @@ const PARALLELS_CONFIG = {
       notParallel: 'You have different social styles. One may want to stay; one may want to go. Plan for this.'
     },
     lifestyle: {
-      parallel: 'You want the same pace of life. Adventure or stabilityâ€”you agree on the rhythm.',
+      parallel: 'You want the same pace of life. Adventure or stability—you agree on the rhythm.',
       notParallel: 'One seeks adventure; one seeks peace. This is manageable but requires explicit negotiation.'
     },
     values: {
@@ -429,7 +429,7 @@ function calculateParallels(user1Results, user2Results) {
   const narratives = [];
   
   if (valuesAligned) {
-    narratives.push('Your values alignâ€”this is the foundation that makes everything else workable.');
+    narratives.push('Your values align—this is the foundation that makes everything else workable.');
   } else {
     narratives.push('Your values differ. This is the most significant gap. Every major life decision will surface this tension.');
   }
@@ -479,13 +479,13 @@ function calculateParallels(user1Results, user2Results) {
 // SECTION 2: STRENGTHS SYSTEM
 // =============================================================================
 // Strengths identify where OPPOSITE poles create VALUE rather than friction.
-// Not all opposites are strengthsâ€”values opposition is usually friction.
+// Not all opposites are strengths—values opposition is usually friction.
 
 const STRENGTHS_CONFIG = {
   dimensionRules: {
     physical: {
       oppositesAre: 'strength',
-      rationale: 'Different physical currencies often complement. His Fitness + Her Confidence, His Maturity + Her Beautyâ€”these create a complete attraction package.',
+      rationale: 'Different physical currencies often complement. His Fitness + Her Confidence, His Maturity + Her Beauty—these create a complete attraction package.',
       narrativeTemplate: 'Your {pole1} and their {pole2} complement each other. You each bring something the other lacks.'
     },
     social: {
@@ -704,7 +704,7 @@ function generateCompatibilitySummary(user1To2, user2To1, strengths) {
   
   // Values check
   if (!user1To2.valuesAligned || !user2To1.valuesAligned) {
-    parts.push('Your values differâ€”this is significant and affects major life decisions.');
+    parts.push('Your values differ—this is significant and affects major life decisions.');
   }
   
   // At-risk check
@@ -733,7 +733,7 @@ const NARRATIVE_VOICE = {
     'NO THERAPY-SPEAK. Never use: boundaries, communicate openly, safe space, navigate, honor your feelings, holding space.',
     'USE "YOU" CONSTANTLY. This is about THEM, not abstract patterns.',
     'SHORT SENTENCES. Punch. Don\'t meander.',
-    'END WITH THE REAL QUESTION. Not adviceâ€”the choice they actually face.'
+    'END WITH THE REAL QUESTION. Not advice—the choice they actually face.'
   ],
   
   forbiddenPhrases: [
@@ -756,7 +756,7 @@ const NARRATIVE_VOICE = {
   
   voiceExamples: {
     bad: 'Your values misalignment may create friction in major life decisions. Consider discussing your respective perspectives on traditional versus egalitarian partnership structures.',
-    good: 'You two are going to fight about money. About who works. About who raises the kids. About whose career matters more. Not because either of you is wrongâ€”because you inherited different blueprints for what a marriage looks like.'
+    good: 'You two are going to fight about money. About who works. About who raises the kids. About whose career matters more. Not because either of you is wrong—because you inherited different blueprints for what a marriage looks like.'
   }
 };
 
@@ -771,7 +771,7 @@ const NARRATIVE_VOICE = {
 // It only becomes visible when we look at how different parts of you interact.
 // 
 // Most assessments stop at description: "You are X type." Tension Stacks go further.
-// They reveal where your own patterns create frictionâ€”with yourself, with partners,
+// They reveal where your own patterns create friction—with yourself, with partners,
 // with the market. They show where you're aligned and where you're at war.
 // 
 // Why do they matter?
@@ -786,8 +786,8 @@ const NARRATIVE_VOICE = {
 //    What turns you on and what kills it. Your desire pattern.
 //    Sources: M1 (what you want) + M2 (what you offer) + M3 (how you connect)
 // 
-// 2. VULNERABILITY PROFILE (BrenÃ© Brown)
-//    How you protect yourself from shameâ€”and what it costs you in intimacy.
+// 2. VULNERABILITY PROFILE (Brené Brown)
+//    How you protect yourself from shame—and what it costs you in intimacy.
 //    Sources: M2 (self-perception) + M3 (what you offer) + M4 (conflict patterns)
 // 
 // 3. ATTRACTION-ATTACHMENT (Helen Fisher)
@@ -827,14 +827,14 @@ const NARRATIVE_VOICE = {
 // enough. Desire has architecture. It has patterns. And those patterns often
 // contradict your conscious preferences.
 // 
-// The Erotic Dimension reveals HOW you desireâ€”what turns it on, what kills it,
+// The Erotic Dimension reveals HOW you desire—what turns it on, what kills it,
 // and why you keep ending up in the same place. Some people need novelty.
 // Some need safety. Some need the gap between them and their partner to stay
 // open. Others need it to close.
 // 
 // This matters because desire problems sink more relationships than conflict
 // does. And desire problems are almost never about the other person. They're
-// about your wiring meeting their wiringâ€”and whether those patterns can dance
+// about your wiring meeting their wiring—and whether those patterns can dance
 // together or will step on each other's feet for decades.
 // 
 // Women especially feel this gap in traditional assessments. The erotic
@@ -856,11 +856,11 @@ const EROTIC_DIMENSION_CONFIG = {
       detection: 'M1 lifestyle direction !== M2 lifestyle direction AND both have strength > 30',
       
       starters: {
-        male: `You need difference to want someone. Sameness bores youâ€”not intellectually, but physically. Something in you goes quiet when there's no gap to cross. You're drawn to women who aren't quite like you. The ones who challenge your rhythm, who don't fit neatly into your life. The problem? Difference is unstable. You're attracted to what you can't fully have, fully know, fully predict. This keeps desire aliveâ€”and makes security feel like a slow death. Your partner needs to stay a little bit foreign to you. The moment she becomes predictable, something in you starts looking for the next horizon.`,
+        male: `You need difference to want someone. Sameness bores you—not intellectually, but physically. Something in you goes quiet when there's no gap to cross. You're drawn to women who aren't quite like you. The ones who challenge your rhythm, who don't fit neatly into your life. The problem? Difference is unstable. You're attracted to what you can't fully have, fully know, fully predict. This keeps desire alive—and makes security feel like a slow death. Your partner needs to stay a little bit foreign to you. The moment she becomes predictable, something in you starts looking for the next horizon.`,
         
-        female: `You need polarity to feel desire. When a man feels too similarâ€”too agreeable, too available, too much like a friendâ€”something shuts off. You're not broken. You're wired for difference. The catch is that difference creates friction, and friction is exhausting outside the bedroom. You want a man who challenges you, but challenge gets old on a Tuesday night when you're tired and just want ease. The question you're living: can you find someone who stays foreign enough to want, but familiar enough to live with?`,
+        female: `You need polarity to feel desire. When a man feels too similar—too agreeable, too available, too much like a friend—something shuts off. You're not broken. You're wired for difference. The catch is that difference creates friction, and friction is exhausting outside the bedroom. You want a man who challenges you, but challenge gets old on a Tuesday night when you're tired and just want ease. The question you're living: can you find someone who stays foreign enough to want, but familiar enough to live with?`,
         
-        general: `Desire, for you, lives in the gap. The space between you and them. When that gap closesâ€”when you know everything, when nothing surprises youâ€”desire fades. This isn't a flaw. It's a feature. But it means you need a partner who understands that closeness isn't the goal. The goal is closeness AND distance. Together AND separate. Known AND mysterious. Most people collapse into one. You need both to stay alive.`
+        general: `Desire, for you, lives in the gap. The space between you and them. When that gap closes—when you know everything, when nothing surprises you—desire fades. This isn't a flaw. It's a feature. But it means you need a partner who understands that closeness isn't the goal. The goal is closeness AND distance. Together AND separate. Known AND mysterious. Most people collapse into one. You need both to stay alive.`
       },
       
       risks: [
@@ -870,7 +870,7 @@ const EROTIC_DIMENSION_CONFIG = {
         'Getting bored with partners who are actually good for you'
       ],
       
-      growthPath: 'Learn to create distance within commitment. Separate lives, separate friends, separate adventuresâ€”then come back together. The gap doesn\'t have to mean different people. It can mean different experiences within the same relationship.'
+      growthPath: 'Learn to create distance within commitment. Separate lives, separate friends, separate adventures—then come back together. The gap doesn\'t have to mean different people. It can mean different experiences within the same relationship.'
     },
     
     noveltyDependent: {
@@ -883,11 +883,11 @@ const EROTIC_DIMENSION_CONFIG = {
       detection: 'M1 lifestyle = Thrill AND M3 wantScore > 65',
       
       starters: {
-        male: `New is what lights you up. New places, new experiences, new versions of the same woman. It's not that you can't commitâ€”it's that routine doesn't just bore you, it kills something. The same restaurant, the same position, the same Saturday. Your body checks out. This terrifies partners who think your need for novelty means you'll leave. You might not leave. But you will die slowly in a relationship that becomes predictable. The question: can you build a life with someone while constantly reaching for what's next? And can she understand that your restlessness isn't about her?`,
+        male: `New is what lights you up. New places, new experiences, new versions of the same woman. It's not that you can't commit—it's that routine doesn't just bore you, it kills something. The same restaurant, the same position, the same Saturday. Your body checks out. This terrifies partners who think your need for novelty means you'll leave. You might not leave. But you will die slowly in a relationship that becomes predictable. The question: can you build a life with someone while constantly reaching for what's next? And can she understand that your restlessness isn't about her?`,
         
-        female: `You need the new. Not new men, necessarilyâ€”but new experiences, new contexts, new versions of him. The same flowers every anniversary makes you want to scream. You're not ungrateful. You're wired for discovery. Routine is where your desire goes to die. The men who understand this are rare. Most hear "I need novelty" and assume you're about to leave. The truth is simpler and harder: you need a partner who will keep showing you parts of himself you haven't seen. And you need to keep showing him parts of yourself too.`,
+        female: `You need the new. Not new men, necessarily—but new experiences, new contexts, new versions of him. The same flowers every anniversary makes you want to scream. You're not ungrateful. You're wired for discovery. Routine is where your desire goes to die. The men who understand this are rare. Most hear "I need novelty" and assume you're about to leave. The truth is simpler and harder: you need a partner who will keep showing you parts of himself you haven't seen. And you need to keep showing him parts of yourself too.`,
         
-        general: `Your erotic engine runs on new. This doesn't mean you can't be faithfulâ€”it means you can't be stagnant. Repetition is your kryptonite. The third time you do anything the same way, something dims. This is expensive to maintain in a long-term relationship. Not impossibleâ€”but expensive. You'll need to invest in novelty the way other couples invest in stability.`
+        general: `Your erotic engine runs on new. This doesn't mean you can't be faithful—it means you can't be stagnant. Repetition is your kryptonite. The third time you do anything the same way, something dims. This is expensive to maintain in a long-term relationship. Not impossible—but expensive. You'll need to invest in novelty the way other couples invest in stability.`
       },
       
       risks: [
@@ -897,7 +897,7 @@ const EROTIC_DIMENSION_CONFIG = {
         'Feeling like something is wrong when things are actually good but stable'
       ],
       
-      growthPath: 'Novelty doesn\'t have to mean external. Go deeper instead of wider. The person you\'ve been with for years has depths you haven\'t seen. But you have to look. Adventure can be internalâ€”asking the question you\'ve never asked, going to the place inside them you\'ve avoided.'
+      growthPath: 'Novelty doesn\'t have to mean external. Go deeper instead of wider. The person you\'ve been with for years has depths you haven\'t seen. But you have to look. Adventure can be internal—asking the question you\'ve never asked, going to the place inside them you\'ve avoided.'
     },
     
     familiarityDependent: {
@@ -909,21 +909,21 @@ const EROTIC_DIMENSION_CONFIG = {
       detection: 'M1 lifestyle = Peace AND M3 offerScore > 60',
       
       starters: {
-        male: `You need to feel safe before you can want. The body doesn't open without trust. This means early dating is awkwardâ€”you don't perform on command, and the "spark" everyone talks about often isn't there for you at first. It shows up later. After you know her. After she's proven she won't use your openness against you. The right woman understands this isn't coldness. It's protection. And when you finally do open, you open all the way. Your desire isn't a sparkâ€”it's a long burn. Slow to start, hard to put out.`,
+        male: `You need to feel safe before you can want. The body doesn't open without trust. This means early dating is awkward—you don't perform on command, and the "spark" everyone talks about often isn't there for you at first. It shows up later. After you know her. After she's proven she won't use your openness against you. The right woman understands this isn't coldness. It's protection. And when you finally do open, you open all the way. Your desire isn't a spark—it's a long burn. Slow to start, hard to put out.`,
         
-        female: `You need to know a man before you can want him. Really know himâ€”not just his rÃ©sumÃ©, but how he handles a bad day, how he treats waiters, how he talks about his ex. The heat comes after the safety. This makes modern dating brutal because you're supposed to feel "chemistry" on date one. You won't. You might on date ten. Or thirty. The ones who don't wait, don't deserve you. The ones who stay long enough to see what you become when you trust themâ€”they get the version of you that most people never see.`,
+        female: `You need to know a man before you can want him. Really know him—not just his résumé, but how he handles a bad day, how he treats waiters, how he talks about his ex. The heat comes after the safety. This makes modern dating brutal because you're supposed to feel "chemistry" on date one. You won't. You might on date ten. Or thirty. The ones who don't wait, don't deserve you. The ones who stay long enough to see what you become when you trust them—they get the version of you that most people never see.`,
         
-        general: `Desire, for you, follows trust. It doesn't lead. Your body needs your mind and heart to go first, to scout ahead and report back: safe. Only then does wanting become possible. This is beautiful and inconvenient. Beautiful because when you finally desire someone, it's not shallowâ€”it's built on foundation. Inconvenient because you live in a world that expects instant heat.`
+        general: `Desire, for you, follows trust. It doesn't lead. Your body needs your mind and heart to go first, to scout ahead and report back: safe. Only then does wanting become possible. This is beautiful and inconvenient. Beautiful because when you finally desire someone, it's not shallow—it's built on foundation. Inconvenient because you live in a world that expects instant heat.`
       },
       
       risks: [
         'Staying too long in relationships that are safe but passionless',
         'Missing genuine connections because the spark wasn\'t immediate',
         'Partners misreading your slow warm-up as rejection',
-        'Confusing comfort with desireâ€”staying because it\'s easy, not because you want them'
+        'Confusing comfort with desire—staying because it\'s easy, not because you want them'
       ],
       
-      growthPath: 'The risk for you isn\'t opening upâ€”it\'s staying open. Once you feel safe, you might stop reaching. Familiarity can become furniture. Keep choosing each other. Don\'t let safety become the end of the story. Let it be the foundation for something that keeps growing.'
+      growthPath: 'The risk for you isn\'t opening up—it\'s staying open. Once you feel safe, you might stop reaching. Familiarity can become furniture. Keep choosing each other. Don\'t let safety become the end of the story. Let it be the foundation for something that keeps growing.'
     },
     
     integrated: {
@@ -937,7 +937,7 @@ const EROTIC_DIMENSION_CONFIG = {
       starters: {
         male: `You can access desire through multiple doors. Novelty works. Familiarity works. Distance works. Closeness works. This is rarer than you think. Most people have one pathway and struggle when that pathway gets blocked. You have options. The risk? You might not understand partners who don't. When she says she needs space to want you, or needs closeness to want you, you might think something is wrong. Nothing is wrong. Her wiring is just more specific than yours.`,
         
-        female: `You're not locked into one way of wanting. Some nights it's the novelty that lights you up. Other nights it's the comfort of knowing exactly how he'll touch you. You can find desire in the gap and in the closeness. This is a giftâ€”and a potential blind spot. Because you're flexible, you might expect him to be too. He might not be. He might need the new, or need the familiar, and only that. Learning his pathway is more important for you than most, because you could easily assume he works the way you do.`,
+        female: `You're not locked into one way of wanting. Some nights it's the novelty that lights you up. Other nights it's the comfort of knowing exactly how he'll touch you. You can find desire in the gap and in the closeness. This is a gift—and a potential blind spot. Because you're flexible, you might expect him to be too. He might not be. He might need the new, or need the familiar, and only that. Learning his pathway is more important for you than most, because you could easily assume he works the way you do.`,
         
         general: `Your desire has multiple access points. This makes you adaptable but potentially impatient with partners who are more narrowly wired. Remember: their limitation isn't dysfunction. It's just a different architecture. Your job is to learn their pathway, even if it's not how you would have designed it.`
       },
@@ -949,7 +949,7 @@ const EROTIC_DIMENSION_CONFIG = {
         'Missing what your partner actually needs because you\'re offering what works for you'
       ],
       
-      growthPath: 'Your growth isn\'t about becoming more flexibleâ€”you\'re already flexible. It\'s about becoming fluent in pathways that aren\'t yours. Learn what lights up your partner even if it doesn\'t light you up. Become a student of their desire, not just your own.'
+      growthPath: 'Your growth isn\'t about becoming more flexible—you\'re already flexible. It\'s about becoming fluent in pathways that aren\'t yours. Learn what lights up your partner even if it doesn\'t light you up. Become a student of their desire, not just your own.'
     }
   },
   
@@ -961,7 +961,7 @@ const EROTIC_DIMENSION_CONFIG = {
       computation: 'Compare M1.lifestyle.direction to M2.lifestyle.direction',
       interpretation: {
         same: 'You want what you offer. Congruent but potentially limited erotic range.',
-        different: 'You want what you don\'t naturally offer. This creates internal polarityâ€”and often attracts partners who mirror your gap.'
+        different: 'You want what you don\'t naturally offer. This creates internal polarity—and often attracts partners who mirror your gap.'
       }
     },
     
@@ -971,7 +971,7 @@ const EROTIC_DIMENSION_CONFIG = {
       computation: 'M3.wantScore',
       interpretation: {
         high: 'You want deep exclusive access. The erotic charge comes from being the only one who knows them this way.',
-        low: 'You\'re comfortable with partial access. Mystery doesn\'t threaten youâ€”it intrigues you.'
+        low: 'You\'re comfortable with partial access. Mystery doesn\'t threaten you—it intrigues you.'
       }
     },
     
@@ -991,7 +991,7 @@ const EROTIC_DIMENSION_CONFIG = {
       computation: 'M2.overallSelfPerceptionGap.average',
       interpretation: {
         aligned: 'You see yourself clearly. What you think you offer is what you actually offer.',
-        gapPresent: 'There\'s a gap between how you see yourself and how you come across. This can create erotic confusionâ€”you\'re sending signals you don\'t know you\'re sending.'
+        gapPresent: 'There\'s a gap between how you see yourself and how you come across. This can create erotic confusion—you\'re sending signals you don\'t know you\'re sending.'
       }
     }
   }
@@ -1066,7 +1066,7 @@ function computeEroticDimension(m1, m2, m3, gender) {
   else {
     primaryPattern = 'integrated';
     patternConfidence = 60;
-    patternRationale.push('No dominant pattern detectedâ€”you have multiple pathways to desire');
+    patternRationale.push('No dominant pattern detected—you have multiple pathways to desire');
   }
   
   const pattern = EROTIC_DIMENSION_CONFIG.desirePatterns[primaryPattern];
@@ -1115,11 +1115,11 @@ function computeEroticDimension(m1, m2, m3, gender) {
   }
   
   if (signals.selfPerceptionAccuracy.level !== 'aligned') {
-    customizations.push(`There's a gap between how you see yourself and how you come across. You might be sending erotic signals you're not aware ofâ€”or not sending ones you think you are.`);
+    customizations.push(`There's a gap between how you see yourself and how you come across. You might be sending erotic signals you're not aware of—or not sending ones you think you are.`);
   }
   
   if (signals.rangeCapacity.level === 'high') {
-    customizations.push(`You can switch contextsâ€”formal to intimate, public to private. This range is erotic fuel. You're not the same person in every room, and that's attractive.`);
+    customizations.push(`You can switch contexts—formal to intimate, public to private. This range is erotic fuel. You're not the same person in every room, and that's attractive.`);
   } else if (signals.rangeCapacity.level === 'low') {
     customizations.push(`You're consistent across contexts. What someone sees at dinner is what they get in the bedroom. Some partners find this trustworthy. Others want more range.`);
   }
@@ -1180,7 +1180,7 @@ function computeEroticCompatibility(user1Erotic, user2Erotic) {
   const compatibilityMatrix = {
     'polarityDependent-polarityDependent': {
       score: 70,
-      dynamic: 'Two people who need difference. You\'ll create itâ€”sometimes productively, sometimes destructively. The risk is manufacturing conflict to feel alive.',
+      dynamic: 'Two people who need difference. You\'ll create it—sometimes productively, sometimes destructively. The risk is manufacturing conflict to feel alive.',
       challenge: 'You might compete for who gets to be the "different" one.',
       opportunity: 'You both understand the need for space and mystery. Neither will suffocate the other.'
     },
@@ -1192,7 +1192,7 @@ function computeEroticCompatibility(user1Erotic, user2Erotic) {
     },
     'polarityDependent-noveltyDependent': {
       score: 75,
-      dynamic: 'Both of you need movement. Different kindsâ€”one needs difference, one needs newnessâ€”but movement is shared.',
+      dynamic: 'Both of you need movement. Different kinds—one needs difference, one needs newness—but movement is shared.',
       challenge: 'Neither of you is great at stillness. The relationship might always be reaching for the next thing.',
       opportunity: 'You won\'t bore each other. That counts for a lot.'
     },
@@ -1204,13 +1204,13 @@ function computeEroticCompatibility(user1Erotic, user2Erotic) {
     },
     'noveltyDependent-noveltyDependent': {
       score: 65,
-      dynamic: 'Two explorers. The relationship will be an adventureâ€”or exhaust itself chasing the next thing.',
+      dynamic: 'Two explorers. The relationship will be an adventure—or exhaust itself chasing the next thing.',
       challenge: 'Who holds down the fort while you\'re both looking for new horizons?',
       opportunity: 'You\'ll never run out of things to try together.'
     },
     'noveltyDependent-familiarityDependent': {
       score: 50,
-      dynamic: 'One wants to explore; one wants to deepen. These can complementâ€”or clash.',
+      dynamic: 'One wants to explore; one wants to deepen. These can complement—or clash.',
       challenge: 'Your "let\'s try something new" meets their "I liked it the way it was." Repeatedly.',
       opportunity: 'You can teach each other what you\'re missing. They show you depth; you show them range.'
     },
@@ -1272,7 +1272,7 @@ function computeEroticCompatibility(user1Erotic, user2Erotic) {
 }
 
 // =============================================================================
-// SECTION 4: TENSION STACK - VULNERABILITY PROFILE (BrenÃ© Brown)
+// SECTION 4: TENSION STACK - VULNERABILITY PROFILE (Brené Brown)
 // =============================================================================
 // Source: M2 (self-perception gap) + M3 (offer score) + M4 (drivers, gottman, capacity)
 //
@@ -1283,7 +1283,7 @@ function computeEroticCompatibility(user1Erotic, user2Erotic) {
 // yourself. The problem is that armor built for one war gets worn into the next.
 // The protection that saved you at 12 is suffocating your relationships at 35.
 // 
-// The Vulnerability Profile reveals your armor typeâ€”perfectionism, numbing,
+// The Vulnerability Profile reveals your armor type—perfectionism, numbing,
 // cynicism, control, or flooding. Each has a logic. Each has a cost. Each
 // shows up differently in intimacy. And each operates differently by gender,
 // because men and women are shamed for different things.
@@ -1299,7 +1299,7 @@ function computeEroticCompatibility(user1Erotic, user2Erotic) {
 
 const VULNERABILITY_PROFILE_CONFIG = {
   name: 'Vulnerability Profile',
-  author: 'BrenÃ© Brown',
+  author: 'Brené Brown',
   sources: ['M2.overallSelfPerceptionGap', 'M3.offerScore', 'M4.emotionalDrivers', 'M4.gottmanScreener', 'M4.conflictApproach'],
   
   // Gender-specific shame patterns
@@ -1316,7 +1316,7 @@ const VULNERABILITY_PROFILE_CONFIG = {
       ],
       culturalPressure: 'Men are taught that vulnerability is weakness, and weakness is unacceptable. The box is small: provide, protect, perform. Anything outside that box triggers shame.',
       partnerExperience: 'She feels like she can\'t reach him. He\'s there but not there. When she asks what\'s wrong, he says "nothing" or gets irritated. She starts to think he doesn\'t trust her, or doesn\'t have feelings at all.',
-      whatHeNeeds: 'He needs her to understand that his shutdown isn\'t rejectionâ€”it\'s protection. He needs permission to not have the answer. He needs her to not interpret his silence as absence of feeling.'
+      whatHeNeeds: 'He needs her to understand that his shutdown isn\'t rejection—it\'s protection. He needs permission to not have the answer. He needs her to not interpret his silence as absence of feeling.'
     },
     female: {
       primaryShame: 'not-enough',
@@ -1328,7 +1328,7 @@ const VULNERABILITY_PROFILE_CONFIG = {
         'Over-functioning to prove worth',
         'Never asking for what she needs directly'
       ],
-      culturalPressure: 'Women are taught they must be everything to everyoneâ€”beautiful but not vain, smart but not intimidating, sexy but not slutty, nurturing but also successful. The expectations are impossible, so shame is inevitable.',
+      culturalPressure: 'Women are taught they must be everything to everyone—beautiful but not vain, smart but not intimidating, sexy but not slutty, nurturing but also successful. The expectations are impossible, so shame is inevitable.',
       partnerExperience: 'He feels like nothing he does is enough. She\'s always fixing, improving, apologizing. He can\'t figure out what she actually wants because she won\'t say it directly. He starts to feel like he\'s failing a test he can\'t see.',
       whatSheNeeds: 'She needs him to see her effort without her having to perform it. She needs to be told she\'s enough without having to earn it. She needs permission to stop.'
     }
@@ -1346,11 +1346,11 @@ const VULNERABILITY_PROFILE_CONFIG = {
       },
       
       starters: {
-        male: `You learned early that mistakes are unacceptable. So you stopped making themâ€”or stopped admitting them. The work is always excellent. The image is always managed. But here's what that costs: no one knows you. They know your performance. They applaud your results. But the man behind the results? He's alone in there. Perfectionism isn't about high standards. It's about believing that if you're perfect enough, you'll finally be safe from criticism. You won't. The criticism just gets more specific. And the exhaustion of performing never stops.`,
+        male: `You learned early that mistakes are unacceptable. So you stopped making them—or stopped admitting them. The work is always excellent. The image is always managed. But here's what that costs: no one knows you. They know your performance. They applaud your results. But the man behind the results? He's alone in there. Perfectionism isn't about high standards. It's about believing that if you're perfect enough, you'll finally be safe from criticism. You won't. The criticism just gets more specific. And the exhaustion of performing never stops.`,
         
-        female: `You've built a life where everything looks right. The house, the body, the career, the kids if you have them. People say "I don't know how you do it all." You smile. You don't tell them about the 2am anxiety, the constant comparisons, the voice that says it's never enough. Perfectionism told you it would protect you. If you just got it rightâ€”finally, completely rightâ€”you'd be safe from judgment. But the target keeps moving. And the woman everyone admires is drowning while she smiles.`,
+        female: `You've built a life where everything looks right. The house, the body, the career, the kids if you have them. People say "I don't know how you do it all." You smile. You don't tell them about the 2am anxiety, the constant comparisons, the voice that says it's never enough. Perfectionism told you it would protect you. If you just got it right—finally, completely right—you'd be safe from judgment. But the target keeps moving. And the woman everyone admires is drowning while she smiles.`,
         
-        general: `Perfectionism is armor disguised as ambition. It whispers that if you just perform well enough, you'll outrun shame. You can't. Shame is faster than performance. The only way out is to let yourself be seenâ€”imperfect, incomplete, still trying. That's terrifying. It's also the only door to actual connection.`
+        general: `Perfectionism is armor disguised as ambition. It whispers that if you just perform well enough, you'll outrun shame. You can't. Shame is faster than performance. The only way out is to let yourself be seen—imperfect, incomplete, still trying. That's terrifying. It's also the only door to actual connection.`
       },
       
       inRelationship: {
@@ -1371,9 +1371,9 @@ const VULNERABILITY_PROFILE_CONFIG = {
       },
       
       starters: {
-        male: `Somewhere along the way, you learned that feelings were expensive. They got you in trouble. They made things complicated. So you found ways to turn them down. Work. Screens. Drinks. Exercise. Whatever keeps the volume low. You're not depressedâ€”you're managed. The problem is you can't selectively numb. Turn down the pain, you turn down the joy too. Your partner isn't asking you to feel everything all the time. They're asking you to feel something, with them, out loud. That's the part that's hard.`,
+        male: `Somewhere along the way, you learned that feelings were expensive. They got you in trouble. They made things complicated. So you found ways to turn them down. Work. Screens. Drinks. Exercise. Whatever keeps the volume low. You're not depressed—you're managed. The problem is you can't selectively numb. Turn down the pain, you turn down the joy too. Your partner isn't asking you to feel everything all the time. They're asking you to feel something, with them, out loud. That's the part that's hard.`,
         
-        female: `You've gotten good at not feeling what you can't afford to feel. Wine takes the edge off. Shopping fills the hole for a minute. Staying busy means you don't have to think. You're not an addictâ€”you're coping. But coping has a cost. The feelings you're avoiding don't go away. They wait. And while you're numbing the hard stuff, you're numbing the good stuff too. The joy gets quieter. The love gets flatter. You're surviving, but you're not living.`,
+        female: `You've gotten good at not feeling what you can't afford to feel. Wine takes the edge off. Shopping fills the hole for a minute. Staying busy means you don't have to think. You're not an addict—you're coping. But coping has a cost. The feelings you're avoiding don't go away. They wait. And while you're numbing the hard stuff, you're numbing the good stuff too. The joy gets quieter. The love gets flatter. You're surviving, but you're not living.`,
         
         general: `Numbing works. That's the problem. It actually does turn down the volume on pain. The catch is it turns down everything. You don't get to choose what you stop feeling. Go numb to grief, you go numb to joy. Go numb to shame, you go numb to love. Your partner is knocking on a door you've locked from the inside. They can hear you in there, but you're not answering.`
       },
@@ -1396,9 +1396,9 @@ const VULNERABILITY_PROFILE_CONFIG = {
       },
       
       starters: {
-        male: `You've been burned enough times to know better. People disappoint. Systems fail. Hope is for suckers. Your cynicism feels like intelligenceâ€”you're just seeing clearly what others are too naive to see. But here's what cynicism actually is: pre-emptive disappointment. You're rejecting things before they can reject you. It's armor made of "I knew it." The problem is that cynicism kills possibility. When you assume the worst, you create conditions for the worst. Your partner feels your low expectations. And people tend to meet expectations.`,
+        male: `You've been burned enough times to know better. People disappoint. Systems fail. Hope is for suckers. Your cynicism feels like intelligence—you're just seeing clearly what others are too naive to see. But here's what cynicism actually is: pre-emptive disappointment. You're rejecting things before they can reject you. It's armor made of "I knew it." The problem is that cynicism kills possibility. When you assume the worst, you create conditions for the worst. Your partner feels your low expectations. And people tend to meet expectations.`,
         
-        female: `You've been let down enough times that hoping feels dangerous. So you stopped. You're not negativeâ€”you're realistic. You see patterns others miss. You know how this ends. But cynicism isn't wisdom. It's fear dressed up as intelligence. When you expect disappointment, you find it everywhere. You create it. Your partner feels you waiting for them to fail. And people perform to the level of belief. You believe they'll disappoint you, and eventually, they do.`,
+        female: `You've been let down enough times that hoping feels dangerous. So you stopped. You're not negative—you're realistic. You see patterns others miss. You know how this ends. But cynicism isn't wisdom. It's fear dressed up as intelligence. When you expect disappointment, you find it everywhere. You create it. Your partner feels you waiting for them to fail. And people perform to the level of belief. You believe they'll disappoint you, and eventually, they do.`,
         
         general: `Cynicism is hope that's been hurt too many times. It says: if I don't believe in anything, nothing can let me down. This works in the short term. Long term, it poisons everything. Relationships need someone who believes they can work. Without that belief, you're just waiting for the end. And waiting for the end is a way of causing it.`
       },
@@ -1421,11 +1421,11 @@ const VULNERABILITY_PROFILE_CONFIG = {
       },
       
       starters: {
-        male: `You like things a certain way. Not because you're difficultâ€”because when things are predictable, they're safe. The calendar is organized. The finances are managed. The plans are made in advance. What you call "being responsible," others might call controlling. The distinction matters. Responsibility is handling your part. Control is handling everyone's part because you don't trust them to do it right. Your partner feels managed, not loved. They don't want a project manager. They want a partner.`,
+        male: `You like things a certain way. Not because you're difficult—because when things are predictable, they're safe. The calendar is organized. The finances are managed. The plans are made in advance. What you call "being responsible," others might call controlling. The distinction matters. Responsibility is handling your part. Control is handling everyone's part because you don't trust them to do it right. Your partner feels managed, not loved. They don't want a project manager. They want a partner.`,
         
-        female: `You run a tight ship. The house, the schedule, the social calendarâ€”you've got it handled. People rely on you because you're reliable. But somewhere under all that competence is a terrified girl who learned that the only way to be safe is to be in charge. Control is how you manage anxiety. If nothing is left to chance, nothing can hurt you. But control is also how you push people away. Your partner feels like your employee. They stop trying because you'll just redo it anyway.`,
+        female: `You run a tight ship. The house, the schedule, the social calendar—you've got it handled. People rely on you because you're reliable. But somewhere under all that competence is a terrified girl who learned that the only way to be safe is to be in charge. Control is how you manage anxiety. If nothing is left to chance, nothing can hurt you. But control is also how you push people away. Your partner feels like your employee. They stop trying because you'll just redo it anyway.`,
         
-        general: `Control is fear wearing a management hat. It says: if I can predict everything, nothing can hurt me. But control is an illusion, and maintaining the illusion is exhausting. You can't control other people. You can only control yourselfâ€”and barely that. The tighter you grip, the more they pull away. Real intimacy requires surrendering control. That's the part that feels like dying.`
+        general: `Control is fear wearing a management hat. It says: if I can predict everything, nothing can hurt me. But control is an illusion, and maintaining the illusion is exhausting. You can't control other people. You can only control yourself—and barely that. The tighter you grip, the more they pull away. Real intimacy requires surrendering control. That's the part that feels like dying.`
       },
       
       inRelationship: {
@@ -1446,11 +1446,11 @@ const VULNERABILITY_PROFILE_CONFIG = {
       },
       
       starters: {
-        male: `When you feel, you feel big. You're not one of those shut-down guys who can't access emotionâ€”you access it full volume. This terrifies people. Men especially aren't supposed to feel this much, this openly. So you've been told you're "too much," "too intense," "too emotional." Here's the thing: your capacity to feel is a strength. But intensity without regulation is overwhelming. Your partner can't process when they're flooded. You need to learn to turn down the volumeâ€”not to feel less, but so they can hear you at all.`,
+        male: `When you feel, you feel big. You're not one of those shut-down guys who can't access emotion—you access it full volume. This terrifies people. Men especially aren't supposed to feel this much, this openly. So you've been told you're "too much," "too intense," "too emotional." Here's the thing: your capacity to feel is a strength. But intensity without regulation is overwhelming. Your partner can't process when they're flooded. You need to learn to turn down the volume—not to feel less, but so they can hear you at all.`,
         
         female: `You feel everything. Deeply, loudly, immediately. When you're hurt, they know it. When you're happy, the room knows it. People have called you dramatic, too much, overwhelming. You've tried to tone it down. It doesn't work. You just feel like you're suffocating. Here's the truth: your emotional intensity is a gift. But gifts need to be given in doses the other person can receive. When you flood, they can't hear you anymore. They're just trying to survive the wave. Learning to regulate isn't about feeling less. It's about being heard.`,
         
-        general: `Flooding is emotional intensity without a dimmer switch. Everything is urgent, everything is now, everything is at volume ten. This comes from a place of genuinely wanting connectionâ€”the intensity is a bid for response. But it backfires. Instead of drawing people in, it overwhelms them. They shut down not because they don't care, but because they can't process. The work isn't to feel less. It's to titrateâ€”to give your feelings in doses small enough to be received.`
+        general: `Flooding is emotional intensity without a dimmer switch. Everything is urgent, everything is now, everything is at volume ten. This comes from a place of genuinely wanting connection—the intensity is a bid for response. But it backfires. Instead of drawing people in, it overwhelms them. They shut down not because they don't care, but because they can't process. The work isn't to feel less. It's to titrate—to give your feelings in doses small enough to be received.`
       },
       
       inRelationship: {
@@ -1615,7 +1615,7 @@ function computeVulnerabilityProfile(m2, m3, m4, gender) {
   
   // Add perception gap insight if significant
   if (gapInterpretation === 'significant') {
-    customizations.push(`There's a significant gap between how you see yourself and how you come across. Your armor is workingâ€”maybe too well. You're protecting something that might not need this much protection anymore.`);
+    customizations.push(`There's a significant gap between how you see yourself and how you come across. Your armor is working—maybe too well. You're protecting something that might not need this much protection anymore.`);
     if (mismatchedDimensions.length > 0) {
       customizations.push(`This gap shows up especially in: ${mismatchedDimensions.join(', ')}.`);
     }
@@ -1623,9 +1623,9 @@ function computeVulnerabilityProfile(m2, m3, m4, gender) {
   
   // Add capacity context
   if (lowCapacity) {
-    customizations.push(`You have limited bandwidth for emotional processing right now. This isn't a character flawâ€”it might mean you're already carrying a lot. But it affects how much vulnerability you can offer.`);
+    customizations.push(`You have limited bandwidth for emotional processing right now. This isn't a character flaw—it might mean you're already carrying a lot. But it affects how much vulnerability you can offer.`);
   } else if (highCapacity) {
-    customizations.push(`You have high emotional capacity. You can hold a lotâ€”yours and others'. The risk is taking on too much, or expecting partners to match your capacity.`);
+    customizations.push(`You have high emotional capacity. You can hold a lot—yours and others'. The risk is taking on too much, or expecting partners to match your capacity.`);
   }
   
   // Compute vulnerability capacity score (0-100)
@@ -1716,7 +1716,7 @@ function computeVulnerabilityCompatibility(user1Vuln, user2Vuln) {
       score: 55,
       dynamic: 'Two performers. You both look great on paper and neither of you is seen.',
       challenge: 'The relationship becomes a performance for an audience of two. Neither drops the mask.',
-      opportunity: 'You understand the exhaustion of performing. You could agree to stopâ€”together.'
+      opportunity: 'You understand the exhaustion of performing. You could agree to stop—together.'
     },
     'perfectionism-numbing': {
       score: 40,
@@ -1746,7 +1746,7 @@ function computeVulnerabilityCompatibility(user1Vuln, user2Vuln) {
       score: 45,
       dynamic: 'Two people alone together. Peaceful, but empty.',
       challenge: 'Nothing is wrong, but nothing is alive either. You coexist without connecting.',
-      opportunity: 'You both understand needing space. You could build something quiet but realâ€”if you try.'
+      opportunity: 'You both understand needing space. You could build something quiet but real—if you try.'
     },
     'numbing-flooding': {
       score: 35,
@@ -1891,7 +1891,7 @@ function analyzeShameInteraction(shame1, shame2) {
     return {
       risk: 'medium',
       pattern: 'Shared vulnerability',
-      description: `You both carry ${d1} as your primary driver. You understand each other's core fearâ€”which is rare and valuable. The risk is that you might trigger each other in stereo.`,
+      description: `You both carry ${d1} as your primary driver. You understand each other's core fear—which is rare and valuable. The risk is that you might trigger each other in stereo.`,
       guidance: 'Your shared wound is a bond and a risk. When you\'re both activated, neither can hold the other. Have a plan for who grounds first.'
     };
   }
@@ -1914,9 +1914,9 @@ function analyzeShameInteraction(shame1, shame2) {
 // nervous system can handle are often completely different things.
 // 
 // You're drawn to thrill, but your deepest fear is abandonment. So you chase
-// exciting, unpredictable peopleâ€”then spend the whole relationship terrified
+// exciting, unpredictable people—then spend the whole relationship terrified
 // they'll leave. Or you want peace, but you fear being trapped. So you choose
-// stable partnersâ€”then feel suffocated by the very stability you picked.
+// stable partners—then feel suffocated by the very stability you picked.
 // 
 // This isn't bad luck. It's not picking the wrong people. It's a mismatch
 // between your attraction system (dopamine, novelty, chemistry) and your
@@ -1928,7 +1928,7 @@ function analyzeShameInteraction(shame1, shame2) {
 // works. If they're at war, your attractions lead you toward what will hurt you.
 // 
 // Knowing this won't change what attracts you. But it will help you understand
-// why you keep ending up in the same placeâ€”and what you might do differently.
+// why you keep ending up in the same place—and what you might do differently.
 
 const ATTRACTION_ATTACHMENT_CONFIG = {
   name: 'Attraction-Attachment',
@@ -1942,11 +1942,11 @@ const ATTRACTION_ATTACHMENT_CONFIG = {
       description: 'What attracts you matches what your nervous system can handle.',
       
       starters: {
-        male: `You're attracted to what actually works for you. This is rarer than it sounds. Most people develop attractions that fight their attachment needs. You didn't. The woman who lights you up is also the woman who won't destabilize you. This doesn't mean no challengesâ€”it means the challenges won't be about fundamental incompatibility between what you want and what you can handle.`,
+        male: `You're attracted to what actually works for you. This is rarer than it sounds. Most people develop attractions that fight their attachment needs. You didn't. The woman who lights you up is also the woman who won't destabilize you. This doesn't mean no challenges—it means the challenges won't be about fundamental incompatibility between what you want and what you can handle.`,
         
-        female: `Your attraction and your attachment system are pulling in the same direction. You want what's actually good for you. This is a giftâ€”most people spend years attracted to what hurts them before they figure this out. Trust your instincts here. The man who excites you is also the man who can hold you. Don't let anyone tell you that's boring.`,
+        female: `Your attraction and your attachment system are pulling in the same direction. You want what's actually good for you. This is a gift—most people spend years attracted to what hurts them before they figure this out. Trust your instincts here. The man who excites you is also the man who can hold you. Don't let anyone tell you that's boring.`,
         
-        general: `What turns you on doesn't turn against you. Your attraction patterns and your attachment needs are aligned. This creates stable desireâ€”you can want someone without that wanting becoming self-destructive. Don't take this for granted. Many people never achieve this alignment.`
+        general: `What turns you on doesn't turn against you. Your attraction patterns and your attachment needs are aligned. This creates stable desire—you can want someone without that wanting becoming self-destructive. Don't take this for granted. Many people never achieve this alignment.`
       },
       
       riskLevel: 'low',
@@ -1958,11 +1958,11 @@ const ATTRACTION_ATTACHMENT_CONFIG = {
       description: 'You\'re attracted to excitement but terrified of being left.',
       
       starters: {
-        male: `You're drawn to women who are excitingâ€”unpredictable, adventurous, maybe a little wild. But your deepest fear is being left. See the problem? The excitement you crave often comes packaged with instability. The woman who thrills you is often the woman who can't be pinned down. So you chase intensity, catch it, then spend all your energy trying to keep it from leaving. You're attracted to what activates your deepest wound.`,
+        male: `You're drawn to women who are exciting—unpredictable, adventurous, maybe a little wild. But your deepest fear is being left. See the problem? The excitement you crave often comes packaged with instability. The woman who thrills you is often the woman who can't be pinned down. So you chase intensity, catch it, then spend all your energy trying to keep it from leaving. You're attracted to what activates your deepest wound.`,
         
-        female: `You want the thrill. The butterflies. The man who makes you feel alive. But underneath that want is a terror of abandonment. So you pursue exciting menâ€”and then try to lock them down. You want the rollercoaster but you're afraid it'll throw you off. This creates exhausting relationships: you're drawn to what you can't quite hold, and you grip tighter, which pushes them away, which confirms your fear. The cycle is brutal.`,
+        female: `You want the thrill. The butterflies. The man who makes you feel alive. But underneath that want is a terror of abandonment. So you pursue exciting men—and then try to lock them down. You want the rollercoaster but you're afraid it'll throw you off. This creates exhausting relationships: you're drawn to what you can't quite hold, and you grip tighter, which pushes them away, which confirms your fear. The cycle is brutal.`,
         
-        general: `Thrill and abandonment fear are at war in you. You're attracted to excitement, spontaneity, unpredictabilityâ€”but your nervous system needs to know they're not leaving. These rarely come together. Exciting people are often flight risks. Stable people often feel boring to you. You're caught between what lights you up and what lets you sleep at night.`
+        general: `Thrill and abandonment fear are at war in you. You're attracted to excitement, spontaneity, unpredictability—but your nervous system needs to know they're not leaving. These rarely come together. Exciting people are often flight risks. Stable people often feel boring to you. You're caught between what lights you up and what lets you sleep at night.`
       },
       
       riskLevel: 'high',
@@ -1977,14 +1977,14 @@ const ATTRACTION_ATTACHMENT_CONFIG = {
       starters: {
         male: `You want thrill, adventure, a woman who keeps you on your toes. But you also panic when things get too close. Your attraction pulls you in; your fear pushes you out. You pursue exciting women, then feel smothered when they actually show up. The problem isn't them. The problem is you're attracted to intensity but allergic to commitment. Every relationship becomes an approach-avoid dance.`,
         
-        female: `You want excitementâ€”a man who surprises you, challenges you, keeps life interesting. But when he gets close, you feel trapped. So you pick thrilling men, let them in, then need to escape. You're not commitment-phobic, exactly. You're attracted to what you can't actually tolerate at close range. The distance is where the desire lives. The closeness is where it dies.`,
+        female: `You want excitement—a man who surprises you, challenges you, keeps life interesting. But when he gets close, you feel trapped. So you pick thrilling men, let them in, then need to escape. You're not commitment-phobic, exactly. You're attracted to what you can't actually tolerate at close range. The distance is where the desire lives. The closeness is where it dies.`,
         
-        general: `You want the thrill but not the bill. Excitement attracts you; commitment suffocates you. This creates a pattern of intense beginnings and claustrophobic endings. You're not brokenâ€”you're wired for contradiction. The work is learning that closeness doesn't have to mean consumption.`
+        general: `You want the thrill but not the bill. Excitement attracts you; commitment suffocates you. This creates a pattern of intense beginnings and claustrophobic endings. You're not broken—you're wired for contradiction. The work is learning that closeness doesn't have to mean consumption.`
       },
       
       riskLevel: 'high',
       pattern: 'You run toward intensity, then run away from intimacy. Repeat.',
-      guidance: 'Your attraction to thrill isn\'t the problem. Your equation of closeness with consumption is. You need a partner who can be exciting AND give you spaceâ€”and you need to learn that space isn\'t rejection.'
+      guidance: 'Your attraction to thrill isn\'t the problem. Your equation of closeness with consumption is. You need a partner who can be exciting AND give you space—and you need to learn that space isn\'t rejection.'
     },
     
     peaceAbandonmentConflict: {
@@ -1992,16 +1992,16 @@ const ATTRACTION_ATTACHMENT_CONFIG = {
       description: 'You want stability but fear they\'ll leave.',
       
       starters: {
-        male: `You're drawn to stable, grounded women. The ones who feel like home. But even in that stability, you're waiting for the other shoe to drop. You found peace, but you can't rest in it. You keep checkingâ€”is she still here? Is she still happy? Your attraction found the right thing; your nervous system won't let you enjoy it. You got what you wanted and now you're afraid to lose it.`,
+        male: `You're drawn to stable, grounded women. The ones who feel like home. But even in that stability, you're waiting for the other shoe to drop. You found peace, but you can't rest in it. You keep checking—is she still here? Is she still happy? Your attraction found the right thing; your nervous system won't let you enjoy it. You got what you wanted and now you're afraid to lose it.`,
         
-        female: `You want a peaceful, stable man. And you probably found oneâ€”or you're looking for one. But your abandonment fear doesn't care how stable he is. You're still anxious. Still checking. Still afraid that this good thing will disappear. You chose well, but you can't stop bracing for loss. The peace you wanted is here, and you can't feel it because you're too busy protecting against its end.`,
+        female: `You want a peaceful, stable man. And you probably found one—or you're looking for one. But your abandonment fear doesn't care how stable he is. You're still anxious. Still checking. Still afraid that this good thing will disappear. You chose well, but you can't stop bracing for loss. The peace you wanted is here, and you can't feel it because you're too busy protecting against its end.`,
         
-        general: `You're attracted to peace but haunted by abandonment. You want the calm partner, the stable life, the quiet loveâ€”and then you worry it away. Your taste is good. Your trust is broken. You picked the right person and now you're exhausting them with reassurance-seeking. They're not leaving. But you can't believe that.`
+        general: `You're attracted to peace but haunted by abandonment. You want the calm partner, the stable life, the quiet love—and then you worry it away. Your taste is good. Your trust is broken. You picked the right person and now you're exhausting them with reassurance-seeking. They're not leaving. But you can't believe that.`
       },
       
       riskLevel: 'medium',
       pattern: 'You found peace but can\'t rest in it. You exhaust stable partners with your need for reassurance.',
-      guidance: 'Your attraction is healthy. Your attachment wound is the work. The reassurance you seek can never be enough because the fear isn\'t about themâ€”it\'s older than them. You need to heal the wound, not have them constantly bandage it.'
+      guidance: 'Your attraction is healthy. Your attachment wound is the work. The reassurance you seek can never be enough because the fear isn\'t about them—it\'s older than them. You need to heal the wound, not have them constantly bandage it.'
     },
     
     peaceEngulfmentConflict: {
@@ -2009,16 +2009,16 @@ const ATTRACTION_ATTACHMENT_CONFIG = {
       description: 'You want stability but fear being swallowed by it.',
       
       starters: {
-        male: `You want peace. A grounded woman. A calm life. But when you get it, you feel trapped. The stability you craved becomes the cage you flee. You're not attracted to chaosâ€”you're just afraid that peace means disappearing. Comfort feels like quicksand. You picked the right woman and then you can't breathe. The problem isn't her. It's that you've confused safety with suffocation.`,
+        male: `You want peace. A grounded woman. A calm life. But when you get it, you feel trapped. The stability you craved becomes the cage you flee. You're not attracted to chaos—you're just afraid that peace means disappearing. Comfort feels like quicksand. You picked the right woman and then you can't breathe. The problem isn't her. It's that you've confused safety with suffocation.`,
         
-        female: `You want a peaceful life with a stable man. You chose well. But now you're restless. The peace feels like a trap. You're not bored by himâ€”you're scared that settling means losing yourself. The comfort you wanted is here, and it feels like being slowly erased. You're attracted to peace but allergic to being consumed by it.`,
+        female: `You want a peaceful life with a stable man. You chose well. But now you're restless. The peace feels like a trap. You're not bored by him—you're scared that settling means losing yourself. The comfort you wanted is here, and it feels like being slowly erased. You're attracted to peace but allergic to being consumed by it.`,
         
         general: `Peace attracts you. Engulfment terrifies you. These are the same thing to your nervous system. You want stability, but stability feels like identity death. So you either sabotage good relationships or suffocate in them. The work is separating peace from consumption. They're not the same. You can be calm and still be you.`
       },
       
       riskLevel: 'medium-high',
       pattern: 'You attract what you want, then feel trapped by it. Good relationships feel like gilded cages.',
-      guidance: 'Keep your life. Friends, hobbies, space. Peace doesn\'t mean merging. You can be in a stable relationship and still be a separate person. That\'s not betrayalâ€”it\'s health.'
+      guidance: 'Keep your life. Friends, hobbies, space. Peace doesn\'t mean merging. You can be in a stable relationship and still be a separate person. That\'s not betrayal—it\'s health.'
     },
     
     thrillInadequacyConflict: {
@@ -2026,9 +2026,9 @@ const ATTRACTION_ATTACHMENT_CONFIG = {
       description: 'You\'re attracted to excitement but feel unworthy of it.',
       
       starters: {
-        male: `You want the exciting womanâ€”the one who turns heads, who lives boldly, who makes life feel bigger. But underneath that want is a voice that says you don't deserve her. So you either don't approach, or you approach and then sabotage. You're attracted to what you feel inadequate for. The desire and the shame are fused. You want what you've already decided you can't have.`,
+        male: `You want the exciting woman—the one who turns heads, who lives boldly, who makes life feel bigger. But underneath that want is a voice that says you don't deserve her. So you either don't approach, or you approach and then sabotage. You're attracted to what you feel inadequate for. The desire and the shame are fused. You want what you've already decided you can't have.`,
         
-        female: `You're drawn to exciting menâ€”confident, dynamic, alive. But part of you already knows you're not enough for them. So you hold back. Or you get them and then wait to be found out. Your attraction is clear; your worthiness is in question. You want the thrill but you've pre-rejected yourself from it.`,
+        female: `You're drawn to exciting men—confident, dynamic, alive. But part of you already knows you're not enough for them. So you hold back. Or you get them and then wait to be found out. Your attraction is clear; your worthiness is in question. You want the thrill but you've pre-rejected yourself from it.`,
         
         general: `Thrill attracts you. Inadequacy undermines you. You want excitement but feel fundamentally unworthy of it. This creates either avoidance (you never pursue what you want) or self-sabotage (you get it and then destroy it before they can discover you're not enough). The attraction isn't the problem. The shame is.`
       },
@@ -2060,11 +2060,11 @@ const ATTRACTION_ATTACHMENT_CONFIG = {
       description: 'You\'re attracted to excitement but hypersensitive to unfairness.',
       
       starters: {
-        male: `You want excitementâ€”a woman who challenges you, keeps things interesting. But your injustice driver means every slight gets logged. The exciting woman you chose doesn't play by rules, but you're keeping score. Thrill is inherently unpredictable; injustice craves fairness. You're attracted to what you'll spend the relationship prosecuting.`,
+        male: `You want excitement—a woman who challenges you, keeps things interesting. But your injustice driver means every slight gets logged. The exciting woman you chose doesn't play by rules, but you're keeping score. Thrill is inherently unpredictable; injustice craves fairness. You're attracted to what you'll spend the relationship prosecuting.`,
         
-        female: `You're drawn to exciting menâ€”dynamic, maybe a little unpredictable. But when they're inconsistent (which exciting often is), you feel wronged. You wanted the thrill but you're billing them for every time the thrill wasn't fair. Your attraction and your accounting don't match.`,
+        female: `You're drawn to exciting men—dynamic, maybe a little unpredictable. But when they're inconsistent (which exciting often is), you feel wronged. You wanted the thrill but you're billing them for every time the thrill wasn't fair. Your attraction and your accounting don't match.`,
         
-        general: `Thrill attracts you. Unfairness enrages you. But thrill is often unfairâ€”it's not balanced, not predictable, not equitable. You want excitement but you can't stop tracking whether you're getting a fair deal. You're drawn to fire and then resentful that it burns.`
+        general: `Thrill attracts you. Unfairness enrages you. But thrill is often unfair—it's not balanced, not predictable, not equitable. You want excitement but you can't stop tracking whether you're getting a fair deal. You're drawn to fire and then resentful that it burns.`
       },
       
       riskLevel: 'medium',
@@ -2077,9 +2077,9 @@ const ATTRACTION_ATTACHMENT_CONFIG = {
       description: 'You want stability but see unfairness everywhere.',
       
       starters: {
-        male: `You want peaceâ€”a stable woman, a calm life. But your injustice driver won't let things rest. Even in peaceful relationships, you find inequities to address. You got the calm you wanted, but you're disrupting it with every fairness audit. You want peace but you're the one disturbing it.`,
+        male: `You want peace—a stable woman, a calm life. But your injustice driver won't let things rest. Even in peaceful relationships, you find inequities to address. You got the calm you wanted, but you're disrupting it with every fairness audit. You want peace but you're the one disturbing it.`,
         
-        female: `You want a peaceful life with a stable man. And maybe you have it. But you can't stop noticing what's unfairâ€”who did more, who sacrificed what, who's giving and who's taking. The peace you wanted is here, but you're eroding it with constant accounting. You're your own obstacle to the thing you most want.`,
+        female: `You want a peaceful life with a stable man. And maybe you have it. But you can't stop noticing what's unfair—who did more, who sacrificed what, who's giving and who's taking. The peace you wanted is here, but you're eroding it with constant accounting. You're your own obstacle to the thing you most want.`,
         
         general: `You want peace but your injustice driver keeps disturbing it. You've created the stable life and now you're the one finding problems. The vigilance that protected you is now preventing you from resting. You want calm but you're the noise.`
       },
@@ -2280,7 +2280,7 @@ function computeAttractionAttachmentCompatibility(user1AA, user2AA) {
   // Same conflict pattern
   else if (p1 === p2) {
     score = 50;
-    dynamic = 'You share the same attraction-attachment conflict. You understand each otherâ€”and you might enable each other.';
+    dynamic = 'You share the same attraction-attachment conflict. You understand each other—and you might enable each other.';
     challenge = 'Two people with the same wound can bond over it instead of healing it.';
     opportunity = 'Shared struggle is intimacy. If you both commit to growth, you can help each other.';
   }
@@ -2330,7 +2330,7 @@ function computeAttractionAttachmentCompatibility(user1AA, user2AA) {
 // INTRODUCTION:
 // Some people fight TO connect. The argument is engagement. The heat is contact.
 // They'd rather have a screaming match than cold distance. For them, conflict
-// can actually deepen intimacyâ€”rupture and repair builds trust.
+// can actually deepen intimacy—rupture and repair builds trust.
 // 
 // Others fight AND disconnect. Conflict is threat. The heat is damage. They
 // need safety before they can be intimate again. For them, every fight creates
@@ -2347,8 +2347,8 @@ function computeAttractionAttachmentCompatibility(user1AA, user2AA) {
 // comes from working through things together?
 // 
 // This is one of the most predictive patterns for long-term relationship
-// success. Get this wrong and you'll exhaust each other. Get it rightâ€”or
-// learn to choreograph your differencesâ€”and you can last.
+// success. Get this wrong and you'll exhaust each other. Get it right—or
+// learn to choreograph your differences—and you can last.
 
 const INTIMACY_CONFLICT_BRIDGE_CONFIG = {
   name: 'Intimacy-Conflict Bridge',
@@ -2365,16 +2365,16 @@ const INTIMACY_CONFLICT_BRIDGE_CONFIG = {
       detection: 'M3 Type 1 or 2 + Pursue + Quick repair',
       
       starters: {
-        male: `For you, fighting is engaging. Not pleasant, but alive. You'd rather have a heated argument than cold silence. Conflict means you're still in it togetherâ€”still caring enough to clash. The danger isn't the fighting; it's if she stops fighting back. That's when you know she's checked out. Your repair is quick because you can't stand the distance. You fight, you make up, you're closer than before. That's your pattern.`,
+        male: `For you, fighting is engaging. Not pleasant, but alive. You'd rather have a heated argument than cold silence. Conflict means you're still in it together—still caring enough to clash. The danger isn't the fighting; it's if she stops fighting back. That's when you know she's checked out. Your repair is quick because you can't stand the distance. You fight, you make up, you're closer than before. That's your pattern.`,
         
-        female: `You fight to connect, not to win. The conflict itself is intimacyâ€”it means you're still invested, still showing up, still engaged. Cold politeness terrifies you more than heated argument. When you fight with him and then repair, you feel closer. The rupture and repair cycle is how you build trust. You know you can survive conflict together, and that knowledge is safety.`,
+        female: `You fight to connect, not to win. The conflict itself is intimacy—it means you're still invested, still showing up, still engaged. Cold politeness terrifies you more than heated argument. When you fight with him and then repair, you feel closer. The rupture and repair cycle is how you build trust. You know you can survive conflict together, and that knowledge is safety.`,
         
         general: `Conflict, for you, is a form of contact. You'd rather fight than feel the distance of avoidance. Your pattern is: engage, clash, repair, grow closer. This works when your partner shares this pattern. It fails when they experience conflict as damage rather than connection.`
       },
       
       riskLevel: 'low',
       withSameType: 'Two generative engagers can fight passionately and repair quickly. High intensity, high intimacy. Just watch for escalation without resolution.',
-      withOpposite: 'If your partner experiences conflict as damage, your "engaging" feels like attacking. You need to understand that their withdrawal isn\'t rejectionâ€”it\'s protection.'
+      withOpposite: 'If your partner experiences conflict as damage, your "engaging" feels like attacking. You need to understand that their withdrawal isn\'t rejection—it\'s protection.'
     },
     
     protectedIntimacy: {
@@ -2385,16 +2385,16 @@ const INTIMACY_CONFLICT_BRIDGE_CONFIG = {
       detection: 'M3 Type 3 or 4 + Withdraw + Slow repair',
       
       starters: {
-        male: `Conflict doesn't feel like connection to youâ€”it feels like threat. When things get heated, something in you shuts down. Not because you don't care, but because you care too much to risk saying something you can't take back. You need space to process. You need time before you can repair. Rushing back into it before you're ready makes everything worse. Your intimacy lives in the calm, not the storm.`,
+        male: `Conflict doesn't feel like connection to you—it feels like threat. When things get heated, something in you shuts down. Not because you don't care, but because you care too much to risk saying something you can't take back. You need space to process. You need time before you can repair. Rushing back into it before you're ready makes everything worse. Your intimacy lives in the calm, not the storm.`,
         
-        female: `Fighting doesn't bring you closerâ€”it creates distance you then have to overcome. You'd rather avoid the conflict altogether than go through the rupture-repair cycle. When he raises his voice, something in you closes. You need to feel safe before you can be intimate again. Quick repair feels forced; you need time to trust again. Your intimacy is protected, not performed.`,
+        female: `Fighting doesn't bring you closer—it creates distance you then have to overcome. You'd rather avoid the conflict altogether than go through the rupture-repair cycle. When he raises his voice, something in you closes. You need to feel safe before you can be intimate again. Quick repair feels forced; you need time to trust again. Your intimacy is protected, not performed.`,
         
-        general: `Conflict is a threat to your intimacy, not a path to it. You need to recover before you can reconnect. Fighting doesn't clear the air for youâ€”it fills it with smoke you have to wait to clear. Partners who want to "talk it out" right now don't understand that you can't access intimacy when your system is activated.`
+        general: `Conflict is a threat to your intimacy, not a path to it. You need to recover before you can reconnect. Fighting doesn't clear the air for you—it fills it with smoke you have to wait to clear. Partners who want to "talk it out" right now don't understand that you can't access intimacy when your system is activated.`
       },
       
       riskLevel: 'low-medium',
       withSameType: 'Two protected-intimacy people may avoid conflict entirely. Peaceful, but issues go unaddressed. You\'ll need structured ways to surface problems without activating threat responses.',
-      withOpposite: 'If your partner fights to connect, your withdrawal feels like abandonment to them. You need to communicate that you\'re coming backâ€”just not yet.'
+      withOpposite: 'If your partner fights to connect, your withdrawal feels like abandonment to them. You need to communicate that you\'re coming back—just not yet.'
     },
     
     conflictedBridge: {
@@ -2405,11 +2405,11 @@ const INTIMACY_CONFLICT_BRIDGE_CONFIG = {
       detection: 'Pursue + Low emotional capacity OR Pursue + Type 4',
       
       starters: {
-        male: `You move toward conflictâ€”you pursue it, engage it, insist on addressing it. But once you're in it, you can't hold it. You start the fight but you can't finish it well. You want resolution but your capacity gets overwhelmed before you get there. You open doors you can't walk through. This creates a pattern: initiate, escalate, flood, regret.`,
+        male: `You move toward conflict—you pursue it, engage it, insist on addressing it. But once you're in it, you can't hold it. You start the fight but you can't finish it well. You want resolution but your capacity gets overwhelmed before you get there. You open doors you can't walk through. This creates a pattern: initiate, escalate, flood, regret.`,
         
-        female: `You engage conflict directly. You're not afraid to bring things up, to push for resolution. But your emotional capacity doesn't match your courage. You start conversations you can't sustain. The intimacy that conflict could create gets burned by the intensity you can't regulate. You want the connection that comes afterâ€”but you keep blowing up the bridge to get there.`,
+        female: `You engage conflict directly. You're not afraid to bring things up, to push for resolution. But your emotional capacity doesn't match your courage. You start conversations you can't sustain. The intimacy that conflict could create gets burned by the intensity you can't regulate. You want the connection that comes after—but you keep blowing up the bridge to get there.`,
         
-        general: `Your approach says "let's deal with this" but your capacity says "I can't hold this much." You pursue conflict but can't metabolize it. This creates cycles of engagement and overwhelm. The work isn't to stop engagingâ€”it's to build capacity, or to engage in smaller doses.`
+        general: `Your approach says "let's deal with this" but your capacity says "I can't hold this much." You pursue conflict but can't metabolize it. This creates cycles of engagement and overwhelm. The work isn't to stop engaging—it's to build capacity, or to engage in smaller doses.`
       },
       
       riskLevel: 'medium-high',
@@ -2425,16 +2425,16 @@ const INTIMACY_CONFLICT_BRIDGE_CONFIG = {
       detection: 'Withdraw + Type 1 or 2 + Slow repair',
       
       starters: {
-        male: `You want deep intimacyâ€”real connection, real knowing. But you avoid the conflict that would get you there. You withdraw when things get heated, even though you want to be closer. The intimacy you crave requires vulnerability you're protecting. You want her to know you, but you won't fight for it. You're waiting for connection without rupture, and that's not how it works.`,
+        male: `You want deep intimacy—real connection, real knowing. But you avoid the conflict that would get you there. You withdraw when things get heated, even though you want to be closer. The intimacy you crave requires vulnerability you're protecting. You want her to know you, but you won't fight for it. You're waiting for connection without rupture, and that's not how it works.`,
         
-        female: `You want to be deeply known. But when conflict arisesâ€”the very thing that could deepen intimacyâ€”you pull back. You protect yourself from the rupture that precedes repair. You want the closeness but you won't risk the fight. So you stay in safe shallows, wanting depth but unwilling to dive. The intimacy you want is on the other side of conflict you avoid.`,
+        female: `You want to be deeply known. But when conflict arises—the very thing that could deepen intimacy—you pull back. You protect yourself from the rupture that precedes repair. You want the closeness but you won't risk the fight. So you stay in safe shallows, wanting depth but unwilling to dive. The intimacy you want is on the other side of conflict you avoid.`,
         
         general: `You want intimacy but avoid the conflict that creates it. Withdrawal protects you from rupture, but rupture-and-repair is how trust deepens. You're staying safe in ways that keep you distant. The connection you want requires engaging the very thing you avoid.`
       },
       
       riskLevel: 'medium',
       withSameType: 'Two avoidant-bridge people will be comfortable but shallow. The intimacy you both want stays out of reach because neither will fight for it.',
-      withOpposite: 'A generative engager might be able to draw you outâ€”if they\'re patient. But if they push too hard, you\'ll retreat further.'
+      withOpposite: 'A generative engager might be able to draw you out—if they\'re patient. But if they push too hard, you\'ll retreat further.'
     },
     
     paradoxicalBridge: {
@@ -2445,7 +2445,7 @@ const INTIMACY_CONFLICT_BRIDGE_CONFIG = {
       detection: 'Type 1 + Withdraw approach',
       
       starters: {
-        male: `You want full intimacyâ€”nothing held back, complete access. But when conflict comes, you disappear. You're asking for everything and then withdrawing when things get hard. This confuses partners. You're saying "I want all of you" and then "I need space" in the same breath. The intimacy you want requires presence in conflict. You can't have one without the other.`,
+        male: `You want full intimacy—nothing held back, complete access. But when conflict comes, you disappear. You're asking for everything and then withdrawing when things get hard. This confuses partners. You're saying "I want all of you" and then "I need space" in the same breath. The intimacy you want requires presence in conflict. You can't have one without the other.`,
         
         female: `You offer everything and want everything in return. Deep intimacy, full presence. But conflict sends you running. You want the depth without the difficulty. You're asking him to be fully vulnerable while you protect yourself when things get heated. This isn't sustainable. Real intimacy includes conflict. You can't have the first without engaging the second.`,
         
@@ -2536,11 +2536,11 @@ function computeIntimacyConflictBridge(m3, m4, gender) {
   // Mixed patterns
   else if (isPursuer && slowRepair) {
     pattern = 'conflictedBridge';
-    rationale.push('Pursue but slow to repairâ€”opens conflicts without closing them');
+    rationale.push('Pursue but slow to repair—opens conflicts without closing them');
   }
   else if (isWithdrawer && quickRepair) {
     pattern = 'avoidantBridge';
-    rationale.push('Withdraw but want quick resolutionâ€”avoidant with reconnection need');
+    rationale.push('Withdraw but want quick resolution—avoidant with reconnection need');
   }
   else {
     pattern = 'protectedIntimacy';
@@ -2633,8 +2633,8 @@ function computeIntimacyConflictBridge(m3, m4, gender) {
 // you repair slowly because that's your rhythm. Your parts are aligned.
 // 
 // Internal incoherence means your patterns contradict. You pursue conflict but
-// fear engulfmentâ€”so you chase intimacy and then feel trapped. You withdraw
-// but fear abandonmentâ€”so you leave and then panic about being left. You're
+// fear engulfment—so you chase intimacy and then feel trapped. You withdraw
+// but fear abandonment—so you leave and then panic about being left. You're
 // your own obstacle.
 // 
 // This matters because incoherence is exhausting. You're fighting yourself
@@ -2643,7 +2643,7 @@ function computeIntimacyConflictBridge(m3, m4, gender) {
 // you want contradictory things.
 // 
 // The Internal Conflict Coherence stack reveals where your patterns align and
-// where they contradict. It won't fix the contradictionsâ€”but it will name them.
+// where they contradict. It won't fix the contradictions—but it will name them.
 // And naming them is the first step to stop being whiplashed by your own wiring.
 
 const INTERNAL_CONFLICT_COHERENCE_CONFIG = {
@@ -2658,7 +2658,7 @@ const INTERNAL_CONFLICT_COHERENCE_CONFIG = {
       description: 'You move toward but need space.',
       severity: 'high',
       
-      explanation: `You pursue conflictâ€”you move toward, engage, insist on resolution. But your primary driver is engulfmentâ€”you fear being consumed, controlled, trapped. This is incoherent. You're running toward the very thing that will make you feel trapped. When you pursue, you create the closeness you'll then need to escape.`,
+      explanation: `You pursue conflict—you move toward, engage, insist on resolution. But your primary driver is engulfment—you fear being consumed, controlled, trapped. This is incoherent. You're running toward the very thing that will make you feel trapped. When you pursue, you create the closeness you'll then need to escape.`,
       
       behavioral: 'You start fights, then feel suffocated by the intensity you created. You demand engagement, then need to retreat. Your partner is whiplashed.',
       
@@ -2670,11 +2670,11 @@ const INTERNAL_CONFLICT_COHERENCE_CONFIG = {
       description: 'You leave but fear being left.',
       severity: 'high',
       
-      explanation: `You withdraw from conflictâ€”you need space, you shut down, you leave. But your primary driver is abandonmentâ€”you're terrified of being left. This is incoherent. You're creating the very distance you fear. When you withdraw, you trigger your partner's pursuit, which feels like chasing, which makes you withdraw more.`,
+      explanation: `You withdraw from conflict—you need space, you shut down, you leave. But your primary driver is abandonment—you're terrified of being left. This is incoherent. You're creating the very distance you fear. When you withdraw, you trigger your partner's pursuit, which feels like chasing, which makes you withdraw more.`,
       
       behavioral: `You leave the room, then check if they're still there. You create distance, then panic about the gap. You're abandoning while fearing abandonment.`,
       
-      resolution: 'You need to communicate that withdrawal isn\'t leavingâ€”it\'s regulating. Tell them you\'re coming back. Give a timeline. Don\'t just disappear and then resent them for not waiting.'
+      resolution: 'You need to communicate that withdrawal isn\'t leaving—it\'s regulating. Tell them you\'re coming back. Give a timeline. Don\'t just disappear and then resent them for not waiting.'
     },
     
     quickRepairWithdraw: {
@@ -2682,7 +2682,7 @@ const INTERNAL_CONFLICT_COHERENCE_CONFIG = {
       description: 'You want fast resolution but need space first.',
       severity: 'medium',
       
-      explanation: `Your repair style is quickâ€”you want to resolve things fast, move on, restore connection. But your conflict approach is withdrawâ€”you need space before you can engage. These timings don't work together. You withdraw (need space) but then feel urgency to repair (want resolution). You're fighting your own rhythm.`,
+      explanation: `Your repair style is quick—you want to resolve things fast, move on, restore connection. But your conflict approach is withdraw—you need space before you can engage. These timings don't work together. You withdraw (need space) but then feel urgency to repair (want resolution). You're fighting your own rhythm.`,
       
       behavioral: `You leave to calm down, then feel anxious about the unresolved conflict. You want space AND want it to be over. You're rushing yourself.`,
       
@@ -2694,9 +2694,9 @@ const INTERNAL_CONFLICT_COHERENCE_CONFIG = {
       description: 'You engage immediately but need time to recover.',
       severity: 'medium',
       
-      explanation: `You pursue conflictâ€”you engage, address, don't let things slide. But your repair is slowâ€”you need time to come back after conflict. This creates a painful pattern: you engage fully, but then you're not ready to reconnect. Your partner thinks you're still angry when you're actually recovering.`,
+      explanation: `You pursue conflict—you engage, address, don't let things slide. But your repair is slow—you need time to come back after conflict. This creates a painful pattern: you engage fully, but then you're not ready to reconnect. Your partner thinks you're still angry when you're actually recovering.`,
       
-      behavioral: `You have the fight, then go quiet. Not stonewallingâ€”processing. But your partner doesn't know the difference. They think you're still in it when you're just slow to return.`,
+      behavioral: `You have the fight, then go quiet. Not stonewalling—processing. But your partner doesn't know the difference. They think you're still in it when you're just slow to return.`,
       
       resolution: 'Communicate your repair timeline. "I need to have this conversation, but I\'ll need time afterward to settle." Let them know the silence is recovery, not rejection.'
     },
@@ -2706,7 +2706,7 @@ const INTERNAL_CONFLICT_COHERENCE_CONFIG = {
       description: 'You engage conflict but can\'t hold it.',
       severity: 'medium-high',
       
-      explanation: `You pursue conflictâ€”you don't avoid, you engage. But your emotional capacity is lowâ€”you can't hold intensity for long before you're overwhelmed. You're starting conflicts your system can't sustain. You open the pressure valve but can't handle what comes out.`,
+      explanation: `You pursue conflict—you don't avoid, you engage. But your emotional capacity is low—you can't hold intensity for long before you're overwhelmed. You're starting conflicts your system can't sustain. You open the pressure valve but can't handle what comes out.`,
       
       behavioral: `You bring things up, then flood. You start the conversation, then shut down mid-way. You create intensity you can't manage.`,
       
@@ -2718,7 +2718,7 @@ const INTERNAL_CONFLICT_COHERENCE_CONFIG = {
       description: 'You could hold conflict but choose not to engage.',
       severity: 'low',
       
-      explanation: `You have high emotional capacityâ€”you could hold intensity, stay in difficult conversations, weather the storm. But you withdraw anyway. You're choosing not to use what you have. This might be wisdom (picking battles) or avoidance (using capacity as excuse to not engage).`,
+      explanation: `You have high emotional capacity—you could hold intensity, stay in difficult conversations, weather the storm. But you withdraw anyway. You're choosing not to use what you have. This might be wisdom (picking battles) or avoidance (using capacity as excuse to not engage).`,
       
       behavioral: `You could handle the conflict but you don't. Partners might feel you're holding back, that there's more there you won't bring.`,
       
@@ -2730,7 +2730,7 @@ const INTERNAL_CONFLICT_COHERENCE_CONFIG = {
       description: 'You criticize but collapse under criticism.',
       severity: 'medium-high',
       
-      explanation: `Your Gottman profile shows criticism as a patternâ€”you attack character, point out flaws, generalize negatively. But your primary driver is inadequacyâ€”you can't handle criticism yourself. You dish what you can't take. This is often projection: the flaws you attack in others are the ones you fear in yourself.`,
+      explanation: `Your Gottman profile shows criticism as a pattern—you attack character, point out flaws, generalize negatively. But your primary driver is inadequacy—you can't handle criticism yourself. You dish what you can't take. This is often projection: the flaws you attack in others are the ones you fear in yourself.`,
       
       behavioral: `You criticize your partner freely, then crumble when they respond in kind. You set rules for them that you don't follow. This builds resentment fast.`,
       
@@ -2742,11 +2742,11 @@ const INTERNAL_CONFLICT_COHERENCE_CONFIG = {
       description: 'You pursue but shut down under intensity.',
       severity: 'high',
       
-      explanation: `You pursue conflictâ€”you move toward, engage, don't let things slide. But you also stonewallâ€”you shut down completely when things get too intense. You're both the gas and the brake. You accelerate toward conflict, then slam the brakes when you get there. This is disorienting for partners.`,
+      explanation: `You pursue conflict—you move toward, engage, don't let things slide. But you also stonewall—you shut down completely when things get too intense. You're both the gas and the brake. You accelerate toward conflict, then slam the brakes when you get there. This is disorienting for partners.`,
       
       behavioral: `You insist on having the conversation, then go blank in the middle of it. You demand engagement, then become unreachable. Your partner never knows which version they're getting.`,
       
-      resolution: 'Your stonewalling isn\'t characterâ€”it\'s physiology. Your heart rate crosses 100 BPM and your brain goes offline. You need to recognize the signs before you hit the wall. Pursue smaller, or build in breaks before you freeze.'
+      resolution: 'Your stonewalling isn\'t character—it\'s physiology. Your heart rate crosses 100 BPM and your brain goes offline. You need to recognize the signs before you hit the wall. Pursue smaller, or build in breaks before you freeze.'
     }
   },
   
@@ -2961,7 +2961,7 @@ function computeInternalConflictCoherence(m4, gender) {
   
   if (incoherences.length === 0) {
     interpretation = 'coherent';
-    summary = 'Your conflict patterns work together. Your approach, driver, repair style, and capacity are aligned. This doesn\'t mean conflict is easyâ€”it means you\'re not fighting yourself while fighting with your partner.';
+    summary = 'Your conflict patterns work together. Your approach, driver, repair style, and capacity are aligned. This doesn\'t mean conflict is easy—it means you\'re not fighting yourself while fighting with your partner.';
   } else if (totalSeverity <= 2) {
     interpretation = 'mostly-coherent';
     summary = `You have minor internal friction in your conflict patterns. ${incoherences[0].name} creates some inconsistency, but it's manageable with awareness.`;
@@ -2970,7 +2970,7 @@ function computeInternalConflictCoherence(m4, gender) {
     summary = `You have meaningful incoherences in your conflict patterns. These create internal friction that shows up in relationships. ${incoherences.map(i => i.name).join(' and ')} mean you're often fighting yourself while fighting with your partner.`;
   } else {
     interpretation = 'incoherent';
-    summary = `Your conflict patterns are at war with each other. You pursue what you flee from, or flee what you need. This exhausts you and confuses partners. The work isn't just about conflict skillsâ€”it's about aligning your patterns so you're not your own obstacle.`;
+    summary = `Your conflict patterns are at war with each other. You pursue what you flee from, or flee what you need. This exhausts you and confuses partners. The work isn't just about conflict skills—it's about aligning your patterns so you're not your own obstacle.`;
   }
   
   return {
@@ -3113,7 +3113,7 @@ function computeCoherenceCompatibility(user1Coherence, user2Coherence) {
 // 
 // THE FANTASY GAP: What you want vs what the market offers you. If you're
 // holding out for someone who represents 0.3% of your local market, that's
-// not standardsâ€”that's strategy that will fail.
+// not standards—that's strategy that will fail.
 // 
 // THE MIRROR GAP: What you want vs what you offer. This is why you "keep
 // attracting the wrong people." You're fishing with bait that attracts
@@ -3142,17 +3142,17 @@ const MARKET_REALITY_CONFIG = {
       
       starters: {
         male: {
-          large: `You're shopping in the wrong store. The woman you've built in your headâ€”she exists, but not in the numbers you need. You want specific things that significantly shrink your pool. This isn't wrong. But it means you're either going to wait longer, expand your radius, or adjust your expectations. The market doesn't care what you deserve. It only cares what it has.`,
+          large: `You're shopping in the wrong store. The woman you've built in your head—she exists, but not in the numbers you need. You want specific things that significantly shrink your pool. This isn't wrong. But it means you're either going to wait longer, expand your radius, or adjust your expectations. The market doesn't care what you deserve. It only cares what it has.`,
           
           moderate: `Your expectations are ambitious but not unrealistic. The pool is smaller than you'd like, but it's not empty. You'll need patience and strategy. Cast a wider net geographically, be more flexible on one or two dimensions, or accept that your search will take longer. Pick your constraint.`,
           
-          small: `Your expectations align with your market position. The pool of women who fit what you want is healthy relative to what you bring. This doesn't guarantee successâ€”but it means the math is working for you, not against you. Don't create artificial scarcity by adding criteria you don't actually need.`
+          small: `Your expectations align with your market position. The pool of women who fit what you want is healthy relative to what you bring. This doesn't guarantee success—but it means the math is working for you, not against you. Don't create artificial scarcity by adding criteria you don't actually need.`
         },
         
         female: {
-          large: `The man you want is rare in your market. Not impossibleâ€”but rare enough that waiting for him to show up is a strategy that might not pay off. You can expand geographically, adjust one or two criteria, or accept a longer timeline. But pretending the market owes you this specific man will only lead to frustration. The market doesn't negotiate.`,
+          large: `The man you want is rare in your market. Not impossible—but rare enough that waiting for him to show up is a strategy that might not pay off. You can expand geographically, adjust one or two criteria, or accept a longer timeline. But pretending the market owes you this specific man will only lead to frustration. The market doesn't negotiate.`,
           
-          moderate: `Your criteria are selective but not fantasy. The pool is tight, which means you'll need to be intentionalâ€”online dating, wider geography, saying yes to dates you might have declined. The man you want exists, but he won't fall into your lap. This requires effort, not just standards.`,
+          moderate: `Your criteria are selective but not fantasy. The pool is tight, which means you'll need to be intentional—online dating, wider geography, saying yes to dates you might have declined. The man you want exists, but he won't fall into your lap. This requires effort, not just standards.`,
           
           small: `Your expectations match your market reality. The pool of men who fit your criteria is reasonable given what you bring. This is a workable situation. Stay consistent, stay visible, and don't add criteria you don't actually care about just because you can.`
         },
@@ -3160,7 +3160,7 @@ const MARKET_REALITY_CONFIG = {
         general: {
           large: `There's a significant gap between what you want and what the market offers you. This gap is where frustration lives. You can close it three ways: adjust criteria, expand geography, or increase your own market position. Waiting and hoping is not a strategy.`,
           
-          moderate: `Your expectations exceed your immediate market, but not by much. With intentional effortâ€”active dating, wider search radius, flexibility on negotiable criteriaâ€”the gap is bridgeable. Don't wait for luck. Create opportunity.`,
+          moderate: `Your expectations exceed your immediate market, but not by much. With intentional effort—active dating, wider search radius, flexibility on negotiable criteria—the gap is bridgeable. Don't wait for luck. Create opportunity.`,
           
           small: `Your expectations align with market reality. The people you want are available in reasonable numbers. This is a good position. Don't complicate it by adding criteria that don't actually matter to you.`
         }
@@ -3171,15 +3171,15 @@ const MARKET_REALITY_CONFIG = {
       name: 'Mirror Gap',
       description: 'The distance between what you want and what you offer.',
       
-      computation: 'M1 code vs M2 codeâ€”are you attracting who you want?',
+      computation: 'M1 code vs M2 code—are you attracting who you want?',
       
       explanation: `This is why you keep attracting the "wrong" people. You want one thing but you're signaling another. The people who respond to what you offer aren't the people you want. You're fishing with the wrong bait.`,
       
       starters: {
         male: {
-          large: `The women you attract aren't the women you want. This isn't bad luckâ€”it's signal mismatch. What you offer attracts a different type than what you're seeking. You're putting out one frequency and expecting a different one to respond. Either change what you want, or change what you're projecting. The market is responding to you accurately; you just don't like the response.`,
+          large: `The women you attract aren't the women you want. This isn't bad luck—it's signal mismatch. What you offer attracts a different type than what you're seeking. You're putting out one frequency and expecting a different one to respond. Either change what you want, or change what you're projecting. The market is responding to you accurately; you just don't like the response.`,
           
-          moderate: `There's some gap between who you attract and who you want. You're getting interest, but from women who aren't quite right. Look at what you're signaling versus what you're seeking. Small adjustments in presentation can shift who responds. You don't need a personality overhaulâ€”you need message alignment.`,
+          moderate: `There's some gap between who you attract and who you want. You're getting interest, but from women who aren't quite right. Look at what you're signaling versus what you're seeking. Small adjustments in presentation can shift who responds. You don't need a personality overhaul—you need message alignment.`,
           
           small: `What you offer tends to attract what you want. Your signals and desires are aligned. This doesn't guarantee chemistry with any individual, but it means you're fishing in the right pond with the right bait. Stay consistent.`
         },
@@ -3187,9 +3187,9 @@ const MARKET_REALITY_CONFIG = {
         female: {
           large: `You keep asking "why do I attract these men?" Here's why: what you offer signals to a different type than what you want. You want the stable provider but you're projecting excitement and edge. You want the adventurer but you're projecting domesticity. The men responding to you are responding accurately to what you're putting out. They're not wrong. Your signal is.`,
           
-          moderate: `The men you attract are close to what you want, but not quite. There's signal leakageâ€”something in your presentation is calling in men who don't match your stated preferences. This is usually fixable with awareness. Notice what you're emphasizing versus what you actually want.`,
+          moderate: `The men you attract are close to what you want, but not quite. There's signal leakage—something in your presentation is calling in men who don't match your stated preferences. This is usually fixable with awareness. Notice what you're emphasizing versus what you actually want.`,
           
-          small: `You tend to attract men who match what you're looking for. Your offer and your want are aligned. This is healthy positioning. The work now is selection, not attractionâ€”filtering the responses you get for actual compatibility.`
+          small: `You tend to attract men who match what you're looking for. Your offer and your want are aligned. This is healthy positioning. The work now is selection, not attraction—filtering the responses you get for actual compatibility.`
         },
         
         general: {
@@ -3208,21 +3208,21 @@ const MARKET_REALITY_CONFIG = {
       
       computation: 'M2 self-perception vs Demographics/behavioral signals',
       
-      explanation: `You think you're offering one thing; the market sees another. This isn't about lyingâ€”it's about blind spots. You rate yourself differently than the market rates you. This gap creates confusion and disappointment.`,
+      explanation: `You think you're offering one thing; the market sees another. This isn't about lying—it's about blind spots. You rate yourself differently than the market rates you. This gap creates confusion and disappointment.`,
       
       starters: {
         male: {
-          large: `There's a significant gap between how you see yourself and how you come across. This isn't about self-esteemâ€”it's about calibration. You think you're offering X, but your demographics, behaviors, and presentation say Y. The women who reject you aren't misjudging you. They're judging you accurately based on what they see. If you want different results, either change what you're actually offering, or get clearer on what you actually project.`,
+          large: `There's a significant gap between how you see yourself and how you come across. This isn't about self-esteem—it's about calibration. You think you're offering X, but your demographics, behaviors, and presentation say Y. The women who reject you aren't misjudging you. They're judging you accurately based on what they see. If you want different results, either change what you're actually offering, or get clearer on what you actually project.`,
           
-          moderate: `Some gap between your self-image and your market presentation. You're slightly overestimating or underestimating something. This creates small mismatchesâ€”dates that don't convert, matches that fizzle. Get feedback from trusted sources. What do people actually experience when they meet you?`,
+          moderate: `Some gap between your self-image and your market presentation. You're slightly overestimating or underestimating something. This creates small mismatches—dates that don't convert, matches that fizzle. Get feedback from trusted sources. What do people actually experience when they meet you?`,
           
           small: `Your self-perception aligns with how you come across. What you think you offer is what people actually receive. This calibration is valuable. You can trust your self-assessment when making decisions about who to approach.`
         },
         
         female: {
-          large: `You see yourself differently than the market sees you. This gap isn't about beauty or worthâ€”it's about accuracy. You're either overestimating something (and getting rejected when reality doesn't match), or underestimating something (and underselling yourself). The men you're meeting aren't blind. They're responding to what's actually in front of them. Get calibrated.`,
+          large: `You see yourself differently than the market sees you. This gap isn't about beauty or worth—it's about accuracy. You're either overestimating something (and getting rejected when reality doesn't match), or underestimating something (and underselling yourself). The men you're meeting aren't blind. They're responding to what's actually in front of them. Get calibrated.`,
           
-          moderate: `Some gap between your self-image and your market position. You're slightly off in how you see yourself versus how you land. This creates frictionâ€”things feel harder than they should. Ask people you trust: what do I actually project? The answer might surprise you.`,
+          moderate: `Some gap between your self-image and your market position. You're slightly off in how you see yourself versus how you land. This creates friction—things feel harder than they should. Ask people you trust: what do I actually project? The answer might surprise you.`,
           
           small: `Your self-perception is calibrated. What you think you offer is what people experience. This accuracy helps you target appropriately and set realistic expectations. Trust your read on yourself.`
         },
@@ -3255,13 +3255,13 @@ const MARKET_REALITY_CONFIG = {
     signalMismatch: {
       name: 'Signal Mismatch',
       description: 'Large Mirror Gap. Attracting wrong people.',
-      guidance: `You're sending mixed signals. What you project attracts a different type than what you want. This is fixableâ€”but it requires examining what you're actually putting out there, not just what you intend to put out.`
+      guidance: `You're sending mixed signals. What you project attracts a different type than what you want. This is fixable—but it requires examining what you're actually putting out there, not just what you intend to put out.`
     },
     
     blindSpot: {
       name: 'Blind Spot',
       description: 'Large Perception Gap. Self-image doesn\'t match reality.',
-      guidance: `You have a calibration problem. You're not seeing yourself the way the market sees you. This creates targeting errors and surprise rejections. Get honest feedback. The issue isn't the marketâ€”it's your read on yourself.`
+      guidance: `You have a calibration problem. You're not seeing yourself the way the market sees you. This creates targeting errors and surprise rejections. Get honest feedback. The issue isn't the market—it's your read on yourself.`
     },
     
     multipleGaps: {

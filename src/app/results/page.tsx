@@ -89,6 +89,7 @@ function ResultsDashboard() {
   const [loaded, setLoaded] = useState(false);
   const [hasPartner, setHasPartner] = useState(false);
   const [hasCouplesAccess, setHasCouplesAccess] = useState(false);
+  const [matchesExpanded, setMatchesExpanded] = useState(false);
   const [partnerName, setPartnerName] = useState<string | null>(null);
   const marketFetchedRef = useRef(false);
 
@@ -322,11 +323,248 @@ function ResultsDashboard() {
   // Sub-nav items — grouped
   const navItems = [
     { id: 'persona', label: 'Persona', show: !!persona },
-    { id: 'know-yourself', label: 'Know Yourself', show: hasDimensions || !!m3 || !!m4Summary || !!ic?.attachment },
-    { id: 'know-your-match', label: 'Know Your Match', show: !!(ic?.attachmentTiers) || matches.length > 0 },
+    { id: 'know-yourself', label: 'Know Yourself', show: hasDimensions || !!m3 || !!m4Summary || !!ic?.attachment || !!(tensionStacks && Object.keys(tensionStacks).length > 0) },
+    { id: 'know-your-match', label: 'Know Your Ideal Match', show: !!(ic?.attachmentTiers) || !!modifiers || (hasResults && true) },
     { id: 'know-your-market', label: 'Know Your Market', show: hasMarket },
     { id: 'coaching', label: 'Coaching', show: hasResults && canDownload },
   ].filter(n => n.show);
+
+  // Helper: render a single tension stack card by key
+  function renderTensionStack(key: string, stack: any) {
+    if (!stack || typeof stack !== 'object') return null;
+    const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, (s: string) => s.toUpperCase()).trim();
+
+    // Internal Conflict Coherence: dedicated renderer
+    if (key === 'internalConflictCoherence') {
+      return (
+        <section key={key} className="card mb-4">
+          <div className="flex items-start justify-between mb-2">
+            <div>
+              <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
+              <h4 className="text-sm font-semibold mt-1">
+                {stack.interpretation === 'coherent' ? 'Your conflict patterns are aligned' :
+                 stack.interpretation === 'mostly-coherent' ? 'Mostly aligned with minor friction' :
+                 stack.interpretation === 'mixed' ? 'Mixed signals in your conflict patterns' :
+                 'Your conflict patterns are working against each other'}
+              </h4>
+            </div>
+            <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+              stack.coherenceScore >= 80 ? 'bg-success/10 text-success' :
+              stack.coherenceScore >= 60 ? 'bg-accent/10 text-accent' :
+              stack.coherenceScore >= 40 ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
+            }`}>
+              {stack.coherenceScore}/100
+            </span>
+          </div>
+          {stack.summary && <p className="text-sm text-secondary mb-3">{stack.summary}</p>}
+          {Array.isArray(stack.incoherences) && stack.incoherences.length > 0 && (
+            <div className="mb-3">
+              <span className="text-xs font-mono text-warning uppercase tracking-wider">Internal Friction</span>
+              <div className="mt-2 space-y-3">
+                {stack.incoherences.map((inc: any, i: number) => (
+                  <div key={i} className="p-3 bg-warning/5 border border-warning/20 rounded">
+                    <p className="text-sm font-medium mb-1">{inc.name}</p>
+                    <p className="text-xs text-secondary mb-1">{inc.explanation}</p>
+                    {inc.behavioral && <p className="text-xs text-secondary italic">{inc.behavioral}</p>}
+                    {inc.resolution && (
+                      <p className="text-xs text-success mt-1.5"><span className="font-medium">Path forward:</span> {inc.resolution}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {Array.isArray(stack.coherences) && stack.coherences.length > 0 && (
+            <div>
+              <span className="text-xs font-mono text-success uppercase tracking-wider">Healthy Alignments</span>
+              <ul className="mt-2 space-y-1">
+                {stack.coherences.map((coh: any, i: number) => (
+                  <li key={i} className="text-sm text-secondary flex gap-2">
+                    <span className="text-success flex-shrink-0">&#8226;</span>
+                    {coh.note || coh.specific || coh.name || String(coh)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+      );
+    }
+
+    // Vulnerability Profile: dedicated renderer
+    if (key === 'vulnerabilityProfile') {
+      return (
+        <section key={key} className="card mb-4">
+          <div className="flex items-start justify-between mb-2">
+            <div>
+              <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
+              {stack.armorName && <h4 className="text-sm font-semibold mt-1">{stack.armorName}</h4>}
+            </div>
+            {stack.vulnerabilityLevel && (
+              <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+                stack.vulnerabilityLevel === 'high' ? 'bg-success/10 text-success' :
+                stack.vulnerabilityLevel === 'moderate' ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
+              }`}>
+                {stack.vulnerabilityLevel} openness
+              </span>
+            )}
+          </div>
+          {stack.armorCore && <p className="text-sm text-secondary mb-3">{stack.armorCore}</p>}
+          {stack.starterNarrative && <p className="text-sm mb-3">{stack.starterNarrative}</p>}
+          {Array.isArray(stack.customizations) && stack.customizations.length > 0 && (
+            <div className="mb-3">
+              <span className="text-xs font-mono text-secondary uppercase tracking-wider">Key Patterns</span>
+              <ul className="mt-1.5 space-y-1">
+                {stack.customizations.map((c: string, i: number) => (
+                  <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {stack.inRelationship && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {Array.isArray(stack.inRelationship.costs) && stack.inRelationship.costs.length > 0 && (
+                <div>
+                  <span className="text-xs font-mono text-warning uppercase tracking-wider">Risks</span>
+                  <ul className="mt-1.5 space-y-1">
+                    {stack.inRelationship.costs.map((r: string, i: number) => (
+                      <li key={i} className="text-xs text-secondary">{r}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {stack.repairPath && (
+                <div>
+                  <span className="text-xs font-mono text-success uppercase tracking-wider">Growth Path</span>
+                  <p className="text-xs text-secondary mt-1.5">{stack.repairPath}</p>
+                </div>
+              )}
+            </div>
+          )}
+          {stack.shamePattern && (
+            <div className="mt-3 pt-3 border-t border-border">
+              <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
+              <ul className="mt-1.5 space-y-1.5">
+                <li className="text-xs text-secondary"><span className="font-medium text-foreground">Trigger:</span> {stack.shamePattern.trigger}</li>
+                <li className="text-xs text-secondary"><span className="font-medium text-foreground">Internal message:</span> {stack.shamePattern.shameMessage}</li>
+                <li className="text-xs text-secondary"><span className="font-medium text-foreground">Your response:</span> {stack.shamePattern.behavioralResponse}</li>
+                <li className="text-xs text-secondary"><span className="font-medium text-foreground">Partner experiences:</span> {stack.shamePattern.partnerExperience}</li>
+              </ul>
+            </div>
+          )}
+        </section>
+      );
+    }
+
+    // Generic renderer for all other tension stacks
+    const tensionLevel = stack.tensionLevel || stack.riskLevel;
+    return (
+      <section key={key} className="card mb-4">
+        <div className="flex items-start justify-between mb-2">
+          <div>
+            <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
+            {stack.patternName && <h4 className="text-sm font-semibold mt-1">{stack.patternName}</h4>}
+          </div>
+          {tensionLevel !== undefined && (
+            <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+              tensionLevel === 'high' ? 'bg-danger/10 text-danger' :
+              tensionLevel === 'medium' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
+            }`}>
+              {tensionLevel}
+            </span>
+          )}
+        </div>
+        {stack.patternDescription && <p className="text-sm text-secondary mb-3">{stack.patternDescription}</p>}
+        {stack.starterNarrative && <p className="text-sm mb-3">{stack.starterNarrative}</p>}
+        {Array.isArray(stack.customizations) && stack.customizations.length > 0 && (
+          <div className="mb-3">
+            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Key Patterns</span>
+            <ul className="mt-1.5 space-y-1">
+              {stack.customizations.map((c: string, i: number) => (
+                <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {Array.isArray(stack.risks) && stack.risks.length > 0 && (
+            <div>
+              <span className="text-xs font-mono text-warning uppercase tracking-wider">Risks</span>
+              <ul className="mt-1.5 space-y-1">
+                {stack.risks.map((r: string, i: number) => (
+                  <li key={i} className="text-xs text-secondary">{r}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {stack.growthPath && (
+            <div>
+              <span className="text-xs font-mono text-success uppercase tracking-wider">Growth Path</span>
+              {Array.isArray(stack.growthPath) ? (
+                <ul className="mt-1.5 space-y-1">
+                  {stack.growthPath.map((g: string, i: number) => (
+                    <li key={i} className="text-xs text-secondary">{g}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-xs text-secondary mt-1.5">{stack.growthPath}</p>
+              )}
+            </div>
+          )}
+        </div>
+        {stack.signals && typeof stack.signals === 'object' && !Array.isArray(stack.signals) && (
+          <div className="mt-3 pt-3 border-t border-border">
+            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
+            <ul className="mt-1.5 space-y-1.5">
+              {Object.entries(stack.signals).map(([k, v]: [string, any]) => {
+                if (v && typeof v === 'object' && v.interpretation) {
+                  const interpValue = typeof v.interpretation === 'object'
+                    ? Object.values(v.interpretation).find((x: any) => typeof x === 'string') || JSON.stringify(v.interpretation)
+                    : v.interpretation;
+                  return (
+                    <li key={k} className="text-xs text-secondary">
+                      <span className="font-medium text-foreground capitalize">{v.name || k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}
+                      {interpValue as string}
+                    </li>
+                  );
+                }
+                if (v && typeof v === 'object') {
+                  return (
+                    <li key={k} className="text-xs text-secondary">
+                      <span className="font-medium text-foreground capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}
+                      {v.value !== undefined ? String(v.value) : JSON.stringify(v)}
+                    </li>
+                  );
+                }
+                return (
+                  <li key={k} className="text-xs text-secondary">
+                    <span className="font-medium text-foreground capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span> {String(v)}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+        {Array.isArray(stack.signals) && stack.signals.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-border">
+            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
+            <ul className="mt-1.5 space-y-1">
+              {stack.signals.map((s: string, i: number) => (
+                <li key={i} className="text-xs text-secondary">{s}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </section>
+    );
+  }
+
+  // Tension stack keys that belong to Group 1 (Know Yourself)
+  const group1TensionKeys = ['eroticDimension', 'intimacyConflictBridge', 'vulnerabilityProfile', 'attractionAttachment', 'internalConflictCoherence'];
+  // Keys for Group 2 (anything not in Group 1 and not marketReality)
+  const group2TensionKeys = tensionStacks
+    ? Object.keys(tensionStacks).filter(k => k !== 'marketReality' && !group1TensionKeys.includes(k))
+    : [];
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -445,12 +683,62 @@ function ResultsDashboard() {
           </section>
         )}
 
+        {/* ── Matches (below persona) ── */}
+        {matches.length > 0 && (
+          <section className="card mb-4 scroll-mt-28">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-serif text-lg font-semibold">Compatibility Rankings</h3>
+              {hasPaid && <Link href="/results/matches" className="text-xs text-accent hover:underline">View all</Link>}
+            </div>
+            <div className="space-y-3">
+              {(matchesExpanded ? visibleMatches : visibleMatches.slice(0, 5)).map((match: any) => (
+                <div key={match.code} className="card">
+                  <div className="flex items-start justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs text-secondary">#{match.rank}</span>
+                      {hasPaid ? (
+                        <Link href={`/results/match/${match.code}`} className="text-sm font-semibold text-accent hover:underline">{match.name}</Link>
+                      ) : <span className="text-sm font-semibold">{match.name}</span>}
+                      <span className="font-mono text-xs text-secondary">{match.code}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>
+                      <span className="font-mono text-sm font-semibold">{match.compatibilityScore}</span>
+                    </div>
+                  </div>
+                  {match.traits && <p className="text-xs text-secondary mb-1">{match.traits}</p>}
+                  {match.summary && <p className="text-sm text-secondary">{match.summary}</p>}
+                </div>
+              ))}
+            </div>
+            {visibleMatches.length > 5 && !matchesExpanded && (
+              <button onClick={() => setMatchesExpanded(true)} className="text-xs text-accent hover:underline mt-3">
+                Show all {visibleMatches.length} matches
+              </button>
+            )}
+            {matchesExpanded && visibleMatches.length > 5 && (
+              <button onClick={() => setMatchesExpanded(false)} className="text-xs text-accent hover:underline mt-3">
+                Show top 5
+              </button>
+            )}
+            {!hasPaid && matches.length > freeMatchLimit && (
+              <div className="mt-4 card border-accent text-center">
+                <p className="text-sm text-secondary mb-3">{matches.length - freeMatchLimit} more matches available with Plus</p>
+                <div className="flex gap-2 justify-center">
+                  <a href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary inline-block text-sm">Plus ($29.99/mo)</a>
+                  <a href={`/api/checkout?product=premium&email=${encodeURIComponent(user?.email || '')}`} className="btn-primary inline-block text-sm">Premium ($49.99/mo)</a>
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
         {/* ══════════════════════════════════════════════════
             GROUP 1: KNOW YOURSELF
         ══════════════════════════════════════════════════ */}
-        {(hasDimensions || m3 || m4Summary || ic?.attachment) && (
+        {(hasDimensions || m3 || m4Summary || ic?.attachment || tensionStacks) && (
           <div id="know-yourself" className="scroll-mt-28 mb-2">
-            <div className="flex items-baseline gap-3 mb-4 mt-2">
+            <div className="flex items-baseline gap-3 mb-4 mt-6">
               <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">01</span>
               <span className="font-mono text-xs text-secondary uppercase tracking-widest">Know Yourself</span>
             </div>
@@ -533,112 +821,10 @@ function ResultsDashboard() {
           </section>
         )}
 
-        {/* ── Conflict Profile ── */}
-        {m4Summary && (
-          <section className="card mb-4 scroll-mt-28">
-            <h3 className="font-serif text-lg font-semibold mb-4">Conflict Profile</h3>
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              {[
-                ['Approach', m4Summary.approach],
-                ['Primary Driver', m4Summary.primaryDriver],
-                ['Repair Speed', m4Summary.repairSpeed],
-                ['Repair Mode', m4Summary.repairMode],
-                ['Capacity', m4Summary.capacity],
-              ].map(([label, val]) => (
-                <div key={label as string} className="flex justify-between py-1 border-b border-border last:border-0">
-                  <span className="text-xs text-secondary">{label}</span>
-                  <span className="text-xs font-mono capitalize">{(val as string) || '-'}</span>
-                </div>
-              ))}
-            </div>
+        {/* ── Erotic Dimension ── */}
+        {tensionStacks?.eroticDimension && renderTensionStack('eroticDimension', tensionStacks.eroticDimension)}
 
-            {/* Gottman Four Horsemen */}
-            {gottman?.horsemen && Object.keys(gottman.horsemen).length > 0 && (
-              <div className="pt-4 border-t border-border">
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Gottman Four Horsemen</span>
-                {gottman.overallRisk && (
-                  <p className="text-xs text-secondary mt-1 mb-3">
-                    Overall risk: <span className={`font-mono ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-warning' : 'text-success'}`}>
-                      {gottman.overallRisk}
-                    </span>
-                  </p>
-                )}
-                <div className="space-y-3">
-                  {Object.entries(gottman.horsemen).map(([name, data]: [string, any]) => {
-                    if (!data) return null;
-                    const riskColor = data.riskLevel === 'high' ? 'text-danger' : data.riskLevel === 'medium' ? 'text-warning' : 'text-success';
-                    const barColor = data.riskLevel === 'high' ? 'bg-danger' : data.riskLevel === 'medium' ? 'bg-warning' : 'bg-success';
-                    return (
-                      <div key={name}>
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium capitalize">{name}</span>
-                          <span className={`text-xs font-mono ${riskColor}`}>{data.riskLevel || '-'} ({data.score ?? '-'})</span>
-                        </div>
-                        <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden mb-1">
-                          <div className={`h-full rounded-full ${barColor}`} style={{ width: `${Math.min(100, (data.score ?? 0) * 10)}%` }} />
-                        </div>
-                        {data.antidote && (
-                          <p className="text-xs text-secondary">Antidote: {data.antidote}</p>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* ── Your Attachment Style ── */}
-        {ic?.attachment && (
-          <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1">Your Attachment Style</h3>
-            <p className="text-sm text-secondary mb-4">How you connect, protect, and respond in close relationships</p>
-            <div className="flex items-center gap-3 mb-4">
-              <span className="font-mono text-lg font-semibold capitalize">{ic.attachment.style}</span>
-              {ic.attachment.subtype && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded capitalize">{ic.attachment.subtype}</span>}
-              {ic.attachment.leaningToward && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded">leaning {ic.attachment.leaningToward}</span>}
-              <span className="text-xs font-mono text-accent ml-auto">{Math.round((ic.attachment.confidence ?? 0) * 100)}% confidence</span>
-            </div>
-            {ic.attachment.description && <p className="text-sm text-secondary mb-4">{ic.attachment.description}</p>}
-            {ic.attachment.strengths && Array.isArray(ic.attachment.strengths) && ic.attachment.strengths.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
-                <div>
-                  <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
-                  <ul className="mt-2 space-y-1.5">
-                    {ic.attachment.strengths.map((s: string, i: number) => (
-                      <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{s}</li>
-                    ))}
-                  </ul>
-                </div>
-                {ic.attachment.challenges && Array.isArray(ic.attachment.challenges) && ic.attachment.challenges.length > 0 && (
-                  <div>
-                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
-                    <ul className="mt-2 space-y-1.5">
-                      {ic.attachment.challenges.map((c: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
-            {ic.attachment.inRelationships && (
-              <div className="mt-4 pt-4 border-t border-border">
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">In Relationships</span>
-                <p className="text-sm text-secondary mt-2">{ic.attachment.inRelationships}</p>
-              </div>
-            )}
-            {ic.attachment.underStress && (
-              <div className="mt-4 pt-4 border-t border-border">
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Under Stress</span>
-                <p className="text-sm text-secondary mt-2">{ic.attachment.underStress}</p>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* ── Intimacy Under Stress ── */}
+        {/* ── Intimacy Under Stress ── (moved up from below Attachment) */}
         {ic?.m3States?.states?.normal && (
           <section className="card mb-4">
             <h3 className="font-serif text-lg font-semibold mb-1">Intimacy Under Stress</h3>
@@ -704,14 +890,131 @@ function ResultsDashboard() {
           </section>
         )}
 
+        {/* ── Intimacy Conflict Bridge ── */}
+        {tensionStacks?.intimacyConflictBridge && renderTensionStack('intimacyConflictBridge', tensionStacks.intimacyConflictBridge)}
+
+        {/* ── Your Attachment Style ── (moved down) */}
+        {ic?.attachment && (
+          <section className="card mb-4">
+            <h3 className="font-serif text-lg font-semibold mb-1">Your Attachment Style</h3>
+            <p className="text-sm text-secondary mb-4">How you connect, protect, and respond in close relationships</p>
+            <div className="flex items-center gap-3 mb-4">
+              <span className="font-mono text-lg font-semibold capitalize">{ic.attachment.style}</span>
+              {ic.attachment.subtype && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded capitalize">{ic.attachment.subtype}</span>}
+              {ic.attachment.leaningToward && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded">leaning {ic.attachment.leaningToward}</span>}
+              <span className="text-xs font-mono text-accent ml-auto">{Math.round((ic.attachment.confidence ?? 0) * 100)}% confidence</span>
+            </div>
+            {ic.attachment.description && <p className="text-sm text-secondary mb-4">{ic.attachment.description}</p>}
+            {ic.attachment.strengths && Array.isArray(ic.attachment.strengths) && ic.attachment.strengths.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
+                <div>
+                  <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
+                  <ul className="mt-2 space-y-1.5">
+                    {ic.attachment.strengths.map((s: string, i: number) => (
+                      <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{s}</li>
+                    ))}
+                  </ul>
+                </div>
+                {ic.attachment.challenges && Array.isArray(ic.attachment.challenges) && ic.attachment.challenges.length > 0 && (
+                  <div>
+                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
+                    <ul className="mt-2 space-y-1.5">
+                      {ic.attachment.challenges.map((c: string, i: number) => (
+                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+            {ic.attachment.inRelationships && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">In Relationships</span>
+                <p className="text-sm text-secondary mt-2">{ic.attachment.inRelationships}</p>
+              </div>
+            )}
+            {ic.attachment.underStress && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Under Stress</span>
+                <p className="text-sm text-secondary mt-2">{ic.attachment.underStress}</p>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* ── Vulnerability Profile ── */}
+        {tensionStacks?.vulnerabilityProfile && renderTensionStack('vulnerabilityProfile', tensionStacks.vulnerabilityProfile)}
+
+        {/* ── Attraction Attachment ── */}
+        {tensionStacks?.attractionAttachment && renderTensionStack('attractionAttachment', tensionStacks.attractionAttachment)}
+
+        {/* ── Conflict Profile ── */}
+        {m4Summary && (
+          <section className="card mb-4 scroll-mt-28">
+            <h3 className="font-serif text-lg font-semibold mb-4">Conflict Profile</h3>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              {[
+                ['Approach', m4Summary.approach],
+                ['Primary Driver', m4Summary.primaryDriver],
+                ['Repair Speed', m4Summary.repairSpeed],
+                ['Repair Mode', m4Summary.repairMode],
+                ['Capacity', m4Summary.capacity],
+              ].map(([label, val]) => (
+                <div key={label as string} className="flex justify-between py-1 border-b border-border last:border-0">
+                  <span className="text-xs text-secondary">{label}</span>
+                  <span className="text-xs font-mono capitalize">{(val as string) || '-'}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Gottman Four Horsemen */}
+            {gottman?.horsemen && Object.keys(gottman.horsemen).length > 0 && (
+              <div className="pt-4 border-t border-border">
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Gottman Four Horsemen</span>
+                {gottman.overallRisk && (
+                  <p className="text-xs text-secondary mt-1 mb-3">
+                    Overall risk: <span className={`font-mono ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-warning' : 'text-success'}`}>
+                      {gottman.overallRisk}
+                    </span>
+                  </p>
+                )}
+                <div className="space-y-3">
+                  {Object.entries(gottman.horsemen).map(([name, data]: [string, any]) => {
+                    if (!data) return null;
+                    const riskColor = data.riskLevel === 'high' ? 'text-danger' : data.riskLevel === 'medium' ? 'text-warning' : 'text-success';
+                    const barColor = data.riskLevel === 'high' ? 'bg-danger' : data.riskLevel === 'medium' ? 'bg-warning' : 'bg-success';
+                    return (
+                      <div key={name}>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium capitalize">{name}</span>
+                          <span className={`text-xs font-mono ${riskColor}`}>{data.riskLevel || '-'} ({data.score ?? '-'})</span>
+                        </div>
+                        <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden mb-1">
+                          <div className={`h-full rounded-full ${barColor}`} style={{ width: `${Math.min(100, (data.score ?? 0) * 10)}%` }} />
+                        </div>
+                        {data.antidote && (
+                          <p className="text-xs text-secondary">Antidote: {data.antidote}</p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* ── Internal Conflict Coherence ── */}
+        {tensionStacks?.internalConflictCoherence && renderTensionStack('internalConflictCoherence', tensionStacks.internalConflictCoherence)}
+
         {/* ══════════════════════════════════════════════════
-            GROUP 2: KNOW YOUR MATCH
+            GROUP 2: KNOW YOUR IDEAL MATCH
         ══════════════════════════════════════════════════ */}
-        {(ic?.attachmentTiers || matches.length > 0 || tensionStacks || modifiers || referrals.length > 0) && (
+        {(ic?.attachmentTiers || modifiers || hasResults) && (
           <div id="know-your-match" className="scroll-mt-28 mb-2">
-            <div className="flex items-baseline gap-3 mb-4 mt-6">
+            <div className="flex items-baseline gap-3 mb-4 mt-10">
               <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">02</span>
-              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Know Your Match</span>
+              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Know Your Ideal Match</span>
             </div>
           </div>
         )}
@@ -820,249 +1123,8 @@ function ResultsDashboard() {
           </section>
         )}
 
-        {/* ── Tension Stacks / Insights ── */}
-        {tensionStacks && Object.keys(tensionStacks).length > 0 && (
-          <section className="mb-4 scroll-mt-28">
-            <h3 className="font-serif text-lg font-semibold mb-4">Relationship Insights</h3>
-            <div className="space-y-4">
-              {Object.entries(tensionStacks)
-                .filter(([key]) => key !== 'marketReality')
-                .map(([key, stack]: [string, any]) => {
-                if (!stack || typeof stack !== 'object') return null;
-                const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, (s: string) => s.toUpperCase()).trim();
-
-                {/* ── Internal Conflict Coherence: dedicated renderer ── */}
-                if (key === 'internalConflictCoherence') {
-                  return (
-                    <div key={key} className="card">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
-                          <h4 className="text-sm font-semibold mt-1">
-                            {stack.interpretation === 'coherent' ? 'Your conflict patterns are aligned' :
-                             stack.interpretation === 'mostly-coherent' ? 'Mostly aligned with minor friction' :
-                             stack.interpretation === 'mixed' ? 'Mixed signals in your conflict patterns' :
-                             'Your conflict patterns are working against each other'}
-                          </h4>
-                        </div>
-                        <span className={`text-xs font-mono px-2 py-0.5 rounded ${
-                          stack.coherenceScore >= 80 ? 'bg-success/10 text-success' :
-                          stack.coherenceScore >= 60 ? 'bg-accent/10 text-accent' :
-                          stack.coherenceScore >= 40 ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
-                        }`}>
-                          {stack.coherenceScore}/100
-                        </span>
-                      </div>
-                      {stack.summary && <p className="text-sm text-secondary mb-3">{stack.summary}</p>}
-
-                      {/* Incoherences */}
-                      {Array.isArray(stack.incoherences) && stack.incoherences.length > 0 && (
-                        <div className="mb-3">
-                          <span className="text-xs font-mono text-warning uppercase tracking-wider">Internal Friction</span>
-                          <div className="mt-2 space-y-3">
-                            {stack.incoherences.map((inc: any, i: number) => (
-                              <div key={i} className="p-3 bg-warning/5 border border-warning/20 rounded">
-                                <p className="text-sm font-medium mb-1">{inc.name}</p>
-                                <p className="text-xs text-secondary mb-1">{inc.explanation}</p>
-                                {inc.behavioral && <p className="text-xs text-secondary italic">{inc.behavioral}</p>}
-                                {inc.resolution && (
-                                  <p className="text-xs text-success mt-1.5"><span className="font-medium">Path forward:</span> {inc.resolution}</p>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Coherences */}
-                      {Array.isArray(stack.coherences) && stack.coherences.length > 0 && (
-                        <div>
-                          <span className="text-xs font-mono text-success uppercase tracking-wider">Healthy Alignments</span>
-                          <ul className="mt-2 space-y-1">
-                            {stack.coherences.map((coh: any, i: number) => (
-                              <li key={i} className="text-sm text-secondary flex gap-2">
-                                <span className="text-success flex-shrink-0">&#8226;</span>
-                                {coh.note || coh.specific || coh.name || String(coh)}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  );
-                }
-
-                {/* ── Vulnerability Profile: improved rendering ── */}
-                if (key === 'vulnerabilityProfile') {
-                  return (
-                    <div key={key} className="card">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
-                          {stack.armorName && <h4 className="text-sm font-semibold mt-1">{stack.armorName}</h4>}
-                        </div>
-                        {stack.vulnerabilityLevel && (
-                          <span className={`text-xs font-mono px-2 py-0.5 rounded ${
-                            stack.vulnerabilityLevel === 'high' ? 'bg-success/10 text-success' :
-                            stack.vulnerabilityLevel === 'moderate' ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
-                          }`}>
-                            {stack.vulnerabilityLevel} openness
-                          </span>
-                        )}
-                      </div>
-                      {stack.armorCore && <p className="text-sm text-secondary mb-3">{stack.armorCore}</p>}
-                      {stack.starterNarrative && <p className="text-sm mb-3">{stack.starterNarrative}</p>}
-                      {Array.isArray(stack.customizations) && stack.customizations.length > 0 && (
-                        <div className="mb-3">
-                          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Key Patterns</span>
-                          <ul className="mt-1.5 space-y-1">
-                            {stack.customizations.map((c: string, i: number) => (
-                              <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      {stack.inRelationship && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {Array.isArray(stack.inRelationship.costs) && stack.inRelationship.costs.length > 0 && (
-                            <div>
-                              <span className="text-xs font-mono text-warning uppercase tracking-wider">Risks</span>
-                              <ul className="mt-1.5 space-y-1">
-                                {stack.inRelationship.costs.map((r: string, i: number) => (
-                                  <li key={i} className="text-xs text-secondary">{r}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                          {stack.repairPath && (
-                            <div>
-                              <span className="text-xs font-mono text-success uppercase tracking-wider">Growth Path</span>
-                              <p className="text-xs text-secondary mt-1.5">{stack.repairPath}</p>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                      {stack.shamePattern && (
-                        <div className="mt-3 pt-3 border-t border-border">
-                          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
-                          <ul className="mt-1.5 space-y-1.5">
-                            <li className="text-xs text-secondary"><span className="font-medium text-foreground">Trigger:</span> {stack.shamePattern.trigger}</li>
-                            <li className="text-xs text-secondary"><span className="font-medium text-foreground">Internal message:</span> {stack.shamePattern.shameMessage}</li>
-                            <li className="text-xs text-secondary"><span className="font-medium text-foreground">Your response:</span> {stack.shamePattern.behavioralResponse}</li>
-                            <li className="text-xs text-secondary"><span className="font-medium text-foreground">Partner experiences:</span> {stack.shamePattern.partnerExperience}</li>
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  );
-                }
-
-                {/* ── Generic renderer for other tension stacks ── */}
-                const tensionLevel = stack.tensionLevel || stack.riskLevel;
-                return (
-                  <div key={key} className="card">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
-                        {stack.patternName && <h4 className="text-sm font-semibold mt-1">{stack.patternName}</h4>}
-                      </div>
-                      {tensionLevel !== undefined && (
-                        <span className={`text-xs font-mono px-2 py-0.5 rounded ${
-                          tensionLevel === 'high' ? 'bg-danger/10 text-danger' :
-                          tensionLevel === 'medium' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
-                        }`}>
-                          {tensionLevel}
-                        </span>
-                      )}
-                    </div>
-                    {stack.patternDescription && <p className="text-sm text-secondary mb-3">{stack.patternDescription}</p>}
-                    {stack.starterNarrative && <p className="text-sm mb-3">{stack.starterNarrative}</p>}
-                    {Array.isArray(stack.customizations) && stack.customizations.length > 0 && (
-                      <div className="mb-3">
-                        <span className="text-xs font-mono text-secondary uppercase tracking-wider">Key Patterns</span>
-                        <ul className="mt-1.5 space-y-1">
-                          {stack.customizations.map((c: string, i: number) => (
-                            <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {Array.isArray(stack.risks) && stack.risks.length > 0 && (
-                        <div>
-                          <span className="text-xs font-mono text-warning uppercase tracking-wider">Risks</span>
-                          <ul className="mt-1.5 space-y-1">
-                            {stack.risks.map((r: string, i: number) => (
-                              <li key={i} className="text-xs text-secondary">{r}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      {stack.growthPath && (
-                        <div>
-                          <span className="text-xs font-mono text-success uppercase tracking-wider">Growth Path</span>
-                          {Array.isArray(stack.growthPath) ? (
-                            <ul className="mt-1.5 space-y-1">
-                              {stack.growthPath.map((g: string, i: number) => (
-                                <li key={i} className="text-xs text-secondary">{g}</li>
-                              ))}
-                            </ul>
-                          ) : (
-                            <p className="text-xs text-secondary mt-1.5">{stack.growthPath}</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    {/* Watch For - handle signals as array, object with nested values, or primitives */}
-                    {stack.signals && typeof stack.signals === 'object' && !Array.isArray(stack.signals) && (
-                      <div className="mt-3 pt-3 border-t border-border">
-                        <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
-                        <ul className="mt-1.5 space-y-1.5">
-                          {Object.entries(stack.signals).map(([k, v]: [string, any]) => {
-                            if (v && typeof v === 'object' && v.interpretation) {
-                              const interpValue = typeof v.interpretation === 'object'
-                                ? Object.values(v.interpretation).find((x: any) => typeof x === 'string') || JSON.stringify(v.interpretation)
-                                : v.interpretation;
-                              return (
-                                <li key={k} className="text-xs text-secondary">
-                                  <span className="font-medium text-foreground capitalize">{v.name || k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}
-                                  {interpValue as string}
-                                </li>
-                              );
-                            }
-                            if (v && typeof v === 'object') {
-                              return (
-                                <li key={k} className="text-xs text-secondary">
-                                  <span className="font-medium text-foreground capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}
-                                  {v.value !== undefined ? String(v.value) : JSON.stringify(v)}
-                                </li>
-                              );
-                            }
-                            return (
-                              <li key={k} className="text-xs text-secondary">
-                                <span className="font-medium text-foreground capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span> {String(v)}
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </div>
-                    )}
-                    {Array.isArray(stack.signals) && stack.signals.length > 0 && (
-                      <div className="mt-3 pt-3 border-t border-border">
-                        <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
-                        <ul className="mt-1.5 space-y-1">
-                          {stack.signals.map((s: string, i: number) => (
-                            <li key={i} className="text-xs text-secondary">{s}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        )}
+        {/* ── Other Tension Stacks (Group 2) ── */}
+        {group2TensionKeys.map(key => renderTensionStack(key, tensionStacks[key]))}
 
         {/* ── Relationship Capacity / Modifiers ── */}
         {modifiers && (
@@ -1146,99 +1208,7 @@ function ResultsDashboard() {
           </section>
         )}
 
-        {/* ══════════════════════════════════════════════════
-            GROUP 3: KNOW YOUR MARKET
-        ══════════════════════════════════════════════════ */}
-        {hasMarket && (
-          <div id="know-your-market" className="scroll-mt-28 mb-2">
-            <div className="flex items-baseline gap-3 mb-4 mt-6">
-              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">03</span>
-              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Know Your Market</span>
-            </div>
-          </div>
-        )}
-
-        {/* ── Dating Market ── */}
-        {hasMarket && (
-          <div className="scroll-mt-28">
-            <DatingMarketViz data={marketData} loading={marketLoading} />
-          </div>
-        )}
-
-        {/* ── Market Coaching ── */}
-        {marketData && (
-          <MarketCoaching
-            marketData={marketData}
-            demographics={demographics}
-            m3={fullM3}
-            m4={fullM4}
-            persona={persona || null}
-          />
-        )}
-
-        {/* ── Matches ── */}
-        {matches.length > 0 && (
-          <section className="mb-4 scroll-mt-28">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-serif text-lg font-semibold">Compatibility Rankings</h3>
-              {hasPaid && <Link href="/results/matches" className="text-xs text-accent hover:underline">View all</Link>}
-            </div>
-            <div className="space-y-3">
-              {visibleMatches.map((match: any) => (
-                <div key={match.code} className="card">
-                  <div className="flex items-start justify-between mb-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs text-secondary">#{match.rank}</span>
-                      {hasPaid ? (
-                        <Link href={`/results/match/${match.code}`} className="text-sm font-semibold text-accent hover:underline">{match.name}</Link>
-                      ) : <span className="text-sm font-semibold">{match.name}</span>}
-                      <span className="font-mono text-xs text-secondary">{match.code}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>
-                      <span className="font-mono text-sm font-semibold">{match.compatibilityScore}</span>
-                    </div>
-                  </div>
-                  {match.traits && <p className="text-xs text-secondary mb-1">{match.traits}</p>}
-                  {match.summary && <p className="text-sm text-secondary">{match.summary}</p>}
-                </div>
-              ))}
-            </div>
-            {!hasPaid && matches.length > freeMatchLimit && (
-              <div className="mt-4 card border-accent text-center">
-                <p className="text-sm text-secondary mb-3">{matches.length - freeMatchLimit} more matches available with Plus</p>
-                <div className="flex gap-2 justify-center">
-                  <a href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary inline-block text-sm">Plus ($29.99/mo)</a>
-                  <a href={`/api/checkout?product=premium&email=${encodeURIComponent(user?.email || '')}`} className="btn-primary inline-block text-sm">Premium ($49.99/mo)</a>
-                </div>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* ── Referrals ── */}
-        {referrals.length > 0 && (
-          <section className="mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-4">Recommended Resources</h3>
-            <div className="space-y-2">
-              {referrals.map((ref) => (
-                <a key={ref.service} href={ref.url} target="_blank" rel="noopener noreferrer"
-                  onClick={() => fetch('/api/referral-click', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ service: ref.service, affiliateUrl: ref.url }) })}
-                  className="card block hover:border-accent transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium">{ref.cta}</p>
-                      <p className="text-xs text-secondary">{ref.reason}</p>
-                    </div>
-                    <span className="text-accent text-sm">&rarr;</span>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* ── Couples Mode (end of Group 2) ── */}
+        {/* ── Couples Mode ── */}
         {hasResults && (
           <section className="card mb-4 border-accent">
             <h3 className="font-serif text-lg font-semibold mb-2">Couples Mode</h3>
@@ -1277,6 +1247,36 @@ function ResultsDashboard() {
               </div>
             )}
           </section>
+        )}
+
+        {/* ══════════════════════════════════════════════════
+            GROUP 3: KNOW YOUR MARKET
+        ══════════════════════════════════════════════════ */}
+        {hasMarket && (
+          <div id="know-your-market" className="scroll-mt-28 mb-2">
+            <div className="flex items-baseline gap-3 mb-4 mt-10">
+              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">03</span>
+              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Know Your Market</span>
+            </div>
+          </div>
+        )}
+
+        {/* ── Dating Market ── */}
+        {hasMarket && (
+          <div className="scroll-mt-28">
+            <DatingMarketViz data={marketData} loading={marketLoading} />
+          </div>
+        )}
+
+        {/* ── Market Coaching ── */}
+        {marketData && (
+          <MarketCoaching
+            marketData={marketData}
+            demographics={demographics}
+            m3={fullM3}
+            m4={fullM4}
+            persona={persona || null}
+          />
         )}
       </main>
 
