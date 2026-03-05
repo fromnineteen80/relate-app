@@ -83,20 +83,18 @@ export default function MatchDetailPage() {
 
       <main className="max-w-2xl mx-auto px-6 py-8 w-full">
         {/* Header */}
-        <div className="flex items-start justify-between mb-6">
-          <div>
+        <div className="flex items-start justify-between gap-6 flex-wrap mb-6">
+          <div className="min-w-0">
             <span className="font-mono text-xs text-secondary">Match #{match.rank}</span>
             <h2 className="font-serif text-3xl font-semibold">{match.name}</h2>
             <span className="font-mono text-sm text-accent">{match.code}</span>
           </div>
-          <div className="text-right">
+          <div className="text-right shrink-0">
             <span className="font-mono text-3xl font-semibold">{match.compatibilityScore}</span>
-            <p className="text-xs text-secondary">compatibility</p>
+            <div className={`inline-block text-white text-xs px-3 py-1 rounded-full mt-1 ${tierColor(match.tier)}`}>
+              {tierLabel(match.tier)}
+            </div>
           </div>
-        </div>
-
-        <div className={`inline-block text-white text-xs px-3 py-1 rounded-full mb-6 ${tierColor(match.tier)}`}>
-          {tierLabel(match.tier)}
         </div>
 
         {match.traits && <p className="text-secondary mb-6">{match.traits}</p>}

@@ -339,8 +339,8 @@ function ResultsDashboard() {
     if (key === 'internalConflictCoherence') {
       return (
         <section key={key} className="card mb-4">
-          <div className="flex items-start justify-between mb-2">
-            <div>
+          <div className="flex items-start justify-between gap-4 flex-wrap mb-2">
+            <div className="min-w-0">
               <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
               <h4 className="text-sm font-semibold mt-1">
                 {stack.interpretation === 'coherent' ? 'Your conflict patterns are aligned' :
@@ -349,7 +349,7 @@ function ResultsDashboard() {
                  'Your conflict patterns are working against each other'}
               </h4>
             </div>
-            <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+            <span className={`text-xs font-mono px-2 py-0.5 rounded shrink-0 ${
               stack.coherenceScore >= 80 ? 'bg-success/10 text-success' :
               stack.coherenceScore >= 60 ? 'bg-accent/10 text-accent' :
               stack.coherenceScore >= 40 ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
@@ -686,15 +686,15 @@ function ResultsDashboard() {
             <div className="space-y-3">
               {(matchesExpanded ? visibleMatches : visibleMatches.slice(0, 5)).map((match: any) => (
                 <div key={match.code} className="card">
-                  <div className="flex items-start justify-between mb-1">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-start justify-between gap-4 flex-wrap mb-1">
+                    <div className="flex items-center gap-2 min-w-0 flex-wrap">
                       <span className="font-mono text-xs text-secondary">#{match.rank}</span>
                       {hasPaid ? (
                         <Link href={`/results/match/${match.code}`} className="text-sm font-semibold text-accent hover:underline">{match.name}</Link>
                       ) : <span className="text-sm font-semibold">{match.name}</span>}
                       <span className="font-mono text-xs text-secondary">{match.code}</span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 shrink-0">
                       <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>
                       <span className="font-mono text-sm font-semibold">{match.compatibilityScore}</span>
                     </div>
