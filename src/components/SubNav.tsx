@@ -19,6 +19,7 @@ type SubNavProps = {
 export function SubNav({ items = [] }: SubNavProps) {
   const pathname = usePathname();
   const [hasResults, setHasResults] = useState(false);
+  const [hasPartner, setHasPartner] = useState(false);
   const [topMatchCode, setTopMatchCode] = useState<string | null>(null);
   const [seekingLabel, setSeekingLabel] = useState<string>('Matches');
 
@@ -34,6 +35,11 @@ export function SubNav({ items = [] }: SubNavProps) {
       } catch { /* */ }
     }
 
+    // Check for partner
+    if (localStorage.getItem('relate_partner_email')) {
+      setHasPartner(true);
+    }
+
     // Determine seeking label from gender (user's gender → they're seeking the opposite)
     const gender = localStorage.getItem('relate_gender');
     if (gender === 'M' || gender === 'Man') {
@@ -46,13 +52,17 @@ export function SubNav({ items = [] }: SubNavProps) {
   // Show results sublinks on results subpages (persona, match, matches, etc.) but NOT the root /results page
   const isResultsSubpage = pathname.startsWith('/results/');
 
+  // On couples pages, show couples section links instead of individual results sublinks
+  const isCouplesPage = pathname.startsWith('/results/compare') || pathname.startsWith('/couples');
+
   const universalLinks: SubNavItem[] = [
     { id: 'account', label: 'Account', href: '/account', show: true },
     { id: 'results', label: 'Results', href: '/results', show: hasResults },
+    { id: 'couples', label: 'Couples', href: '/results/compare', show: hasPartner },
   ];
 
-  // Build results subpage links when hasResults and on a results subpage
-  const resultsSubLinks: SubNavItem[] = (hasResults && isResultsSubpage) ? [
+  // Build results subpage links when hasResults and on a results subpage (but not couples pages)
+  const resultsSubLinks: SubNavItem[] = (hasResults && isResultsSubpage && !isCouplesPage) ? [
     { id: 'persona', label: 'Your Persona', href: '/results/persona', show: true },
     { id: 'match', label: 'Your #1 Match', href: topMatchCode ? `/results/match/${topMatchCode}` : '/results/matches', show: !!topMatchCode },
     { id: 'matches', label: `All Potential ${seekingLabel}`, href: '/results/matches', show: true },

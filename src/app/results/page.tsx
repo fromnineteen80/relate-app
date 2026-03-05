@@ -11,6 +11,7 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 import { loadAndHydrateProgress } from '@/lib/supabase/progress';
+import { getProfile } from '@/lib/onboarding';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -93,6 +94,11 @@ function ResultsDashboard() {
   const [hasCouplesAccess, setHasCouplesAccess] = useState(false);
   const [matchesExpanded, setMatchesExpanded] = useState(false);
   const [partnerName, setPartnerName] = useState<string | null>(null);
+  const [partnerPersonaName, setPartnerPersonaName] = useState<string | null>(null);
+  const [partnerAssessmentComplete, setPartnerAssessmentComplete] = useState(false);
+  const [partnerHasResults, setPartnerHasResults] = useState(false);
+  const [userProfilePhoto, setUserProfilePhoto] = useState<string | null>(null);
+  const [userFullName, setUserFullName] = useState<string | null>(null);
   const marketFetchedRef = useRef(false);
 
   // Load everything from localStorage / Supabase
@@ -134,13 +140,18 @@ function ResultsDashboard() {
     });
   }, [user]);
 
-  // Load partner info
+  // Load partner info and user profile
   useEffect(() => {
     if (!user) return;
     const savedPartner = localStorage.getItem('relate_partner_results');
     if (savedPartner) setHasPartner(true);
     const savedDiscount = localStorage.getItem('relate_couples_discount');
     if (savedDiscount) setHasCouplesAccess(true);
+
+    // Load user's own profile photo and name
+    setUserProfilePhoto(localStorage.getItem('relate_profile_photo'));
+    const profile = getProfile();
+    if (profile?.firstName) setUserFullName(`${profile.firstName}${profile.lastName ? ` ${profile.lastName}` : ''}`);
 
     fetch(`/api/partner-lookup?userId=${user.id}`)
       .then(r => r.json())
@@ -151,7 +162,11 @@ function ResultsDashboard() {
             ? `${data.partner.firstName}${data.partner.lastName ? ` ${data.partner.lastName}` : ''}`
             : data.partner.email;
           setPartnerName(name);
-          localStorage.setItem('relate_partner_results', 'true');
+          if (data.partner.personaName) setPartnerPersonaName(data.partner.personaName);
+          if (data.partner.assessmentComplete) setPartnerAssessmentComplete(true);
+          if (data.partner.hasResults) setPartnerHasResults(true);
+          localStorage.setItem('relate_partner_email', data.partner.email);
+          if (data.partner.hasResults) localStorage.setItem('relate_partner_results', 'true');
         }
       })
       .catch(() => { });
@@ -1204,32 +1219,65 @@ function ResultsDashboard() {
         {/* ── Couples Mode ── */}
         {hasResults && (
           <section className="card mb-4 border-accent">
-            <h3 className="font-serif text-lg font-semibold mb-2">Couples Mode</h3>
-            {hasPartner && hasCouplesAccess ? (
+            <h3 className="font-serif text-lg font-semibold mb-4">Couples Mode</h3>
+
+            {hasPartner ? (
               <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center text-xs font-medium flex-shrink-0">
-                    {partnerName ? partnerName.charAt(0).toUpperCase() : '?'}
+                {/* User / Connected / Partner row */}
+                <div className="flex items-center justify-between gap-3">
+                  {/* Left: current user */}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-full flex-shrink-0 overflow-hidden border-2 border-border">
+                      {userProfilePhoto ? (
+                        <img src={userProfilePhoto} alt="You" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-sm font-medium">
+                          {userFullName ? userFullName.charAt(0).toUpperCase() : '?'}
+                        </span>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">{userFullName || 'You'}</p>
+                      {persona?.name ? (
+                        <Link href="/results/persona" className="text-xs text-secondary hover:text-accent truncate block">{persona.name}</Link>
+                      ) : (
+                        <Link href="/assessment" className="text-xs text-accent hover:underline">Complete Assessment</Link>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium">Connected with {partnerName || 'your partner'}</p>
-                    <p className="text-xs text-secondary">Couples access active</p>
+
+                  {/* Center: connected pill */}
+                  <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
+
+                  {/* Right: partner */}
+                  <div className="flex items-center gap-3 min-w-0 flex-row-reverse">
+                    <div className="w-10 h-10 rounded-full flex-shrink-0 overflow-hidden border-2 border-border">
+                      <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-sm font-medium">
+                        {partnerName ? partnerName.charAt(0).toUpperCase() : '?'}
+                      </span>
+                    </div>
+                    <div className="min-w-0 text-right">
+                      <p className="text-sm font-medium truncate">{partnerName || 'Partner'}</p>
+                      {partnerPersonaName ? (
+                        <span className="text-xs text-secondary truncate block">{partnerPersonaName}</span>
+                      ) : partnerAssessmentComplete ? (
+                        <span className="text-xs text-secondary">Results ready</span>
+                      ) : (
+                        <span className="text-xs text-secondary">Complete Assessment</span>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <Link href="/results/compare" className="btn-primary text-xs">View Couples Results</Link>
-              </div>
-            ) : hasPartner ? (
-              <div>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center text-xs font-medium flex-shrink-0">
-                    {partnerName ? partnerName.charAt(0).toUpperCase() : '?'}
+
+                {/* Action button */}
+                {hasResults && partnerHasResults && hasCouplesAccess ? (
+                  <Link href="/results/compare" className="btn-secondary text-xs w-full text-center block mt-4">View Couples Results</Link>
+                ) : hasResults && partnerHasResults ? (
+                  <div className="mt-4">
+                    <p className="text-xs text-secondary mb-2">Both assessments complete. Activate Couples access to unlock your compatibility report.</p>
+                    <Link href="/invite" className="btn-secondary text-xs w-full text-center block">Activate Couples</Link>
                   </div>
-                  <p className="text-sm font-medium">Connected with {partnerName || 'your partner'}</p>
-                </div>
-                <p className="text-sm text-secondary mb-4">
-                  Activate Couples access to unlock your compatibility report, growth plan, and shared advisor.
-                </p>
-                <Link href="/invite" className="btn-primary text-xs">Activate Couples</Link>
+                ) : null}
               </div>
             ) : (
               <div>
