@@ -576,10 +576,7 @@ function AccountPage() {
       ]} />
 
       <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
-        <div className="flex items-center justify-between gap-6 flex-wrap mb-8">
-          <h1 className="font-serif text-3xl font-semibold">Account</h1>
-          <Link href="/results" className="text-sm text-accent hover:underline">See Results →</Link>
-        </div>
+        <h1 className="font-serif text-3xl font-semibold mb-8">Account</h1>
 
         {/* ── Payment Success Toast ── */}
         {paymentSuccess && (
