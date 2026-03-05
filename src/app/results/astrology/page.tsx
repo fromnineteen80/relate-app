@@ -188,12 +188,12 @@ export default function AstrologyPage() {
         <SiteHeader />
         <SubNav />
         <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
-          <div className="flex items-center justify-between mb-6">
-            <div>
+          <div className="flex items-center justify-between gap-4 flex-wrap mb-6">
+            <div className="min-w-0">
               <span className="font-mono text-xs text-secondary uppercase tracking-wider">Sun, Moon &amp; Rise</span>
               <h1 className="font-serif text-2xl font-semibold mt-1">Your Cosmic Blueprint</h1>
             </div>
-            <Link href="/results/astrology/cheatsheet" className="btn-secondary text-sm">
+            <Link href="/results/astrology/cheatsheet" className="btn-secondary text-sm shrink-0">
               Cheat Sheet
             </Link>
           </div>

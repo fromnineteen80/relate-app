@@ -152,15 +152,80 @@ function rankCompatiblePersonas(userResults: any) {
 }
 
 function generateMatchSummary(userResults: any, match: any): string {
-  const tierDescriptions: Record<string, string> = {
-    ideal: 'Strong natural compatibility. Your values and behavioral patterns align well.',
-    kismet: 'High potential for connection. Key dimensions complement each other.',
-    effort: 'Promising match that requires conscious effort in specific areas.',
-    longShot: 'Significant differences that would need sustained work to bridge.',
-    atRisk: 'Core value conflicts present. Proceed with clear expectations.',
-    incompatible: 'Fundamental misalignment in values and behavioral patterns.',
+  const { personaCode, m3, m4 } = userResults;
+  const userCode = personaCode || '';
+  const matchCode = match.code || '';
+
+  // Dimension labels for readable output
+  const dimLabels = ['Physical', 'Social', 'Lifestyle', 'Values'];
+  const poleNames: Record<string, Record<string, string>> = {
+    Physical: { A: 'Fitness', B: 'Maturity' },
+    Social: { C: 'Leadership', D: 'Presence' },
+    Lifestyle: { E: 'Adventure', F: 'Stability' },
+    Values: { G: 'Traditional', H: 'Egalitarian' },
   };
-  return tierDescriptions[match.tier] || 'Compatibility assessment available.';
+
+  // Find shared and divergent dimensions
+  const shared: string[] = [];
+  const divergent: string[] = [];
+  for (let i = 0; i < 4; i++) {
+    const uLetter = userCode[i];
+    const mLetter = matchCode[i];
+    const dim = dimLabels[i];
+    if (uLetter === mLetter) {
+      shared.push(`${poleNames[dim]?.[uLetter] || uLetter}`);
+    } else {
+      divergent.push(`your ${poleNames[dim]?.[uLetter] || uLetter} meets their ${poleNames[dim]?.[mLetter] || mLetter}`);
+    }
+  }
+
+  // Build a blended summary
+  const parts: string[] = [];
+
+  // Tier opening
+  const tierOpeners: Record<string, string> = {
+    ideal: 'A natural pairing.',
+    kismet: 'Strong potential here.',
+    effort: 'A promising match with areas to navigate.',
+    longShot: 'Real differences to bridge.',
+    atRisk: 'Significant friction points.',
+    incompatible: 'Fundamental differences in approach.',
+  };
+  parts.push(tierOpeners[match.tier] || '');
+
+  if (shared.length > 0) {
+    parts.push(`You share ${shared.join(' and ').toLowerCase()} ground.`);
+  }
+  if (divergent.length > 0) {
+    const divergentStr = divergent.length === 1
+      ? divergent[0]
+      : divergent.slice(0, 2).join(', and ');
+    parts.push(`Where you differ: ${divergentStr}.`);
+  }
+
+  // Intimacy dynamic hint
+  if (m3) {
+    const userWant = m3.wantScore ?? m3.want ?? 50;
+    const matchProfile = PERSONA_TYPICAL_PROFILES[matchCode];
+    if (matchProfile?.m3) {
+      const gap = Math.abs(userWant - matchProfile.m3.typicalOffer);
+      if (gap < 15) {
+        parts.push('Your intimacy expectations are well-aligned.');
+      } else if (gap > 35) {
+        parts.push('There may be a gap in intimacy expectations worth discussing.');
+      }
+    }
+  }
+
+  // Conflict dynamic hint
+  if (m4) {
+    const matchProfile = PERSONA_TYPICAL_PROFILES[matchCode];
+    if (matchProfile?.m4 && m4.approach !== matchProfile.m4.typicalApproach) {
+      parts.push('Your conflict styles complement — one pursues while the other withdraws, which can balance well with awareness.');
+    }
+  }
+
+  return parts.filter(Boolean).join(' ');
 }
 
 export async function POST(request: NextRequest) {
@@ -255,6 +320,22 @@ export async function POST(request: NextRequest) {
         compatibilityScore: match.compatibilityScore,
         traits: match.persona?.traits || '',
         summary: generateMatchSummary(userResults, match),
+        // Persona insight metadata
+        datingBehavior: match.persona?.datingBehavior || [],
+        inRelationships: match.persona?.inRelationships || [],
+        howValued: match.persona?.howValued || [],
+        disappointments: match.persona?.disappointments || [],
+        struggles: match.persona?.struggles || [],
+        mostAttractive: match.persona?.mostAttractive || [],
+        leastAttractive: match.persona?.leastAttractive || [],
+        // Sub-scores for dimension breakdown
+        subScores: {
+          tier: match.tierScore,
+          preference: match.preferenceScore,
+          dimension: match.dimensionScore,
+          intimacy: match.m3Score,
+          conflict: match.m4Score,
+        },
       })),
     };
 
