@@ -256,6 +256,7 @@ function ProfileAvatar({
             { href: '/settings/profile', label: 'Edit Profile' },
             { href: '/settings/billing', label: 'Billing' },
             { href: '/feedback', label: 'Feedback' },
+            { href: '/results/astrology', label: 'Sun, Moon & Rise' },
           ].map(item => (
             <Link
               key={item.href}
