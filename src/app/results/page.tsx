@@ -319,17 +319,13 @@ function ResultsDashboard() {
   try { fullM3 = JSON.parse(localStorage.getItem('relate_m3_scored') || '{}')?.result || null; } catch { /* */ }
   try { fullM4 = JSON.parse(localStorage.getItem('relate_m4_scored') || '{}')?.result || null; } catch { /* */ }
 
-  // Sub-nav items — only show sections that have data
+  // Sub-nav items — grouped
   const navItems = [
     { id: 'persona', label: 'Persona', show: !!persona },
-    { id: 'dimensions', label: 'Dimensions', show: hasDimensions },
-    { id: 'connection', label: 'Connection', show: !!m3 },
-    { id: 'conflict', label: 'Conflict', show: !!m4Summary },
-    { id: 'insights', label: 'Insights', show: !!tensionStacks },
-    { id: 'market', label: 'Market', show: hasMarket },
-    { id: 'matches', label: 'Matches', show: matches.length > 0 },
-    { id: 'downloads', label: 'Downloads', show: canDownload },
-    { id: 'coaching', label: 'Ongoing Coaching', show: hasResults && canDownload },
+    { id: 'know-yourself', label: 'Know Yourself', show: hasDimensions || !!m3 || !!m4Summary || !!ic?.attachment },
+    { id: 'know-your-match', label: 'Know Your Match', show: !!(ic?.attachmentTiers) || matches.length > 0 },
+    { id: 'know-your-market', label: 'Know Your Market', show: hasMarket },
+    { id: 'coaching', label: 'Coaching', show: hasResults && canDownload },
   ].filter(n => n.show);
 
   return (
@@ -348,12 +344,19 @@ function ResultsDashboard() {
       )}
 
       <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
-        <h1 className="font-serif text-3xl font-semibold mb-8">Results</h1>
+        <div className="flex items-baseline justify-between mb-8">
+          <h1 className="font-serif text-2xl font-semibold">Results</h1>
+          {canDownload && (
+            <button onClick={handleDownloadPDF} disabled={downloading} className="text-xs text-accent hover:underline">
+              {downloading ? 'Preparing...' : 'Download PDF Report'}
+            </button>
+          )}
+        </div>
 
         {/* ── Assessment Incomplete CTA ── */}
         {!hasResults && (
           <section className="card mb-6 text-center py-12">
-            <h2 className="font-serif text-xl font-semibold mb-2">Assessment Not Complete</h2>
+            <h3 className="font-serif text-lg font-semibold mb-2">Assessment Not Complete</h3>
             <p className="text-sm text-secondary mb-6 max-w-md mx-auto">
               Complete all four modules of your RELATE assessment to generate your persona, compatibility rankings, dating market analysis, and personalized coaching.
             </p>
@@ -365,31 +368,24 @@ function ResultsDashboard() {
 
         {/* ── Persona ── */}
         {persona && (
-          <section id="persona" className="card mb-6 scroll-mt-28">
+          <section id="persona" className="card mb-4 scroll-mt-28">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <span className="font-mono text-xs text-secondary">Your Persona</span>
-                <h2 className="font-serif text-2xl font-semibold">{persona.name}</h2>
-                {persona.code && <span className="font-mono text-sm text-accent">{persona.code}</span>}
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Your Persona</span>
+                <h3 className="font-serif text-lg font-semibold mt-1">{persona.name}</h3>
+                {persona.code && <span className="font-mono text-xs text-accent">{persona.code}</span>}
               </div>
-              <div className="flex gap-2">
-                {canDownload && (
-                  <button onClick={handleDownloadPDF} disabled={downloading} className="btn-secondary text-xs">
-                    {downloading ? 'Preparing...' : 'Download PDF'}
-                  </button>
-                )}
-                <Link href="/results/persona" className="btn-secondary text-xs">Details</Link>
-              </div>
+              <Link href="/results/persona" className="btn-secondary text-xs">Details</Link>
             </div>
             {persona.traits && <p className="text-sm text-secondary mb-4">{persona.traits}</p>}
 
             {/* Dating Behavior */}
             {persona.datingBehavior?.length > 0 && (
-              <div className="mb-4">
+              <div>
                 <span className="text-xs font-mono text-secondary uppercase tracking-wider">Dating Behavior</span>
                 <ul className="mt-2 space-y-1.5">
                   {persona.datingBehavior.map((b: string, i: number) => (
-                    <li key={i} className="text-sm flex gap-2"><span className="text-accent">&#8226;</span>{b}</li>
+                    <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{b}</li>
                   ))}
                 </ul>
               </div>
@@ -397,13 +393,13 @@ function ResultsDashboard() {
 
             {/* Strengths & Growth */}
             {(persona.mostAttractive?.length > 0 || persona.leastAttractive?.length > 0) && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+              <div className="mt-4 pt-4 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {persona.mostAttractive?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-success uppercase tracking-wider">Most Attractive Qualities</span>
-                    <ul className="mt-2 space-y-1">
+                    <ul className="mt-2 space-y-1.5">
                       {persona.mostAttractive.map((item: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary">{item}</li>
+                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{item}</li>
                       ))}
                     </ul>
                   </div>
@@ -411,9 +407,9 @@ function ResultsDashboard() {
                 {persona.leastAttractive?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-warning uppercase tracking-wider">Growth Areas</span>
-                    <ul className="mt-2 space-y-1">
+                    <ul className="mt-2 space-y-1.5">
                       {persona.leastAttractive.map((item: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary">{item}</li>
+                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{item}</li>
                       ))}
                     </ul>
                   </div>
@@ -423,13 +419,13 @@ function ResultsDashboard() {
 
             {/* In Relationships + Shadow Side */}
             {(persona.inRelationships?.length > 0 || persona.struggles?.length > 0) && (
-              <div className="mt-4 pt-4 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+              <div className="mt-4 pt-4 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {persona.inRelationships?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-secondary uppercase tracking-wider">In Relationships</span>
                     <ul className="mt-2 space-y-1.5">
                       {persona.inRelationships.map((b: string, i: number) => (
-                        <li key={i} className="text-sm flex gap-2"><span className="text-accent">&#8226;</span>{b}</li>
+                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{b}</li>
                       ))}
                     </ul>
                   </div>
@@ -439,7 +435,7 @@ function ResultsDashboard() {
                     <span className="text-xs font-mono text-secondary uppercase tracking-wider">Shadow Side</span>
                     <ul className="mt-2 space-y-1.5">
                       {persona.struggles.map((b: string, i: number) => (
-                        <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{b}</li>
+                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{b}</li>
                       ))}
                     </ul>
                   </div>
@@ -449,9 +445,21 @@ function ResultsDashboard() {
           </section>
         )}
 
+        {/* ══════════════════════════════════════════════════
+            GROUP 1: KNOW YOURSELF
+        ══════════════════════════════════════════════════ */}
+        {(hasDimensions || m3 || m4Summary || ic?.attachment) && (
+          <div id="know-yourself" className="scroll-mt-28 mb-2">
+            <div className="flex items-baseline gap-3 mb-4 mt-2">
+              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">01</span>
+              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Know Yourself</span>
+            </div>
+          </div>
+        )}
+
         {/* ── Dimensions ── */}
         {hasDimensions && (
-          <section id="dimensions" className="card mb-6 scroll-mt-28">
+          <section className="card mb-4 scroll-mt-28">
             <h3 className="font-serif text-lg font-semibold mb-4">Dimension Scores</h3>
             <div className="space-y-3">
               {Object.entries(dimensions).map(([dim, data]: [string, any]) => {
@@ -472,9 +480,9 @@ function ResultsDashboard() {
 
         {/* ── Connection Style ── */}
         {m3 && (
-          <section id="connection" className="card mb-6 scroll-mt-28">
-            <h3 className="font-serif text-lg font-semibold mb-3">Connection Style</h3>
-            <div className="grid grid-cols-3 gap-4 text-center mb-4">
+          <section className="card mb-4 scroll-mt-28">
+            <h3 className="font-serif text-lg font-semibold mb-4">Connection Style</h3>
+            <div className="grid grid-cols-3 gap-6 text-center mb-4">
               <div>
                 <span className="font-mono text-lg font-semibold">{m3.wantScore ?? '-'}</span>
                 <p className="text-xs text-secondary mt-1">Want Score</p>
@@ -499,13 +507,13 @@ function ResultsDashboard() {
               <p className="text-sm text-secondary mb-4">{m3.typeDescription}</p>
             )}
             {m3.typeDetails && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
                 {m3.typeDetails.strengths?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
-                    <ul className="mt-2 space-y-1">
+                    <ul className="mt-2 space-y-1.5">
                       {m3.typeDetails.strengths.map((s: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary">{s}</li>
+                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{s}</li>
                       ))}
                     </ul>
                   </div>
@@ -513,9 +521,9 @@ function ResultsDashboard() {
                 {m3.typeDetails.challenges?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
-                    <ul className="mt-2 space-y-1">
+                    <ul className="mt-2 space-y-1.5">
                       {m3.typeDetails.challenges.map((c: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary">{c}</li>
+                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
                       ))}
                     </ul>
                   </div>
@@ -527,9 +535,9 @@ function ResultsDashboard() {
 
         {/* ── Conflict Profile ── */}
         {m4Summary && (
-          <section id="conflict" className="card mb-6 scroll-mt-28">
-            <h3 className="font-serif text-lg font-semibold mb-3">Conflict Profile</h3>
-            <div className="grid grid-cols-2 gap-3 text-sm mb-4">
+          <section className="card mb-4 scroll-mt-28">
+            <h3 className="font-serif text-lg font-semibold mb-4">Conflict Profile</h3>
+            <div className="grid grid-cols-2 gap-3 mb-4">
               {[
                 ['Approach', m4Summary.approach],
                 ['Primary Driver', m4Summary.primaryDriver],
@@ -538,8 +546,8 @@ function ResultsDashboard() {
                 ['Capacity', m4Summary.capacity],
               ].map(([label, val]) => (
                 <div key={label as string} className="flex justify-between py-1 border-b border-border last:border-0">
-                  <span className="text-secondary">{label}</span>
-                  <span className="font-mono capitalize">{(val as string) || '-'}</span>
+                  <span className="text-xs text-secondary">{label}</span>
+                  <span className="text-xs font-mono capitalize">{(val as string) || '-'}</span>
                 </div>
               ))}
             </div>
@@ -549,7 +557,7 @@ function ResultsDashboard() {
               <div className="pt-4 border-t border-border">
                 <span className="text-xs font-mono text-secondary uppercase tracking-wider">Gottman Four Horsemen</span>
                 {gottman.overallRisk && (
-                  <p className="text-xs mt-1 mb-3">
+                  <p className="text-xs text-secondary mt-1 mb-3">
                     Overall risk: <span className={`font-mono ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-warning' : 'text-success'}`}>
                       {gottman.overallRisk}
                     </span>
@@ -563,7 +571,7 @@ function ResultsDashboard() {
                     return (
                       <div key={name}>
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm capitalize font-medium">{name}</span>
+                          <span className="text-sm font-medium capitalize">{name}</span>
                           <span className={`text-xs font-mono ${riskColor}`}>{data.riskLevel || '-'} ({data.score ?? '-'})</span>
                         </div>
                         <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden mb-1">
@@ -583,9 +591,9 @@ function ResultsDashboard() {
 
         {/* ── Your Attachment Style ── */}
         {ic?.attachment && (
-          <section className="card mb-6">
+          <section className="card mb-4">
             <h3 className="font-serif text-lg font-semibold mb-1">Your Attachment Style</h3>
-            <p className="text-xs text-secondary mb-4">How you connect, protect, and respond in close relationships</p>
+            <p className="text-sm text-secondary mb-4">How you connect, protect, and respond in close relationships</p>
             <div className="flex items-center gap-3 mb-4">
               <span className="font-mono text-lg font-semibold capitalize">{ic.attachment.style}</span>
               {ic.attachment.subtype && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded capitalize">{ic.attachment.subtype}</span>}
@@ -594,21 +602,21 @@ function ResultsDashboard() {
             </div>
             {ic.attachment.description && <p className="text-sm text-secondary mb-4">{ic.attachment.description}</p>}
             {ic.attachment.strengths && Array.isArray(ic.attachment.strengths) && ic.attachment.strengths.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
                 <div>
                   <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
-                  <ul className="mt-2 space-y-1">
+                  <ul className="mt-2 space-y-1.5">
                     {ic.attachment.strengths.map((s: string, i: number) => (
-                      <li key={i} className="text-sm text-secondary">{s}</li>
+                      <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{s}</li>
                     ))}
                   </ul>
                 </div>
                 {ic.attachment.challenges && Array.isArray(ic.attachment.challenges) && ic.attachment.challenges.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
-                    <ul className="mt-2 space-y-1">
+                    <ul className="mt-2 space-y-1.5">
                       {ic.attachment.challenges.map((c: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary">{c}</li>
+                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
                       ))}
                     </ul>
                   </div>
@@ -632,12 +640,12 @@ function ResultsDashboard() {
 
         {/* ── Intimacy Under Stress ── */}
         {ic?.m3States?.states?.normal && (
-          <section className="card mb-6">
-            <h3 className="font-serif text-lg font-semibold mb-1">Your Intimacy Under Stress</h3>
-            <p className="text-xs text-secondary mb-4">How your Want and Offer shift across relationship states</p>
+          <section className="card mb-4">
+            <h3 className="font-serif text-lg font-semibold mb-1">Intimacy Under Stress</h3>
+            <p className="text-sm text-secondary mb-4">How your Want and Offer shift across relationship states</p>
 
             {/* Legend */}
-            <div className="flex items-center gap-4 mb-4 text-[10px]">
+            <div className="flex items-center gap-6 mb-4 text-xs text-secondary">
               <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-sm bg-blue-500 inline-block" /> Offer (what you give)</span>
               <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-sm bg-rose-400 inline-block" /> Want (what you need)</span>
             </div>
@@ -654,22 +662,17 @@ function ResultsDashboard() {
                   <div key={key}>
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="text-xs font-medium">{data.label || label}</span>
-                      <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                      <span className={`text-xs font-mono px-1.5 py-0.5 rounded ${
                         Math.abs(data.gap) <= 5 ? 'bg-success/10 text-success' :
                         Math.abs(data.gap) <= 15 ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
                       }`}>gap {data.gap > 0 ? '+' : ''}{data.gap}</span>
                     </div>
-                    {/* Single bar: Offer grows from left (blue), Want grows from right (rose) */}
                     <div className="relative h-5 bg-stone-100 rounded-full overflow-hidden">
-                      {/* Offer from left */}
                       <div className="absolute left-0 top-0 h-full bg-blue-500/70 rounded-l-full transition-all duration-300"
                         style={{ width: `${offerPct}%` }} />
-                      {/* Want from right */}
                       <div className="absolute right-0 top-0 h-full bg-rose-400/70 rounded-r-full transition-all duration-300"
                         style={{ width: `${wantPct}%` }} />
-                      {/* Center line */}
                       <div className="absolute left-1/2 top-0 w-px h-full bg-stone-300" />
-                      {/* Labels */}
                       <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-blue-800">{data.offer}</span>
                       <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-rose-800">{data.want}</span>
                     </div>
@@ -678,7 +681,7 @@ function ResultsDashboard() {
               })}
             </div>
 
-            <p className="text-xs text-secondary mt-4">
+            <p className="text-sm text-secondary mt-4">
               When Offer and Want overlap in the center, you are giving close to what you need.
               When they pull apart, there is a gap between what you bring to the relationship and what you ask from it.
             </p>
@@ -701,13 +704,25 @@ function ResultsDashboard() {
           </section>
         )}
 
+        {/* ══════════════════════════════════════════════════
+            GROUP 2: KNOW YOUR MATCH
+        ══════════════════════════════════════════════════ */}
+        {(ic?.attachmentTiers || matches.length > 0 || tensionStacks || modifiers || referrals.length > 0) && (
+          <div id="know-your-match" className="scroll-mt-28 mb-2">
+            <div className="flex items-baseline gap-3 mb-4 mt-6">
+              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">02</span>
+              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Know Your Match</span>
+            </div>
+          </div>
+        )}
+
         {/* ── Ideal Partner Profile ── */}
         {ic?.attachmentTiers && (
-          <section className="card mb-6">
-            <h3 className="font-serif text-lg font-semibold mb-1">Your Ideal Partner Profile</h3>
-            <p className="text-xs text-secondary mb-4">The attachment styles, emotional drivers, and conflict behaviors that complement yours best</p>
+          <section className="card mb-4">
+            <h3 className="font-serif text-lg font-semibold mb-1">Ideal Partner Profile</h3>
+            <p className="text-sm text-secondary mb-4">The attachment styles, emotional drivers, and conflict behaviors that complement yours best</p>
 
-            {/* Attachment Style - horizontal colored cards */}
+            {/* Attachment Style */}
             <div className="mb-4">
               <span className="text-xs font-mono text-secondary uppercase tracking-wider">Partner Attachment Style</span>
               <div className="flex flex-wrap gap-2 mt-3">
@@ -735,7 +750,7 @@ function ResultsDashboard() {
               {ic.attachmentTiers.recommendation && <p className="text-sm text-secondary mt-3">{ic.attachmentTiers.recommendation}</p>}
             </div>
 
-            {/* Emotional Driver - horizontal colored cards */}
+            {/* Emotional Driver */}
             {ic.driverTiers && (
               <div className="mb-4 pt-4 border-t border-border">
                 <span className="text-xs font-mono text-secondary uppercase tracking-wider">Partner Emotional Driver</span>
@@ -774,25 +789,24 @@ function ResultsDashboard() {
                 )}
                 {Array.isArray(ic.horsemenInsights?.lookFor) && ic.horsemenInsights.lookFor.length > 0 && (
                   <div className="mt-3">
-                    <p className="text-xs font-medium text-success mb-1.5">Look for in a partner:</p>
-                    <ul className="space-y-1.5">
+                    <span className="text-xs font-mono text-success uppercase tracking-wider">Look for in a partner</span>
+                    <ul className="mt-2 space-y-1.5">
                       {ic.horsemenInsights.lookFor.map((item: any, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-success flex-shrink-0">&#8226;</span><span><span className="font-medium text-foreground">{item.partnerTrait}</span> — {item.reason}</span></li>
+                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary flex-shrink-0">&#8226;</span><span><span className="font-medium text-foreground">{item.partnerTrait}</span> — {item.reason}</span></li>
                       ))}
                     </ul>
                   </div>
                 )}
                 {Array.isArray(ic.horsemenInsights?.avoid) && ic.horsemenInsights.avoid.length > 0 && (
                   <div className="mt-3">
-                    <p className="text-xs font-medium text-warning mb-1.5">Be cautious of:</p>
-                    <ul className="space-y-1.5">
+                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Be cautious of</span>
+                    <ul className="mt-2 space-y-1.5">
                       {ic.horsemenInsights.avoid.map((item: any, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-warning flex-shrink-0">&#8226;</span><span><span className="font-medium text-foreground">{item.partnerTrait}</span> — {item.reason}</span></li>
+                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary flex-shrink-0">&#8226;</span><span><span className="font-medium text-foreground">{item.partnerTrait}</span> — {item.reason}</span></li>
                       ))}
                     </ul>
                   </div>
                 )}
-                {/* Fallback: if horsemenInsights didn't populate but we have gottman data, show conflict guidance */}
                 {!ic.horsemenInsights && gottman && (
                   <div className="mt-3">
                     <p className="text-sm text-secondary">
@@ -808,7 +822,7 @@ function ResultsDashboard() {
 
         {/* ── Tension Stacks / Insights ── */}
         {tensionStacks && Object.keys(tensionStacks).length > 0 && (
-          <section id="insights" className="mb-6 scroll-mt-28">
+          <section className="mb-4 scroll-mt-28">
             <h3 className="font-serif text-lg font-semibold mb-4">Relationship Insights</h3>
             <div className="space-y-4">
               {Object.entries(tensionStacks)
@@ -903,7 +917,7 @@ function ResultsDashboard() {
                           <span className="text-xs font-mono text-secondary uppercase tracking-wider">Key Patterns</span>
                           <ul className="mt-1.5 space-y-1">
                             {stack.customizations.map((c: string, i: number) => (
-                              <li key={i} className="text-sm flex gap-2"><span className="text-accent">&#8226;</span>{c}</li>
+                              <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
                             ))}
                           </ul>
                         </div>
@@ -968,7 +982,7 @@ function ResultsDashboard() {
                         <span className="text-xs font-mono text-secondary uppercase tracking-wider">Key Patterns</span>
                         <ul className="mt-1.5 space-y-1">
                           {stack.customizations.map((c: string, i: number) => (
-                            <li key={i} className="text-sm flex gap-2"><span className="text-accent">&#8226;</span>{c}</li>
+                            <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
                           ))}
                         </ul>
                       </div>
@@ -1052,8 +1066,8 @@ function ResultsDashboard() {
 
         {/* ── Relationship Capacity / Modifiers ── */}
         {modifiers && (
-          <section className="card mb-6">
-            <h3 className="font-serif text-lg font-semibold mb-3">Relationship Capacity</h3>
+          <section className="card mb-4">
+            <h3 className="font-serif text-lg font-semibold mb-4">Relationship Capacity</h3>
             {modifiers.relationshipCapacity && (
               <div className="mb-4">
                 <div className="flex items-center gap-3 mb-2">
@@ -1132,9 +1146,21 @@ function ResultsDashboard() {
           </section>
         )}
 
+        {/* ══════════════════════════════════════════════════
+            GROUP 3: KNOW YOUR MARKET
+        ══════════════════════════════════════════════════ */}
+        {hasMarket && (
+          <div id="know-your-market" className="scroll-mt-28 mb-2">
+            <div className="flex items-baseline gap-3 mb-4 mt-6">
+              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">03</span>
+              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Know Your Market</span>
+            </div>
+          </div>
+        )}
+
         {/* ── Dating Market ── */}
         {hasMarket && (
-          <div id="market" className="scroll-mt-28">
+          <div className="scroll-mt-28">
             <DatingMarketViz data={marketData} loading={marketLoading} />
           </div>
         )}
@@ -1152,7 +1178,7 @@ function ResultsDashboard() {
 
         {/* ── Matches ── */}
         {matches.length > 0 && (
-          <section id="matches" className="mb-6 scroll-mt-28">
+          <section className="mb-4 scroll-mt-28">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-serif text-lg font-semibold">Compatibility Rankings</h3>
               {hasPaid && <Link href="/results/matches" className="text-xs text-accent hover:underline">View all</Link>}
@@ -1180,7 +1206,7 @@ function ResultsDashboard() {
             </div>
             {!hasPaid && matches.length > freeMatchLimit && (
               <div className="mt-4 card border-accent text-center">
-                <p className="text-sm mb-3">{matches.length - freeMatchLimit} more matches available with Plus</p>
+                <p className="text-sm text-secondary mb-3">{matches.length - freeMatchLimit} more matches available with Plus</p>
                 <div className="flex gap-2 justify-center">
                   <a href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary inline-block text-sm">Plus ($29.99/mo)</a>
                   <a href={`/api/checkout?product=premium&email=${encodeURIComponent(user?.email || '')}`} className="btn-primary inline-block text-sm">Premium ($49.99/mo)</a>
@@ -1192,8 +1218,8 @@ function ResultsDashboard() {
 
         {/* ── Referrals ── */}
         {referrals.length > 0 && (
-          <section className="mb-6">
-            <h3 className="font-serif text-lg font-semibold mb-3">Recommended Resources</h3>
+          <section className="mb-4">
+            <h3 className="font-serif text-lg font-semibold mb-4">Recommended Resources</h3>
             <div className="space-y-2">
               {referrals.map((ref) => (
                 <a key={ref.service} href={ref.url} target="_blank" rel="noopener noreferrer"
@@ -1212,25 +1238,9 @@ function ResultsDashboard() {
           </section>
         )}
 
-        {/* ── Downloads ── */}
-        {canDownload && (
-          <section id="downloads" className="card mb-6 scroll-mt-28">
-            <h2 className="font-serif text-lg font-semibold mb-4">Downloads</h2>
-            <div className="flex items-center gap-4 py-2">
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium">Full PDF Report</p>
-                <p className="text-xs text-secondary">Complete assessment results, persona, matches, and market data</p>
-              </div>
-              <button onClick={handleDownloadPDF} disabled={downloading} className="btn-secondary text-xs flex-shrink-0">
-                {downloading ? 'Preparing...' : 'Download PDF'}
-              </button>
-            </div>
-          </section>
-        )}
-
-        {/* ── Couples Mode ── */}
+        {/* ── Couples Mode (end of Group 2) ── */}
         {hasResults && (
-          <section className="card mb-6 border-accent">
+          <section className="card mb-4 border-accent">
             <h3 className="font-serif text-lg font-semibold mb-2">Couples Mode</h3>
             {hasPartner && hasCouplesAccess ? (
               <div>
@@ -1390,9 +1400,9 @@ function ResultsDashboard() {
 function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: boolean }) {
   if (loading) {
     return (
-      <section className="card mb-6">
-        <h2 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h2>
-        <p className="text-xs text-secondary mb-4">Analyzing your local market...</p>
+      <section className="card mb-4">
+        <h3 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h3>
+        <p className="text-sm text-secondary mb-4">Analyzing your local market...</p>
         <div className="flex items-center justify-center py-8">
           <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
         </div>
@@ -1432,9 +1442,9 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
   ];
 
   return (
-    <section className="card mb-6">
-      <h2 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h2>
-      <p className="text-xs text-secondary mb-5">{metro}</p>
+    <section className="card mb-4">
+      <h3 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h3>
+      <p className="text-sm text-secondary mb-4">{metro}</p>
 
       <div className="mb-6">
         <div className="flex items-end justify-between mb-2">
@@ -1817,9 +1827,9 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
   insights.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
 
   return (
-    <section className="card mb-6">
-      <h2 className="font-serif text-lg font-semibold mb-1">Market Coaching</h2>
-      <p className="text-xs text-secondary mb-5">Actionable insights from your dating market data and assessment results</p>
+    <section className="card mb-4">
+      <h3 className="font-serif text-lg font-semibold mb-1">Market Coaching</h3>
+      <p className="text-sm text-secondary mb-4">Actionable insights from your dating market data and assessment results</p>
       <div className="space-y-4">
         {insights.map((insight, i) => (
           <div key={i} className="border border-border rounded-md p-3">
