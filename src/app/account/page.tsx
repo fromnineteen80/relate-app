@@ -572,7 +572,7 @@ function AccountPage() {
         { id: 'subscription', label: 'Subscription', href: '#subscription', show: true },
         { id: 'assessment', label: 'Assessment', href: '#assessment', show: true },
         { id: 'downloads', label: 'Downloads', href: '#downloads', show: hasResults },
-        { id: 'coaching', label: 'Coaching', href: '/advisor', show: true },
+        { id: 'coaching', label: 'Coaching', href: '#coaching', show: true },
       ]} />
 
       <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
