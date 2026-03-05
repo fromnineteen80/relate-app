@@ -159,6 +159,9 @@ function AccountPage() {
   const [partnerEmail, setPartnerEmail] = useState<string | null>(null);
   const [partnerName, setPartnerName] = useState<string | null>(null);
   const [connectedAt, setConnectedAt] = useState<string | null>(null);
+  const [partnerPersonaName, setPartnerPersonaName] = useState<string | null>(null);
+  const [partnerAssessmentComplete, setPartnerAssessmentComplete] = useState(false);
+  const [partnerHasResults, setPartnerHasResults] = useState(false);
   const [moduleProgress, setModuleProgress] = useState<Record<number, boolean>>({});
   const [mockUpgrading, setMockUpgrading] = useState(false);
   const [profileData, setProfileData] = useState<{ firstName: string; lastName: string; photoUrl: string | null } | null>(null);
@@ -274,8 +277,11 @@ function AccountPage() {
               : null;
             setPartnerName(name);
             if (data.connectedAt) setConnectedAt(data.connectedAt);
+            if (data.partner.personaName) setPartnerPersonaName(data.partner.personaName);
+            if (data.partner.assessmentComplete) setPartnerAssessmentComplete(true);
+            if (data.partner.hasResults) setPartnerHasResults(true);
             localStorage.setItem('relate_partner_email', data.partner.email);
-            localStorage.setItem('relate_partner_results', 'true');
+            if (data.partner.hasResults) localStorage.setItem('relate_partner_results', 'true');
           }
         })
         .catch(() => { /* silent */ });
@@ -775,7 +781,7 @@ function AccountPage() {
             {hasPartner ? (
               <div className="space-y-4">
                 <div className="flex items-center gap-4 p-3 bg-success/5 border border-success/20 rounded-md">
-                  <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center text-lg font-medium flex-shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center text-lg font-medium flex-shrink-0 overflow-hidden">
                     {partnerName ? partnerName.charAt(0).toUpperCase() : partnerEmail?.charAt(0).toUpperCase() || '?'}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -783,7 +789,11 @@ function AccountPage() {
                       <p className="text-sm font-medium truncate">{partnerName || partnerEmail || 'Partner'}</p>
                       <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
                     </div>
-                    {partnerName && partnerEmail && <p className="text-xs text-secondary truncate">{partnerEmail}</p>}
+                    {partnerPersonaName ? (
+                      <p className="text-xs text-secondary truncate">{partnerPersonaName}</p>
+                    ) : partnerName && partnerEmail ? (
+                      <p className="text-xs text-secondary truncate">{partnerEmail}</p>
+                    ) : null}
                     {connectedAt && (
                       <p className="text-xs text-secondary mt-0.5">Connected {new Date(connectedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                     )}

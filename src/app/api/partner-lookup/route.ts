@@ -130,11 +130,40 @@ export async function GET(request: NextRequest) {
     // Get partner's info
     const partnerId = partnership.user1_id === userId ? partnership.user2_id : partnership.user1_id;
 
-    const { data: partnerUser } = await supabase
-      .from('users')
-      .select('id, email, first_name, last_name')
-      .eq('id', partnerId)
-      .single();
+    const [{ data: partnerUser }, { data: partnerProgress }] = await Promise.all([
+      supabase
+        .from('users')
+        .select('id, email, first_name, last_name, gender')
+        .eq('id', partnerId)
+        .single(),
+      supabase
+        .from('user_progress')
+        .select('m1_completed, m2_completed, m3_completed, m4_completed, results, m2_scored')
+        .eq('user_id', partnerId)
+        .single(),
+    ]);
+
+    // Extract persona name from partner's results or m2_scored
+    let partnerPersonaName: string | null = null;
+    let partnerPersonaCode: string | null = null;
+    let partnerHasResults = false;
+    if (partnerProgress?.results) {
+      const r = partnerProgress.results as Record<string, any>;
+      partnerPersonaName = r.persona?.name || null;
+      partnerPersonaCode = r.persona?.code || null;
+      partnerHasResults = true;
+    } else if (partnerProgress?.m2_scored) {
+      const m2 = partnerProgress.m2_scored as Record<string, any>;
+      partnerPersonaName = m2.personaMetadata?.name || null;
+      partnerPersonaCode = m2.result?.code || null;
+    }
+
+    const assessmentComplete = !!(
+      partnerProgress?.m1_completed &&
+      partnerProgress?.m2_completed &&
+      partnerProgress?.m3_completed &&
+      partnerProgress?.m4_completed
+    );
 
     return NextResponse.json({
       partner: partnerUser ? {
@@ -142,6 +171,11 @@ export async function GET(request: NextRequest) {
         email: partnerUser.email,
         firstName: partnerUser.first_name,
         lastName: partnerUser.last_name,
+        gender: partnerUser.gender,
+        personaName: partnerPersonaName,
+        personaCode: partnerPersonaCode,
+        assessmentComplete,
+        hasResults: partnerHasResults,
       } : null,
       partnershipId: partnership.id,
       connectedAt: partnership.accepted_at || partnership.created_at,
