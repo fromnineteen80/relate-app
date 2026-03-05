@@ -17,12 +17,12 @@ function tierLabel(tier: string) {
   return labels[tier] || tier;
 }
 
-function tierColor(tier: string) {
+function tierTextColor(tier: string) {
   const colors: Record<string, string> = {
-    ideal: 'bg-success', kismet: 'bg-success/70', effort: 'bg-warning',
-    longShot: 'bg-stone-400', atRisk: 'bg-danger/70', incompatible: 'bg-danger',
+    ideal: 'text-success', kismet: 'text-success/70', effort: 'text-warning',
+    longShot: 'text-stone-400', atRisk: 'text-danger/70', incompatible: 'text-danger',
   };
-  return colors[tier] || 'bg-secondary';
+  return colors[tier] || 'text-secondary';
 }
 
 function InsightCard({ title, items, accent }: { title: string; items: string[]; accent?: boolean }) {
@@ -54,6 +54,35 @@ function ScoreBar({ label, value }: { label: string; value: number }) {
   );
 }
 
+/**
+ * Hydrate a single match with persona metadata if arrays are missing.
+ */
+async function hydrateMatch(match: any, userGender: string): Promise<any> {
+  if (match.datingBehavior?.length > 0) return match;
+
+  try {
+    const res = await fetch('/api/persona-metadata');
+    if (!res.ok) return match;
+    const data = await res.json();
+    const targetMeta = userGender === 'M' ? data.female : data.male;
+    const meta = targetMeta?.[match.code];
+    if (!meta) return match;
+
+    return {
+      ...match,
+      datingBehavior: match.datingBehavior?.length ? match.datingBehavior : (meta.datingBehavior || []),
+      inRelationships: match.inRelationships?.length ? match.inRelationships : (meta.inRelationships || []),
+      howValued: match.howValued?.length ? match.howValued : (meta.howValued || []),
+      disappointments: match.disappointments?.length ? match.disappointments : (meta.disappointments || []),
+      struggles: match.struggles?.length ? match.struggles : (meta.struggles || []),
+      mostAttractive: match.mostAttractive?.length ? match.mostAttractive : (meta.mostAttractive || []),
+      leastAttractive: match.leastAttractive?.length ? match.leastAttractive : (meta.leastAttractive || []),
+    };
+  } catch {
+    return match;
+  }
+}
+
 export default function MatchDetailPage() {
   const router = useRouter();
   const params = useParams();
@@ -69,12 +98,24 @@ export default function MatchDetailPage() {
     const m = r.matches?.find((m: any) => m.code === code);
     if (!m) { router.push('/results/matches'); return; }
     setMatch(m);
+
+    // Hydrate missing persona data
+    hydrateMatch(m, r.gender).then(hydrated => {
+      if (hydrated !== m) {
+        setMatch(hydrated);
+        // Update localStorage too
+        const updatedMatches = r.matches.map((x: any) => x.code === code ? hydrated : x);
+        const updated = { ...r, matches: updatedMatches };
+        localStorage.setItem('relate_results', JSON.stringify(updated));
+      }
+    });
   }, [router, code]);
 
   if (!match || !report) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
 
-  const genderLabel = report.gender === 'M' ? 'him' : 'her';
-  const GenderCap = report.gender === 'M' ? 'He' : 'She';
+  // Matches are the OPPOSITE gender of the user
+  const matchGenderPronoun = report.gender === 'M' ? 'her' : 'him';
+  const matchGenderCap = report.gender === 'M' ? 'She' : 'He';
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -89,9 +130,9 @@ export default function MatchDetailPage() {
             <h2 className="font-serif text-3xl font-semibold">{match.name}</h2>
             <span className="font-mono text-sm text-accent">{match.code}</span>
           </div>
-          <div className="text-center shrink-0">
+          <div className="text-right shrink-0">
             <span className="font-mono text-3xl font-semibold block">{match.compatibilityScore}</span>
-            <span className={`inline-block text-white text-xs px-3 py-1 rounded-full mt-1 ${tierColor(match.tier)}`}>
+            <span className={`text-sm font-semibold ${tierTextColor(match.tier)}`}>
               {tierLabel(match.tier)}
             </span>
           </div>
@@ -107,36 +148,38 @@ export default function MatchDetailPage() {
           </section>
         )}
 
-        {/* Your pairing */}
-        <section className="card mb-4">
-          <h3 className="font-serif font-semibold mb-3">Your Pairing</h3>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <span className="text-xs text-secondary">You</span>
-              <p className="font-serif font-semibold">{report.persona.name}</p>
-              <span className="font-mono text-xs text-accent">{report.persona.code}</span>
-            </div>
-            <div>
-              <span className="text-xs text-secondary">Match</span>
-              <p className="font-serif font-semibold">{match.name}</p>
-              <span className="font-mono text-xs text-accent">{match.code}</span>
-            </div>
-          </div>
-        </section>
-
-        {/* Score breakdown */}
-        {match.subScores && (
-          <section className="card mb-4">
-            <h3 className="font-serif font-semibold mb-3">Score Breakdown</h3>
-            <div className="space-y-2.5">
-              <ScoreBar label="Persona" value={match.subScores.tier} />
-              <ScoreBar label="Preference" value={match.subScores.preference} />
-              <ScoreBar label="Behavioral" value={match.subScores.dimension} />
-              <ScoreBar label="Intimacy" value={match.subScores.intimacy} />
-              <ScoreBar label="Conflict" value={match.subScores.conflict} />
+        {/* Your pairing + Score breakdown — side by side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <section className="card">
+            <h3 className="font-serif font-semibold mb-3">Your Pairing</h3>
+            <div className="space-y-3">
+              <div>
+                <span className="text-xs text-secondary">You</span>
+                <p className="font-serif font-semibold">{report.persona.name}</p>
+                <span className="font-mono text-xs text-accent">{report.persona.code}</span>
+              </div>
+              <div>
+                <span className="text-xs text-secondary">Match</span>
+                <p className="font-serif font-semibold">{match.name}</p>
+                <span className="font-mono text-xs text-accent">{match.code}</span>
+              </div>
             </div>
           </section>
-        )}
+
+          {/* Score breakdown */}
+          {match.subScores && (
+            <section className="card">
+              <h3 className="font-serif font-semibold mb-3">Score Breakdown</h3>
+              <div className="space-y-2.5">
+                <ScoreBar label="Persona" value={match.subScores.tier} />
+                <ScoreBar label="Preference" value={match.subScores.preference} />
+                <ScoreBar label="Behavioral" value={match.subScores.dimension} />
+                <ScoreBar label="Intimacy" value={match.subScores.intimacy} />
+                <ScoreBar label="Conflict" value={match.subScores.conflict} />
+              </div>
+            </section>
+          )}
+        </div>
 
         {/* Persona insight cards */}
         <div className="mt-8 mb-2">
@@ -145,7 +188,7 @@ export default function MatchDetailPage() {
         </div>
 
         <InsightCard
-          title={`What draws people to ${genderLabel}`}
+          title={`What draws people to ${matchGenderPronoun}`}
           items={match.mostAttractive}
           accent
         />
@@ -161,7 +204,7 @@ export default function MatchDetailPage() {
         />
 
         <InsightCard
-          title={`How partners value ${genderLabel}`}
+          title={`How partners value ${matchGenderPronoun}`}
           items={match.howValued}
         />
 
@@ -171,12 +214,12 @@ export default function MatchDetailPage() {
         />
 
         <InsightCard
-          title={`What disappoints ${genderLabel}`}
+          title={`What disappoints ${matchGenderPronoun}`}
           items={match.disappointments}
         />
 
         <InsightCard
-          title={`Where ${GenderCap.toLowerCase()} struggles`}
+          title={`Where ${matchGenderCap.toLowerCase()} struggles`}
           items={match.struggles}
         />
 
