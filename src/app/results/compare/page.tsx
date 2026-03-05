@@ -709,7 +709,7 @@ function EnhancedCompatibilitySection({ data, overview }: { data: any; overview:
         <div className="text-center mb-4">
           <span className="font-mono text-4xl font-bold">{data.summary?.overallScore}</span>
           <p className="text-xs text-secondary mt-1">
-            Overall Score — <span className={`font-mono capitalize ${tierColor(data.summary?.tier)}`}>{data.summary?.tier}</span>
+            Overall Score: <span className={`font-mono capitalize ${tierColor(data.summary?.tier)}`}>{data.summary?.tier}</span>
           </p>
         </div>
         <div className="grid grid-cols-3 gap-4">
@@ -759,7 +759,7 @@ function EnhancedCompatibilitySection({ data, overview }: { data: any; overview:
         </div>
       </div>
 
-      {/* Intimacy Dynamics — State comparison */}
+      {/* Intimacy Dynamics, State comparison */}
       {data.intimacyDynamics && (
         <div className="card">
           <h3 className="font-serif text-sm font-semibold mb-4">Intimacy Dynamics Across States</h3>

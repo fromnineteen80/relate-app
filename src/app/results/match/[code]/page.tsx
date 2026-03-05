@@ -116,7 +116,7 @@ export default function MatchDetailPage() {
       <SubNav />
 
       <main className="max-w-3xl mx-auto px-6 py-8 w-full">
-        {/* Header — name/code on left, score/tier on right, vertically centered */}
+        {/* Header: name/code on left, score/tier on right, vertically centered */}
         <div className="flex items-center justify-between gap-6 mb-6">
           <div className="min-w-0">
             <span className="font-mono text-xs text-secondary">Match #{match.rank}</span>

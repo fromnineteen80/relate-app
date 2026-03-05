@@ -368,7 +368,7 @@ export default function DemographicsPage() {
               </div>
               <div>
                 <label className="label">Birth Time *</label>
-                <p className="text-xs text-secondary mb-1">Check your birth certificate — needed for Moon &amp; Rising signs.</p>
+                <p className="text-xs text-secondary mb-1">Check your birth certificate, needed for Moon &amp; Rising signs.</p>
                 <div className="grid grid-cols-3 gap-2">
                   <select value={form.birthHour} onChange={e => updateField('birthHour', e.target.value)} className="input">
                     <option value="">Hour</option>

@@ -102,7 +102,7 @@ export default function MatchesPage() {
                 </div>
               </div>
 
-              {/* Compatibility summary — first 3 sentences only on rankings page */}
+              {/* Compatibility summary, first 3 sentences only on rankings page */}
               {match.summary && (
                 <p className="text-sm text-secondary leading-relaxed mt-3 ml-12">{truncateSentences(match.summary, 3)}</p>
               )}

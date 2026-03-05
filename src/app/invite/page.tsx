@@ -281,7 +281,7 @@ export default function InvitePage() {
                       href={`/api/checkout?product=couples&email=${encodeURIComponent(user?.email || '')}`}
                       className="btn-primary w-full text-center block"
                     >
-                      Get Couples Report — $119
+                      Get Couples Report, $119
                     </a>
                   </div>
                 </div>
