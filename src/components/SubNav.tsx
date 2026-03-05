@@ -19,18 +19,46 @@ type SubNavProps = {
 export function SubNav({ items = [] }: SubNavProps) {
   const pathname = usePathname();
   const [hasResults, setHasResults] = useState(false);
+  const [topMatchCode, setTopMatchCode] = useState<string | null>(null);
+  const [seekingLabel, setSeekingLabel] = useState<string>('Matches');
 
   useEffect(() => {
-    setHasResults(!!localStorage.getItem('relate_results'));
+    const stored = localStorage.getItem('relate_results');
+    if (stored) {
+      setHasResults(true);
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed.matches?.[0]?.code) {
+          setTopMatchCode(parsed.matches[0].code);
+        }
+      } catch { /* */ }
+    }
+
+    // Determine seeking label from gender (user's gender → they're seeking the opposite)
+    const gender = localStorage.getItem('relate_gender');
+    if (gender === 'M' || gender === 'Man') {
+      setSeekingLabel('Female Matches');
+    } else if (gender === 'W' || gender === 'Woman') {
+      setSeekingLabel('Male Matches');
+    }
   }, []);
+
+  const isResultsSection = pathname.startsWith('/results');
 
   const universalLinks: SubNavItem[] = [
     { id: 'account', label: 'Account', href: '/account', show: true },
     { id: 'results', label: 'Results', href: '/results', show: hasResults },
   ];
 
+  // Build results subpage links when hasResults and on a results page
+  const resultsSubLinks: SubNavItem[] = (hasResults && isResultsSection) ? [
+    { id: 'persona', label: 'Your Persona', href: '/results/persona', show: true },
+    { id: 'match', label: 'Your Match', href: topMatchCode ? `/results/match/${topMatchCode}` : '/results/matches', show: !!topMatchCode },
+    { id: 'matches', label: `All Potential ${seekingLabel}`, href: '/results/matches', show: true },
+  ] : [];
+
   const visibleUniversal = universalLinks.filter(l => l.show !== false);
-  const visibleItems = items.filter(l => l.show !== false);
+  const allPageItems = [...resultsSubLinks, ...items].filter(l => l.show !== false);
 
   return (
     <nav className="border-b border-border bg-background sticky top-[65px] z-10">
@@ -51,10 +79,10 @@ export function SubNav({ items = [] }: SubNavProps) {
             </Link>
           );
         })}
-        {visibleItems.length > 0 && (
+        {allPageItems.length > 0 && (
           <span className="self-center mx-1 text-border select-none" aria-hidden="true">|</span>
         )}
-        {visibleItems.map(link => {
+        {allPageItems.map(link => {
           const isAnchor = link.href.startsWith('#');
           if (isAnchor) {
             return (
