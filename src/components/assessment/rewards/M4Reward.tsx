@@ -70,7 +70,7 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className={`text-center transition-opacity duration-700 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-          <div className="mx-auto mb-6">
+          <div className="flex justify-center mb-6">
             <ProgressRing progress={100} size={80} strokeWidth={4} />
           </div>
           <h2 className="font-serif text-2xl font-semibold">Assessment Complete</h2>
@@ -128,9 +128,22 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
       stonewalling: 'Shutting down entirely. You withdraw not just physically but emotionally.',
     };
 
+    // Detect if all horsemen scored identically at the default value (scoring data issue)
+    const rawScores = horsemen.map(h => (gottman[h] || {}).score || 4);
+    const allAtDefault = rawScores.every(s => s === 12); // 4 questions * default 3
+
     return (
       <div className={`max-w-xl mx-auto transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
         <h3 className="font-serif text-xl font-semibold mb-6">Patterns to Watch</h3>
+
+        {allAtDefault && (
+          <div className="card bg-stone-50 mb-6">
+            <p className="text-sm text-secondary leading-relaxed">
+              These scores could not be calculated from your responses. This may be a scoring issue.
+              Try retaking Module 4 to get accurate conflict pattern results.
+            </p>
+          </div>
+        )}
 
         <div className="space-y-5">
           {horsemen.map((h, i) => {
@@ -144,7 +157,7 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
               <div
                 key={h}
                 className="transition-all duration-500"
-                style={{ transitionDelay: `${i * 200}ms`, opacity: fadeIn ? 1 : 0, transform: fadeIn ? 'translateY(0)' : 'translateY(8px)' }}
+                style={{ transitionDelay: `${i * 200}ms`, opacity: fadeIn ? (allAtDefault ? 0.5 : 1) : 0, transform: fadeIn ? 'translateY(0)' : 'translateY(8px)' }}
               >
                 <div className="flex items-center gap-2 mb-2">
                   <span className={`text-sm ${isRisk ? 'text-warning' : 'text-success'}`}>

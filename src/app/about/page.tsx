@@ -9,7 +9,7 @@ export default function AboutPage() {
 
       {/* ── Hero ── */}
       <section className="relative pt-16 pb-16 px-6 bg-gradient-to-b from-stone-100 to-background">
-        <div className="max-w-3xl mx-auto text-center">
+        <div className="max-w-2xl mx-auto text-center">
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-4">About Relate</p>
           <h1 className="font-serif text-4xl md:text-5xl font-semibold leading-[1.1] mb-6">
             The Intelligence Layer For Modern Dating
@@ -22,7 +22,7 @@ export default function AboutPage() {
 
       {/* ── Intelligence Layer ── */}
       <section className="px-6 pt-6 pb-20 border-b border-border">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               'Understand the dating economy',
@@ -40,7 +40,7 @@ export default function AboutPage() {
 
       {/* ── Key Pillars ── */}
       <section className="px-6 py-20 bg-stone-50 border-b border-border">
-        <div className="max-w-3xl mx-auto space-y-14">
+        <div className="max-w-2xl mx-auto space-y-14">
           <div>
             <h3 className="font-serif text-xl font-semibold mb-3">Solving App Fatigue</h3>
             <p className="text-secondary leading-relaxed">
@@ -73,7 +73,7 @@ export default function AboutPage() {
 
       {/* ── The Problem ── */}
       <section className="px-6 py-20">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           <div className="text-center mb-10">
             <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">The Problem</p>
             <h2 className="font-serif text-3xl md:text-4xl font-semibold">

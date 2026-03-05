@@ -90,7 +90,7 @@ export default function CouplesDashboard() {
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
 
-      <main className="max-w-3xl mx-auto px-6 py-8 w-full space-y-6">
+      <main className="max-w-2xl mx-auto px-6 py-8 w-full space-y-6">
         {/* Couple Header */}
         <div className="card flex items-center justify-between">
           <div>

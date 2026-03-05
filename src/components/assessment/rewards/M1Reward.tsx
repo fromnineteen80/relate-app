@@ -67,7 +67,7 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className={`text-center transition-opacity duration-700 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-          <div className="mx-auto mb-6">
+          <div className="flex justify-center mb-6">
             <ProgressRing progress={100} size={80} strokeWidth={4} />
           </div>
           <h2 className="font-serif text-2xl font-semibold">Module 1 Complete</h2>
@@ -78,13 +78,25 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
 
   // Screen 1: Preference Profile Reveal
   if (screen === 1) {
+    const dims = ['physical', 'social', 'lifestyle', 'values'] as const;
+    const balancedCount = dims.filter(dim => {
+      const d = dimensions[dim];
+      return d && (d.strength || 50) < 20;
+    }).length;
+
     return (
       <div className={`max-w-xl mx-auto transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
         <span className="font-mono text-xs text-secondary">Your Preference Profile</span>
         <h2 className="font-serif text-2xl font-semibold mt-1 mb-8">What You&apos;re Looking For</h2>
 
+        {balancedCount >= 3 && (
+          <p className="text-sm text-secondary italic mb-6 leading-relaxed">
+            Your preferences didn&apos;t lean strongly in any direction across most dimensions. This can mean you&apos;re genuinely open, or that you haven&apos;t yet encountered enough contrast to know what you need. Either way, experience will sharpen these over time.
+          </p>
+        )}
+
         <div className="space-y-6">
-          {(['physical', 'social', 'lifestyle', 'values'] as const).map((dim, i) => {
+          {dims.map((dim, i) => {
             const d = dimensions[dim];
             if (!d) return null;
             const poleName = d.assignedPole || '';
@@ -92,6 +104,7 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
             const poleA = poles?.[dim]?.A || 'A';
             const poleB = poles?.[dim]?.B || 'B';
             const strength = d.strength || 50;
+            const isWeak = strength < 20;
             // Position: 0 = full A, 100 = full B
             const position = direction === 'A' ? Math.max(5, 50 - strength / 2) : Math.min(95, 50 + strength / 2);
             const desc = getDimDescription(dim, direction, gender);
@@ -118,6 +131,11 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
                 </div>
                 {desc && (
                   <p className="text-sm text-secondary mt-1">{desc}</p>
+                )}
+                {isWeak && balancedCount < 3 && (
+                  <p className="text-xs text-secondary italic mt-1">
+                    Your responses here were close to the middle. This may reflect genuine flexibility, or it may sharpen with more experience.
+                  </p>
                 )}
               </div>
             );

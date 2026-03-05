@@ -684,7 +684,7 @@ const MEN_MODULE1_QUESTIONS = {
         },
         {
           id: 'M1_LIFE_B_D04',
-          text: 'Surprisesâ€”even good onesâ€”stress me out.',
+          text: 'Surprises, even good ones, stress me out.',
           pole: 'B',
           type: QUESTION_TYPES.DIRECT,
           reverseCoded: false
@@ -845,7 +845,7 @@ const MEN_MODULE1_QUESTIONS = {
         },
         {
           id: 'M1_LIFE_B_B07',
-          text: 'Knowing someone completely has not killed my desire for themâ€”it has deepened it.',
+          text: 'Knowing someone completely has not killed my desire for them. It has deepened it.',
           pole: 'B',
           type: QUESTION_TYPES.BEHAVIORAL,
           reverseCoded: false
@@ -903,7 +903,7 @@ const MEN_MODULE1_QUESTIONS = {
       poleA: [
         {
           id: 'M1_VAL_A_D01',
-          text: 'I want to know who handles the money, who handles the home, who handles the social calendarâ€”and stick to it.',
+          text: 'I want to know who handles the money, who handles the home, who handles the social calendar, and stick to it.',
           pole: 'A',
           type: QUESTION_TYPES.DIRECT,
           reverseCoded: false
@@ -1758,7 +1758,7 @@ const WOMEN_MODULE1_QUESTIONS = {
         },
         {
           id: 'W1_LIFE_B_D04',
-          text: 'Surprisesâ€”even good onesâ€”stress me out.',
+          text: 'Surprises, even good ones, stress me out.',
           pole: 'B',
           type: QUESTION_TYPES.DIRECT,
           reverseCoded: false
@@ -1919,7 +1919,7 @@ const WOMEN_MODULE1_QUESTIONS = {
         },
         {
           id: 'W1_LIFE_B_B07',
-          text: 'Knowing someone completely has not killed my desire for themâ€”it has deepened it.',
+          text: 'Knowing someone completely has not killed my desire for them. It has deepened it.',
           pole: 'B',
           type: QUESTION_TYPES.BEHAVIORAL,
           reverseCoded: false
@@ -1978,7 +1978,7 @@ const WOMEN_MODULE1_QUESTIONS = {
       poleA: [
         {
           id: 'W1_VAL_A_D01',
-          text: 'I want to know who handles the money, who handles the home, who handles the social calendarâ€”and stick to it.',
+          text: 'I want to know who handles the money, who handles the home, who handles the social calendar, and stick to it.',
           pole: 'A',
           type: QUESTION_TYPES.DIRECT,
           reverseCoded: false
@@ -4360,22 +4360,30 @@ const MEN_M2_POLES = {
   physical: {
     A: 'Fitness',
     B: 'Maturity',
-    description: 'Source of physical gravity: body and vitality vs depth and experience'
+    description: 'Source of physical gravity: body and vitality vs depth and experience',
+    descriptionA: 'You lead with physical vitality and take pride in how your body performs. Your energy and discipline around fitness signal drive and self-investment.',
+    descriptionB: 'You lead with depth and lived experience over raw physicality. Your presence carries weight because of who you are, not how you look.'
   },
   social: {
     A: 'Leadership',
     B: 'Presence',
-    description: 'Source of social gravity: taking charge vs deep attention'
+    description: 'Source of social gravity: taking charge vs deep attention',
+    descriptionA: 'You naturally take charge in social settings and people look to you for direction. Your confidence in leading creates a sense of safety and momentum.',
+    descriptionB: 'You draw people in through quiet attentiveness rather than commanding the room. Your ability to make others feel seen is your strongest social asset.'
   },
   lifestyle: {
     A: 'Thrill',
     B: 'Peace',
-    description: 'Life orientation: adventure and excitement vs stability and calm'
+    description: 'Life orientation: adventure and excitement vs stability and calm',
+    descriptionA: 'You are energized by novelty, adventure, and spontaneous experiences. A life without surprises feels stagnant to you.',
+    descriptionB: 'You are grounded by routine, consistency, and intentional calm. You build a life that feels secure and sustainable over time.'
   },
   values: {
     A: 'Traditional',
     B: 'Egalitarian',
-    description: 'Partnership structure: inherited roles vs constructed roles'
+    description: 'Partnership structure: inherited roles vs constructed roles',
+    descriptionA: 'You value clearly defined roles and responsibilities in a partnership. Structure and tradition give your relationships a reliable foundation.',
+    descriptionB: 'You believe partnership roles should be negotiated, not inherited. Shared responsibility and flexibility define how you build a life together.'
   }
 };
 
@@ -4387,22 +4395,30 @@ const WOMEN_W2_POLES = {
   physical: {
     A: 'Beauty',
     B: 'Confidence',
-    description: 'Source of physical gravity: aesthetic appeal vs self-assured presence'
+    description: 'Source of physical gravity: aesthetic appeal vs self-assured presence',
+    descriptionA: 'You lead with aesthetic presence and take pride in how you present yourself. Your appearance signals self-care and intentionality.',
+    descriptionB: 'You lead with self-assurance that transcends appearance. Your confidence in who you are draws people in more than any physical trait.'
   },
   social: {
     A: 'Allure',
     B: 'Charm',
-    description: 'Source of social gravity: magnetic mystery vs warm engagement'
+    description: 'Source of social gravity: magnetic mystery vs warm engagement',
+    descriptionA: 'You carry an air of magnetic mystery that makes people want to know more. Your selective attention creates intrigue and desire.',
+    descriptionB: 'You connect through warmth, humor, and genuine engagement. People feel instantly comfortable around you because of how present you are.'
   },
   lifestyle: {
     A: 'Thrill',
     B: 'Peace',
-    description: 'Life orientation: adventure and excitement vs stability and calm'
+    description: 'Life orientation: adventure and excitement vs stability and calm',
+    descriptionA: 'You are energized by novelty, adventure, and spontaneous experiences. A life without surprises feels stagnant to you.',
+    descriptionB: 'You are grounded by routine, consistency, and intentional calm. You build a life that feels secure and sustainable over time.'
   },
   values: {
     A: 'Traditional',
     B: 'Egalitarian',
-    description: 'Partnership structure: inherited roles vs constructed roles'
+    description: 'Partnership structure: inherited roles vs constructed roles',
+    descriptionA: 'You value clearly defined roles and responsibilities in a partnership. Structure and tradition give your relationships a reliable foundation.',
+    descriptionB: 'You believe partnership roles should be negotiated, not inherited. Shared responsibility and flexibility define how you build a life together.'
   }
 };
 

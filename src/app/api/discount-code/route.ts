@@ -49,7 +49,7 @@ function parseDiscountCode(code: string): { percent: number; tier: PricingTier; 
 
 export async function POST(request: NextRequest) {
   try {
-    const { code, email } = await request.json();
+    const { code, email, partnerEmail } = await request.json();
 
     if (!code || !email) {
       return NextResponse.json({ error: 'Code and email are required' }, { status: 400 });
@@ -72,21 +72,35 @@ export async function POST(request: NextRequest) {
     // For 100% discount, grant access immediately by inserting a payment record
     if (parsed.percent === 100) {
       const supabase = createServerClient();
+      const timestamp = Date.now();
 
+      // Grant access to the primary user
       await supabase.from('payments').insert({
         customer_email: email,
         product: parsed.tier,
         amount: 0,
-        stripe_session_id: `discount_${code}_${Date.now()}`,
+        stripe_session_id: `discount_${code}_${timestamp}`,
         stripe_payment_intent: `discount_${code}`,
         status: 'completed',
       });
+
+      // For couples tier, also grant access to partner if provided
+      if (parsed.tier === 'couples' && partnerEmail) {
+        await supabase.from('payments').insert({
+          customer_email: partnerEmail,
+          product: parsed.tier,
+          amount: 0,
+          stripe_session_id: `discount_${code}_partner_${timestamp}`,
+          stripe_payment_intent: `discount_${code}_partner`,
+          status: 'completed',
+        });
+      }
 
       return NextResponse.json({
         success: true,
         tier: parsed.tier,
         percent: parsed.percent,
-        message: `Access granted: ${parsed.tier.charAt(0).toUpperCase() + parsed.tier.slice(1)} tier activated`,
+        message: `Access granted: ${parsed.tier.charAt(0).toUpperCase() + parsed.tier.slice(1)} tier activated${partnerEmail ? ' for both partners' : ''}`,
       });
     }
 

@@ -61,7 +61,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className={`text-center transition-opacity duration-700 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-          <div className="mx-auto mb-6">
+          <div className="flex justify-center mb-6">
             <ProgressRing progress={100} size={80} strokeWidth={4} />
           </div>
           <h2 className="font-serif text-2xl font-semibold">Module 3 Complete</h2>
@@ -72,10 +72,25 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
 
   // Screen 1: Connection Style
   if (screen === 1) {
+    const wantLabel = wantScore > 60
+      ? 'You want exclusive access to hidden sides of a partner'
+      : wantScore >= 40
+        ? 'You seek a balanced mix of depth and consistency from a partner'
+        : 'You value consistency and predictability over mystery';
+    const offerLabel = offerScore > 60
+      ? 'You reveal yourself in layers, showing different sides over time'
+      : offerScore >= 40
+        ? 'You offer a steady blend of openness and range to those close to you'
+        : 'You show up the same way in every context, what people see is what they get';
+
     return (
       <div className={`max-w-xl mx-auto transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
         <span className="font-mono text-xs text-secondary">Your Connection Style</span>
-        <h2 className="font-serif text-2xl font-semibold mt-1 mb-8">How You Connect</h2>
+        <h2 className="font-serif text-2xl font-semibold mt-1 mb-4">How You Connect</h2>
+
+        <p className="text-sm text-secondary mb-8 leading-relaxed">
+          These scores measure context switching: how much differentiated access you seek from a partner and how much you provide. Higher scores mean more range across situations. Lower scores mean more consistency. Neither is better; what matters is the balance between them.
+        </p>
 
         <div className="grid grid-cols-2 gap-6 mb-8">
           <div
@@ -90,9 +105,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
                 style={{ width: `${wantScore}%`, transitionDelay: '400ms' }}
               />
             </div>
-            <p className="text-xs text-secondary mt-2">
-              {wantScore > 60 ? 'You want exclusive access to hidden sides' : 'You value consistency over mystery'}
-            </p>
+            <p className="text-xs text-secondary mt-2">{wantLabel}</p>
           </div>
 
           <div
@@ -107,9 +120,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
                 style={{ width: `${offerScore}%`, transitionDelay: '600ms' }}
               />
             </div>
-            <p className="text-xs text-secondary mt-2">
-              {offerScore > 60 ? 'You reveal yourself in layers over time' : 'You are the same person in every context'}
-            </p>
+            <p className="text-xs text-secondary mt-2">{offerLabel}</p>
           </div>
         </div>
 
@@ -124,7 +135,11 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
   if (screen === 2) {
     return (
       <div className={`max-w-xl mx-auto transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-        <h3 className="font-serif text-xl font-semibold mb-6">Your Want/Offer Balance</h3>
+        <h3 className="font-serif text-xl font-semibold mb-4">Your Want/Offer Balance</h3>
+
+        <p className="text-sm text-secondary mb-6 leading-relaxed">
+          The gap between these two bars is the key insight. When they are close, you seek and give a similar level of emotional range. A large gap means one side of the exchange is carrying more weight, which creates friction over time.
+        </p>
 
         <div className="card mb-6">
           <div className="space-y-3">
@@ -151,6 +166,11 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
           <p className="text-sm text-secondary mt-4 leading-relaxed">
             {getGapInterpretation(wantOfferGap)}
           </p>
+          {wantScore >= 40 && wantScore <= 60 && offerScore >= 40 && offerScore <= 60 && Math.abs(wantOfferGap) <= 10 && (
+            <p className="text-xs text-secondary italic mt-3">
+              With both scores near the midpoint, you may find your style becomes clearer in the context of a specific partner.
+            </p>
+          )}
         </div>
 
         <div className="card mb-6">
@@ -178,7 +198,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
           <div className="relative h-3 bg-stone-200 rounded-full mb-4">
             <div
               className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-accent rounded-full border-2 border-white transition-all duration-1000"
-              style={{ left: `${Math.min(95, Math.max(5, score))}%` }}
+              style={{ left: `${Math.min(95, Math.max(5, 100 - score))}%` }}
             />
           </div>
           <div className="flex justify-between text-xs text-secondary mb-4">

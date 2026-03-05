@@ -155,9 +155,11 @@ function AccountPage() {
   const [hasResults, setHasResults] = useState(false);
   const [hasPartner, setHasPartner] = useState(false);
   const [partnerEmail, setPartnerEmail] = useState<string | null>(null);
+  const [partnerName, setPartnerName] = useState<string | null>(null);
   const [moduleProgress, setModuleProgress] = useState<Record<number, boolean>>({});
   const [mockUpgrading, setMockUpgrading] = useState(false);
   const [profileData, setProfileData] = useState<{ firstName: string; lastName: string; photoUrl: string | null } | null>(null);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [m1Data, setM1Data] = useState<M1Scored | null>(null);
   const [m2Data, setM2Data] = useState<M2Scored | null>(null);
   const [m3Data, setM3Data] = useState<M3Scored | null>(null);
@@ -254,6 +256,26 @@ function AccountPage() {
     setHasPartner(!!localStorage.getItem('relate_partner_results'));
     setPartnerEmail(localStorage.getItem('relate_partner_email'));
     setProfileData(getProfile());
+    setProfilePhoto(localStorage.getItem('relate_profile_photo'));
+
+    // Load partner info from API
+    if (user?.id) {
+      fetch(`/api/partner-lookup?userId=${user.id}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.partner) {
+            setHasPartner(true);
+            setPartnerEmail(data.partner.email);
+            const name = data.partner.firstName
+              ? `${data.partner.firstName}${data.partner.lastName ? ` ${data.partner.lastName}` : ''}`
+              : null;
+            setPartnerName(name);
+            localStorage.setItem('relate_partner_email', data.partner.email);
+            localStorage.setItem('relate_partner_results', 'true');
+          }
+        })
+        .catch(() => { /* silent */ });
+    }
   }, [authLoading, user, router]);
 
   // Fetch dating market data when demographics are available
@@ -584,8 +606,8 @@ function AccountPage() {
           </div>
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 border-2 border-border">
-              {profileData?.photoUrl ? (
-                <img src={profileData.photoUrl} alt="Profile" className="w-full h-full object-cover" />
+              {profilePhoto ? (
+                <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" />
               ) : (
                 <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-lg font-medium">
                   {initial}
@@ -638,6 +660,19 @@ function AccountPage() {
               </p>
             </div>
           </div>
+
+          {/* Couples partner in subscription */}
+          {currentTier === 'couples' && hasPartner && (
+            <div className="flex items-center gap-3 p-3 mb-4 rounded-md border border-success/20 bg-success/5">
+              <div className="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center text-xs font-medium flex-shrink-0">
+                {partnerName ? partnerName.charAt(0).toUpperCase() : partnerEmail?.charAt(0).toUpperCase() || '?'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium truncate">Paired with {partnerName || partnerEmail || 'partner'}</p>
+              </div>
+              <Link href="/invite" className="text-xs text-accent hover:underline flex-shrink-0">Manage</Link>
+            </div>
+          )}
 
           {currentTier === 'free' && (
             <div className="mb-3">
@@ -1083,23 +1118,38 @@ function AccountPage() {
 
           {hasPartner ? (
             <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 bg-success/5 border border-success/20 rounded-md">
-                <div className="w-8 h-8 rounded-full bg-success/10 text-success flex items-center justify-center text-sm flex-shrink-0">✓</div>
-                <div>
-                  <p className="text-sm font-medium">Partner connected</p>
-                  {partnerEmail && <p className="text-xs text-secondary">{partnerEmail}</p>}
+              <div className="flex items-center gap-4 p-3 bg-success/5 border border-success/20 rounded-md">
+                <div className="w-10 h-10 rounded-full bg-accent/10 text-accent flex items-center justify-center text-sm font-medium flex-shrink-0">
+                  {partnerName ? partnerName.charAt(0).toUpperCase() : partnerEmail?.charAt(0).toUpperCase() || '?'}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium truncate">{partnerName || partnerEmail || 'Partner'}</p>
+                    <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
+                  </div>
+                  {partnerName && partnerEmail && <p className="text-xs text-secondary truncate">{partnerEmail}</p>}
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Link href="/couples" className="btn-primary text-xs">Couples Results</Link>
-              </div>
+              {currentTier === 'couples' ? (
+                <div className="flex gap-2">
+                  <Link href="/results/compare" className="btn-primary text-xs">View Couples Results</Link>
+                  <Link href="/invite" className="btn-secondary text-xs">Manage</Link>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-xs text-secondary mb-2">Upgrade to Couples tier to unlock your compatibility report.</p>
+                  <div className="flex gap-2">
+                    <Link href="/invite" className="btn-primary text-xs">Activate Couples</Link>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="space-y-4">
               <p className="text-sm text-secondary">
-                Invite your partner by email to unlock your couples compatibility results.
+                Connect with your partner by email to unlock your couples compatibility results.
               </p>
-              <Link href="/invite" className="btn-primary text-xs inline-block">Invite Partner</Link>
+              <Link href="/invite" className="btn-primary text-xs inline-block">Connect Partner</Link>
             </div>
           )}
         </section>
