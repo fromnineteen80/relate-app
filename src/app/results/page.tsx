@@ -397,7 +397,7 @@ function ResultsDashboard() {
 
             {/* Strengths & Growth */}
             {(persona.mostAttractive?.length > 0 || persona.leastAttractive?.length > 0) && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
                 {persona.mostAttractive?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-success uppercase tracking-wider">Most Attractive Qualities</span>
@@ -423,7 +423,7 @@ function ResultsDashboard() {
 
             {/* In Relationships + Shadow Side */}
             {(persona.inRelationships?.length > 0 || persona.struggles?.length > 0) && (
-              <div className="mt-4 pt-4 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="mt-4 pt-4 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
                 {persona.inRelationships?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-secondary uppercase tracking-wider">In Relationships</span>
