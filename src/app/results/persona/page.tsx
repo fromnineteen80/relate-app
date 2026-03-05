@@ -53,14 +53,14 @@ export default function PersonaPage() {
         <span className="font-mono text-xs text-secondary">Your Persona</span>
         <h2 className="font-serif text-3xl font-semibold mt-1 mb-1">{persona.name}</h2>
         <span className="font-mono text-sm text-accent">{persona.code}</span>
-        {persona.traits && <p className="text-secondary mt-3 mb-6">{persona.traits}</p>}
+        {/* traits string removed per design */}
 
         {codeKeys.length > 0 && (
           <section className="mb-6">
             <h3 className="font-serif text-lg font-semibold mb-3">Code Key</h3>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-wrap gap-3">
               {codeKeys.map((k) => (
-                <div key={k.dim} className="card text-center">
+                <div key={k.dim} className="card text-center flex-1 min-w-[120px]">
                   <span className="inline-block text-xs border border-border rounded-md px-3 py-1.5 mb-1.5 font-medium">
                     {k.pole}
                   </span>
