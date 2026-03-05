@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SubNav } from '@/components/SubNav';
 import { useAuth } from '@/lib/auth-context';
 import { loadChartResult, type BirthChartResult } from '@/lib/astrology/engine';
 import { ALL_SIGNS, SIGN_DATA, ELEMENT_COLORS } from '@/lib/astrology/signs';
@@ -41,6 +42,7 @@ export default function CheatSheetPage() {
     return (
       <div className="min-h-screen flex flex-col">
         <SiteHeader />
+        <SubNav />
         <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full text-center">
           <h1 className="font-serif text-2xl font-semibold mb-4">Calculate Your Chart First</h1>
           <p className="text-sm text-secondary mb-6">

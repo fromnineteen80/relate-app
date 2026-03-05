@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SubNav } from '@/components/SubNav';
 import { CONVERSATION_DECKS } from '@/lib/couples';
 
 export default function CardsPage() {
@@ -35,6 +36,7 @@ export default function CardsPage() {
     return (
       <div className="min-h-screen flex flex-col">
         <SiteHeader />
+        <SubNav />
 
         <main className="flex-1 flex flex-col items-center justify-center px-6 py-8">
           <p className="text-xs text-secondary font-mono mb-2">{deck.name} Deck</p>
@@ -68,6 +70,7 @@ export default function CardsPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
+      <SubNav />
 
       <main className="max-w-2xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-1">Conversation Cards</h2>

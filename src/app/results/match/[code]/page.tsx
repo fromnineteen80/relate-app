@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SubNav } from '@/components/SubNav';
 
 function tierLabel(tier: string) {
   const labels: Record<string, string> = {
@@ -43,6 +44,7 @@ export default function MatchDetailPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
+      <SubNav />
 
       <main className="max-w-2xl mx-auto px-6 py-8 w-full">
         <div className="flex items-start justify-between mb-6">

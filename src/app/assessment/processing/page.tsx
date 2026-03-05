@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SubNav } from '@/components/SubNav';
 import { saveResults } from '@/lib/supabase/progress';
 
 export default function ProcessingPage() {
@@ -75,6 +76,7 @@ export default function ProcessingPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
+      <SubNav />
       <main className="flex-1 flex items-center justify-center px-6">
         <div className="max-w-md w-full text-center">
           <h2 className="font-serif text-2xl font-semibold mb-6">Processing Your Assessment</h2>

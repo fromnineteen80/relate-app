@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getGrowthLevel, getRecommendedChallenges, CHALLENGE_LIBRARY } from '@/lib/couples';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SubNav } from '@/components/SubNav';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -89,6 +90,7 @@ export default function CouplesDashboard() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
+      <SubNav />
 
       <main className="max-w-3xl mx-auto px-6 py-8 w-full space-y-6">
         {/* Couple Header */}
