@@ -158,7 +158,7 @@ export default function AstrologyPage() {
       <div className="min-h-screen flex flex-col">
         <SiteHeader />
         <SubNav />
-        <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full text-center">
+        <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full text-center">
           <h1 className="font-serif text-2xl font-semibold mb-4">Sun, Moon &amp; Rise</h1>
           <p className="text-sm text-secondary mb-6">
             This module is currently available for women only. Check back soon for expanded access.
@@ -187,7 +187,7 @@ export default function AstrologyPage() {
       <div className="min-h-screen flex flex-col">
         <SiteHeader />
         <SubNav />
-        <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
+        <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
           <div className="flex items-center justify-between gap-4 flex-wrap mb-6">
             <div className="min-w-0">
               <span className="font-mono text-xs text-secondary uppercase tracking-wider">Sun, Moon &amp; Rise</span>
@@ -265,7 +265,7 @@ export default function AstrologyPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
-      <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
+      <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
         <Link href="/results" className="text-xs text-secondary hover:text-foreground mb-4 inline-block">&larr; Back to Results</Link>
         <span className="font-mono text-xs text-secondary uppercase tracking-wider block">Sun, Moon &amp; Rise</span>
         <h1 className="font-serif text-2xl font-semibold mt-1 mb-2">Enter Your Birth Details</h1>

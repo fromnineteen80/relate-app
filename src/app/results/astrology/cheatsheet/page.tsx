@@ -44,7 +44,7 @@ export default function CheatSheetPage() {
       <div className="min-h-screen flex flex-col">
         <SiteHeader />
         <SubNav />
-        <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full text-center">
+        <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full text-center">
           <h1 className="font-serif text-2xl font-semibold mb-4">Calculate Your Chart First</h1>
           <p className="text-sm text-secondary mb-6">
             Your cheat sheet is personalized to your specific Sun, Moon, and Rising placements. Complete your birth chart to unlock it.
@@ -61,7 +61,7 @@ export default function CheatSheetPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
-      <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
+      <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
         <Link href="/results/astrology" className="text-xs text-secondary hover:text-foreground mb-4 inline-block">&larr; Back to Profile</Link>
         <span className="font-mono text-xs text-secondary uppercase tracking-wider block">Sun, Moon &amp; Rise</span>
         <h1 className="font-serif text-2xl font-semibold mt-1 mb-2">Your 12 Sign Cheat Sheet</h1>
