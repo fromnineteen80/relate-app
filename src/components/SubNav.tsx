@@ -51,6 +51,9 @@ export function SubNav({ items = [] }: SubNavProps) {
             </Link>
           );
         })}
+        {visibleItems.length > 0 && (
+          <span className="self-center mx-1 text-border select-none" aria-hidden="true">|</span>
+        )}
         {visibleItems.map(link => {
           const isAnchor = link.href.startsWith('#');
           if (isAnchor) {
