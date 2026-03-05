@@ -659,7 +659,7 @@ export function calculateCouplesM3Dynamics(partnerA: any, partnerB: any) {
 function scorePersonaCompatibility(user1: any, user2: any): number {
   // Use existing persona compatibility table lookup — READ ONLY
   try {
-    const personaModule = require('../../../relate_persona_definitions.js');
+    const personaModule = require('../../relate_persona_definitions.js');
     const u1Code = user1.personaCode || user1.m2?.code || user1.persona?.code;
     const u2Code = user2.personaCode || user2.m2?.code || user2.persona?.code;
     const u1Gender = user1.gender;

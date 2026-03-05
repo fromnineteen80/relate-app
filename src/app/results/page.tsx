@@ -369,7 +369,7 @@ function ResultsDashboard() {
             <div className="flex items-start justify-between mb-4">
               <div>
                 <span className="font-mono text-xs text-secondary">Your Persona</span>
-                <h2 className="font-serif text-3xl font-semibold">{persona.name}</h2>
+                <h2 className="font-serif text-2xl font-semibold">{persona.name}</h2>
                 {persona.code && <span className="font-mono text-sm text-accent">{persona.code}</span>}
               </div>
               <div className="flex gap-2">
@@ -462,15 +462,15 @@ function ResultsDashboard() {
             <h3 className="font-serif text-lg font-semibold mb-3">Connection Style</h3>
             <div className="grid grid-cols-3 gap-4 text-center mb-4">
               <div>
-                <span className="font-mono text-2xl font-semibold">{m3.wantScore ?? '-'}</span>
+                <span className="font-mono text-lg font-semibold">{m3.wantScore ?? '-'}</span>
                 <p className="text-xs text-secondary mt-1">Want Score</p>
               </div>
               <div>
-                <span className="font-mono text-2xl font-semibold">{m3.offerScore ?? '-'}</span>
+                <span className="font-mono text-lg font-semibold">{m3.offerScore ?? '-'}</span>
                 <p className="text-xs text-secondary mt-1">Offer Score</p>
               </div>
               <div>
-                <span className="font-mono text-2xl font-semibold">{m3.typeName ?? '-'}</span>
+                <span className="font-mono text-lg font-semibold">{m3.typeName ?? '-'}</span>
                 <p className="text-xs text-secondary mt-1">Type</p>
               </div>
             </div>
@@ -567,17 +567,52 @@ function ResultsDashboard() {
           </section>
         )}
 
-        {/* ── Attachment Style ── */}
+        {/* ── Your Attachment Style ── */}
         {ic?.attachment && (
           <section className="card mb-6">
-            <h3 className="font-serif text-lg font-semibold mb-3">Attachment Style</h3>
-            <div className="flex items-center gap-4 mb-3">
-              <span className="font-mono text-2xl font-semibold capitalize">{ic.attachment.style}</span>
-              {ic.attachment.subtype && <span className="text-xs font-mono text-secondary">({ic.attachment.subtype})</span>}
-              {ic.attachment.leaningToward && <span className="text-xs font-mono text-secondary">leaning {ic.attachment.leaningToward}</span>}
+            <h3 className="font-serif text-lg font-semibold mb-1">Your Attachment Style</h3>
+            <p className="text-xs text-secondary mb-4">How you connect, protect, and respond in close relationships</p>
+            <div className="flex items-center gap-3 mb-4">
+              <span className="font-mono text-lg font-semibold capitalize">{ic.attachment.style}</span>
+              {ic.attachment.subtype && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded capitalize">{ic.attachment.subtype}</span>}
+              {ic.attachment.leaningToward && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded">leaning {ic.attachment.leaningToward}</span>}
               <span className="text-xs font-mono text-accent ml-auto">{Math.round((ic.attachment.confidence ?? 0) * 100)}% confidence</span>
             </div>
-            {ic.attachment.description && <p className="text-sm text-secondary">{ic.attachment.description}</p>}
+            {ic.attachment.description && <p className="text-sm text-secondary mb-4">{ic.attachment.description}</p>}
+            {ic.attachment.strengths && Array.isArray(ic.attachment.strengths) && ic.attachment.strengths.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border">
+                <div>
+                  <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
+                  <ul className="mt-2 space-y-1">
+                    {ic.attachment.strengths.map((s: string, i: number) => (
+                      <li key={i} className="text-sm text-secondary">{s}</li>
+                    ))}
+                  </ul>
+                </div>
+                {ic.attachment.challenges && Array.isArray(ic.attachment.challenges) && ic.attachment.challenges.length > 0 && (
+                  <div>
+                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
+                    <ul className="mt-2 space-y-1">
+                      {ic.attachment.challenges.map((c: string, i: number) => (
+                        <li key={i} className="text-sm text-secondary">{c}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+            {ic.attachment.inRelationships && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">In Relationships</span>
+                <p className="text-sm text-secondary mt-2">{ic.attachment.inRelationships}</p>
+              </div>
+            )}
+            {ic.attachment.underStress && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Under Stress</span>
+                <p className="text-sm text-secondary mt-2">{ic.attachment.underStress}</p>
+              </div>
+            )}
           </section>
         )}
 
@@ -586,47 +621,61 @@ function ResultsDashboard() {
           <section className="card mb-6">
             <h3 className="font-serif text-lg font-semibold mb-1">Your Intimacy Under Stress</h3>
             <p className="text-xs text-secondary mb-4">How your Want and Offer shift across relationship states</p>
+
+            {/* Legend */}
+            <div className="flex items-center gap-4 mb-4 text-[10px]">
+              <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-sm bg-blue-500 inline-block" /> Offer (what you give)</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-sm bg-rose-400 inline-block" /> Want (what you need)</span>
+            </div>
+
             <div className="space-y-5">
               {[
-                { key: 'normal', data: ic.m3States.states.normal, color: 'bg-stone-400' },
-                { key: 'conflict', data: ic.m3States.states.conflict, color: 'bg-warning' },
-                { key: 'repair', data: ic.m3States.states.repair, color: 'bg-success' },
-              ].filter(s => s.data).map(({ key, data, color }) => {
-                const wantDelta = key !== 'normal' ? data.want - ic.m3States.states.normal.want : null;
-                const offerDelta = key !== 'normal' ? data.offer - ic.m3States.states.normal.offer : null;
+                { key: 'normal', data: ic.m3States.states.normal, label: 'Normal' },
+                { key: 'conflict', data: ic.m3States.states.conflict, label: 'During Conflict' },
+                { key: 'repair', data: ic.m3States.states.repair, label: 'During Repair' },
+              ].filter(s => s.data).map(({ key, data, label }) => {
+                const offerPct = Math.min(50, (data.offer / 100) * 50);
+                const wantPct = Math.min(50, (data.want / 100) * 50);
                 return (
                   <div key={key}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-medium">{data.label}</span>
-                      <span className="text-xs font-mono text-secondary">Gap: {data.gap > 0 ? '+' : ''}{data.gap}</span>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-medium">{data.label || label}</span>
+                      <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                        Math.abs(data.gap) <= 5 ? 'bg-success/10 text-success' :
+                        Math.abs(data.gap) <= 15 ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
+                      }`}>gap {data.gap > 0 ? '+' : ''}{data.gap}</span>
                     </div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] text-secondary w-10">Want</span>
-                      <div className="flex-1 h-2 bg-stone-100 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full ${color}`} style={{ width: `${data.want}%` }} />
-                      </div>
-                      <span className="text-xs font-mono w-8 text-right">{data.want}</span>
-                      {wantDelta !== null && <span className={`text-[10px] font-mono w-8 ${wantDelta > 0 ? 'text-warning' : 'text-success'}`}>{wantDelta > 0 ? '+' : ''}{wantDelta}</span>}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-secondary w-10">Offer</span>
-                      <div className="flex-1 h-2 bg-stone-100 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full ${color}`} style={{ width: `${data.offer}%` }} />
-                      </div>
-                      <span className="text-xs font-mono w-8 text-right">{data.offer}</span>
-                      {offerDelta !== null && <span className={`text-[10px] font-mono w-8 ${offerDelta < 0 ? 'text-warning' : 'text-success'}`}>{offerDelta > 0 ? '+' : ''}{offerDelta}</span>}
+                    {/* Single bar: Offer grows from left (blue), Want grows from right (rose) */}
+                    <div className="relative h-5 bg-stone-100 rounded-full overflow-hidden">
+                      {/* Offer from left */}
+                      <div className="absolute left-0 top-0 h-full bg-blue-500/70 rounded-l-full transition-all duration-300"
+                        style={{ width: `${offerPct}%` }} />
+                      {/* Want from right */}
+                      <div className="absolute right-0 top-0 h-full bg-rose-400/70 rounded-r-full transition-all duration-300"
+                        style={{ width: `${wantPct}%` }} />
+                      {/* Center line */}
+                      <div className="absolute left-1/2 top-0 w-px h-full bg-stone-300" />
+                      {/* Labels */}
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-blue-800">{data.offer}</span>
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-rose-800">{data.want}</span>
                     </div>
                   </div>
                 );
               })}
             </div>
+
+            <p className="text-xs text-secondary mt-4">
+              When Offer and Want overlap in the center, you are giving close to what you need.
+              When they pull apart, there is a gap between what you bring to the relationship and what you ask from it.
+            </p>
+
             {ic.m3States.insights && (
               <div className="mt-4 pt-4 border-t border-border space-y-2">
                 <span className={`text-xs font-mono px-2 py-0.5 rounded ${
                   ic.m3States.insights.gapExpansionLevel === 'HIGH' ? 'bg-danger/10 text-danger' :
                   ic.m3States.insights.gapExpansionLevel === 'MODERATE' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
                 }`}>
-                  Gap expansion: {ic.m3States.insights.gapExpansion > 0 ? '+' : ''}{ic.m3States.insights.gapExpansion} pts ({ic.m3States.insights.gapExpansionLevel})
+                  Gap expansion under stress: {ic.m3States.insights.gapExpansion > 0 ? '+' : ''}{ic.m3States.insights.gapExpansion} pts ({ic.m3States.insights.gapExpansionLevel})
                 </span>
                 <p className="text-xs text-secondary">
                   Repair effort: <span className={`font-mono ${ic.m3States.insights.repairSustainable ? 'text-success' : 'text-warning'}`}>
@@ -642,77 +691,100 @@ function ResultsDashboard() {
         {ic?.attachmentTiers && (
           <section className="card mb-6">
             <h3 className="font-serif text-lg font-semibold mb-1">Your Ideal Partner Profile</h3>
-            <p className="text-xs text-secondary mb-4">Based on your attachment, drivers, and conflict patterns</p>
+            <p className="text-xs text-secondary mb-4">The attachment styles, emotional drivers, and conflict behaviors that complement yours best</p>
+
+            {/* Attachment Style - horizontal colored cards */}
             <div className="mb-4">
-              <span className="text-xs font-mono text-secondary uppercase tracking-wider">Attachment Style</span>
-              <div className="mt-2 space-y-1">
-                {[
-                  { label: 'Best', items: ic.attachmentTiers.bestMatches, color: 'text-success' },
-                  { label: 'Good', items: ic.attachmentTiers.goodMatches, color: 'text-accent' },
-                  { label: 'Workable', items: ic.attachmentTiers.workableMatches, color: 'text-warning' },
-                  { label: 'Risky', items: ic.attachmentTiers.riskyMatches, color: 'text-danger' },
-                  { label: 'Avoid', items: ic.attachmentTiers.avoidMatches, color: 'text-danger' },
-                ].filter(g => Array.isArray(g.items) && g.items.length > 0).map(group => (
-                  <div key={group.label} className="flex items-center gap-3 py-1">
-                    <span className={`text-xs w-16 ${group.color}`}>{group.label}</span>
-                    <div className="flex gap-2">
-                      {group.items.map((m: any, i: number) => (
-                        <span key={i} className="text-xs font-mono capitalize bg-stone-50 px-2 py-0.5 rounded">
-                          {m.style} ({m.score})
-                        </span>
-                      ))}
+              <span className="text-xs font-mono text-secondary uppercase tracking-wider">Partner Attachment Style</span>
+              <div className="flex flex-wrap gap-2 mt-3">
+                {(() => {
+                  const allMatches: { style: string; score: number; tier: string; color: string; bg: string }[] = [];
+                  [
+                    { items: ic.attachmentTiers.bestMatches, tier: 'Best', color: 'text-success', bg: 'bg-success/10 border-success/30' },
+                    { items: ic.attachmentTiers.goodMatches, tier: 'Good', color: 'text-accent', bg: 'bg-accent/10 border-accent/30' },
+                    { items: ic.attachmentTiers.workableMatches, tier: 'Workable', color: 'text-warning', bg: 'bg-warning/10 border-warning/30' },
+                    { items: ic.attachmentTiers.riskyMatches, tier: 'Risky', color: 'text-danger/70', bg: 'bg-danger/5 border-danger/20' },
+                    { items: ic.attachmentTiers.avoidMatches, tier: 'Avoid', color: 'text-danger', bg: 'bg-danger/10 border-danger/30' },
+                  ].forEach(group => {
+                    if (Array.isArray(group.items)) {
+                      group.items.forEach((m: any) => allMatches.push({ style: m.style, score: m.score, tier: group.tier, color: group.color, bg: group.bg }));
+                    }
+                  });
+                  return allMatches.sort((a, b) => b.score - a.score).map((m, i) => (
+                    <div key={i} className={`text-center px-3 py-2 rounded-lg border ${m.bg}`}>
+                      <p className="text-sm font-medium capitalize">{m.style}</p>
+                      <p className={`text-xs font-mono ${m.color}`}>{m.score}</p>
                     </div>
-                  </div>
-                ))}
+                  ));
+                })()}
               </div>
-              {ic.attachmentTiers.recommendation && <p className="text-xs text-secondary mt-2">{ic.attachmentTiers.recommendation}</p>}
+              {ic.attachmentTiers.recommendation && <p className="text-sm text-secondary mt-3">{ic.attachmentTiers.recommendation}</p>}
             </div>
+
+            {/* Emotional Driver - horizontal colored cards */}
             {ic.driverTiers && (
               <div className="mb-4 pt-4 border-t border-border">
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Emotional Driver</span>
-                <p className="text-xs text-secondary mt-1 mb-2">Your primary: <span className="font-mono capitalize text-foreground">{ic.driverTiers.yourDriver?.primary || '-'}</span></p>
-                <div className="space-y-1">
-                  {[
-                    { label: 'Best', items: ic.driverTiers.bestMatches, color: 'text-success' },
-                    { label: 'Good', items: ic.driverTiers.goodMatches, color: 'text-accent' },
-                    { label: 'Workable', items: ic.driverTiers.workableMatches, color: 'text-warning' },
-                    { label: 'Avoid', items: ic.driverTiers.avoidMatches, color: 'text-danger' },
-                  ].filter(g => Array.isArray(g.items) && g.items.length > 0).map(group => (
-                    <div key={group.label} className="flex items-center gap-3 py-1">
-                      <span className={`text-xs w-16 ${group.color}`}>{group.label}</span>
-                      <div className="flex gap-2">
-                        {group.items.map((m: any, i: number) => (
-                          <span key={i} className="text-xs font-mono capitalize bg-stone-50 px-2 py-0.5 rounded">
-                            {m.driver} ({m.score})
-                          </span>
-                        ))}
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Partner Emotional Driver</span>
+                <p className="text-xs text-secondary mt-1 mb-3">Your primary: <span className="font-mono capitalize text-foreground">{ic.driverTiers.yourDriver?.primary || '-'}</span></p>
+                <div className="flex flex-wrap gap-2">
+                  {(() => {
+                    const allDrivers: { driver: string; score: number; tier: string; color: string; bg: string }[] = [];
+                    [
+                      { items: ic.driverTiers.bestMatches, tier: 'Best', color: 'text-success', bg: 'bg-success/10 border-success/30' },
+                      { items: ic.driverTiers.goodMatches, tier: 'Good', color: 'text-accent', bg: 'bg-accent/10 border-accent/30' },
+                      { items: ic.driverTiers.workableMatches, tier: 'Workable', color: 'text-warning', bg: 'bg-warning/10 border-warning/30' },
+                      { items: ic.driverTiers.avoidMatches, tier: 'Avoid', color: 'text-danger', bg: 'bg-danger/10 border-danger/30' },
+                    ].forEach(group => {
+                      if (Array.isArray(group.items)) {
+                        group.items.forEach((m: any) => allDrivers.push({ driver: m.driver, score: m.score, tier: group.tier, color: group.color, bg: group.bg }));
+                      }
+                    });
+                    return allDrivers.sort((a, b) => b.score - a.score).map((m, i) => (
+                      <div key={i} className={`text-center px-3 py-2 rounded-lg border ${m.bg}`}>
+                        <p className="text-sm font-medium capitalize">{m.driver}</p>
+                        <p className={`text-xs font-mono ${m.color}`}>{m.score}</p>
                       </div>
-                    </div>
-                  ))}
+                    ));
+                  })()}
                 </div>
-                {ic.driverTiers.recommendation && <p className="text-xs text-secondary mt-2">{ic.driverTiers.recommendation}</p>}
+                {ic.driverTiers.recommendation && <p className="text-sm text-secondary mt-3">{ic.driverTiers.recommendation}</p>}
               </div>
             )}
-            {ic.horsemenInsights && (
+
+            {/* Conflict Behavior */}
+            {(ic.horsemenInsights || gottman) && (
               <div className="pt-4 border-t border-border">
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Conflict Behavior</span>
-                {ic.horsemenInsights.urgent && (
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Partner Conflict Behavior</span>
+                {ic.horsemenInsights?.urgent && (
                   <div className="mt-2 p-2 bg-danger/5 border border-danger/20 rounded text-xs text-danger">{ic.horsemenInsights.urgent}</div>
                 )}
-                {Array.isArray(ic.horsemenInsights.lookFor) && ic.horsemenInsights.lookFor.length > 0 && (
-                  <div className="mt-2">
-                    <p className="text-xs text-success mb-1">Look for:</p>
-                    {ic.horsemenInsights.lookFor.map((item: any, i: number) => (
-                      <p key={i} className="text-xs text-secondary ml-3">{item.partnerTrait} — {item.reason}</p>
-                    ))}
+                {Array.isArray(ic.horsemenInsights?.lookFor) && ic.horsemenInsights.lookFor.length > 0 && (
+                  <div className="mt-3">
+                    <p className="text-xs font-medium text-success mb-1.5">Look for in a partner:</p>
+                    <ul className="space-y-1.5">
+                      {ic.horsemenInsights.lookFor.map((item: any, i: number) => (
+                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-success flex-shrink-0">&#8226;</span><span><span className="font-medium text-foreground">{item.partnerTrait}</span> — {item.reason}</span></li>
+                      ))}
+                    </ul>
                   </div>
                 )}
-                {Array.isArray(ic.horsemenInsights.avoid) && ic.horsemenInsights.avoid.length > 0 && (
-                  <div className="mt-2">
-                    <p className="text-xs text-warning mb-1">Avoid:</p>
-                    {ic.horsemenInsights.avoid.map((item: any, i: number) => (
-                      <p key={i} className="text-xs text-secondary ml-3">{item.partnerTrait} — {item.reason}</p>
-                    ))}
+                {Array.isArray(ic.horsemenInsights?.avoid) && ic.horsemenInsights.avoid.length > 0 && (
+                  <div className="mt-3">
+                    <p className="text-xs font-medium text-warning mb-1.5">Be cautious of:</p>
+                    <ul className="space-y-1.5">
+                      {ic.horsemenInsights.avoid.map((item: any, i: number) => (
+                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-warning flex-shrink-0">&#8226;</span><span><span className="font-medium text-foreground">{item.partnerTrait}</span> — {item.reason}</span></li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {/* Fallback: if horsemenInsights didn't populate but we have gottman data, show conflict guidance */}
+                {!ic.horsemenInsights && gottman && (
+                  <div className="mt-3">
+                    <p className="text-sm text-secondary">
+                      Based on your Gottman profile ({gottman.overallRisk || 'moderate'} risk), look for a partner
+                      who demonstrates emotional regulation and constructive conflict habits.
+                    </p>
                   </div>
                 )}
               </div>
@@ -725,9 +797,140 @@ function ResultsDashboard() {
           <section id="insights" className="mb-6 scroll-mt-28">
             <h3 className="font-serif text-lg font-semibold mb-4">Relationship Insights</h3>
             <div className="space-y-4">
-              {Object.entries(tensionStacks).map(([key, stack]: [string, any]) => {
+              {Object.entries(tensionStacks)
+                .filter(([key]) => key !== 'marketReality')
+                .map(([key, stack]: [string, any]) => {
                 if (!stack || typeof stack !== 'object') return null;
                 const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, (s: string) => s.toUpperCase()).trim();
+
+                {/* ── Internal Conflict Coherence: dedicated renderer ── */}
+                if (key === 'internalConflictCoherence') {
+                  return (
+                    <div key={key} className="card">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
+                          <h4 className="text-sm font-semibold mt-1">
+                            {stack.interpretation === 'coherent' ? 'Your conflict patterns are aligned' :
+                             stack.interpretation === 'mostly-coherent' ? 'Mostly aligned with minor friction' :
+                             stack.interpretation === 'mixed' ? 'Mixed signals in your conflict patterns' :
+                             'Your conflict patterns are working against each other'}
+                          </h4>
+                        </div>
+                        <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+                          stack.coherenceScore >= 80 ? 'bg-success/10 text-success' :
+                          stack.coherenceScore >= 60 ? 'bg-accent/10 text-accent' :
+                          stack.coherenceScore >= 40 ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
+                        }`}>
+                          {stack.coherenceScore}/100
+                        </span>
+                      </div>
+                      {stack.summary && <p className="text-sm text-secondary mb-3">{stack.summary}</p>}
+
+                      {/* Incoherences */}
+                      {Array.isArray(stack.incoherences) && stack.incoherences.length > 0 && (
+                        <div className="mb-3">
+                          <span className="text-xs font-mono text-warning uppercase tracking-wider">Internal Friction</span>
+                          <div className="mt-2 space-y-3">
+                            {stack.incoherences.map((inc: any, i: number) => (
+                              <div key={i} className="p-3 bg-warning/5 border border-warning/20 rounded">
+                                <p className="text-sm font-medium mb-1">{inc.name}</p>
+                                <p className="text-xs text-secondary mb-1">{inc.explanation}</p>
+                                {inc.behavioral && <p className="text-xs text-secondary italic">{inc.behavioral}</p>}
+                                {inc.resolution && (
+                                  <p className="text-xs text-success mt-1.5"><span className="font-medium">Path forward:</span> {inc.resolution}</p>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Coherences */}
+                      {Array.isArray(stack.coherences) && stack.coherences.length > 0 && (
+                        <div>
+                          <span className="text-xs font-mono text-success uppercase tracking-wider">Healthy Alignments</span>
+                          <ul className="mt-2 space-y-1">
+                            {stack.coherences.map((coh: any, i: number) => (
+                              <li key={i} className="text-sm text-secondary flex gap-2">
+                                <span className="text-success flex-shrink-0">&#8226;</span>
+                                {coh.note || coh.specific || coh.name || String(coh)}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                {/* ── Vulnerability Profile: improved rendering ── */}
+                if (key === 'vulnerabilityProfile') {
+                  return (
+                    <div key={key} className="card">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
+                          {stack.armorName && <h4 className="text-sm font-semibold mt-1">{stack.armorName}</h4>}
+                        </div>
+                        {stack.vulnerabilityLevel && (
+                          <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+                            stack.vulnerabilityLevel === 'high' ? 'bg-success/10 text-success' :
+                            stack.vulnerabilityLevel === 'moderate' ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
+                          }`}>
+                            {stack.vulnerabilityLevel} openness
+                          </span>
+                        )}
+                      </div>
+                      {stack.armorCore && <p className="text-sm text-secondary mb-3">{stack.armorCore}</p>}
+                      {stack.starterNarrative && <p className="text-sm mb-3">{stack.starterNarrative}</p>}
+                      {Array.isArray(stack.customizations) && stack.customizations.length > 0 && (
+                        <div className="mb-3">
+                          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Key Patterns</span>
+                          <ul className="mt-1.5 space-y-1">
+                            {stack.customizations.map((c: string, i: number) => (
+                              <li key={i} className="text-sm flex gap-2"><span className="text-accent">&#8226;</span>{c}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {stack.inRelationship && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {Array.isArray(stack.inRelationship.costs) && stack.inRelationship.costs.length > 0 && (
+                            <div>
+                              <span className="text-xs font-mono text-warning uppercase tracking-wider">Risks</span>
+                              <ul className="mt-1.5 space-y-1">
+                                {stack.inRelationship.costs.map((r: string, i: number) => (
+                                  <li key={i} className="text-xs text-secondary">{r}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {stack.repairPath && (
+                            <div>
+                              <span className="text-xs font-mono text-success uppercase tracking-wider">Growth Path</span>
+                              <p className="text-xs text-secondary mt-1.5">{stack.repairPath}</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      {stack.shamePattern && (
+                        <div className="mt-3 pt-3 border-t border-border">
+                          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
+                          <ul className="mt-1.5 space-y-1.5">
+                            <li className="text-xs text-secondary"><span className="font-medium text-foreground">Trigger:</span> {stack.shamePattern.trigger}</li>
+                            <li className="text-xs text-secondary"><span className="font-medium text-foreground">Internal message:</span> {stack.shamePattern.shameMessage}</li>
+                            <li className="text-xs text-secondary"><span className="font-medium text-foreground">Your response:</span> {stack.shamePattern.behavioralResponse}</li>
+                            <li className="text-xs text-secondary"><span className="font-medium text-foreground">Partner experiences:</span> {stack.shamePattern.partnerExperience}</li>
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                {/* ── Generic renderer for other tension stacks ── */}
+                const tensionLevel = stack.tensionLevel || stack.riskLevel;
                 return (
                   <div key={key} className="card">
                     <div className="flex items-start justify-between mb-2">
@@ -735,12 +938,12 @@ function ResultsDashboard() {
                         <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
                         {stack.patternName && <h4 className="text-sm font-semibold mt-1">{stack.patternName}</h4>}
                       </div>
-                      {stack.tensionLevel !== undefined && (
+                      {tensionLevel !== undefined && (
                         <span className={`text-xs font-mono px-2 py-0.5 rounded ${
-                          stack.tensionLevel === 'high' ? 'bg-danger/10 text-danger' :
-                          stack.tensionLevel === 'medium' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
+                          tensionLevel === 'high' ? 'bg-danger/10 text-danger' :
+                          tensionLevel === 'medium' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
                         }`}>
-                          {stack.tensionLevel}
+                          {tensionLevel}
                         </span>
                       )}
                     </div>
@@ -782,24 +985,48 @@ function ResultsDashboard() {
                         </div>
                       )}
                     </div>
-                    {stack.signals && (
+                    {/* Watch For - handle signals as array, object with nested values, or primitives */}
+                    {stack.signals && typeof stack.signals === 'object' && !Array.isArray(stack.signals) && (
                       <div className="mt-3 pt-3 border-t border-border">
                         <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
-                        {Array.isArray(stack.signals) ? (
-                          <ul className="mt-1.5 space-y-1">
-                            {stack.signals.map((s: string, i: number) => (
-                              <li key={i} className="text-xs text-secondary">{s}</li>
-                            ))}
-                          </ul>
-                        ) : typeof stack.signals === 'object' ? (
-                          <div className="mt-1.5 space-y-1">
-                            {Object.entries(stack.signals).map(([k, v]: [string, any]) => (
-                              <p key={k} className="text-xs text-secondary"><span className="font-mono capitalize">{k}:</span> {String(v)}</p>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="text-xs text-secondary mt-1.5">{String(stack.signals)}</p>
-                        )}
+                        <ul className="mt-1.5 space-y-1.5">
+                          {Object.entries(stack.signals).map(([k, v]: [string, any]) => {
+                            if (v && typeof v === 'object' && v.interpretation) {
+                              const interpValue = typeof v.interpretation === 'object'
+                                ? Object.values(v.interpretation).find((x: any) => typeof x === 'string') || JSON.stringify(v.interpretation)
+                                : v.interpretation;
+                              return (
+                                <li key={k} className="text-xs text-secondary">
+                                  <span className="font-medium text-foreground capitalize">{v.name || k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}
+                                  {interpValue as string}
+                                </li>
+                              );
+                            }
+                            if (v && typeof v === 'object') {
+                              return (
+                                <li key={k} className="text-xs text-secondary">
+                                  <span className="font-medium text-foreground capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}
+                                  {v.value !== undefined ? String(v.value) : JSON.stringify(v)}
+                                </li>
+                              );
+                            }
+                            return (
+                              <li key={k} className="text-xs text-secondary">
+                                <span className="font-medium text-foreground capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span> {String(v)}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    )}
+                    {Array.isArray(stack.signals) && stack.signals.length > 0 && (
+                      <div className="mt-3 pt-3 border-t border-border">
+                        <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
+                        <ul className="mt-1.5 space-y-1">
+                          {stack.signals.map((s: string, i: number) => (
+                            <li key={i} className="text-xs text-secondary">{s}</li>
+                          ))}
+                        </ul>
                       </div>
                     )}
                   </div>
@@ -816,7 +1043,7 @@ function ResultsDashboard() {
             {modifiers.relationshipCapacity && (
               <div className="mb-4">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="font-mono text-2xl font-semibold">
+                  <span className="font-mono text-lg font-semibold">
                     {typeof modifiers.relationshipCapacity === 'object' ? modifiers.relationshipCapacity.score ?? modifiers.relationshipCapacity.level ?? '-' : modifiers.relationshipCapacity}
                   </span>
                   {modifiers.relationshipCapacity.level && (

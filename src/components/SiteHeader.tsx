@@ -220,6 +220,7 @@ function ProfileAvatar({
   dropdownRef,
   onSignOut,
   hasPartner,
+  hasCouplesAccess,
 }: {
   initial: string;
   photoUrl: string | null;
