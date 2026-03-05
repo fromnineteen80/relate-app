@@ -236,6 +236,7 @@ export async function POST(request: NextRequest) {
         inRelationships: personaMetadata?.inRelationships || [],
         mostAttractive: personaMetadata?.mostAttractive || [],
         leastAttractive: personaMetadata?.leastAttractive || [],
+        struggles: personaMetadata?.struggles || [],
       },
       m2Poles,
       dimensions: m2Result?.dimensions || m1Result?.dimensions || {},

@@ -25,12 +25,12 @@ export default function MethodologyPage() {
 
       {/* Hero */}
       <section className="relative pt-16 pb-12 px-6 bg-gradient-to-b from-stone-100 to-background">
-        <div className="max-w-2xl mx-auto text-center">
+        <div className="max-w-3xl mx-auto text-center">
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-4">Deep Dive</p>
           <h1 className="font-serif text-4xl md:text-5xl font-semibold leading-[1.1] mb-6">
             Assessment Methodology
           </h1>
-          <p className="text-lg text-secondary max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-secondary max-w-3xl mx-auto leading-relaxed">
             Relate&apos;s assessment draws from four clinical frameworks to create a comprehensive picture of how you date, who you are, how you connect, and how you handle conflict.
           </p>
         </div>
@@ -38,7 +38,7 @@ export default function MethodologyPage() {
 
       {/* Clinical Foundations */}
       <section className="px-6 py-16 border-b border-border">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Foundations</p>
           <h2 className="font-serif text-3xl font-semibold mb-8">Clinical Frameworks</h2>
 
@@ -73,7 +73,7 @@ export default function MethodologyPage() {
 
       {/* The Four Modules */}
       <section className="px-6 py-16 bg-stone-50 border-b border-border">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">The Assessment</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">Four Modules, 367 Questions</h2>
           <p className="text-secondary mb-10">
@@ -190,7 +190,7 @@ export default function MethodologyPage() {
 
       {/* Gottman Deep Dive */}
       <section className="px-6 py-16 border-b border-border">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Conflict Patterns</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">The Four Horsemen</h2>
           <p className="text-secondary mb-8">
@@ -213,7 +213,7 @@ export default function MethodologyPage() {
 
       {/* Persona System */}
       <section className="px-6 py-16 bg-stone-50 border-b border-border">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Identity</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">The 32 Personas</h2>
           <p className="text-secondary mb-8">
@@ -267,7 +267,7 @@ export default function MethodologyPage() {
 
       {/* Compatibility System */}
       <section className="px-6 py-16 border-b border-border">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Matching</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">Compatibility Scoring</h2>
           <p className="text-secondary mb-8">
@@ -304,7 +304,7 @@ export default function MethodologyPage() {
 
       {/* Emotional Drivers */}
       <section className="px-6 py-16 bg-stone-50 border-b border-border">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Module 4 Deep Dive</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">Emotional Drivers</h2>
           <p className="text-secondary mb-8">
@@ -355,7 +355,7 @@ export default function MethodologyPage() {
 
       {/* Scoring Transparency */}
       <section className="px-6 py-16 border-b border-border">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Transparency</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">How Scoring Works</h2>
           <p className="text-secondary mb-8">
@@ -396,7 +396,7 @@ export default function MethodologyPage() {
 
       {/* Finding Your Ideal Match */}
       <section id="ideal-match" className="px-6 py-16 bg-stone-50 border-b border-border">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Demographics</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">Finding Your Ideal Match Pool</h2>
           <p className="text-secondary mb-8">
@@ -485,7 +485,7 @@ export default function MethodologyPage() {
 
       {/* CTA */}
       <section className="px-6 py-20 bg-stone-50 border-t border-border">
-        <div className="max-w-2xl mx-auto text-center">
+        <div className="max-w-3xl mx-auto text-center">
           <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">
             Ready to discover your profile?
           </h2>
