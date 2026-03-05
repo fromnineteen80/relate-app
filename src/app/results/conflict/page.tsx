@@ -28,7 +28,7 @@ export default function ConflictPage() {
       <SiteHeader />
       <SubNav />
 
-      <main className="max-w-2xl mx-auto px-6 py-8 w-full">
+      <main className="max-w-3xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-6">Conflict Profile</h2>
 
         <section className="card mb-4">

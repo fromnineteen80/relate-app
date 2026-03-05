@@ -81,7 +81,7 @@ export default function MatchDetailPage() {
       <SiteHeader />
       <SubNav />
 
-      <main className="max-w-2xl mx-auto px-6 py-8 w-full">
+      <main className="max-w-3xl mx-auto px-6 py-8 w-full">
         {/* Header */}
         <div className="flex items-start justify-between gap-6 flex-wrap mb-6">
           <div className="min-w-0">
