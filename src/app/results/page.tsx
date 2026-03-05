@@ -368,7 +368,7 @@ function ResultsDashboard() {
 
         {/* ── Persona ── */}
         {persona && (
-          <section id="persona" className="card mb-6 scroll-mt-28">
+          <section id="persona" className="card mb-4 scroll-mt-28">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <span className="text-xs font-mono text-secondary uppercase tracking-wider">Your Persona</span>
@@ -381,7 +381,7 @@ function ResultsDashboard() {
 
             {/* Dating Behavior */}
             {persona.datingBehavior?.length > 0 && (
-              <div className="mb-4">
+              <div>
                 <span className="text-xs font-mono text-secondary uppercase tracking-wider">Dating Behavior</span>
                 <ul className="mt-2 space-y-1.5">
                   {persona.datingBehavior.map((b: string, i: number) => (
@@ -393,7 +393,7 @@ function ResultsDashboard() {
 
             {/* Strengths & Growth */}
             {(persona.mostAttractive?.length > 0 || persona.leastAttractive?.length > 0) && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="mt-4 pt-4 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {persona.mostAttractive?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-success uppercase tracking-wider">Most Attractive Qualities</span>
