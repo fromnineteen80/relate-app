@@ -251,6 +251,7 @@ function generateMatchSummary(userResults: any, match: any): string {
   return sentences.filter(Boolean).join(' ')
     .replace(/\s*[—–]\s*/g, ', ')
     .replace(/,\s*,/g, ',');
+}
 
 export async function POST(request: NextRequest) {
   try {
