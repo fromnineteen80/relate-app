@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
+import { SiteFooter } from '@/components/SiteFooter';
 import { CONVERSATION_DECKS } from '@/lib/couples';
 
 export default function CardsPage() {
@@ -63,6 +64,7 @@ export default function CardsPage() {
             Card {currentIndex + 1} of {deck.cards.length}
           </p>
         </main>
+        <SiteFooter />
       </div>
     );
   }
@@ -93,6 +95,7 @@ export default function CardsPage() {
           })}
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

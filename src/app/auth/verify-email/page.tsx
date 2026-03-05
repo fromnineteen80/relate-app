@@ -7,6 +7,7 @@ import { config } from '@/lib/config';
 import { mockVerifyEmail } from '@/lib/mock/auth';
 import { supabase } from '@/lib/supabase/client';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 import { getOnboardingRedirect } from '@/lib/onboarding';
 
 export default function VerifyEmailPage() {
@@ -100,6 +101,7 @@ export default function VerifyEmailPage() {
           </p>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

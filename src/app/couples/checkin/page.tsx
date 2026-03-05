@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
+import { SiteFooter } from '@/components/SiteFooter';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -109,6 +110,7 @@ export default function CheckinHistoryPage() {
           </>
         )}
       </main>
+      <SiteFooter />
     </div>
   );
 }

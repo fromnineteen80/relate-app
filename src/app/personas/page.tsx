@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-require-imports */
 
@@ -418,6 +419,7 @@ export default function PersonasPage() {
           <Link href="/auth/signup" className="btn-primary">Take the Assessment</Link>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

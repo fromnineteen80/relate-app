@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { getGrowthLevel, getRecommendedChallenges, CHALLENGE_LIBRARY } from '@/lib/couples';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
+import { SiteFooter } from '@/components/SiteFooter';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -242,6 +243,8 @@ export default function CouplesDashboard() {
           <Link href="/advisor?mode=couples" className="btn-secondary text-xs">Couples Advisor</Link>
         </div>
       </main>
+
+      <SiteFooter />
 
       {/* Check-in Modal */}
       {showCheckin && (

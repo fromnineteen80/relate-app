@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 
 export default function SignUpPage() {
   const [email, setEmail] = useState('');
@@ -106,6 +107,7 @@ export default function SignUpPage() {
           </div>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 import { useAuth } from '@/lib/auth-context';
 import { loadChartResult, type BirthChartResult } from '@/lib/astrology/engine';
@@ -50,6 +51,7 @@ export default function CheatSheetPage() {
           </p>
           <Link href="/results/astrology" className="btn-primary text-sm">Enter Birth Details</Link>
         </main>
+        <SiteFooter />
       </div>
     );
   }
@@ -111,6 +113,7 @@ export default function CheatSheetPage() {
           <Link href="/results/astrology" className="btn-secondary text-sm">Back to Your Profile</Link>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

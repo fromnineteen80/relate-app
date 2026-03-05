@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 
 const CODE_TO_POLE: Record<string, 'A' | 'B'> = {
@@ -119,6 +120,7 @@ export default function PersonaPage() {
           )}
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

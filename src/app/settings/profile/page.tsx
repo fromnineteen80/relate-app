@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
+import { SiteFooter } from '@/components/SiteFooter';
 import { saveProfileToDb } from '@/lib/supabase/progress';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -245,6 +246,7 @@ export default function ProfileSettings() {
           </button>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

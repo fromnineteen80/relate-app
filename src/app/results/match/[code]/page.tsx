@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 
 function tierLabel(tier: string) {
@@ -93,6 +94,7 @@ export default function MatchDetailPage() {
           <Link href="/advisor" className="btn-primary text-xs">Discuss with Advisor</Link>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }
