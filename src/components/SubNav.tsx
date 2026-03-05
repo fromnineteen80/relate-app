@@ -43,17 +43,18 @@ export function SubNav({ items = [] }: SubNavProps) {
     }
   }, []);
 
-  const isResultsSection = pathname.startsWith('/results');
+  // Show results sublinks on results subpages (persona, match, matches, etc.) but NOT the root /results page
+  const isResultsSubpage = pathname.startsWith('/results/');
 
   const universalLinks: SubNavItem[] = [
     { id: 'account', label: 'Account', href: '/account', show: true },
     { id: 'results', label: 'Results', href: '/results', show: hasResults },
   ];
 
-  // Build results subpage links when hasResults and on a results page
-  const resultsSubLinks: SubNavItem[] = (hasResults && isResultsSection) ? [
+  // Build results subpage links when hasResults and on a results subpage
+  const resultsSubLinks: SubNavItem[] = (hasResults && isResultsSubpage) ? [
     { id: 'persona', label: 'Your Persona', href: '/results/persona', show: true },
-    { id: 'match', label: 'Your Match', href: topMatchCode ? `/results/match/${topMatchCode}` : '/results/matches', show: !!topMatchCode },
+    { id: 'match', label: 'Your #1 Match', href: topMatchCode ? `/results/match/${topMatchCode}` : '/results/matches', show: !!topMatchCode },
     { id: 'matches', label: `All Potential ${seekingLabel}`, href: '/results/matches', show: true },
   ] : [];
 

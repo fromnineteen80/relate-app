@@ -9,14 +9,6 @@ import { SubNav } from '@/components/SubNav';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-function tierColor(tier: string) {
-  const colors: Record<string, string> = {
-    ideal: 'text-success', kismet: 'text-success/70', effort: 'text-warning',
-    longShot: 'text-stone-400', atRisk: 'text-danger/70', incompatible: 'text-danger',
-  };
-  return colors[tier] || 'text-secondary';
-}
-
 function tierBg(tier: string) {
   const colors: Record<string, string> = {
     ideal: 'bg-success', kismet: 'bg-success/70', effort: 'bg-warning',
@@ -37,7 +29,7 @@ function ScoreBar({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex items-center gap-2">
       <span className="text-[11px] text-secondary w-16 shrink-0">{label}</span>
-      <div className="flex-1 h-1 bg-stone-100 rounded-full overflow-hidden">
+      <div className="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
         <div className="h-full bg-accent rounded-full" style={{ width: `${Math.min(100, value)}%` }} />
       </div>
       <span className="font-mono text-[11px] text-secondary w-6 text-right">{Math.round(value)}</span>
@@ -45,16 +37,16 @@ function ScoreBar({ label, value }: { label: string; value: number }) {
   );
 }
 
-function CompactInsights({ label, items, color }: { label: string; items?: string[]; color?: string }) {
+function InsightSection({ label, items, color }: { label: string; items?: string[]; color?: string }) {
   if (!items || items.length === 0) return null;
   return (
-    <div>
-      <span className={`text-[11px] font-medium uppercase tracking-wider ${color || 'text-secondary'}`}>{label}</span>
-      <ul className="mt-1 space-y-0.5">
-        {items.slice(0, 2).map((item, i) => (
-          <li key={i} className="text-xs text-secondary flex gap-1.5">
-            <span className="text-accent shrink-0">&bull;</span>
-            <span className="line-clamp-1">{item}</span>
+    <div className="card">
+      <span className={`text-[11px] font-semibold uppercase tracking-wider block mb-2 ${color || 'text-secondary'}`}>{label}</span>
+      <ul className="space-y-1.5">
+        {items.map((item, i) => (
+          <li key={i} className="text-sm text-secondary flex gap-2">
+            <span className="text-accent shrink-0 mt-0.5">&bull;</span>
+            <span>{item}</span>
           </li>
         ))}
       </ul>
@@ -77,6 +69,7 @@ export default function MatchesPage() {
 
   const persona = report.persona;
   const genderLabel = report.gender === 'M' ? 'him' : 'her';
+  const GenderCap = report.gender === 'M' ? 'He' : 'She';
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -101,7 +94,7 @@ export default function MatchesPage() {
           ))}
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-4">
           {report.matches.map((match: any) => {
             const isExpanded = expandedCode === match.code;
             return (
@@ -129,22 +122,25 @@ export default function MatchesPage() {
                   </div>
                 </button>
 
-                {/* Compatibility summary — always visible if present */}
+                {/* Compatibility summary — always visible */}
                 {match.summary && (
-                  <p className="text-sm text-secondary mt-3 leading-relaxed">{match.summary}</p>
+                  <div className="mt-3">
+                    <p className="text-sm text-secondary leading-relaxed">{match.summary}</p>
+                  </div>
                 )}
 
                 {/* Expanded details */}
                 {isExpanded && (
-                  <div className="mt-4 pt-4 border-t border-border space-y-4">
+                  <div className="mt-4 pt-4 border-t border-border space-y-5">
                     {/* Your pairing */}
                     {persona && (
-                      <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="flex items-center gap-6 flex-wrap">
                         <div>
                           <span className="text-[11px] text-secondary uppercase tracking-wider">You</span>
                           <p className="font-serif font-semibold text-sm">{persona.name}</p>
                           <span className="font-mono text-xs text-accent">{persona.code}</span>
                         </div>
+                        <span className="text-secondary text-lg">&times;</span>
                         <div>
                           <span className="text-[11px] text-secondary uppercase tracking-wider">Match</span>
                           <p className="font-serif font-semibold text-sm">{match.name}</p>
@@ -156,8 +152,8 @@ export default function MatchesPage() {
                     {/* Score breakdown */}
                     {match.subScores && (
                       <div>
-                        <span className="text-[11px] text-secondary uppercase tracking-wider">Score Breakdown</span>
-                        <div className="mt-2 space-y-1.5">
+                        <span className="text-[11px] text-secondary uppercase tracking-wider block mb-2">Score Breakdown</span>
+                        <div className="space-y-1.5">
                           <ScoreBar label="Persona" value={match.subScores.tier} />
                           <ScoreBar label="Preference" value={match.subScores.preference} />
                           <ScoreBar label="Behavioral" value={match.subScores.dimension} />
@@ -167,14 +163,15 @@ export default function MatchesPage() {
                       </div>
                     )}
 
-                    {/* Compact insight cards */}
+                    {/* Full insight cards — all items shown */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <CompactInsights label="Strengths" items={match.mostAttractive} color="text-success" />
-                      <CompactInsights label="How they date" items={match.datingBehavior} />
-                      <CompactInsights label="In relationships" items={match.inRelationships} />
-                      <CompactInsights label={`What draws people to ${genderLabel}`} items={match.howValued} />
-                      <CompactInsights label="Watch out for" items={match.leastAttractive} color="text-warning" />
-                      <CompactInsights label="Where they struggle" items={match.struggles} color="text-danger/70" />
+                      <InsightSection label={`What draws people to ${genderLabel}`} items={match.mostAttractive} color="text-success" />
+                      <InsightSection label="How they date" items={match.datingBehavior} />
+                      <InsightSection label="In relationships" items={match.inRelationships} />
+                      <InsightSection label={`How partners value ${genderLabel}`} items={match.howValued} />
+                      <InsightSection label="Watch out for" items={match.leastAttractive} color="text-warning" />
+                      <InsightSection label={`What disappoints ${genderLabel}`} items={match.disappointments} color="text-warning" />
+                      <InsightSection label={`Where ${GenderCap.toLowerCase()} struggles`} items={match.struggles} color="text-danger/70" />
                     </div>
 
                     {/* Link to full detail page */}
@@ -190,7 +187,7 @@ export default function MatchesPage() {
                 {!isExpanded && (match.subScores || match.mostAttractive?.length) && (
                   <button
                     onClick={() => setExpandedCode(match.code)}
-                    className="text-[11px] text-accent hover:underline mt-2 block"
+                    className="text-[11px] text-accent hover:underline mt-3 block"
                   >
                     View breakdown &amp; insights
                   </button>
