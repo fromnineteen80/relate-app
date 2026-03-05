@@ -141,7 +141,7 @@ function buildReportHTML(data: {
   ${individualCompatibility?.attachment ? `
   <h2>Attachment Style</h2>
   <div class="grid" style="grid-template-columns: 1fr 1fr">
-    <div class="grid-item"><div class="value" style="text-transform:capitalize">${individualCompatibility.attachment.style}</div><div class="label">Style${individualCompatibility.attachment.subtype ? ` (${individualCompatibility.attachment.subtype})` : ''}${individualCompatibility.attachment.leaningToward ? ` — leaning ${individualCompatibility.attachment.leaningToward}` : ''}</div></div>
+    <div class="grid-item"><div class="value" style="text-transform:capitalize">${individualCompatibility.attachment.style}</div><div class="label">Style${individualCompatibility.attachment.subtype ? ` (${individualCompatibility.attachment.subtype})` : ''}${individualCompatibility.attachment.leaningToward ? `, leaning ${individualCompatibility.attachment.leaningToward}` : ''}</div></div>
     <div class="grid-item"><div class="value">${Math.round((individualCompatibility.attachment.confidence || 0) * 100)}%</div><div class="label">Confidence</div></div>
   </div>
   <p class="secondary">${individualCompatibility.attachment.description}</p>` : ''}
@@ -213,9 +213,9 @@ function buildReportHTML(data: {
   <h3>Conflict Behavior Guidance</h3>
   ${hi.urgent ? `<p style="color:#dc2626;font-size:13px;margin-bottom:8px"><strong>${hi.urgent}</strong></p>` : ''}
   ${hi.lookFor?.length > 0 ? `<p style="font-size:13px;margin-bottom:4px"><strong style="color:#16a34a">Look for:</strong></p>
-  ${hi.lookFor.map((i: any) => `<p class="secondary" style="font-size:13px;margin-left:16px">${i.partnerTrait} — ${i.reason}</p>`).join('')}` : ''}
+  ${hi.lookFor.map((i: any) => `<p class="secondary" style="font-size:13px;margin-left:16px">${i.partnerTrait}: ${i.reason}</p>`).join('')}` : ''}
   ${hi.avoid?.length > 0 ? `<p style="font-size:13px;margin-top:8px;margin-bottom:4px"><strong style="color:#d97706">Avoid:</strong></p>
-  ${hi.avoid.map((i: any) => `<p class="secondary" style="font-size:13px;margin-left:16px">${i.partnerTrait} — ${i.reason}</p>`).join('')}` : ''}` : ''}`;
+  ${hi.avoid.map((i: any) => `<p class="secondary" style="font-size:13px;margin-left:16px">${i.partnerTrait}: ${i.reason}</p>`).join('')}` : ''}` : ''}`;
   })() : ''}
 
   ${report?.m1DeepDive ? `<h2>What You Want</h2><p>${report.m1DeepDive}</p>` : ''}
@@ -259,7 +259,7 @@ function buildMarketHTML(marketData: any): string {
   if (!pool) return '';
 
   const fmt = (n: number) => n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(n);
-  const pctOf = (ideal: number, base: number) => base > 0 ? ((ideal / base) * 100).toFixed(1) + '%' : '—';
+  const pctOf = (ideal: number, base: number) => base > 0 ? ((ideal / base) * 100).toFixed(1) + '%' : '-';
   const gLabel = ctx?.targetGenderLabel || 'target gender';
   const oLabel = ctx?.orientationLabel || 'orientation';
   const eLabel = ctx?.userEthnicity || 'ethnicity';
@@ -296,9 +296,9 @@ function buildMarketHTML(marketData: any): string {
       <td style="padding:6px 8px;border-bottom:1px solid #e5e5e5;${weight}">${r.label}</td>
       <td style="padding:6px 8px;border-bottom:1px solid #e5e5e5;font-family:monospace;text-align:right">${fmt(r.ideal)}</td>
       <td style="padding:6px 8px;border-bottom:1px solid #e5e5e5;font-family:monospace;text-align:right;${weight}">${fmt(r.matches)}</td>
-      <td style="padding:6px 8px;border-bottom:1px solid #e5e5e5;font-family:monospace;text-align:right">${r.ctx ? pctOf(r.ideal, r.ctx.allGender) : '—'}</td>
-      <td style="padding:6px 8px;border-bottom:1px solid #e5e5e5;font-family:monospace;text-align:right">${r.ctx ? pctOf(r.ideal, r.ctx.eligiblePool) : '—'}</td>
-      <td style="padding:6px 8px;border-bottom:1px solid #e5e5e5;font-family:monospace;text-align:right">${r.ctx ? pctOf(r.ideal, r.ctx.eligibleEthnicityPool) : '—'}</td>
+      <td style="padding:6px 8px;border-bottom:1px solid #e5e5e5;font-family:monospace;text-align:right">${r.ctx ? pctOf(r.ideal, r.ctx.allGender) : '-'}</td>
+      <td style="padding:6px 8px;border-bottom:1px solid #e5e5e5;font-family:monospace;text-align:right">${r.ctx ? pctOf(r.ideal, r.ctx.eligiblePool) : '-'}</td>
+      <td style="padding:6px 8px;border-bottom:1px solid #e5e5e5;font-family:monospace;text-align:right">${r.ctx ? pctOf(r.ideal, r.ctx.eligibleEthnicityPool) : '-'}</td>
     </tr>`;
   }).join('');
 
@@ -312,7 +312,7 @@ function buildMarketHTML(marketData: any): string {
     <div class="grid-item"><div class="value">${fmt(pool.idealPool)}</div><div class="label">Ideal Pool</div></div>
     <div class="grid-item"><div class="value">${fmt(matchCount)}</div><div class="label">Matches</div></div>
   </div>
-  <p class="secondary" style="font-size:12px;text-align:center;margin-bottom:4px">${metro} | Match Probability: ${prob?.percentage || '—'}</p>
+  <p class="secondary" style="font-size:12px;text-align:center;margin-bottom:4px">${metro} | Match Probability: ${prob?.percentage || '-'}</p>
 
   <h3>Match Pool Funnel</h3>
   <table style="font-size:12px">
@@ -339,11 +339,11 @@ function buildMarketHTML(marketData: any): string {
   </table>
 
   <div style="margin-top:12px;font-size:11px;color:#6b6b6b;line-height:1.5">
-    <p style="margin-bottom:6px"><strong style="color:#1a1a1a">Ideal Pool</strong> — People in this area who meet every preference you specified: gender, orientation, age range, income, relationship status, lifestyle traits, and physical preferences. This is your fully-filtered pool before accounting for mutual interest.</p>
-    <p style="margin-bottom:6px"><strong style="color:#1a1a1a">Matches</strong> — Your ideal pool adjusted for the probability that someone in it would also be interested in you, based on your Relate Score. A higher Relate Score means a larger share of your ideal pool converts into realistic mutual matches.</p>
-    <p style="margin-bottom:6px"><strong style="color:#1a1a1a">% of ${gLabel}</strong> — Your ideal pool expressed as a percentage of all ${gLabel} (ages 18–64, excluding homeless) in the area. This is the broadest lens: of every ${gLabel.slice(0, -1)} you could theoretically encounter, how many fit what you are looking for.</p>
-    <p style="margin-bottom:6px"><strong style="color:#1a1a1a">% of eligible</strong> — Your ideal pool as a percentage of ${oLabel} ${gLabel} in your preferred age range with no criminal record. This filters out people who were never realistic candidates, giving you a truer sense of how selective your remaining preferences are.</p>
-    <p style="margin-bottom:6px"><strong style="color:#1a1a1a">% of ${eLabel}</strong> — The same eligible pool narrowed further to ${eLabel} ${gLabel} only. Because felon rates, income distributions, and lifestyle patterns differ by ethnicity, this shows the most apples-to-apples view of your selectivity within the demographic group that most closely mirrors your own background.</p>
+    <p style="margin-bottom:6px"><strong style="color:#1a1a1a">Ideal Pool:</strong> People in this area who meet every preference you specified: gender, orientation, age range, income, relationship status, lifestyle traits, and physical preferences. This is your fully-filtered pool before accounting for mutual interest.</p>
+    <p style="margin-bottom:6px"><strong style="color:#1a1a1a">Matches:</strong> Your ideal pool adjusted for the probability that someone in it would also be interested in you, based on your Relate Score. A higher Relate Score means a larger share of your ideal pool converts into realistic mutual matches.</p>
+    <p style="margin-bottom:6px"><strong style="color:#1a1a1a">% of ${gLabel}:</strong> Your ideal pool expressed as a percentage of all ${gLabel} (ages 18 to 64, excluding homeless) in the area. This is the broadest lens: of every ${gLabel.slice(0, -1)} you could theoretically encounter, how many fit what you are looking for.</p>
+    <p style="margin-bottom:6px"><strong style="color:#1a1a1a">% of eligible:</strong> Your ideal pool as a percentage of ${oLabel} ${gLabel} in your preferred age range with no criminal record. This filters out people who were never realistic candidates, giving you a truer sense of how selective your remaining preferences are.</p>
+    <p style="margin-bottom:6px"><strong style="color:#1a1a1a">% of ${eLabel}:</strong> The same eligible pool narrowed further to ${eLabel} ${gLabel} only. Because felon rates, income distributions, and lifestyle patterns differ by ethnicity, this shows the most apples-to-apples view of your selectivity within the demographic group that most closely mirrors your own background.</p>
   </div>
   <p style="font-size:10px;color:#999;margin-top:12px">Estimates derived from publicly available census, demographic, and survey datasets from the U.S. Census Bureau, CDC, Pew Research Center, and Bureau of Justice Statistics. See relate.date/methodology for full details.</p>`;
 }
@@ -376,7 +376,7 @@ function buildCoachingHTML(marketData: any, demographics: any, m3: any, m4: any)
       income: { t: 'Your Income Is Limiting You', d: `Income ranks in the bottom ${Math.round(weakest.local)}% locally. For ${gender === 'Woman' ? 'women' : 'men'}, income carries ${Math.round(weakest.weight * 100)}% of your score weight.`, a: 'Negotiate a raise, pursue certifications, or add a side income. Even a 20% increase moves your score meaningfully.' },
       education: { t: 'Education Is Holding You Back', d: `Education ranks in the bottom ${Math.round(weakest.local)}% locally.`, a: 'Professional certifications, online degrees, or skill-based credentials can shift your percentile with one credential bump.' },
       age: { t: 'Age Is Working Against You', d: `Age score is ${Math.round(weakest.local)}.`, a: 'Offset age by maximizing income, fitness, and emotional maturity. Lead with depth.' },
-      children: { t: 'Having Kids Is Narrowing Your Pool', d: `Children score is ${Math.round(weakest.local)}. Many singles prefer partners without existing children.`, a: 'Position parenting as a strength. Show you\'re a capable, present parent — don\'t hide it.' },
+      children: { t: 'Having Kids Is Narrowing Your Pool', d: `Children score is ${Math.round(weakest.local)}. Many singles prefer partners without existing children.`, a: 'Position parenting as a strength. Show you\'re a capable, present parent. Don\'t hide it.' },
       ethnicity: { t: 'Your Demographic Is Competitive Here', d: `Ethnicity score is ${Math.round(weakest.local)} in ${metro}.`, a: 'Focus on what you control: income, fitness, and being genuinely interesting.' },
     };
     const c = coaching[weakest.name];
@@ -424,7 +424,7 @@ function buildCoachingHTML(marketData: any, demographics: any, m3: any, m4: any)
     const userIsntFit = !['Lean or Fit'].includes(userBodyType) || !['4 to 6 days a week', 'Every day'].includes(userFitness);
 
     if ((wantsOnlyFit || (prefFitness.length > 0 && !prefFitness.includes('No preference') && prefFitness.every((l: string) => ['4 to 6 days a week', 'Every day'].includes(l)))) && gap > 15 && userIsntFit) {
-      items.push({ priority: 'high', title: 'Physical Standards vs. What You Offer', description: `Want/Offer gap of +${gap} and filtering for only fit/lean partners, but your own fitness doesn't meet the same standard.`, action: 'Get in the gym consistently (4+ days/week for 6 months), or expand your physical preferences — attraction grows in person in ways a filter can\'t predict.', category: 'Reality Check' });
+      items.push({ priority: 'high', title: 'Physical Standards vs. What You Offer', description: `Want/Offer gap of +${gap} and filtering for only fit/lean partners, but your own fitness doesn't meet the same standard.`, action: 'Get in the gym consistently (4+ days/week for 6 months), or expand your physical preferences. Attraction grows in person in ways a filter can\'t predict.', category: 'Reality Check' });
     }
 
     if (wantsOnlyFit && ['Never', '1 day a week'].includes(userFitness)) {
