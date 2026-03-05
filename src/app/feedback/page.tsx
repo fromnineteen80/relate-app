@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
+import { SiteFooter } from '@/components/SiteFooter';
 import { useAuth } from '@/lib/auth-context';
 
 const CATEGORIES = [
@@ -97,6 +98,7 @@ export default function FeedbackPage() {
             </div>
           </div>
         </main>
+        <SiteFooter />
       </div>
     );
   }
@@ -187,6 +189,7 @@ export default function FeedbackPage() {
           </button>
         </form>
       </main>
+      <SiteFooter />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 
 export default function ConflictPage() {
@@ -96,6 +97,7 @@ export default function ConflictPage() {
           </section>
         )}
       </main>
+      <SiteFooter />
     </div>
   );
 }

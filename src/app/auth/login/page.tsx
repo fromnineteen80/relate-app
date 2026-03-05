@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { getOnboardingRedirect } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 import { loadProfileFromDb, loadAndHydrateProgress } from '@/lib/supabase/progress';
 
 export default function LoginPage() {
@@ -90,6 +91,7 @@ export default function LoginPage() {
           </div>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

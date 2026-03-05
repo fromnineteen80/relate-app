@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -114,6 +115,7 @@ export default function ComparePage() {
             <p className="text-sm text-secondary">Generating your couples report...</p>
           </div>
         </main>
+        <SiteFooter />
       </div>
     );
   }
@@ -135,6 +137,7 @@ export default function ComparePage() {
             </button>
           </div>
         </main>
+        <SiteFooter />
       </div>
     );
   }
@@ -206,6 +209,7 @@ export default function ComparePage() {
           )}
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { isProfileComplete, hasDemographics } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 import { loadAndHydrateProgress, loadProfileFromDb, clearAllProgress } from '@/lib/supabase/progress';
 import { fetchPaymentTier } from '@/lib/payments';
@@ -74,6 +75,7 @@ export default function AssessmentHub() {
           <p className="text-secondary mb-6">You need to fill in your profile and demographics before starting the assessment.</p>
           <Link href="/onboarding/profile" className="btn-primary">Go to Profile Setup</Link>
         </main>
+        <SiteFooter />
       </div>
     );
   }
@@ -151,6 +153,7 @@ export default function AssessmentHub() {
           </div>
         )}
       </main>
+      <SiteFooter />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
+import { SiteFooter } from '@/components/SiteFooter';
 import { getPersonalizedDates, DATE_IDEAS } from '@/lib/couples';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -109,6 +110,7 @@ export default function DatesPage() {
           </div>
         )}
       </main>
+      <SiteFooter />
     </div>
   );
 }

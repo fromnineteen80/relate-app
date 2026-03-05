@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 import { useAuth } from '@/lib/auth-context';
 import {
@@ -164,6 +165,7 @@ export default function AstrologyPage() {
           </p>
           <Link href="/results" className="btn-secondary text-sm">Back to Results</Link>
         </main>
+        <SiteFooter />
       </div>
     );
   }
@@ -252,6 +254,7 @@ export default function AstrologyPage() {
             </Link>
           </div>
         </main>
+        <SiteFooter />
       </div>
     );
   }
@@ -365,6 +368,7 @@ export default function AstrologyPage() {
           </button>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { getMockPaymentStatus, mockPurchase } from '@/lib/mock/payments';
 import { fetchPaymentTier, refreshPaymentTier } from '@/lib/payments';
 import { getProfile } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 import { TestAccessCard } from '@/components/TestAccessCard';
 import { clearAllProgress } from '@/lib/supabase/progress';
@@ -1113,6 +1114,7 @@ function AccountPage() {
           </div>
         </div>
       )}
+      <SiteFooter />
     </div>
   );
 }

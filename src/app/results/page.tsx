@@ -8,6 +8,7 @@ import { fetchPaymentTier } from '@/lib/payments';
 import { generateReferrals, Referral } from '@/lib/referrals';
 import { useAuth } from '@/lib/auth-context';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 import { loadAndHydrateProgress } from '@/lib/supabase/progress';
 
@@ -1384,6 +1385,7 @@ function ResultsDashboard() {
           </div>
         </div>
       )}
+      <SiteFooter />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 
 function tierColor(tier: string) {
@@ -67,6 +68,7 @@ export default function MatchesPage() {
           ))}
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

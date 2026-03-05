@@ -7,6 +7,7 @@ import { config, type PricingTier } from '@/lib/config';
 import { fetchPaymentTier, refreshPaymentTier } from '@/lib/payments';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
+import { SiteFooter } from '@/components/SiteFooter';
 
 type PartnerInfo = {
   id: string;
@@ -181,6 +182,7 @@ export default function InvitePage() {
         <main className="flex-1 max-w-2xl mx-auto px-6 py-12 w-full">
           <div className="flex items-center justify-center py-12 text-secondary">Loading...</div>
         </main>
+        <SiteFooter />
       </div>
     );
   }
@@ -350,6 +352,7 @@ export default function InvitePage() {
           </div>
         )}
       </main>
+      <SiteFooter />
     </div>
   );
 }

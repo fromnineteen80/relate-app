@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
+import { SiteFooter } from '@/components/SiteFooter';
 import { useAdvisor } from '@/lib/advisor-context';
 
 function AdvisorRedirect() {
@@ -44,6 +45,7 @@ function AdvisorRedirect() {
           </div>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

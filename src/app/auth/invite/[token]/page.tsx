@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 import { useAuth } from '@/lib/auth-context';
 
 type InviteInfo = {
@@ -138,6 +139,7 @@ export default function InviteAcceptPage() {
             </Link>
           </div>
         </main>
+        <SiteFooter />
       </div>
     );
   }
@@ -154,6 +156,7 @@ export default function InviteAcceptPage() {
             <Link href="/auth/login" className="btn-primary w-full block text-center">Sign In</Link>
           </div>
         </main>
+        <SiteFooter />
       </div>
     );
   }
@@ -178,6 +181,7 @@ export default function InviteAcceptPage() {
             </p>
           </div>
         </main>
+        <SiteFooter />
       </div>
     );
   }
@@ -211,6 +215,7 @@ export default function InviteAcceptPage() {
           </p>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

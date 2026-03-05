@@ -7,6 +7,7 @@ import { PRICING, type PricingTier, config } from '@/lib/config';
 import { fetchPaymentTier } from '@/lib/payments';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
+import { SiteFooter } from '@/components/SiteFooter';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -132,6 +133,7 @@ export default function BillingPage() {
           <h2 className="font-serif text-2xl font-semibold mb-6">Billing</h2>
           <div className="flex items-center justify-center py-12 text-secondary">Loading...</div>
         </main>
+        <SiteFooter />
       </div>
     );
   }
@@ -410,6 +412,7 @@ export default function BillingPage() {
           <Link href="/account" className="text-xs text-secondary hover:underline">Back to Account</Link>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }
