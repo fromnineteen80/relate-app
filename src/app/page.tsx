@@ -88,7 +88,7 @@ export default function LandingPage() {
       <section className="relative pt-16 pb-20 px-6 bg-gradient-to-b from-stone-100 to-background">
         <div className="max-w-3xl mx-auto text-center">
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-4">
-            Fixing the match to partner journey for 112 million U.S. singles.
+            Fixing the match to partner journey<br className="sm:hidden" /> for 112 million U.S. singles
           </p>
           <h1 className="font-serif text-4xl md:text-5xl font-semibold leading-[1.1] mb-6">
             The First Dating Intelligence Layer

@@ -571,7 +571,6 @@ function AccountPage() {
             { id: 'assessment', label: 'Assessment', show: true },
             { id: 'downloads', label: 'Downloads', show: hasResults },
             { id: 'partner', label: 'Partner', show: true },
-            { id: 'coaching', label: 'Ongoing Coaching', show: hasResults && canDownload },
           ].filter(n => n.show).map(n => (
             <a key={n.id} href={`#${n.id}`} className="text-xs font-medium px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap text-secondary hover:text-primary">{n.label}</a>
           ))}
@@ -596,13 +595,10 @@ function AccountPage() {
         )}
 
         {/* ── Profile ── */}
-        <section id="profile" className="card mb-4 scroll-mt-12">
+        <section id="profile" className="card mb-4 scroll-mt-32">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-serif text-lg font-semibold">Profile</h2>
-            <div className="flex gap-2">
-              <Link href="/onboarding/profile" className="text-xs text-accent hover:underline">Edit profile</Link>
-              <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">Edit demographics</Link>
-            </div>
+            <Link href="/onboarding/profile" className="text-xs text-accent hover:underline">Edit</Link>
           </div>
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 border-2 border-border">
@@ -633,11 +629,11 @@ function AccountPage() {
         </section>
 
         {/* ── Subscription ── */}
-        <section id="subscription" className="card mb-4 scroll-mt-12">
+        <section id="subscription" className="card mb-4 scroll-mt-32">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-serif text-lg font-semibold">Subscription</h2>
             {currentTier !== 'free' && currentTier !== 'couples' && (
-              <Link href="/settings/billing" className="text-xs text-accent hover:underline">Edit subscription</Link>
+              <Link href="/settings/billing" className="text-xs text-accent hover:underline">Change</Link>
             )}
           </div>
 
@@ -761,7 +757,7 @@ function AccountPage() {
         </section>
 
         {/* ── Assessment Progress ── */}
-        <section id="assessment" className="card mb-4 scroll-mt-12">
+        <section id="assessment" className="card mb-4 scroll-mt-32">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-serif text-lg font-semibold">Assessment Progress</h2>
             <span className="text-xs font-mono text-secondary">{completedModules}/4 modules</span>
@@ -830,7 +826,7 @@ function AccountPage() {
 
         {/* ── Downloads ── */}
         {hasResults && (
-          <section id="downloads" className="card mb-4 scroll-mt-12">
+          <section id="downloads" className="card mb-4 scroll-mt-32">
             <h2 className="font-serif text-lg font-semibold mb-4">Downloads</h2>
             <div className="space-y-3">
               <div className="flex items-center gap-4 py-2 border-b border-border">
@@ -904,7 +900,7 @@ function AccountPage() {
         )}
 
         {/* ── Partner Connection ── */}
-        <section id="partner" className="card mb-4 scroll-mt-12">
+        <section id="partner" className="card mb-4 scroll-mt-32">
           <h2 className="font-serif text-lg font-semibold mb-4">Partner</h2>
 
           {hasPartner ? (
@@ -1009,7 +1005,7 @@ function AccountPage() {
 
       {/* ── Ongoing Coaching Section (darker background, outside main container) ── */}
       {hasResults && canDownload && (
-        <div id="coaching" ref={coachingSectionRef} className="bg-stone-100 border-t border-border scroll-mt-12">
+        <div id="coaching" ref={coachingSectionRef} className="bg-stone-100 border-t border-border scroll-mt-32">
           <div className="max-w-2xl mx-auto px-6 py-10">
             <h2 className="font-serif text-2xl font-semibold mb-2">Ongoing Coaching</h2>
             <p className="text-sm text-secondary mb-6">

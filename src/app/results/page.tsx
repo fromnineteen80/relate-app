@@ -326,7 +326,6 @@ function ResultsDashboard() {
     { id: 'know-yourself', label: 'Know Yourself', show: hasDimensions || !!m3 || !!m4Summary || !!ic?.attachment || !!(tensionStacks && Object.keys(tensionStacks).length > 0) },
     { id: 'know-your-match', label: 'Know Your Ideal Match', show: !!(ic?.attachmentTiers) || !!modifiers || (hasResults && true) },
     { id: 'know-your-market', label: 'Know Your Market', show: hasMarket },
-    { id: 'coaching', label: 'Coaching', show: hasResults && canDownload },
   ].filter(n => n.show);
 
   // Helper: render a single tension stack card by key
@@ -606,7 +605,7 @@ function ResultsDashboard() {
 
         {/* ── Persona ── */}
         {persona && (
-          <section id="persona" className="card mb-4 scroll-mt-28">
+          <section id="persona" className="card mb-4 scroll-mt-32">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <span className="text-xs font-mono text-secondary uppercase tracking-wider">Your Persona</span>
@@ -685,7 +684,7 @@ function ResultsDashboard() {
 
         {/* ── Matches (below persona) ── */}
         {matches.length > 0 && (
-          <section className="card mb-4 scroll-mt-28">
+          <section className="card mb-4 scroll-mt-32">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-serif text-lg font-semibold">Compatibility Rankings</h3>
               {hasPaid && <Link href="/results/matches" className="text-xs text-accent hover:underline">View all</Link>}
@@ -737,7 +736,7 @@ function ResultsDashboard() {
             GROUP 1: KNOW YOURSELF
         ══════════════════════════════════════════════════ */}
         {(hasDimensions || m3 || m4Summary || ic?.attachment || tensionStacks) && (
-          <div id="know-yourself" className="scroll-mt-28 mb-2">
+          <div id="know-yourself" className="scroll-mt-32 mb-2">
             <div className="flex items-baseline gap-3 mb-4 mt-6">
               <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">01</span>
               <span className="font-mono text-xs text-secondary uppercase tracking-widest">Know Yourself</span>
@@ -747,7 +746,7 @@ function ResultsDashboard() {
 
         {/* ── Dimensions ── */}
         {hasDimensions && (
-          <section className="card mb-4 scroll-mt-28">
+          <section className="card mb-4 scroll-mt-32">
             <h3 className="font-serif text-lg font-semibold mb-4">Dimension Scores</h3>
             <div className="space-y-3">
               {Object.entries(dimensions).map(([dim, data]: [string, any]) => {
@@ -768,7 +767,7 @@ function ResultsDashboard() {
 
         {/* ── Connection Style ── */}
         {m3 && (
-          <section className="card mb-4 scroll-mt-28">
+          <section className="card mb-4 scroll-mt-32">
             <h3 className="font-serif text-lg font-semibold mb-4">Connection Style</h3>
             <div className="grid grid-cols-3 gap-6 text-center mb-4">
               <div>
@@ -950,7 +949,7 @@ function ResultsDashboard() {
 
         {/* ── Conflict Profile ── */}
         {m4Summary && (
-          <section className="card mb-4 scroll-mt-28">
+          <section className="card mb-4 scroll-mt-32">
             <h3 className="font-serif text-lg font-semibold mb-4">Conflict Profile</h3>
             <div className="grid grid-cols-2 gap-3 mb-4">
               {[
@@ -1011,7 +1010,7 @@ function ResultsDashboard() {
             GROUP 2: KNOW YOUR IDEAL MATCH
         ══════════════════════════════════════════════════ */}
         {(ic?.attachmentTiers || modifiers || hasResults) && (
-          <div id="know-your-match" className="scroll-mt-28 mb-2">
+          <div id="know-your-match" className="scroll-mt-32 mb-2">
             <div className="flex items-baseline gap-3 mb-4 mt-10">
               <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">02</span>
               <span className="font-mono text-xs text-secondary uppercase tracking-widest">Know Your Ideal Match</span>
@@ -1253,7 +1252,7 @@ function ResultsDashboard() {
             GROUP 3: KNOW YOUR MARKET
         ══════════════════════════════════════════════════ */}
         {hasMarket && (
-          <div id="know-your-market" className="scroll-mt-28 mb-2">
+          <div id="know-your-market" className="scroll-mt-32 mb-2">
             <div className="flex items-baseline gap-3 mb-4 mt-10">
               <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">03</span>
               <span className="font-mono text-xs text-secondary uppercase tracking-widest">Know Your Market</span>
@@ -1263,7 +1262,7 @@ function ResultsDashboard() {
 
         {/* ── Dating Market ── */}
         {hasMarket && (
-          <div className="scroll-mt-28">
+          <div className="scroll-mt-32">
             <DatingMarketViz data={marketData} loading={marketLoading} />
           </div>
         )}

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { lookupZip } from '@/lib/zip-lookup';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 import { saveProfileToDb, loadProfileFromDb } from '@/lib/supabase/progress';
 
 export default function ProfileSetupPage() {
@@ -331,6 +332,7 @@ export default function ProfileSetupPage() {
           </button>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }
