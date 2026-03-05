@@ -32,6 +32,13 @@ function tierLabel(tier: string) {
   return labels[tier] || tier;
 }
 
+/** Truncate a summary to the first N sentences. */
+function truncateSentences(text: string, max: number): string {
+  const parts = text.match(/[^.!?]+[.!?]+/g);
+  if (!parts || parts.length <= max) return text;
+  return parts.slice(0, max).join('').trim();
+}
+
 export default function MatchesPage() {
   const router = useRouter();
   const [report, setReport] = useState<any>(null);
@@ -52,7 +59,7 @@ export default function MatchesPage() {
       <SubNav />
 
       <main className="max-w-3xl mx-auto px-6 py-8 w-full">
-        <p className="text-xs text-secondary mb-1">Click on each persona summary to read the full match experience</p>
+        <p className="text-xs text-secondary mb-1">Click on each persona to read the full match experience</p>
         <h2 className="font-serif text-2xl font-semibold mb-2">All Compatibility Rankings</h2>
         {persona && (
           <p className="text-sm text-secondary mb-6">
@@ -95,9 +102,9 @@ export default function MatchesPage() {
                 </div>
               </div>
 
-              {/* Compatibility summary */}
+              {/* Compatibility summary — first 3 sentences only on rankings page */}
               {match.summary && (
-                <p className="text-sm text-secondary leading-relaxed mt-3 ml-12">{match.summary}</p>
+                <p className="text-sm text-secondary leading-relaxed mt-3 ml-12">{truncateSentences(match.summary, 3)}</p>
               )}
             </button>
           ))}
