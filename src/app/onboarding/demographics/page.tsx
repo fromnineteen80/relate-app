@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
+import { SiteFooter } from '@/components/SiteFooter';
 import { useAuth } from '@/lib/auth-context';
 import { config } from '@/lib/config';
 import { getSupabase } from '@/lib/supabase/client';
@@ -643,13 +644,6 @@ export default function DemographicsPage() {
           <div className="h-1 flex-1 rounded-full bg-stone-200" />
         </div>
 
-        {/* Section progress */}
-        <div className="flex gap-1 mb-6">
-          {SECTIONS.map((s, i) => (
-            <div key={s.id} className={`h-1 flex-1 rounded-full ${i <= currentSection ? 'bg-accent' : 'bg-stone-200'}`} />
-          ))}
-        </div>
-
         {renderSection()}
 
         {error && <p className="text-sm text-danger mt-4">{error}</p>}
@@ -690,6 +684,7 @@ export default function DemographicsPage() {
           )}
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }
