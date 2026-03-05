@@ -214,7 +214,7 @@ export default function DemographicsPage() {
     switch (currentSection) {
       case 0: {
         const base = form.gender && form.age && form.ethnicity && form.orientation;
-        if (form.gender === 'Woman') return base && form.birthMonth !== '' && form.birthDay && form.birthYear;
+        if (form.gender === 'Woman') return base && form.birthMonth !== '' && form.birthDay && form.birthYear && form.birthHour && form.birthMinute && form.birthAmPm;
         return base;
       }
       case 1: {
@@ -366,7 +366,7 @@ export default function DemographicsPage() {
                 </div>
               </div>
               <div>
-                <label className="label">Birth Time</label>
+                <label className="label">Birth Time *</label>
                 <p className="text-xs text-secondary mb-1">Check your birth certificate — needed for Moon &amp; Rising signs.</p>
                 <div className="grid grid-cols-3 gap-2">
                   <select value={form.birthHour} onChange={e => updateField('birthHour', e.target.value)} className="input">
@@ -654,7 +654,7 @@ export default function DemographicsPage() {
 
         {error && <p className="text-sm text-danger mt-4">{error}</p>}
 
-        <div className="flex justify-between mt-8">
+        <div className="flex justify-between mt-8 gap-2">
           <button
             onClick={() => {
               autoSave();
@@ -667,6 +667,9 @@ export default function DemographicsPage() {
             className="btn-secondary"
           >
             Back
+          </button>
+          <button onClick={autoSave} className="btn-secondary">
+            Save Progress
           </button>
           {currentSection < SECTIONS.length - 1 ? (
             <button

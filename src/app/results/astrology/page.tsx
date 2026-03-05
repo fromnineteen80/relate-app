@@ -15,6 +15,7 @@ import {
   type BirthChartResult,
 } from '@/lib/astrology/engine';
 import { getSignData, ELEMENT_COLORS } from '@/lib/astrology/signs';
+import { generateProfileReads } from '@/lib/astrology/compatibility';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -154,7 +155,7 @@ export default function AstrologyPage() {
     return (
       <div className="min-h-screen flex flex-col">
         <SiteHeader />
-        <main className="flex-1 max-w-2xl mx-auto px-6 py-16 w-full text-center">
+        <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full text-center">
           <h1 className="font-serif text-2xl font-semibold mb-4">Sun, Moon &amp; Rise</h1>
           <p className="text-sm text-secondary mb-6">
             This module is currently available for women only. Check back soon for expanded access.
@@ -170,11 +171,12 @@ export default function AstrologyPage() {
     const sunSign = getSignData(chart.sun.sign);
     const moonSign = getSignData(chart.moon.sign);
     const risingSign = getSignData(chart.rising.sign);
+    const profileReads = generateProfileReads(chart);
 
     const cards = [
-      { label: 'Sun', icon: '☉', placement: chart.sun, data: sunSign, description: sunSign.sunTraits },
-      { label: 'Moon', icon: '☽', placement: chart.moon, data: moonSign, description: moonSign.moonTraits },
-      { label: 'Rising', icon: '↑', placement: chart.rising, data: risingSign, description: risingSign.risingTraits },
+      { label: 'Sun', icon: '☉', placement: chart.sun, data: sunSign, description: profileReads.sunRead },
+      { label: 'Moon', icon: '☽', placement: chart.moon, data: moonSign, description: profileReads.moonRead },
+      { label: 'Rising', icon: 'AC', placement: chart.rising, data: risingSign, description: profileReads.risingRead },
     ];
 
     return (
@@ -183,10 +185,10 @@ export default function AstrologyPage() {
         <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <span className="font-mono text-xs text-secondary">Sun, Moon &amp; Rise</span>
-              <h1 className="font-serif text-3xl font-semibold mt-1">Your Cosmic Blueprint</h1>
+              <span className="font-mono text-xs text-secondary uppercase tracking-wider">Sun, Moon &amp; Rise</span>
+              <h1 className="font-serif text-2xl font-semibold mt-1">Your Cosmic Blueprint</h1>
             </div>
-            <Link href="/results/astrology/cheatsheet" className="btn-secondary text-xs">
+            <Link href="/results/astrology/cheatsheet" className="btn-secondary text-sm">
               Cheat Sheet
             </Link>
           </div>
@@ -222,16 +224,16 @@ export default function AstrologyPage() {
           </div>
 
           {/* ── Summary row ── */}
-          <div className="card mb-6">
+          <div className="card border border-border mb-6">
             <span className="font-mono text-xs text-secondary uppercase tracking-wider">Your Element Balance</span>
             <div className="flex gap-4 mt-3">
               {(['Fire', 'Earth', 'Air', 'Water'] as const).map(el => {
                 const count = cards.filter(c => c.data.element === el).length;
                 const colors = ELEMENT_COLORS[el];
                 return (
-                  <div key={el} className={`flex-1 text-center rounded-md py-2 ${count > 0 ? colors.bg : 'bg-stone-50'}`}>
-                    <span className={`text-lg font-semibold ${count > 0 ? colors.text : 'text-stone-300'}`}>{count}</span>
-                    <p className={`text-xs ${count > 0 ? colors.text : 'text-stone-400'}`}>{el}</p>
+                  <div key={el} className={`flex-1 text-center rounded-md py-2 ${count > 0 ? colors.bg : 'bg-background border border-border'}`}>
+                    <span className={`text-lg font-semibold ${count > 0 ? colors.text : 'text-secondary'}`}>{count}</span>
+                    <p className={`text-xs ${count > 0 ? colors.text : 'text-secondary'}`}>{el}</p>
                   </div>
                 );
               })}
@@ -259,7 +261,7 @@ export default function AstrologyPage() {
       <SiteHeader />
       <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
         <Link href="/results" className="text-xs text-secondary hover:text-foreground mb-4 inline-block">&larr; Back to Results</Link>
-        <span className="font-mono text-xs text-secondary block">Sun, Moon &amp; Rise</span>
+        <span className="font-mono text-xs text-secondary uppercase tracking-wider block">Sun, Moon &amp; Rise</span>
         <h1 className="font-serif text-2xl font-semibold mt-1 mb-2">Enter Your Birth Details</h1>
         <p className="text-sm text-secondary mb-6">
           Your exact birth time and location determine your Moon sign and Rising sign. The more accurate your data, the more accurate your cosmic blueprint.
@@ -354,7 +356,7 @@ export default function AstrologyPage() {
           <button
             onClick={handleCalculate}
             disabled={!canCalculate() || calculating}
-            className="btn-primary w-full mt-4"
+            className="btn-primary w-full mt-4 text-sm"
           >
             {calculating ? 'Calculating...' : 'Calculate My Big Three'}
           </button>

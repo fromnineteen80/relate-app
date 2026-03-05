@@ -311,11 +311,21 @@ export default function ProfileSetupPage() {
           </div>
         </div>
 
-        <div className="mt-8">
+        <div className="mt-8 flex gap-2">
+          <button
+            onClick={() => {
+              saveProfile();
+              setSavedToast(true);
+              setTimeout(() => setSavedToast(false), 1500);
+            }}
+            className="btn-secondary flex-1"
+          >
+            Save Progress
+          </button>
           <button
             onClick={handleContinue}
             disabled={!canContinue}
-            className="btn-primary w-full"
+            className="btn-primary flex-1"
           >
             Continue to Demographics
           </button>
