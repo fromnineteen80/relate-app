@@ -9,6 +9,24 @@ import { SubNav } from '@/components/SubNav';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+const CODE_TO_POLE: Record<string, 'A' | 'B'> = {
+  A: 'A', B: 'B', C: 'A', D: 'B', E: 'A', F: 'B', G: 'A', H: 'B',
+};
+
+const DIMS = ['physical', 'social', 'lifestyle', 'values'] as const;
+
+function getCodeKeys(code: string, m2Poles: any): Array<{ dim: string; pole: string; description: string }> {
+  if (!code || code.length !== 4) return [];
+  return DIMS.map((dim, i) => {
+    const letter = code[i];
+    const poleKey = CODE_TO_POLE[letter] || 'A';
+    const poleName = m2Poles?.[dim]?.[poleKey] || letter;
+    const descKey = poleKey === 'A' ? 'descriptionA' : 'descriptionB';
+    const description = m2Poles?.[dim]?.[descKey] || m2Poles?.[dim]?.description || '';
+    return { dim, pole: poleName, description };
+  });
+}
+
 function tierLabel(tier: string) {
   const labels: Record<string, string> = {
     ideal: 'Ideal', kismet: 'Kismet', effort: 'Effort',
@@ -132,6 +150,29 @@ export default function MatchDetailPage() {
         </div>
 
         {match.traits && <p className="text-secondary mb-6">{match.traits}</p>}
+
+        {/* Dimension cards */}
+        {(() => {
+          const codeKeys = getCodeKeys(match.code, report.matchM2Poles);
+          if (codeKeys.length === 0) return null;
+          return (
+            <section className="mt-2 mb-8">
+              <div className="flex flex-wrap gap-3">
+                {codeKeys.map((k) => (
+                  <div key={k.dim} className="card text-center flex-1 min-w-[120px]">
+                    <span className="inline-block text-xs border border-accent text-accent rounded-md px-3 py-1.5 mb-1.5 font-medium capitalize">
+                      {k.dim}
+                    </span>
+                    <p className="font-serif text-sm font-semibold text-primary mb-1">{k.pole}</p>
+                    {k.description && (
+                      <p className="text-[11px] text-secondary/80 leading-snug">{k.description}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          );
+        })()}
 
         {/* Compatibility summary */}
         {match.summary && (
