@@ -56,8 +56,7 @@ export default function PersonaPage() {
         {/* traits string removed per design */}
 
         {codeKeys.length > 0 && (
-          <section className="mb-6">
-            <h3 className="font-serif text-lg font-semibold mb-3">Code Key</h3>
+          <section className="mt-8 mb-6">
             <div className="flex flex-wrap gap-3">
               {codeKeys.map((k) => (
                 <div key={k.dim} className="card text-center flex-1 min-w-[120px]">
