@@ -46,21 +46,18 @@ export default function MatchesPage() {
         <div className="space-y-3">
           {report.matches.map((match: any) => (
             <Link key={match.code} href={`/results/match/${match.code}`} className="card block hover:border-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <span className="font-mono text-lg text-secondary w-8">{match.rank}</span>
-                  <div>
+              <div className="flex items-start justify-between gap-6 flex-wrap">
+                <div className="flex items-start gap-4 min-w-0">
+                  <span className="font-mono text-lg text-secondary w-8 shrink-0">{match.rank}</span>
+                  <div className="min-w-0">
                     <h3 className="font-serif font-semibold">{match.name}</h3>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs text-secondary">{match.code}</span>
-                      <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>
-                    </div>
+                    <span className="font-mono text-xs text-secondary">{match.code}</span>
                     {match.traits && <p className="text-xs text-secondary mt-1">{match.traits}</p>}
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-right shrink-0">
                   <span className="font-mono text-xl font-semibold">{match.compatibilityScore}</span>
-                  <p className="text-xs text-secondary">compatibility</p>
+                  <p className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</p>
                 </div>
               </div>
               {match.summary && <p className="text-sm text-secondary mt-2">{match.summary}</p>}
