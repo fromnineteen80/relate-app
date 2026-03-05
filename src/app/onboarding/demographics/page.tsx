@@ -9,6 +9,10 @@ import { getSupabase } from '@/lib/supabase/client';
 import { isProfileComplete, getProfile } from '@/lib/onboarding';
 import { loadDemographicsFromDb, saveDemographicsToDb } from '@/lib/supabase/progress';
 
+const BIRTH_MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
 const ETHNICITIES = ['White','Hispanic/Latino','Black','Asian','Native American','Pacific Islander','Other/Mixed'];
 const ORIENTATIONS = ['Straight','Gay/Lesbian','Bisexual','Other'];
 const EDUCATION_LEVELS = ['Less than High School','High School Graduate','Trade/Vocational','Associate Degree','Some College','Bachelor\'s Degree','Graduate Degree'];
@@ -23,6 +27,12 @@ const POLITICAL_VIEWS = ['Apolitical','Liberal','Moderate','Conservative'];
 type FormData = {
   gender: string;
   age: string;
+  birthMonth: string;
+  birthDay: string;
+  birthYear: string;
+  birthHour: string;
+  birthMinute: string;
+  birthAmPm: 'AM' | 'PM' | '';
   ethnicity: string;
   orientation: string;
   income: number;
@@ -69,7 +79,8 @@ export default function DemographicsPage() {
   const [savedToast, setSavedToast] = useState(false);
 
   const [form, setForm] = useState<FormData>({
-    gender: '', age: '', ethnicity: '', orientation: 'Straight',
+    gender: '', age: '', birthMonth: '', birthDay: '', birthYear: '', birthHour: '', birthMinute: '', birthAmPm: '',
+    ethnicity: '', orientation: 'Straight',
     income: 50000, education: '', height: '', bodyType: '', fitness: '',
     political: '', smoking: '', hasKids: '', wantKids: '', relationshipStatus: '',
     prefAgeMin: '', prefAgeMax: '', prefIncome: 0, prefHeight: '',
@@ -98,6 +109,12 @@ export default function DemographicsPage() {
             ...prev,
             gender: d.gender === 'M' ? 'Man' : d.gender === 'W' ? 'Woman' : d.gender || '',
             age: d.age?.toString() || '',
+            birthMonth: d.birth_month?.toString() ?? '',
+            birthDay: d.birth_day?.toString() ?? '',
+            birthYear: d.birth_year?.toString() ?? '',
+            birthHour: d.birth_hour?.toString() ?? '',
+            birthMinute: d.birth_minute?.toString() ?? '',
+            birthAmPm: d.birth_ampm || '',
             ethnicity: d.ethnicity || '',
             orientation: d.orientation || 'Straight',
             income: d.income ?? 50000,
@@ -195,7 +212,11 @@ export default function DemographicsPage() {
 
   function canAdvance() {
     switch (currentSection) {
-      case 0: return form.gender && form.age && form.ethnicity && form.orientation;
+      case 0: {
+        const base = form.gender && form.age && form.ethnicity && form.orientation;
+        if (form.gender === 'Woman') return base && form.birthMonth !== '' && form.birthDay && form.birthYear && form.birthHour && form.birthMinute && form.birthAmPm;
+        return base;
+      }
       case 1: {
         const base = form.income >= 0 && form.education && form.bodyType && form.fitness &&
           form.political && form.smoking && form.hasKids && form.wantKids && form.relationshipStatus;
@@ -257,7 +278,30 @@ export default function DemographicsPage() {
       pref_political: form.prefPolitical,
       pref_education_min: null,
       seeking: form.seeking,
+      birth_month: form.birthMonth ? parseInt(form.birthMonth) : null,
+      birth_day: form.birthDay ? parseInt(form.birthDay) : null,
+      birth_year: form.birthYear ? parseInt(form.birthYear) : null,
+      birth_hour: form.birthHour ? parseInt(form.birthHour) : null,
+      birth_minute: form.birthMinute ? parseInt(form.birthMinute) : null,
+      birth_ampm: form.birthAmPm || null,
     };
+
+    // If woman with birth data, pre-populate astrology birth data
+    if (form.gender === 'Woman' && form.birthMonth && form.birthDay && form.birthYear) {
+      const h12 = parseInt(form.birthHour || '12');
+      const ap = form.birthAmPm || 'PM';
+      const h24 = ap === 'PM' ? (h12 === 12 ? 12 : h12 + 12) : (h12 === 12 ? 0 : h12);
+      const astroBirth = {
+        year: parseInt(form.birthYear),
+        month: parseInt(form.birthMonth),
+        day: parseInt(form.birthDay),
+        hour: h24,
+        minute: parseInt(form.birthMinute || '0'),
+        latitude: 0,
+        longitude: 0,
+      };
+      localStorage.setItem('relate_astrology_birth_data', JSON.stringify(astroBirth));
+    }
 
     if (config.useMockAuth) {
       localStorage.setItem('relate_demographics', JSON.stringify(userData));
@@ -301,6 +345,51 @@ export default function DemographicsPage() {
             <input type="number" value={form.age} onChange={e => updateField('age', e.target.value)}
               className="input" min={18} max={100} placeholder="25" />
           </div>
+          {form.gender === 'Woman' && (
+            <>
+              <div>
+                <label className="label">Birthday *</label>
+                <p className="text-xs text-secondary mb-1">Used for your Sun, Moon &amp; Rise profile.</p>
+                <div className="grid grid-cols-3 gap-2">
+                  <select value={form.birthMonth} onChange={e => updateField('birthMonth', e.target.value)} className="input">
+                    <option value="">Month</option>
+                    {BIRTH_MONTHS.map((m, i) => <option key={m} value={i}>{m}</option>)}
+                  </select>
+                  <select value={form.birthDay} onChange={e => updateField('birthDay', e.target.value)} className="input">
+                    <option value="">Day</option>
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map(d => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
+                  <input type="number" value={form.birthYear} onChange={e => updateField('birthYear', e.target.value)}
+                    className="input" placeholder="Year" min={1900} max={2025} />
+                </div>
+              </div>
+              <div>
+                <label className="label">Birth Time *</label>
+                <p className="text-xs text-secondary mb-1">Check your birth certificate — needed for Moon &amp; Rising signs.</p>
+                <div className="grid grid-cols-3 gap-2">
+                  <select value={form.birthHour} onChange={e => updateField('birthHour', e.target.value)} className="input">
+                    <option value="">Hour</option>
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
+                      <option key={h} value={h}>{h}</option>
+                    ))}
+                  </select>
+                  <select value={form.birthMinute} onChange={e => updateField('birthMinute', e.target.value)} className="input">
+                    <option value="">Min</option>
+                    {Array.from({ length: 60 }, (_, i) => (
+                      <option key={i} value={String(i).padStart(2, '0')}>{String(i).padStart(2, '0')}</option>
+                    ))}
+                  </select>
+                  <select value={form.birthAmPm} onChange={e => updateField('birthAmPm', e.target.value)} className="input">
+                    <option value="">AM/PM</option>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                  </select>
+                </div>
+              </div>
+            </>
+          )}
           <div>
             <label className="label">Ethnicity *</label>
             <select value={form.ethnicity} onChange={e => updateField('ethnicity', e.target.value)} className="input">
@@ -565,7 +654,7 @@ export default function DemographicsPage() {
 
         {error && <p className="text-sm text-danger mt-4">{error}</p>}
 
-        <div className="flex justify-between mt-8">
+        <div className="flex justify-between mt-8 gap-2">
           <button
             onClick={() => {
               autoSave();
@@ -578,6 +667,9 @@ export default function DemographicsPage() {
             className="btn-secondary"
           >
             Back
+          </button>
+          <button onClick={autoSave} className="btn-secondary">
+            Save Progress
           </button>
           {currentSection < SECTIONS.length - 1 ? (
             <button
