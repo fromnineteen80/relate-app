@@ -61,10 +61,10 @@ export default function PersonaPage() {
             <div className="flex flex-wrap gap-3">
               {codeKeys.map((k) => (
                 <div key={k.dim} className="card text-center flex-1 min-w-[120px]">
-                  <span className="inline-block text-xs border border-border rounded-md px-3 py-1.5 mb-1.5 font-medium">
-                    {k.pole}
+                  <span className="inline-block text-xs border border-accent text-accent rounded-md px-3 py-1.5 mb-1.5 font-medium capitalize">
+                    {k.dim}
                   </span>
-                  <p className="text-xs text-secondary capitalize mb-1">{k.dim}</p>
+                  <p className="font-serif text-sm font-semibold text-primary mb-1">{k.pole}</p>
                   {k.description && (
                     <p className="text-[11px] text-secondary/80 leading-snug">{k.description}</p>
                   )}
