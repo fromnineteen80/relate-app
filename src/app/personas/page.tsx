@@ -70,6 +70,7 @@ export default function PersonasPage() {
   const [userPersonaName, setUserPersonaName] = useState<string | null>(null);
   const [userGender, setUserGender] = useState<string | null>(null);
   const [userMatches, setUserMatches] = useState<MatchResult[]>([]);
+  const [bestMatchCode, setBestMatchCode] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -113,6 +114,9 @@ export default function PersonasPage() {
         setUserPersonaCode(parsed.persona?.code || null);
         setUserPersonaName(parsed.persona?.name || null);
         setUserMatches(parsed.matches || []);
+        if (parsed.matches?.length > 0) {
+          setBestMatchCode(parsed.matches[0].code);
+        }
       } catch { /* ignore */ }
     }
     setUserGender(localStorage.getItem('relate_gender'));
@@ -226,13 +230,15 @@ export default function PersonasPage() {
         <div className="space-y-3">
           {personas.map((persona) => {
             const isExpanded = expandedCode === persona.code;
-            const isUserPersona = userPersonaCode === persona.code;
+            const userGenderTab = userGender === 'M' ? 'male' : 'female';
+            const isUserPersona = userPersonaCode === persona.code && activeTab === userGenderTab;
+            const isBestMatch = bestMatchCode === persona.code && activeTab !== userGenderTab && !!userGender;
             const dims = decodeDimensions(persona.code, activeTab);
 
             return (
               <div
                 key={persona.code}
-                className={`card transition-all ${isUserPersona ? 'border-accent' : ''}`}
+                className={`card transition-all ${isUserPersona ? 'border-accent' : isBestMatch ? 'border-success' : ''}`}
               >
                 {/* Collapsed view */}
                 <button
@@ -246,6 +252,9 @@ export default function PersonasPage() {
                         <h3 className="font-serif text-lg font-semibold">{persona.name}</h3>
                         {isUserPersona && (
                           <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-full font-mono">You</span>
+                        )}
+                        {isBestMatch && (
+                          <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded-full font-mono">Best Match</span>
                         )}
                       </div>
                       <p className="text-xs text-secondary">{dims.join(' + ')}</p>
