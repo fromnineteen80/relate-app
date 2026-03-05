@@ -212,7 +212,7 @@ export default function ProfileSettings() {
                 <p className="text-sm font-medium">Partner Preferences</p>
                 <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">Edit</Link>
               </div>
-              <InfoRow label="Age Range" value={`${demographics.pref_age_min} – ${demographics.pref_age_max}`} />
+              <InfoRow label="Age Range" value={`${demographics.pref_age_min} to ${demographics.pref_age_max}`} />
               <InfoRow label="Min Income" value={demographics.pref_income_min != null ? formatCurrency(demographics.pref_income_min) : null} />
               <InfoRow label="Min Height" value={demographics.pref_height_min} />
               <InfoRow label="Body Types" value={demographics.pref_body_types?.join(', ')} />
