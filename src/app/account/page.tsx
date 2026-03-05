@@ -158,6 +158,7 @@ function AccountPage() {
   const [hasPartner, setHasPartner] = useState(false);
   const [partnerEmail, setPartnerEmail] = useState<string | null>(null);
   const [partnerName, setPartnerName] = useState<string | null>(null);
+  const [connectedAt, setConnectedAt] = useState<string | null>(null);
   const [moduleProgress, setModuleProgress] = useState<Record<number, boolean>>({});
   const [mockUpgrading, setMockUpgrading] = useState(false);
   const [profileData, setProfileData] = useState<{ firstName: string; lastName: string; photoUrl: string | null } | null>(null);
@@ -272,6 +273,7 @@ function AccountPage() {
               ? `${data.partner.firstName}${data.partner.lastName ? ` ${data.partner.lastName}` : ''}`
               : null;
             setPartnerName(name);
+            if (data.connectedAt) setConnectedAt(data.connectedAt);
             localStorage.setItem('relate_partner_email', data.partner.email);
             localStorage.setItem('relate_partner_results', 'true');
           }
@@ -570,10 +572,9 @@ function AccountPage() {
         { id: 'subscription', label: 'Subscription', href: '#subscription', show: true },
         { id: 'assessment', label: 'Assessment', href: '#assessment', show: true },
         { id: 'downloads', label: 'Downloads', href: '#downloads', show: hasResults },
-        { id: 'partner', label: 'Partner', href: '#partner', show: true },
       ]} />
 
-      <main className="flex-1 max-w-2xl mx-auto px-6 py-8 w-full">
+      <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
         <div className="flex items-center justify-between mb-8">
           <h1 className="font-serif text-3xl font-semibold">Account</h1>
           <Link href="/results" className="text-sm text-accent hover:underline">See Results →</Link>
@@ -624,133 +625,166 @@ function AccountPage() {
           </div>
         </section>
 
-        {/* ── Subscription ── */}
-        <section id="subscription" className="card mb-4 scroll-mt-32">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-serif text-lg font-semibold">Subscription</h2>
-            {currentTier !== 'free' && currentTier !== 'couples' && (
-              <Link href="/settings/billing" className="text-xs text-accent hover:underline">Change</Link>
-            )}
-          </div>
+        {/* ── Subscription & Partner ── */}
+        <div id="subscription" className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 scroll-mt-32">
+          {/* Subscription Card */}
+          <section className="card">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-serif text-lg font-semibold">Subscription</h2>
+              {currentTier !== 'free' && currentTier !== 'couples' && (
+                <Link href="/settings/billing" className="text-xs text-accent hover:underline">Change</Link>
+              )}
+            </div>
 
-          <div className={`flex items-center gap-3 p-3 mb-4 rounded-md border ${
-            currentTier !== 'free' ? 'bg-stone-50 border-stone-300' : 'bg-stone-50 border-border'
-          }`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${
-              currentTier !== 'free' ? 'bg-stone-200 text-stone-600' : 'bg-stone-200 text-secondary'
+            <div className={`flex items-center gap-3 p-3 mb-4 rounded-md border ${
+              currentTier !== 'free' ? 'bg-stone-50 border-stone-300' : 'bg-stone-50 border-border'
             }`}>
-              {currentTier !== 'free' ? '✓' : '-'}
-            </div>
-            <div>
-              <p className="text-sm font-medium">{(PRICING[currentTier]?.label || currentTier)}: Active</p>
-              <p className="text-xs text-secondary">
-                {currentTier === 'free' && 'Persona code, top 3 matches, 3 advisor messages.'}
-                {currentTier === 'plus' && 'Full report, all 16 matches, PDF download.'}
-                {currentTier === 'premium' && 'Plus features + rate-limited AI advisor + retake assessment.'}
-                {currentTier === 'pro' && 'Everything in Premium + unlimited AI advisor.'}
-                {currentTier === 'couples' && 'Everything for both partners, couples report, shared advisor.'}
-              </p>
-            </div>
-          </div>
-
-          {/* Couples partner in subscription */}
-          {currentTier === 'couples' && hasPartner && (
-            <div className="flex items-center gap-3 p-3 mb-4 rounded-md border border-success/20 bg-success/5">
-              <div className="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center text-xs font-medium flex-shrink-0">
-                {partnerName ? partnerName.charAt(0).toUpperCase() : partnerEmail?.charAt(0).toUpperCase() || '?'}
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${
+                currentTier !== 'free' ? 'bg-stone-200 text-stone-600' : 'bg-stone-200 text-secondary'
+              }`}>
+                {currentTier !== 'free' ? '✓' : '-'}
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium truncate">Paired with {partnerName || partnerEmail || 'partner'}</p>
+              <div>
+                <p className="text-sm font-medium">{(PRICING[currentTier]?.label || currentTier)}: Active</p>
+                <p className="text-xs text-secondary">
+                  {currentTier === 'free' && 'Persona code, top 3 matches, 3 advisor messages.'}
+                  {currentTier === 'plus' && 'Full report, all 16 matches, PDF download.'}
+                  {currentTier === 'premium' && 'Plus features + rate-limited AI advisor + retake assessment.'}
+                  {currentTier === 'pro' && 'Everything in Premium + unlimited AI advisor.'}
+                  {currentTier === 'couples' && 'Everything for both partners, couples report, shared advisor.'}
+                </p>
               </div>
-              <Link href="/invite" className="text-xs text-accent hover:underline flex-shrink-0">Manage</Link>
             </div>
-          )}
 
-          {currentTier === 'free' && (
-            <div className="mb-3">
-              <TestAccessCard />
-            </div>
-          )}
+            {currentTier === 'free' && (
+              <div className="mb-3">
+                <TestAccessCard />
+              </div>
+            )}
 
-          {currentTier !== 'couples' && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {TIER_ORDER.filter(t => t !== 'free' && t !== currentTier).map(tier => {
-                const isUpgrade = tierIndex(tier) > tierIndex(currentTier);
-                return (
-                <div key={tier} className={`p-3 border rounded-md ${isUpgrade ? 'border-border' : 'border-border opacity-80'}`}>
-                  <p className="text-sm font-medium">{(PRICING[tier]?.label || tier)}</p>
-                  <p className="font-serif text-xl font-semibold my-1">{(PRICING[tier]?.priceDisplay || '')}</p>
-                  <p className="text-xs text-secondary mb-3">
-                    {tier === 'plus' && 'All 16 matches, conflict analysis, growth path, PDF report.'}
-                    {tier === 'premium' && 'Plus features + rate-limited AI advisor + retake assessment.'}
-                    {tier === 'pro' && 'Everything in Premium + unlimited AI advisor.'}
-                    {tier === 'couples' && 'Pro for both + compatibility report + shared tools.'}
-                  </p>
-                  {isUpgrade ? (
-                    config.useMockPayments ? (
-                      <button onClick={() => handleMockUpgrade(tier)} className="text-xs w-full btn-secondary" disabled={mockUpgrading}>
-                        {mockUpgrading ? 'Processing...' : `Upgrade to ${(PRICING[tier]?.label || tier)}`}
-                      </button>
+            {currentTier !== 'couples' && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {TIER_ORDER.filter(t => t !== 'free' && t !== currentTier).map(tier => {
+                  const isUpgrade = tierIndex(tier) > tierIndex(currentTier);
+                  return (
+                  <div key={tier} className={`p-3 border rounded-md ${isUpgrade ? 'border-border' : 'border-border opacity-80'}`}>
+                    <p className="text-sm font-medium">{(PRICING[tier]?.label || tier)}</p>
+                    <p className="font-serif text-xl font-semibold my-1">{(PRICING[tier]?.priceDisplay || '')}</p>
+                    <p className="text-xs text-secondary mb-3">
+                      {tier === 'plus' && 'All 16 matches, conflict analysis, growth path, PDF report.'}
+                      {tier === 'premium' && 'Plus features + rate-limited AI advisor + retake assessment.'}
+                      {tier === 'pro' && 'Everything in Premium + unlimited AI advisor.'}
+                      {tier === 'couples' && 'Pro for both + compatibility report + shared tools.'}
+                    </p>
+                    {isUpgrade ? (
+                      config.useMockPayments ? (
+                        <button onClick={() => handleMockUpgrade(tier)} className="text-xs w-full btn-secondary" disabled={mockUpgrading}>
+                          {mockUpgrading ? 'Processing...' : `Upgrade to ${(PRICING[tier]?.label || tier)}`}
+                        </button>
+                      ) : (
+                        <a href={`/api/checkout?product=${tier}&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
+                          Upgrade to {(PRICING[tier]?.label || tier)}
+                        </a>
+                      )
                     ) : (
-                      <a href={`/api/checkout?product=${tier}&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
-                        Upgrade to {(PRICING[tier]?.label || tier)}
-                      </a>
-                    )
-                  ) : (
-                    <button onClick={() => {
-                      if (confirm(`Downgrade to ${PRICING[tier]?.label || tier}? Your current plan features will remain active until the end of this billing period.`)) {
-                        localStorage.setItem('relate_payment_tier', JSON.stringify({ tier, timestamp: Date.now() }));
-                        setCurrentTier(tier);
-                      }
-                    }} className="text-xs w-full btn-secondary">
-                      Downgrade to {(PRICING[tier]?.label || tier)}
-                    </button>
-                  )}
-                  {!isUpgrade && (
-                    <p className="text-[10px] text-secondary mt-2 text-center">Takes effect at the start of your next billing period.</p>
-                  )}
-                </div>
-                );
-              })}
-            </div>
-          )}
+                      <button onClick={() => {
+                        if (confirm(`Downgrade to ${PRICING[tier]?.label || tier}? Your current plan features will remain active until the end of this billing period.`)) {
+                          localStorage.setItem('relate_payment_tier', JSON.stringify({ tier, timestamp: Date.now() }));
+                          setCurrentTier(tier);
+                        }
+                      }} className="text-xs w-full btn-secondary">
+                        Downgrade to {(PRICING[tier]?.label || tier)}
+                      </button>
+                    )}
+                    {!isUpgrade && (
+                      <p className="text-[10px] text-secondary mt-2 text-center">Takes effect at the start of your next billing period.</p>
+                    )}
+                  </div>
+                  );
+                })}
+              </div>
+            )}
 
-          {/* Discount Code */}
-          <div className="mt-4 pt-4 border-t border-border">
-            {activeDiscountCode ? (
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded">Discount Active</span>
-                <span className="text-xs font-mono">{activeDiscountCode}</span>
+            {/* Discount Code */}
+            <div className="mt-4 pt-4 border-t border-border">
+              {activeDiscountCode ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded">Discount Active</span>
+                  <span className="text-xs font-mono">{activeDiscountCode}</span>
+                </div>
+              ) : (
+                <>
+                  <p className="text-xs text-secondary mb-2">Have a discount code?</p>
+                  <form onSubmit={handleDiscountCode} className="flex gap-2">
+                    <input
+                      type="text"
+                      value={discountCode}
+                      onChange={e => setDiscountCode(e.target.value.toUpperCase())}
+                      placeholder="Enter code"
+                      className="input flex-1 text-xs font-mono"
+                    />
+                    <button
+                      type="submit"
+                      disabled={discountSubmitting || !discountCode.trim()}
+                      className="btn-secondary text-xs whitespace-nowrap"
+                    >
+                      {discountSubmitting ? 'Applying...' : 'Apply'}
+                    </button>
+                  </form>
+                  {discountResult?.success && (
+                    <p className="text-xs text-success mt-2">{discountResult.message}</p>
+                  )}
+                  {discountResult?.error && (
+                    <p className="text-xs text-danger mt-2">{discountResult.error}</p>
+                  )}
+                </>
+              )}
+            </div>
+          </section>
+
+          {/* Partner Card */}
+          <section className="card">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-serif text-lg font-semibold">Partner</h2>
+              {hasPartner && <Link href="/invite" className="text-xs text-accent hover:underline">Manage</Link>}
+            </div>
+
+            {hasPartner ? (
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 p-3 bg-success/5 border border-success/20 rounded-md">
+                  <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center text-lg font-medium flex-shrink-0">
+                    {partnerName ? partnerName.charAt(0).toUpperCase() : partnerEmail?.charAt(0).toUpperCase() || '?'}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium truncate">{partnerName || partnerEmail || 'Partner'}</p>
+                      <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
+                    </div>
+                    {partnerName && partnerEmail && <p className="text-xs text-secondary truncate">{partnerEmail}</p>}
+                    {connectedAt && (
+                      <p className="text-xs text-secondary mt-0.5">Connected {new Date(connectedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                    )}
+                  </div>
+                </div>
+                {currentTier === 'couples' ? (
+                  <Link href="/results/compare" className="btn-primary text-xs w-full text-center block">View Couples Results</Link>
+                ) : (
+                  <div>
+                    <p className="text-xs text-secondary mb-2">Upgrade to Couples tier to unlock your compatibility report.</p>
+                    <Link href="/invite" className="btn-primary text-xs w-full text-center block">Activate Couples</Link>
+                  </div>
+                )}
               </div>
             ) : (
-              <>
-                <p className="text-xs text-secondary mb-2">Have a discount code?</p>
-                <form onSubmit={handleDiscountCode} className="flex gap-2">
-                  <input
-                    type="text"
-                    value={discountCode}
-                    onChange={e => setDiscountCode(e.target.value.toUpperCase())}
-                    placeholder="Enter code"
-                    className="input flex-1 text-xs font-mono"
-                  />
-                  <button
-                    type="submit"
-                    disabled={discountSubmitting || !discountCode.trim()}
-                    className="btn-secondary text-xs whitespace-nowrap"
-                  >
-                    {discountSubmitting ? 'Applying...' : 'Apply'}
-                  </button>
-                </form>
-                {discountResult?.success && (
-                  <p className="text-xs text-success mt-2">{discountResult.message}</p>
-                )}
-                {discountResult?.error && (
-                  <p className="text-xs text-danger mt-2">{discountResult.error}</p>
-                )}
-              </>
+              <div className="space-y-4">
+                <p className="text-sm text-secondary">
+                  Connect with your partner by email to unlock your couples compatibility results.
+                </p>
+                <Link href="/invite" className="btn-primary text-xs inline-block">Connect Partner</Link>
+              </div>
             )}
-          </div>
-        </section>
+          </section>
+        </div>
 
         {/* ── Assessment Progress ── */}
         <section id="assessment" className="card mb-4 scroll-mt-32">
@@ -895,47 +929,6 @@ function AccountPage() {
           </section>
         )}
 
-        {/* ── Partner Connection ── */}
-        <section id="partner" className="card mb-4 scroll-mt-32">
-          <h2 className="font-serif text-lg font-semibold mb-4">Partner</h2>
-
-          {hasPartner ? (
-            <div className="space-y-3">
-              <div className="flex items-center gap-4 p-3 bg-success/5 border border-success/20 rounded-md">
-                <div className="w-10 h-10 rounded-full bg-accent/10 text-accent flex items-center justify-center text-sm font-medium flex-shrink-0">
-                  {partnerName ? partnerName.charAt(0).toUpperCase() : partnerEmail?.charAt(0).toUpperCase() || '?'}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium truncate">{partnerName || partnerEmail || 'Partner'}</p>
-                    <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
-                  </div>
-                  {partnerName && partnerEmail && <p className="text-xs text-secondary truncate">{partnerEmail}</p>}
-                </div>
-              </div>
-              {currentTier === 'couples' ? (
-                <div className="flex gap-2">
-                  <Link href="/results/compare" className="btn-primary text-xs">View Couples Results</Link>
-                  <Link href="/invite" className="btn-secondary text-xs">Manage</Link>
-                </div>
-              ) : (
-                <div>
-                  <p className="text-xs text-secondary mb-2">Upgrade to Couples tier to unlock your compatibility report.</p>
-                  <div className="flex gap-2">
-                    <Link href="/invite" className="btn-primary text-xs">Activate Couples</Link>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <p className="text-sm text-secondary">
-                Connect with your partner by email to unlock your couples compatibility results.
-              </p>
-              <Link href="/invite" className="btn-primary text-xs inline-block">Connect Partner</Link>
-            </div>
-          )}
-        </section>
 
         {/* ── Quick Links ── */}
         <section className="card mb-4">
