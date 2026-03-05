@@ -161,14 +161,14 @@ const DRIVER_COMPATIBILITY: Record<string, {
     kismet: ['injustice'],
     effort: ['inadequacy'],
     avoid: ['engulfment'],
-    description: 'You need a partner who understands abandonment fear. Avoid partners with strong engulfment fears — your pursuit will feel suffocating to them.',
+    description: 'You need a partner who understands abandonment fear. Avoid partners with strong engulfment fears, as your pursuit will feel suffocating to them.',
   },
   engulfment: {
     ideal: ['engulfment'],
     kismet: ['injustice'],
     effort: ['inadequacy'],
     avoid: ['abandonment'],
-    description: 'You need a partner who respects space needs. Avoid partners with strong abandonment fears — your need for distance will feel like rejection.',
+    description: 'You need a partner who respects space needs. Avoid partners with strong abandonment fears, as your need for distance will feel like rejection.',
   },
   inadequacy: {
     ideal: ['inadequacy'],
@@ -226,7 +226,7 @@ export function inferAttachmentStyle(m4Data: any): AttachmentResult {
     return {
       style: 'disorganized',
       confidence: Math.min(abandonment, engulfment) / 100,
-      description: 'You experience contradictory impulses — wanting closeness but fearing it simultaneously. This creates unpredictable patterns in relationships.',
+      description: 'You experience contradictory impulses, wanting closeness but fearing it simultaneously. This creates unpredictable patterns in relationships.',
     };
   }
 

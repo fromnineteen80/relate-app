@@ -137,7 +137,7 @@ export default function MatchDetailPage() {
         {match.summary && (
           <section className="card mb-4 border-accent/30">
             <h3 className="font-serif font-semibold mb-2">Compatibility Summary</h3>
-            <p className="text-sm text-secondary leading-relaxed">{match.summary}</p>
+            <p className="text-sm text-secondary leading-relaxed">{match.summary.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>
           </section>
         )}
 

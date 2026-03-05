@@ -104,7 +104,7 @@ export default function MatchesPage() {
 
               {/* Compatibility summary, first 3 sentences only on rankings page */}
               {match.summary && (
-                <p className="text-sm text-secondary leading-relaxed mt-3 ml-12">{truncateSentences(match.summary, 3)}</p>
+                <p className="text-sm text-secondary leading-relaxed mt-3 ml-12">{truncateSentences(match.summary.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ','), 3)}</p>
               )}
             </button>
           ))}

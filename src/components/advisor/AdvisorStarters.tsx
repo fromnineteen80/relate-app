@@ -14,7 +14,7 @@ export default function AdvisorStarters() {
     <div className="text-center py-8 px-2">
       <p className="text-xs text-secondary mb-1">How can I help?</p>
       <p className="text-[10px] text-secondary mb-4">
-        {tierLabel} plan — {limitLabel}
+        {tierLabel} plan: {limitLabel}
       </p>
       <div className="flex flex-col gap-2">
         {starters.map(q => (

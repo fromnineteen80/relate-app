@@ -84,9 +84,9 @@ export default function AdvisorMessages() {
                   Free includes 3 messages per session. Upgrade for more:
                 </p>
                 <div className="space-y-1 text-xs text-secondary mb-3 text-left max-w-[260px] mx-auto">
-                  <div className="flex justify-between"><span>Premium</span><span className="font-mono">25 msgs/session — $49.99</span></div>
-                  <div className="flex justify-between"><span>Pro</span><span className="font-mono">Unlimited — $69.99</span></div>
-                  <div className="flex justify-between"><span>Couples</span><span className="font-mono">Unlimited — $119</span></div>
+                  <div className="flex justify-between"><span>Premium</span><span className="font-mono">25 msgs/session, $49.99</span></div>
+                  <div className="flex justify-between"><span>Pro</span><span className="font-mono">Unlimited, $69.99</span></div>
+                  <div className="flex justify-between"><span>Couples</span><span className="font-mono">Unlimited, $119</span></div>
                 </div>
                 <a href="/account" className="inline-block bg-accent text-white px-4 py-2 rounded-md text-xs font-medium hover:bg-accent-hover">
                   View Plans
