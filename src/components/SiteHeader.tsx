@@ -51,6 +51,13 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
   const hasCouplesAccess = typeof window !== 'undefined'
     ? !!(localStorage.getItem('relate_couples_discount') || localStorage.getItem('relate_payment_tier')?.includes('couples'))
     : false;
+  const isWoman = typeof window !== 'undefined'
+    ? (() => {
+        const g = localStorage.getItem('relate_gender');
+        if (g === 'W' || g === 'Woman') return true;
+        try { const d = JSON.parse(localStorage.getItem('relate_demographics') || '{}'); return d.gender === 'W' || d.gender === 'Woman'; } catch { return false; }
+      })()
+    : false;
   const initial = profileName ? profileName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || '?';
 
   async function handleSignOut() {
@@ -112,6 +119,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
                   onSignOut={handleSignOut}
                   hasPartner={hasPartner}
                   hasCouplesAccess={hasCouplesAccess}
+                  isWoman={isWoman}
                 />
               </>
             )}
@@ -221,6 +229,7 @@ function ProfileAvatar({
   onSignOut,
   hasPartner,
   hasCouplesAccess,
+  isWoman,
 }: {
   initial: string;
   photoUrl: string | null;
@@ -230,6 +239,7 @@ function ProfileAvatar({
   onSignOut: () => void;
   hasPartner: boolean;
   hasCouplesAccess: boolean;
+  isWoman: boolean;
 }) {
   return (
     <div className="relative ml-2" ref={dropdownRef}>
@@ -253,10 +263,7 @@ function ProfileAvatar({
             { href: '/assessment', label: 'Assessment' },
             { href: '/results', label: 'Your Results' },
             ...(hasPartner ? [{ href: hasCouplesAccess ? '/results/compare' : '/invite', label: 'Couples Results' }] : []),
-            { href: '/settings/profile', label: 'Edit Profile' },
-            { href: '/settings/billing', label: 'Billing' },
-            { href: '/feedback', label: 'Feedback' },
-            { href: '/results/astrology', label: 'Sun, Moon & Rise' },
+            ...(isWoman ? [{ href: '/results/astrology', label: 'Sun, Moon & Rise' }] : []),
           ].map(item => (
             <Link
               key={item.href}
@@ -268,6 +275,20 @@ function ProfileAvatar({
             </Link>
           ))}
           <div className="border-t border-border my-1" />
+          {[
+            { href: '/settings/profile', label: 'Edit Profile' },
+            { href: '/settings/billing', label: 'Billing' },
+            { href: '/feedback', label: 'Feedback' },
+          ].map(item => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setDropdownOpen(false)}
+              className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground cursor-pointer"
+            >
+              {item.label}
+            </Link>
+          ))}
           <button
             onClick={() => { setDropdownOpen(false); onSignOut(); }}
             className="block w-full text-left px-4 py-2 text-sm text-secondary hover:bg-stone-50"
