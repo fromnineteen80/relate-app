@@ -59,7 +59,7 @@ const MEN_POLES = {
 const WOMEN_POLES = {
   physical: { A: 'Fitness', B: 'Maturity' },
   social: { A: 'Leadership', B: 'Presence' },
-  lifestyle: { A: 'Thrill', B: 'Peace' },
+  lifestyle: { A: 'Adventure', B: 'Stability' },
   values: { A: 'Traditional', B: 'Egalitarian' }
 };
 
@@ -4372,11 +4372,11 @@ const MEN_M2_POLES = {
     descriptionB: 'You draw people in through quiet attentiveness rather than commanding the room. Your ability to make others feel seen is your strongest social asset.'
   },
   lifestyle: {
-    A: 'Thrill',
-    B: 'Peace',
+    A: 'Adventure',
+    B: 'Stability',
     description: 'Life orientation: adventure and excitement vs stability and calm',
     descriptionA: 'You are energized by novelty, adventure, and spontaneous experiences. A life without surprises feels stagnant to you.',
-    descriptionB: 'You are grounded by routine, consistency, and intentional calm. You build a life that feels secure and sustainable over time.'
+    descriptionB: 'You are grounded by routine, consistency, and a reliable foundation. You build a life that feels secure and sustainable over time.'
   },
   values: {
     A: 'Traditional',
@@ -7281,7 +7281,7 @@ const M2_PERSONA_PROFILES = {
   'ACEG': {
     name: 'The Gladiator',
     code: 'ACEG',
-    summary: 'Fitness + Leadership + Thrill + Traditional',
+    summary: 'Fitness + Leadership + Adventure + Traditional',
     datingBehavior: [
       'Leads with physical presence and takes charge immediately',
       'Pursues actively and decisively',
@@ -7310,7 +7310,7 @@ const M2_PERSONA_PROFILES = {
   'ACEH': {
     name: 'The Maverick',
     code: 'ACEH',
-    summary: 'Fitness + Leadership + Thrill + Egalitarian',
+    summary: 'Fitness + Leadership + Adventure + Egalitarian',
     datingBehavior: [
       'Confident physical presence with progressive mindset',
       'Takes initiative but values equal partnership',
@@ -7339,7 +7339,7 @@ const M2_PERSONA_PROFILES = {
   'ACFG': {
     name: 'The Spy',
     code: 'ACFG',
-    summary: 'Fitness + Leadership + Peace + Traditional',
+    summary: 'Fitness + Leadership + Stability + Traditional',
     datingBehavior: [
       'Controlled physical presence, strategic approach',
       'Takes charge but values stability over excitement',
@@ -7368,7 +7368,7 @@ const M2_PERSONA_PROFILES = {
   'ACFH': {
     name: 'The Engineer',
     code: 'ACFH',
-    summary: 'Fitness + Leadership + Peace + Egalitarian',
+    summary: 'Fitness + Leadership + Stability + Egalitarian',
     datingBehavior: [
       'Methodical approach with physical confidence',
       'Takes initiative but seeks collaborative partnership',
@@ -7397,7 +7397,7 @@ const M2_PERSONA_PROFILES = {
   'ADEG': {
     name: 'The Cowboy',
     code: 'ADEG',
-    summary: 'Fitness + Presence + Thrill + Traditional',
+    summary: 'Fitness + Presence + Adventure + Traditional',
     datingBehavior: [
       'Strong physical presence with attentive nature',
       'Pursues through focused attention, not domination',
@@ -7426,7 +7426,7 @@ const M2_PERSONA_PROFILES = {
   'ADEH': {
     name: 'The Sherpa',
     code: 'ADEH',
-    summary: 'Fitness + Presence + Thrill + Egalitarian',
+    summary: 'Fitness + Presence + Adventure + Egalitarian',
     datingBehavior: [
       'Physical vitality with deep attentiveness',
       'Guides rather than leads, explores together',
@@ -7455,7 +7455,7 @@ const M2_PERSONA_PROFILES = {
   'ADFG': {
     name: 'The Curator',
     code: 'ADFG',
-    summary: 'Fitness + Presence + Peace + Traditional',
+    summary: 'Fitness + Presence + Stability + Traditional',
     datingBehavior: [
       'Quiet physical confidence with deep attention',
       'Patient pursuit focused on genuine connection',
@@ -7484,7 +7484,7 @@ const M2_PERSONA_PROFILES = {
   'ADFH': {
     name: 'The Recruiter',
     code: 'ADFH',
-    summary: 'Fitness + Presence + Peace + Egalitarian',
+    summary: 'Fitness + Presence + Stability + Egalitarian',
     datingBehavior: [
       'Approachable physical presence with genuine interest',
       'Draws people in through attention, not pursuit',
@@ -7513,7 +7513,7 @@ const M2_PERSONA_PROFILES = {
   'BCEG': {
     name: 'The Legionnaire',
     code: 'BCEG',
-    summary: 'Maturity + Leadership + Thrill + Traditional',
+    summary: 'Maturity + Leadership + Adventure + Traditional',
     datingBehavior: [
       'Commands respect through experience and authority',
       'Pursues decisively with mature confidence',
@@ -7542,7 +7542,7 @@ const M2_PERSONA_PROFILES = {
   'BCEH': {
     name: 'The Astronaut',
     code: 'BCEH',
-    summary: 'Maturity + Leadership + Thrill + Egalitarian',
+    summary: 'Maturity + Leadership + Adventure + Egalitarian',
     datingBehavior: [
       'Confident maturity with progressive outlook',
       'Takes initiative on shared exploration',
@@ -7571,7 +7571,7 @@ const M2_PERSONA_PROFILES = {
   'BCFG': {
     name: 'The Statesman',
     code: 'BCFG',
-    summary: 'Maturity + Leadership + Peace + Traditional',
+    summary: 'Maturity + Leadership + Stability + Traditional',
     datingBehavior: [
       'Distinguished presence with measured approach',
       'Courts with traditional values and patience',
@@ -7600,7 +7600,7 @@ const M2_PERSONA_PROFILES = {
   'BCFH': {
     name: 'The Professor',
     code: 'BCFH',
-    summary: 'Maturity + Leadership + Peace + Egalitarian',
+    summary: 'Maturity + Leadership + Stability + Egalitarian',
     datingBehavior: [
       'Intellectual depth with calm confidence',
       'Engages through ideas and thoughtful attention',
@@ -7629,7 +7629,7 @@ const M2_PERSONA_PROFILES = {
   'BDEG': {
     name: 'The Ranger',
     code: 'BDEG',
-    summary: 'Maturity + Presence + Thrill + Traditional',
+    summary: 'Maturity + Presence + Adventure + Traditional',
     datingBehavior: [
       'Quiet depth with adventurous spirit',
       'Connects through presence, not performance',
@@ -7658,7 +7658,7 @@ const M2_PERSONA_PROFILES = {
   'BDEH': {
     name: 'The Playwright',
     code: 'BDEH',
-    summary: 'Maturity + Presence + Thrill + Egalitarian',
+    summary: 'Maturity + Presence + Adventure + Egalitarian',
     datingBehavior: [
       'Deep attention with creative spirit',
       'Connects through understanding and shared exploration',
@@ -7687,7 +7687,7 @@ const M2_PERSONA_PROFILES = {
   'BDFG': {
     name: 'The Arborist',
     code: 'BDFG',
-    summary: 'Maturity + Presence + Peace + Traditional',
+    summary: 'Maturity + Presence + Stability + Traditional',
     datingBehavior: [
       'Patient depth with traditional values',
       'Connects through quiet attention',
@@ -7716,7 +7716,7 @@ const M2_PERSONA_PROFILES = {
   'BDFH': {
     name: 'The Builder',
     code: 'BDFH',
-    summary: 'Maturity + Presence + Peace + Egalitarian',
+    summary: 'Maturity + Presence + Stability + Egalitarian',
     datingBehavior: [
       'Calm depth with collaborative spirit',
       'Builds connection through understanding',

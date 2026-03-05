@@ -231,14 +231,14 @@ const POLES = {
   womenWant: {
     physical: { A: 'Fitness', B: 'Maturity' },
     social: { A: 'Leadership', B: 'Presence' },
-    lifestyle: { A: 'Thrill', B: 'Peace' },
+    lifestyle: { A: 'Adventure', B: 'Stability' },
     values: { A: 'Traditional', B: 'Egalitarian' }
   },
   // M2: What he offers
   menOffer: {
     physical: { A: 'Fitness', B: 'Maturity' },
     social: { A: 'Leadership', B: 'Presence' },
-    lifestyle: { A: 'Thrill', B: 'Peace' },
+    lifestyle: { A: 'Adventure', B: 'Stability' },
     values: { A: 'Traditional', B: 'Egalitarian' }
   },
   // W2: What she offers
