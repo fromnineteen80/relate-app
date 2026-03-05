@@ -289,6 +289,7 @@ function ProfileAvatar({
               {item.label}
             </Link>
           ))}
+          <div className="border-t border-border my-1" />
           <button
             onClick={() => { setDropdownOpen(false); onSignOut(); }}
             className="block w-full text-left px-4 py-2 text-sm text-secondary hover:bg-stone-50"
