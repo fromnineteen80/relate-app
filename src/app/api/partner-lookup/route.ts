@@ -140,7 +140,7 @@ export async function GET(request: NextRequest) {
         .from('user_progress')
         .select('m1_completed, m2_completed, m3_completed, m4_completed, results, m2_scored')
         .eq('user_id', partnerId)
-        .single(),
+        .maybeSingle(),
     ]);
 
     // Extract persona name from partner's results or m2_scored
