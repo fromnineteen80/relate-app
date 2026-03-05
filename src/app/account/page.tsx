@@ -599,10 +599,7 @@ function AccountPage() {
         <section id="profile" className="card mb-4 scroll-mt-12">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-serif text-lg font-semibold">Profile</h2>
-            <div className="flex gap-2">
-              <Link href="/onboarding/profile" className="text-xs text-accent hover:underline">Edit profile</Link>
-              <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">Edit demographics</Link>
-            </div>
+            <Link href="/onboarding/profile" className="text-xs text-accent hover:underline">Edit profile</Link>
           </div>
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 border-2 border-border">
