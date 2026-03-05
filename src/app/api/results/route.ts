@@ -157,144 +157,97 @@ function generateMatchSummary(userResults: any, match: any): string {
   const matchCode = match.code || '';
   const matchName = match.persona?.name || matchCode;
 
-  // Dimension labels for readable output
+  // Dimension labels
   const dimLabels = ['Physical', 'Social', 'Lifestyle', 'Values'];
-  const poleNames: Record<string, Record<string, string>> = {
-    Physical: { A: 'Fitness', B: 'Maturity' },
-    Social: { C: 'Leadership', D: 'Presence' },
-    Lifestyle: { E: 'Adventure', F: 'Stability' },
-    Values: { G: 'Traditional', H: 'Egalitarian' },
-  };
   const poleLongNames: Record<string, Record<string, string>> = {
-    Physical: { A: 'physical fitness and aesthetics', B: 'maturity and quiet confidence' },
-    Social: { C: 'social leadership and initiative', D: 'warmth and interpersonal presence' },
-    Lifestyle: { E: 'adventure and novelty-seeking', F: 'stability and domestic comfort' },
-    Values: { G: 'traditional relationship roles', H: 'egalitarian partnership' },
+    Physical: { A: 'physical fitness', B: 'maturity and presence' },
+    Social: { C: 'social leadership', D: 'warmth and charm' },
+    Lifestyle: { E: 'adventure', F: 'stability' },
+    Values: { G: 'traditional roles', H: 'egalitarian partnership' },
   };
 
-  // Find shared and divergent dimensions
   const shared: string[] = [];
-  const sharedLong: string[] = [];
-  const divergent: { dim: string; user: string; match: string; userLong: string; matchLong: string }[] = [];
+  const divergent: { userLong: string; matchLong: string }[] = [];
   for (let i = 0; i < 4; i++) {
     const uLetter = userCode[i];
     const mLetter = matchCode[i];
     const dim = dimLabels[i];
     if (uLetter === mLetter) {
-      shared.push(poleNames[dim]?.[uLetter] || uLetter);
-      sharedLong.push(poleLongNames[dim]?.[uLetter] || uLetter);
+      shared.push(poleLongNames[dim]?.[uLetter] || uLetter);
     } else {
       divergent.push({
-        dim,
-        user: poleNames[dim]?.[uLetter] || uLetter,
-        match: poleNames[dim]?.[mLetter] || mLetter,
         userLong: poleLongNames[dim]?.[uLetter] || uLetter,
         matchLong: poleLongNames[dim]?.[mLetter] || mLetter,
       });
     }
   }
 
-  const parts: string[] = [];
+  const sentences: string[] = [];
 
-  // Tier-based opening paragraph
-  const tierOpeners: Record<string, string> = {
-    ideal: `${matchName} is one of your strongest natural pairings. The foundation here is solid across multiple dimensions — you share core values and behavioral patterns that make long-term compatibility likely without excessive compromise.`,
-    kismet: `There's strong potential with ${matchName}. Your profiles align on the dimensions that matter most for sustained attraction and relationship stability, with enough complementary differences to keep things interesting.`,
-    effort: `${matchName} is a promising match, but one that requires intentional effort. You align in some key areas, while other dimensions will need honest communication and willingness to meet each other halfway.`,
-    longShot: `With ${matchName}, you're looking at real differences to bridge. This pairing can work, but it demands significant self-awareness from both sides and a willingness to appreciate fundamentally different approaches to life and love.`,
-    atRisk: `${matchName} presents significant friction points. The areas where you diverge tend to surface under stress — in conflict, during life transitions, and around intimacy expectations. This pairing requires extraordinary communication.`,
-    incompatible: `${matchName} represents a fundamental difference in approach. Your profiles diverge on the dimensions most predictive of relationship satisfaction. Not impossible, but the work required is substantial and ongoing.`,
+  // Sentence 1: Overall compatibility framing with match name
+  const tierFrames: Record<string, string> = {
+    ideal: `${matchName} is one of your strongest natural pairings — your profiles align on the dimensions that matter most for long-term compatibility.`,
+    kismet: `${matchName} has strong potential with you, aligning where it counts while offering enough difference to sustain genuine interest.`,
+    effort: `${matchName} is a promising match that will require some intentional effort — you connect in key areas but diverge in others that shape daily life.`,
+    longShot: `${matchName} presents real differences to navigate — this pairing can work, but it asks both of you to stretch beyond your defaults.`,
+    atRisk: `${matchName} is a challenging match where your core differences tend to surface under stress, making communication especially critical.`,
+    incompatible: `${matchName} sits on the opposite end of your compatibility spectrum — your fundamental approaches to relationships diverge significantly.`,
   };
-  parts.push(tierOpeners[match.tier] || '');
+  sentences.push(tierFrames[match.tier] || `${matchName} is a potential match worth understanding.`);
 
-  // Shared dimensions narrative
+  // Sentence 2: What you share and where you differ (the dimensional story)
   if (shared.length >= 3) {
-    parts.push(`You share common ground on ${shared.length} of 4 dimensions — ${sharedLong.join(', ')} — which provides a strong baseline of mutual understanding.`);
-  } else if (shared.length === 2) {
-    parts.push(`You both value ${sharedLong[0]} and ${sharedLong[1]}, giving you a shared foundation to build on.`);
-  } else if (shared.length === 1) {
-    parts.push(`You connect on ${sharedLong[0]}, but the other three dimensions tell a story of complementary — or competing — priorities.`);
+    const topDiv = divergent[0];
+    sentences.push(`You share ground on ${shared.slice(0, 2).join(' and ')}, which creates a natural baseline of understanding${topDiv ? `, though your ${topDiv.userLong} meets their ${topDiv.matchLong} in a way that will need attention` : ''}.`);
+  } else if (shared.length > 0 && divergent.length > 0) {
+    sentences.push(`You connect through a shared value of ${shared[0]}, but diverge where your ${divergent[0].userLong} meets their ${divergent[0].matchLong}${divergent.length > 1 ? ` — and your ${divergent[1].userLong} contrasts with their ${divergent[1].matchLong}` : ''}.`);
+  } else if (divergent.length >= 3) {
+    sentences.push(`You differ across most dimensions — your ${divergent[0].userLong} meets their ${divergent[0].matchLong}, and your ${divergent[1].userLong} contrasts with their ${divergent[1].matchLong}, which shapes how you approach daily life together.`);
   }
 
-  // Divergent dimensions narrative
-  if (divergent.length > 0) {
-    const divParts = divergent.map(d =>
-      `on the ${d.dim.toLowerCase()} axis, your preference for ${d.userLong} meets their orientation toward ${d.matchLong}`
-    );
-    if (divergent.length === 1) {
-      parts.push(`Where you differ: ${divParts[0]}. This is manageable with awareness but can become a recurring tension point if left unaddressed.`);
-    } else if (divergent.length === 2) {
-      parts.push(`Where you diverge: ${divParts[0]}, and ${divParts[1]}. These differences shape how you spend time together and what you prioritize day-to-day.`);
-    } else {
-      parts.push(`You differ on ${divergent.length} dimensions: ${divParts.join('; ')}. When multiple dimensions diverge, the relationship requires more negotiation and mutual flexibility.`);
-    }
-  }
-
-  // Sub-score narrative: preference alignment
-  if (match.preferenceScore !== undefined) {
-    if (match.preferenceScore >= 75) {
-      parts.push(`What you're looking for in a partner maps closely to who ${matchName} is — a ${match.preferenceScore}% preference alignment, which means your stated wants match their actual profile.`);
-    } else if (match.preferenceScore <= 35) {
-      parts.push(`There's a gap between what you say you want and who ${matchName} is (${match.preferenceScore}% preference alignment). This doesn't mean it can't work — it means you may need to examine whether your stated preferences reflect what actually makes you happy.`);
-    }
-  }
-
-  // Intimacy dynamics (M3)
-  if (m3) {
+  // Sentence 3: Intimacy dynamic
+  const matchProfile = PERSONA_TYPICAL_PROFILES[matchCode];
+  if (m3 && matchProfile?.m3) {
     const userWant = m3.wantScore ?? m3.want ?? 50;
     const userOffer = m3.offerScore ?? m3.offer ?? 50;
-    const matchProfile = PERSONA_TYPICAL_PROFILES[matchCode];
-    if (matchProfile?.m3) {
-      const wantGap = Math.abs(userWant - matchProfile.m3.typicalOffer);
-      const offerGap = Math.abs(userOffer - matchProfile.m3.typicalWant);
-      if (wantGap < 15 && offerGap < 15) {
-        parts.push('Your intimacy dynamics are well-matched — what you need emotionally and physically aligns with what this persona typically provides, and vice versa.');
-      } else if (wantGap > 35 || offerGap > 35) {
-        const direction = userWant > matchProfile.m3.typicalOffer
-          ? 'You may want more intimacy and emotional closeness than this persona naturally provides'
-          : 'This persona may seek more emotional intensity than feels comfortable to you';
-        parts.push(`${direction}. This gap in intimacy expectations is one of the most common sources of relationship dissatisfaction when left unspoken.`);
-      } else {
-        parts.push('Your intimacy expectations are moderately aligned, with some room for calibration as you get to know each other.');
-      }
+    const wantGap = Math.abs(userWant - matchProfile.m3.typicalOffer);
+    const offerGap = Math.abs(userOffer - matchProfile.m3.typicalWant);
+    if (wantGap < 15 && offerGap < 15) {
+      sentences.push('Your intimacy expectations align well — what you need emotionally maps to what this persona naturally provides, and what you offer matches what they seek.');
+    } else if (wantGap > 35 || offerGap > 35) {
+      const direction = userWant > matchProfile.m3.typicalOffer
+        ? 'you may want more closeness than this persona naturally offers'
+        : 'this persona may seek more emotional intensity than you naturally provide';
+      sentences.push(`In intimacy, ${direction} — a gap worth naming early to avoid the slow resentment that builds when needs go unspoken.`);
+    } else {
+      sentences.push('Your intimacy styles are moderately aligned, with enough overlap to work and enough difference to require occasional recalibration.');
     }
   }
 
-  // Conflict dynamics (M4)
-  if (m4) {
-    const matchProfile = PERSONA_TYPICAL_PROFILES[matchCode];
-    if (matchProfile?.m4) {
-      const sameApproach = m4.approach === matchProfile.m4.typicalApproach;
-      const sameDriver = m4.primaryDriver === matchProfile.m4.typicalDriver;
-
-      if (!sameApproach) {
-        parts.push('Your conflict styles complement each other — one tends to pursue resolution while the other withdraws to process. This can balance well when both partners understand the dynamic, but it can escalate if the pursuer feels stonewalled or the withdrawer feels cornered.');
-      } else if (m4.approach === 'pursue') {
-        parts.push('You both tend to pursue during conflict, which means arguments can intensify quickly. The upside: neither of you avoids hard conversations. The risk: escalation without cooldown periods.');
-      } else {
-        parts.push('You both tend to withdraw during conflict, which can lead to issues going unresolved for long stretches. The relationship may feel peaceful on the surface while resentment builds underneath.');
-      }
-
-      if (sameDriver) {
-        const driverLabels: Record<string, string> = {
-          abandonment: 'fear of abandonment',
-          engulfment: 'fear of losing independence',
-          inadequacy: 'fear of not being enough',
-          injustice: 'sensitivity to perceived unfairness',
-        };
-        const label = driverLabels[m4.primaryDriver] || m4.primaryDriver;
-        parts.push(`You share a core emotional driver (${label}), which means you understand each other's triggers deeply — but can also activate them more easily.`);
-      }
-
-      if (m4.repairSpeed && matchProfile.m4.typicalRepairSpeed) {
-        if (m4.repairSpeed !== matchProfile.m4.typicalRepairSpeed) {
-          parts.push('Your repair timelines differ — one of you is ready to reconnect faster than the other. Being explicit about needing space (or connection) after a fight helps bridge this gap.');
-        }
-      }
+  // Sentence 4: Conflict dynamic
+  if (m4 && matchProfile?.m4) {
+    const sameApproach = m4.approach === matchProfile.m4.typicalApproach;
+    if (!sameApproach) {
+      sentences.push('In conflict, your styles complement — one pursues while the other withdraws — which balances well with awareness but can spiral without it.');
+    } else if (m4.approach === 'pursue') {
+      sentences.push('You both pursue during conflict, which means hard conversations happen but can escalate fast without built-in cooldown.');
+    } else {
+      sentences.push('You both tend to withdraw during conflict, meaning issues may go unresolved longer than is healthy — naming problems early matters here.');
     }
   }
 
-  return parts.filter(Boolean).join(' ');
+  // Sentence 5: Preference alignment or repair note
+  if (match.preferenceScore !== undefined && match.preferenceScore >= 75) {
+    sentences.push(`At ${match.preferenceScore}% preference alignment, what you say you want maps closely to who this persona actually is.`);
+  } else if (match.preferenceScore !== undefined && match.preferenceScore <= 35) {
+    sentences.push(`Your stated preferences and this persona's profile only overlap ${match.preferenceScore}% — worth examining whether what you think you want matches what actually makes you happy.`);
+  } else if (m4 && matchProfile?.m4) {
+    if (m4.repairSpeed && m4.repairSpeed !== matchProfile.m4.typicalRepairSpeed) {
+      sentences.push('Your repair timelines differ after conflict — one of you is ready to reconnect faster — so being explicit about needing space or closeness after a fight will matter.');
+    }
+  }
+
+  return sentences.filter(Boolean).join(' ');
 }
 
 export async function POST(request: NextRequest) {

@@ -54,12 +54,8 @@ function ScoreBar({ label, value }: { label: string; value: number }) {
   );
 }
 
-/**
- * Hydrate a single match with persona metadata if arrays are missing.
- */
 async function hydrateMatch(match: any, userGender: string): Promise<any> {
   if (match.datingBehavior?.length > 0) return match;
-
   try {
     const res = await fetch('/api/persona-metadata');
     if (!res.ok) return match;
@@ -67,7 +63,6 @@ async function hydrateMatch(match: any, userGender: string): Promise<any> {
     const targetMeta = userGender === 'M' ? data.female : data.male;
     const meta = targetMeta?.[match.code];
     if (!meta) return match;
-
     return {
       ...match,
       datingBehavior: match.datingBehavior?.length ? match.datingBehavior : (meta.datingBehavior || []),
@@ -99,11 +94,9 @@ export default function MatchDetailPage() {
     if (!m) { router.push('/results/matches'); return; }
     setMatch(m);
 
-    // Hydrate missing persona data
     hydrateMatch(m, r.gender).then(hydrated => {
       if (hydrated !== m) {
         setMatch(hydrated);
-        // Update localStorage too
         const updatedMatches = r.matches.map((x: any) => x.code === code ? hydrated : x);
         const updated = { ...r, matches: updatedMatches };
         localStorage.setItem('relate_results', JSON.stringify(updated));
@@ -123,8 +116,8 @@ export default function MatchDetailPage() {
       <SubNav />
 
       <main className="max-w-3xl mx-auto px-6 py-8 w-full">
-        {/* Header */}
-        <div className="flex items-start justify-between gap-6 flex-wrap mb-6">
+        {/* Header — name/code on left, score/tier on right, vertically centered */}
+        <div className="flex items-center justify-between gap-6 mb-6">
           <div className="min-w-0">
             <span className="font-mono text-xs text-secondary">Match #{match.rank}</span>
             <h2 className="font-serif text-3xl font-semibold">{match.name}</h2>
@@ -140,7 +133,7 @@ export default function MatchDetailPage() {
 
         {match.traits && <p className="text-secondary mb-6">{match.traits}</p>}
 
-        {/* Blended compatibility summary */}
+        {/* Compatibility summary */}
         {match.summary && (
           <section className="card mb-4 border-accent/30">
             <h3 className="font-serif font-semibold mb-2">Compatibility Summary</h3>
@@ -148,38 +141,19 @@ export default function MatchDetailPage() {
           </section>
         )}
 
-        {/* Your pairing + Score breakdown — side by side */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <section className="card">
-            <h3 className="font-serif font-semibold mb-3">Your Pairing</h3>
-            <div className="space-y-3">
-              <div>
-                <span className="text-xs text-secondary">You</span>
-                <p className="font-serif font-semibold">{report.persona.name}</p>
-                <span className="font-mono text-xs text-accent">{report.persona.code}</span>
-              </div>
-              <div>
-                <span className="text-xs text-secondary">Match</span>
-                <p className="font-serif font-semibold">{match.name}</p>
-                <span className="font-mono text-xs text-accent">{match.code}</span>
-              </div>
+        {/* Score breakdown */}
+        {match.subScores && (
+          <section className="card mb-4">
+            <h3 className="font-serif font-semibold mb-3">Score Breakdown</h3>
+            <div className="space-y-2.5">
+              <ScoreBar label="Persona" value={match.subScores.tier} />
+              <ScoreBar label="Preference" value={match.subScores.preference} />
+              <ScoreBar label="Behavioral" value={match.subScores.dimension} />
+              <ScoreBar label="Intimacy" value={match.subScores.intimacy} />
+              <ScoreBar label="Conflict" value={match.subScores.conflict} />
             </div>
           </section>
-
-          {/* Score breakdown */}
-          {match.subScores && (
-            <section className="card">
-              <h3 className="font-serif font-semibold mb-3">Score Breakdown</h3>
-              <div className="space-y-2.5">
-                <ScoreBar label="Persona" value={match.subScores.tier} />
-                <ScoreBar label="Preference" value={match.subScores.preference} />
-                <ScoreBar label="Behavioral" value={match.subScores.dimension} />
-                <ScoreBar label="Intimacy" value={match.subScores.intimacy} />
-                <ScoreBar label="Conflict" value={match.subScores.conflict} />
-              </div>
-            </section>
-          )}
-        </div>
+        )}
 
         {/* Persona insight cards */}
         <div className="mt-8 mb-2">
