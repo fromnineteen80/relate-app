@@ -8,7 +8,8 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { module: moduleNumber, gender, responses, m1Responses, m3Responses } = body;
-    const genderArg = gender === 'M' ? 'male' : 'female';
+    // Scoring functions expect 'M' or 'W'/'F', not 'male'/'female'
+    const genderArg = gender === 'M' ? 'M' : 'W';
 
     switch (moduleNumber) {
       case 1: {

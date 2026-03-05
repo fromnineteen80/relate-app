@@ -61,7 +61,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className={`text-center transition-opacity duration-700 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-          <div className="mx-auto mb-6">
+          <div className="flex justify-center mb-6">
             <ProgressRing progress={100} size={80} strokeWidth={4} />
           </div>
           <h2 className="font-serif text-2xl font-semibold">Module 3 Complete</h2>
@@ -166,6 +166,11 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
           <p className="text-sm text-secondary mt-4 leading-relaxed">
             {getGapInterpretation(wantOfferGap)}
           </p>
+          {wantScore >= 40 && wantScore <= 60 && offerScore >= 40 && offerScore <= 60 && Math.abs(wantOfferGap) <= 10 && (
+            <p className="text-xs text-secondary italic mt-3">
+              With both scores near the midpoint, you may find your style becomes clearer in the context of a specific partner.
+            </p>
+          )}
         </div>
 
         <div className="card mb-6">

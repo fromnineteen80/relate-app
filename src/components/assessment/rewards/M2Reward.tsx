@@ -78,7 +78,7 @@ export default function M2Reward({ scoredData, onContinue }: Props) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className={`text-center transition-opacity duration-700 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-          <div className="mx-auto mb-6">
+          <div className="flex justify-center mb-6">
             <ProgressRing progress={100} size={80} strokeWidth={4} />
           </div>
           <h2 className="font-serif text-2xl font-semibold">Module 2 Complete</h2>
