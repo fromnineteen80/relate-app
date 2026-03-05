@@ -129,7 +129,7 @@ export default function BillingPage() {
       <div className="min-h-screen flex flex-col">
         <SiteHeader />
         <SubNav />
-        <main className="max-w-2xl mx-auto px-6 py-8 w-full">
+        <main className="max-w-3xl mx-auto px-6 py-8 w-full">
           <h2 className="font-serif text-2xl font-semibold mb-6">Billing</h2>
           <div className="flex items-center justify-center py-12 text-secondary">Loading...</div>
         </main>
@@ -142,7 +142,7 @@ export default function BillingPage() {
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
       <SubNav />
-      <main className="max-w-2xl mx-auto px-6 py-8 w-full">
+      <main className="max-w-3xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-6">Billing</h2>
 
         {/* Test mode notice */}

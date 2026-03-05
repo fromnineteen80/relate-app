@@ -51,7 +51,7 @@ export default function CheckinHistoryPage() {
       <SiteHeader />
       <SubNav />
 
-      <main className="max-w-2xl mx-auto px-6 py-8 w-full">
+      <main className="max-w-3xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-1">Check-In History</h2>
         <p className="text-sm text-secondary mb-6">{checkins.length} check-in{checkins.length !== 1 ? 's' : ''} recorded</p>
 

@@ -58,7 +58,7 @@ export default function DatesPage() {
       <SiteHeader />
       <SubNav />
 
-      <main className="max-w-2xl mx-auto px-6 py-8 w-full">
+      <main className="max-w-3xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-1">Date Ideas</h2>
         <p className="text-sm text-secondary mb-6">Personalized suggestions based on both your profiles</p>
 

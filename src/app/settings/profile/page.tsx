@@ -14,7 +14,7 @@ import { saveProfileToDb } from '@/lib/supabase/progress';
 function InfoRow({ label, value }: { label: string; value: string | null | undefined }) {
   if (!value) return null;
   return (
-    <div className="flex justify-between py-1.5 border-b border-border last:border-0">
+    <div className="flex justify-between gap-6 flex-wrap py-1.5 border-b border-border last:border-0">
       <span className="text-xs text-secondary">{label}</span>
       <span className="text-xs font-mono">{value}</span>
     </div>
@@ -114,7 +114,7 @@ export default function ProfileSettings() {
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
       <SubNav />
-      <main className="max-w-2xl mx-auto px-6 py-8 w-full">
+      <main className="max-w-3xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-6">Edit Profile</h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -180,7 +180,7 @@ export default function ProfileSettings() {
           {/* About You (Step 2) */}
           {demographics ? (
             <div className="card">
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between gap-6 flex-wrap mb-2">
                 <p className="text-sm font-medium">About You</p>
                 <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">Edit</Link>
               </div>
@@ -208,7 +208,7 @@ export default function ProfileSettings() {
           {/* Partner Preferences */}
           {demographics?.pref_age_min != null && (
             <div className="card">
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between gap-6 flex-wrap mb-2">
                 <p className="text-sm font-medium">Partner Preferences</p>
                 <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">Edit</Link>
               </div>
@@ -229,7 +229,7 @@ export default function ProfileSettings() {
         {/* Location — last card */}
         {profile && (
           <div className="card mb-4">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between gap-6 flex-wrap mb-2">
               <p className="text-sm font-medium">Location</p>
               <Link href="/onboarding/profile" className="text-xs text-accent hover:underline">Edit</Link>
             </div>
