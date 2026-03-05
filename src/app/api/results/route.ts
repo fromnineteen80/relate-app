@@ -315,6 +315,7 @@ export async function POST(request: NextRequest) {
     // Build report
     // Get M2 poles for code key display
     const m2Poles = gender === 'M' ? questionsModule.MEN_M2_POLES : questionsModule.WOMEN_W2_POLES;
+    const matchM2Poles = gender === 'M' ? questionsModule.WOMEN_W2_POLES : questionsModule.MEN_M2_POLES;
 
     const report = {
       gender,
@@ -329,6 +330,7 @@ export async function POST(request: NextRequest) {
         struggles: personaMetadata?.struggles || [],
       },
       m2Poles,
+      matchM2Poles,
       dimensions: m2Result?.dimensions || m1Result?.dimensions || {},
       m1: m1Result,
       m2: m2Result,
