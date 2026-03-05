@@ -822,9 +822,7 @@ function ResultsDashboard() {
 
         {/* ── Tension Stacks / Insights ── */}
         {tensionStacks && Object.keys(tensionStacks).length > 0 && (
-          <section className="mb-4 scroll-mt-28">
-            <h3 className="font-serif text-lg font-semibold mb-4">Relationship Insights</h3>
-            <div className="space-y-4">
+          <>
               {Object.entries(tensionStacks)
                 .filter(([key]) => key !== 'marketReality')
                 .map(([key, stack]: [string, any]) => {
@@ -834,7 +832,7 @@ function ResultsDashboard() {
                 {/* ── Internal Conflict Coherence: dedicated renderer ── */}
                 if (key === 'internalConflictCoherence') {
                   return (
-                    <div key={key} className="card">
+                    <section key={key} className="card mb-4">
                       <div className="flex items-start justify-between mb-2">
                         <div>
                           <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
@@ -888,14 +886,14 @@ function ResultsDashboard() {
                           </ul>
                         </div>
                       )}
-                    </div>
+                    </section>
                   );
                 }
 
                 {/* ── Vulnerability Profile: improved rendering ── */}
                 if (key === 'vulnerabilityProfile') {
                   return (
-                    <div key={key} className="card">
+                    <section key={key} className="card mb-4">
                       <div className="flex items-start justify-between mb-2">
                         <div>
                           <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
@@ -953,14 +951,14 @@ function ResultsDashboard() {
                           </ul>
                         </div>
                       )}
-                    </div>
+                    </section>
                   );
                 }
 
                 {/* ── Generic renderer for other tension stacks ── */}
                 const tensionLevel = stack.tensionLevel || stack.riskLevel;
                 return (
-                  <div key={key} className="card">
+                  <section key={key} className="card mb-4">
                     <div className="flex items-start justify-between mb-2">
                       <div>
                         <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
@@ -1057,11 +1055,10 @@ function ResultsDashboard() {
                         </ul>
                       </div>
                     )}
-                  </div>
+                  </section>
                 );
               })}
-            </div>
-          </section>
+          </>
         )}
 
         {/* ── Relationship Capacity / Modifiers ── */}
