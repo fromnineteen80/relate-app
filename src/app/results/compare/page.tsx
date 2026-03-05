@@ -14,6 +14,7 @@ export default function ComparePage() {
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [activeSection, setActiveSection] = useState(0);
 
   useEffect(() => {
     // Check for existing couples report
@@ -141,53 +142,58 @@ export default function ComparePage() {
     );
   }
 
-  const sectionNavItems = [
-    { id: 'overview', label: 'Overview', href: '#overview', show: true },
-    { id: 'alignment', label: 'Alignment', href: '#alignment', show: true },
-    { id: 'clashes', label: 'Clashes', href: '#clashes', show: true },
-    { id: 'conflict', label: 'Conflict', href: '#conflict', show: true },
-    { id: 'repair', label: 'Repair', href: '#repair', show: true },
-    { id: 'daily', label: 'Daily Life', href: '#daily', show: true },
-    { id: 'ceiling', label: 'Potential', href: '#ceiling', show: true },
-    ...(report.enhancedCompatibility ? [{ id: 'enhanced', label: 'Deep Analysis', href: '#enhanced', show: true }] : []),
+  const sections = [
+    { key: 'overview', label: 'Overview' },
+    { key: 'alignment', label: 'Alignment' },
+    { key: 'clashes', label: 'Clashes' },
+    { key: 'conflict', label: 'Conflict' },
+    { key: 'repair', label: 'Repair' },
+    { key: 'daily', label: 'Daily Life' },
+    { key: 'ceiling', label: 'Potential' },
+    ...(report.enhancedCompatibility ? [{ key: 'enhanced', label: 'Deep Analysis' }] : []),
   ];
+
+  const sectionNavItems = sections.map(s => ({
+    id: s.key, label: s.label, href: `#${s.key}`, show: true,
+  }));
 
   return (
     <div className="min-h-screen flex flex-col">
       <CouplesHeader items={sectionNavItems} />
 
       <main className="max-w-3xl mx-auto px-6 py-8 w-full">
-        <div id="overview" className="scroll-mt-32 mb-10">
-          <OverviewSection data={report.overview} />
-        </div>
-        <div id="alignment" className="scroll-mt-32 mb-10">
-          <AlignmentSection data={report.alignment} overview={report.overview} />
-        </div>
-        <div id="clashes" className="scroll-mt-32 mb-10">
-          <ClashSection data={report.clashes} overview={report.overview} />
-        </div>
-        <div id="conflict" className="scroll-mt-32 mb-10">
-          <ConflictSection data={report.conflictChoreography} overview={report.overview} />
-        </div>
-        <div id="repair" className="scroll-mt-32 mb-10">
-          <RepairSection data={report.repairCompatibility} />
-        </div>
-        <div id="daily" className="scroll-mt-32 mb-10">
-          <DailyLifeSection data={report.dailyLife} />
-        </div>
-        <div id="ceiling" className="scroll-mt-32 mb-10">
-          <CeilingFloorSection data={report.ceilingFloor} />
-        </div>
-        {report.enhancedCompatibility && (
-          <div id="enhanced" className="scroll-mt-32 mb-10">
-            <EnhancedCompatibilitySection data={report.enhancedCompatibility} overview={report.overview} />
-          </div>
+        {activeSection === 0 && <OverviewSection data={report.overview} />}
+        {activeSection === 1 && <AlignmentSection data={report.alignment} overview={report.overview} />}
+        {activeSection === 2 && <ClashSection data={report.clashes} overview={report.overview} />}
+        {activeSection === 3 && <ConflictSection data={report.conflictChoreography} overview={report.overview} />}
+        {activeSection === 4 && <RepairSection data={report.repairCompatibility} />}
+        {activeSection === 5 && <DailyLifeSection data={report.dailyLife} />}
+        {activeSection === 6 && <CeilingFloorSection data={report.ceilingFloor} />}
+        {activeSection === 7 && report.enhancedCompatibility && (
+          <EnhancedCompatibilitySection data={report.enhancedCompatibility} overview={report.overview} />
         )}
 
-        <div className="mt-12 pt-6 border-t border-border text-center">
-          <Link href="/couples" className="btn-primary text-sm">
-            Couples Dashboard
-          </Link>
+        {/* Navigation */}
+        <div className="flex justify-between mt-12 pt-6 border-t border-border">
+          <button
+            onClick={() => setActiveSection(Math.max(0, activeSection - 1))}
+            className="btn-secondary text-sm"
+            disabled={activeSection === 0}
+          >
+            Previous
+          </button>
+          {activeSection < sections.length - 1 ? (
+            <button
+              onClick={() => setActiveSection(activeSection + 1)}
+              className="btn-primary text-sm"
+            >
+              Next Section
+            </button>
+          ) : (
+            <Link href="/couples" className="btn-primary text-sm">
+              Couples Dashboard
+            </Link>
+          )}
         </div>
       </main>
       <SiteFooter />
