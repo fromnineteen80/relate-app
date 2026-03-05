@@ -632,115 +632,140 @@ function AccountPage() {
           <section className="card">
             <div className="flex items-center justify-between gap-6 flex-wrap mb-4">
               <h2 className="font-serif text-lg font-semibold">Subscription</h2>
-              {currentTier !== 'free' && currentTier !== 'couples' && (
-                <Link href="/settings/billing" className="text-xs text-accent hover:underline">Change</Link>
-              )}
+              <Link href="/settings/billing" className="text-xs text-accent hover:underline">Change</Link>
             </div>
 
-            <div className={`flex items-center gap-3 p-3 mb-4 rounded-md border ${
-              currentTier !== 'free' ? 'bg-stone-50 border-stone-300' : 'bg-stone-50 border-border'
-            }`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${
-                currentTier !== 'free' ? 'bg-stone-200 text-stone-600' : 'bg-stone-200 text-secondary'
-              }`}>
-                {currentTier !== 'free' ? '✓' : '-'}
-              </div>
-              <div>
-                <p className="text-sm font-medium">{(PRICING[currentTier]?.label || currentTier)}: Active</p>
-                <p className="text-xs text-secondary">
-                  {currentTier === 'free' && 'Persona code, top 3 matches, 3 advisor messages.'}
-                  {currentTier === 'plus' && 'Full report, all 16 matches, PDF download.'}
-                  {currentTier === 'premium' && 'Plus features + rate-limited AI advisor + retake assessment.'}
-                  {currentTier === 'pro' && 'Everything in Premium + unlimited AI advisor.'}
-                  {currentTier === 'couples' && 'Everything for both partners, couples report, shared advisor.'}
-                </p>
-              </div>
-            </div>
+            {/* Individual tier badge — shown for paid/test accounts */}
+            {currentTier !== 'free' && (() => {
+              // Determine the individual-level tier (strip couples to show its individual component)
+              const individualTier: PricingTier = currentTier === 'couples' ? 'pro' : currentTier;
+              const individualDescriptions: Record<string, string> = {
+                plus: 'Full report, all 16 matches, PDF download.',
+                premium: 'Plus features + rate-limited AI advisor + retake assessment.',
+                pro: 'Everything in Premium + unlimited AI advisor.',
+              };
+              return (
+                <div className="flex items-center gap-3 p-3 mb-3 rounded-md border bg-stone-50 border-stone-300">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 bg-stone-200 text-stone-600">
+                    &#10003;
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">{PRICING[individualTier]?.label || individualTier}: Active</p>
+                    <p className="text-xs text-secondary">{individualDescriptions[individualTier] || ''}</p>
+                  </div>
+                </div>
+              );
+            })()}
 
-            {currentTier === 'free' && (
-              <div className="mb-3">
-                <TestAccessCard />
+            {/* Couples tier badge — shown when user has couples */}
+            {currentTier === 'couples' && (
+              <div className="flex items-center gap-3 p-3 mb-3 rounded-md border bg-stone-50 border-stone-300">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 bg-stone-200 text-stone-600">
+                  &#10003;
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Couples: Active</p>
+                  <p className="text-xs text-secondary">Partner compatibility report, shared advisor, combined tools.</p>
+                </div>
               </div>
             )}
 
-            {currentTier !== 'couples' && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {TIER_ORDER.filter(t => t !== 'free' && t !== currentTier).map(tier => {
-                  const isUpgrade = tierIndex(tier) > tierIndex(currentTier);
-                  return (
-                  <div key={tier} className={`p-3 border rounded-md ${isUpgrade ? 'border-border' : 'border-border opacity-80'}`}>
-                    <p className="text-sm font-medium">{(PRICING[tier]?.label || tier)}</p>
-                    <p className="font-serif text-xl font-semibold my-1">{(PRICING[tier]?.priceDisplay || '')}</p>
-                    <p className="text-xs text-secondary mb-3">
-                      {tier === 'plus' && 'All 16 matches, conflict analysis, growth path, PDF report.'}
-                      {tier === 'premium' && 'Plus features + rate-limited AI advisor + retake assessment.'}
-                      {tier === 'pro' && 'Everything in Premium + unlimited AI advisor.'}
-                      {tier === 'couples' && 'Pro for both + compatibility report + shared tools.'}
-                    </p>
-                    {isUpgrade ? (
-                      config.useMockPayments ? (
+            {/* Couples upgrade option — shown for paid accounts that don't have couples yet */}
+            {currentTier !== 'free' && currentTier !== 'couples' && (
+              <div className="p-3 border rounded-md border-border mt-1">
+                <p className="text-sm font-medium">Couples</p>
+                <p className="font-serif text-xl font-semibold my-1">{PRICING.couples.priceDisplay}</p>
+                <p className="text-xs text-secondary mb-3">Add your partner for a couples compatibility report and shared advisor tools.</p>
+                {config.useMockPayments ? (
+                  <button onClick={() => handleMockUpgrade('couples')} className="text-xs w-full btn-secondary" disabled={mockUpgrading}>
+                    {mockUpgrading ? 'Processing...' : 'Upgrade to Couples'}
+                  </button>
+                ) : (
+                  <a href={`/api/checkout?product=couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
+                    Upgrade to Couples
+                  </a>
+                )}
+              </div>
+            )}
+
+            {/* Free tier — show current status + test access + upgrade options + discount code */}
+            {currentTier === 'free' && (
+              <>
+                <div className="flex items-center gap-3 p-3 mb-3 rounded-md border bg-stone-50 border-border">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 bg-stone-200 text-secondary">
+                    -
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Free: Active</p>
+                    <p className="text-xs text-secondary">Persona code, top 3 matches, 3 advisor messages.</p>
+                  </div>
+                </div>
+
+                <div className="mb-3">
+                  <TestAccessCard />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {TIER_ORDER.filter(t => t !== 'free').map(tier => (
+                    <div key={tier} className="p-3 border rounded-md border-border">
+                      <p className="text-sm font-medium">{PRICING[tier]?.label || tier}</p>
+                      <p className="font-serif text-xl font-semibold my-1">{PRICING[tier]?.priceDisplay || ''}</p>
+                      <p className="text-xs text-secondary mb-3">
+                        {tier === 'plus' && 'All 16 matches, conflict analysis, growth path, PDF report.'}
+                        {tier === 'premium' && 'Plus features + rate-limited AI advisor + retake assessment.'}
+                        {tier === 'pro' && 'Everything in Premium + unlimited AI advisor.'}
+                        {tier === 'couples' && 'Pro for both + compatibility report + shared tools.'}
+                      </p>
+                      {config.useMockPayments ? (
                         <button onClick={() => handleMockUpgrade(tier)} className="text-xs w-full btn-secondary" disabled={mockUpgrading}>
-                          {mockUpgrading ? 'Processing...' : `Upgrade to ${(PRICING[tier]?.label || tier)}`}
+                          {mockUpgrading ? 'Processing...' : `Upgrade to ${PRICING[tier]?.label || tier}`}
                         </button>
                       ) : (
                         <a href={`/api/checkout?product=${tier}&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
-                          Upgrade to {(PRICING[tier]?.label || tier)}
+                          Upgrade to {PRICING[tier]?.label || tier}
                         </a>
-                      )
-                    ) : (
-                      <button onClick={() => {
-                        if (confirm(`Downgrade to ${PRICING[tier]?.label || tier}? Your current plan features will remain active until the end of this billing period.`)) {
-                          localStorage.setItem('relate_payment_tier', JSON.stringify({ tier, timestamp: Date.now() }));
-                          setCurrentTier(tier);
-                        }
-                      }} className="text-xs w-full btn-secondary">
-                        Downgrade to {(PRICING[tier]?.label || tier)}
-                      </button>
-                    )}
-                    {!isUpgrade && (
-                      <p className="text-[10px] text-secondary mt-2 text-center">Takes effect at the start of your next billing period.</p>
-                    )}
-                  </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Discount Code */}
-            <div className="mt-4 pt-4 border-t border-border">
-              {activeDiscountCode ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded">Discount Active</span>
-                  <span className="text-xs font-mono">{activeDiscountCode}</span>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ) : (
-                <>
-                  <p className="text-xs text-secondary mb-2">Have a discount code?</p>
-                  <form onSubmit={handleDiscountCode} className="flex gap-2">
-                    <input
-                      type="text"
-                      value={discountCode}
-                      onChange={e => setDiscountCode(e.target.value.toUpperCase())}
-                      placeholder="Enter code"
-                      className="input flex-1 text-xs font-mono"
-                    />
-                    <button
-                      type="submit"
-                      disabled={discountSubmitting || !discountCode.trim()}
-                      className="btn-secondary text-xs whitespace-nowrap"
-                    >
-                      {discountSubmitting ? 'Applying...' : 'Apply'}
-                    </button>
-                  </form>
-                  {discountResult?.success && (
-                    <p className="text-xs text-success mt-2">{discountResult.message}</p>
+
+                {/* Discount Code — only for free users */}
+                <div className="mt-4 pt-4 border-t border-border">
+                  {activeDiscountCode ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded">Discount Active</span>
+                      <span className="text-xs font-mono">{activeDiscountCode}</span>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-xs text-secondary mb-2">Have a discount code?</p>
+                      <form onSubmit={handleDiscountCode} className="flex gap-2">
+                        <input
+                          type="text"
+                          value={discountCode}
+                          onChange={e => setDiscountCode(e.target.value.toUpperCase())}
+                          placeholder="Enter code"
+                          className="input flex-1 text-xs font-mono"
+                        />
+                        <button
+                          type="submit"
+                          disabled={discountSubmitting || !discountCode.trim()}
+                          className="btn-secondary text-xs whitespace-nowrap"
+                        >
+                          {discountSubmitting ? 'Applying...' : 'Apply'}
+                        </button>
+                      </form>
+                      {discountResult?.success && (
+                        <p className="text-xs text-success mt-2">{discountResult.message}</p>
+                      )}
+                      {discountResult?.error && (
+                        <p className="text-xs text-danger mt-2">{discountResult.error}</p>
+                      )}
+                    </>
                   )}
-                  {discountResult?.error && (
-                    <p className="text-xs text-danger mt-2">{discountResult.error}</p>
-                  )}
-                </>
-              )}
-            </div>
+                </div>
+              </>
+            )}
           </section>
 
           {/* Partner Card */}
