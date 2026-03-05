@@ -15,6 +15,20 @@ const CODE_TO_POLE: Record<string, 'A' | 'B'> = {
 
 const DIMS = ['physical', 'social', 'lifestyle', 'values'] as const;
 
+const MEN_M2_POLES: Record<string, any> = {
+  physical: { A: 'Fitness', B: 'Maturity', descriptionA: 'He leads with physical vitality and takes pride in how his body performs. His energy and discipline around fitness signal drive and self-investment.', descriptionB: 'He leads with depth and lived experience over raw physicality. His presence carries weight because of who he is, not how he looks.' },
+  social: { A: 'Leadership', B: 'Presence', descriptionA: 'He naturally takes charge in social settings and people look to him for direction. His confidence in leading creates a sense of safety and momentum.', descriptionB: 'He draws people in through quiet attentiveness rather than commanding the room. His ability to make others feel seen is his strongest social asset.' },
+  lifestyle: { A: 'Adventure', B: 'Stability', descriptionA: 'He is energized by novelty, spontaneity, and the pursuit of new experiences. He builds a life that feels exciting and expansive.', descriptionB: 'He is grounded by routine, consistency, and intentional calm. He builds a life that feels secure and sustainable over time.' },
+  values: { A: 'Traditional', B: 'Egalitarian', descriptionA: 'He values clearly defined roles and responsibilities in a partnership. Structure and tradition give his relationships a reliable foundation.', descriptionB: 'He believes partnership roles should be negotiated, not inherited. Shared responsibility and flexibility define how he builds a life together.' },
+};
+
+const WOMEN_W2_POLES: Record<string, any> = {
+  physical: { A: 'Beauty', B: 'Confidence', descriptionA: 'She leads with aesthetic presence and takes pride in how she presents herself. Her appearance signals self-care and intentionality.', descriptionB: 'She leads with self-assurance that transcends appearance. Her confidence in who she is draws people in more than any physical trait.' },
+  social: { A: 'Allure', B: 'Charm', descriptionA: 'She carries an air of magnetic mystery that makes people want to know more. Her selective attention creates intrigue and desire.', descriptionB: 'She connects through warmth, humor, and genuine engagement. People feel instantly comfortable around her because of how present she is.' },
+  lifestyle: { A: 'Adventure', B: 'Stability', descriptionA: 'She is energized by novelty, spontaneity, and the pursuit of new experiences. She builds a life that feels exciting and expansive.', descriptionB: 'She is grounded by routine, consistency, and intentional calm. She builds a life that feels secure and sustainable over time.' },
+  values: { A: 'Traditional', B: 'Egalitarian', descriptionA: 'She values clearly defined roles and responsibilities in a partnership. Structure and tradition give her relationships a reliable foundation.', descriptionB: 'She believes partnership roles should be negotiated, not inherited. Shared responsibility and flexibility define how she builds a life together.' },
+};
+
 function getCodeKeys(code: string, m2Poles: any): Array<{ dim: string; pole: string; description: string }> {
   if (!code || code.length !== 4) return [];
   return DIMS.map((dim, i) => {
@@ -22,7 +36,7 @@ function getCodeKeys(code: string, m2Poles: any): Array<{ dim: string; pole: str
     const poleKey = CODE_TO_POLE[letter] || 'A';
     const poleName = m2Poles?.[dim]?.[poleKey] || letter;
     const descKey = poleKey === 'A' ? 'descriptionA' : 'descriptionB';
-    const description = m2Poles?.[dim]?.[descKey] || m2Poles?.[dim]?.description || '';
+    const description = m2Poles?.[dim]?.[descKey] || '';
     return { dim, pole: poleName, description };
   });
 }
@@ -149,11 +163,10 @@ export default function MatchDetailPage() {
           </div>
         </div>
 
-        {match.traits && <p className="text-secondary mb-6">{match.traits}</p>}
-
         {/* Dimension cards */}
         {(() => {
-          const codeKeys = getCodeKeys(match.code, report.matchM2Poles);
+          const matchPoles = report.gender === 'M' ? WOMEN_W2_POLES : MEN_M2_POLES;
+          const codeKeys = getCodeKeys(match.code, matchPoles);
           if (codeKeys.length === 0) return null;
           return (
             <section className="mt-2 mb-8">
