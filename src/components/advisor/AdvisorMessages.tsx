@@ -4,7 +4,11 @@ import { useRef, useEffect } from 'react';
 import { useAdvisor } from '@/lib/advisor-context';
 import AdvisorStarters from './AdvisorStarters';
 
-export default function AdvisorMessages() {
+interface AdvisorMessagesProps {
+  hideStarters?: boolean;
+}
+
+export default function AdvisorMessages({ hideStarters }: AdvisorMessagesProps) {
   const { messages, loading, isLimited, messageCount, messageLimit, paymentTier } = useAdvisor();
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -14,7 +18,7 @@ export default function AdvisorMessages() {
 
   return (
     <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
-      {messages.length === 0 && <AdvisorStarters />}
+      {messages.length === 0 && <AdvisorStarters hidden={hideStarters} />}
 
       {messages.map((msg, i) => (
         <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
