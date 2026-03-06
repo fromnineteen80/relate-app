@@ -33,7 +33,7 @@ export default function AdvisorSidebar() {
         }`}
         style={{ height: '100vh', position: 'sticky', top: 0 }}
         role="dialog"
-        aria-label="RELATE Advisor"
+        aria-label="Your Advisor"
         aria-hidden={!isOpen}
       >
         <div className={`flex flex-col h-full min-w-[320px] ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}>

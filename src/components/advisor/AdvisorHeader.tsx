@@ -12,9 +12,9 @@ export default function AdvisorHeader() {
   } as const;
 
   return (
-    <div className="border-b border-stone-200 px-4 py-3 flex-shrink-0">
+    <div className="border-b border-border px-4 py-3 flex-shrink-0">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="font-serif text-base font-semibold">RELATE Advisor</h2>
+        <h2 className="font-serif text-base font-semibold">Your Advisor</h2>
         <button
           onClick={close}
           aria-label="Close advisor"
