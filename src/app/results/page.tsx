@@ -753,20 +753,36 @@ function ResultsDashboard() {
           </div>
         )}
 
-        {/* ── Dimensions ── */}
+        {/* ── Score Breakdown ── */}
         {hasDimensions && (
           <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-4">Dimension Scores</h3>
-            <div className="space-y-3">
+            <h3 className="font-serif text-lg font-semibold mb-3">Score Breakdown</h3>
+            <div className="space-y-3.5">
               {Object.entries(dimensions).map(([dim, data]: [string, any]) => {
                 if (!data || typeof data !== 'object') return null;
+                const strength = data.strength || Math.max(data.poleAScore || 50, data.poleBScore || 50);
+                const pole = data.assignedPole || '-';
+                const desc = (() => {
+                  const strong = strength >= 70;
+                  const moderate = strength >= 40 && strength < 70;
+                  switch (dim) {
+                    case 'physical': return strong ? `Strong leaning toward ${pole} — this is a defining part of how you present yourself.` : moderate ? `Moderate ${pole} tendency — you show elements of both sides.` : `Mild preference — physical presentation isn't a strong differentiator for you.`;
+                    case 'social': return strong ? `Clear ${pole} orientation — this shapes how people experience you socially.` : moderate ? `Balanced social style with a slight lean toward ${pole}.` : `Flexible social approach — you adapt to different settings easily.`;
+                    case 'lifestyle': return strong ? `Strong ${pole} drive — this defines what energizes you day to day.` : moderate ? `You lean toward ${pole} but can flex when needed.` : `No strong lifestyle preference — you're comfortable with variety.`;
+                    case 'values': return strong ? `Firmly ${pole} in your partnership values — this guides your relationship expectations.` : moderate ? `Leaning ${pole}, but open to some flexibility in how roles are shared.` : `Balanced values orientation — you're adaptable in how you structure partnerships.`;
+                    default: return `Your ${dim} dimension leans toward ${pole}.`;
+                  }
+                })();
                 return (
-                  <div key={dim} className="flex items-center gap-3">
-                    <span className="text-xs text-secondary w-20 capitalize">{dim}</span>
-                    <div className="flex-1 h-2 bg-stone-200 rounded-full overflow-hidden">
-                      <div className="h-full bg-accent rounded-full" style={{ width: `${Math.max(data.poleAScore || 50, data.poleBScore || 50)}%` }} />
+                  <div key={dim}>
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs text-secondary w-20 shrink-0 capitalize">{dim}</span>
+                      <div className="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-accent rounded-full transition-all" style={{ width: `${Math.min(100, strength)}%` }} />
+                      </div>
+                      <span className="font-mono text-xs text-secondary w-8 text-right">{Math.round(strength)}</span>
                     </div>
-                    <span className="text-xs font-mono w-20 text-right">{data.assignedPole || '-'}</span>
+                    <p className="text-[11px] text-secondary/70 mt-1 ml-[92px] leading-snug">{desc}</p>
                   </div>
                 );
               })}

@@ -60,7 +60,7 @@ export default function PersonaPage() {
             <div className="flex flex-wrap gap-3">
               {codeKeys.map((k) => (
                 <div key={k.dim} className="card text-center flex-1 min-w-[120px]">
-                  <span className="inline-block text-xs border border-accent text-accent rounded-md px-3 py-1.5 mb-1.5 font-medium capitalize">
+                  <span className="inline-block text-[10px] border border-accent text-accent rounded-md px-2 py-1 mb-2.5 mt-1 font-medium capitalize">
                     {k.dim}
                   </span>
                   <p className="font-serif text-sm font-semibold text-primary mb-1">{k.pole}</p>
