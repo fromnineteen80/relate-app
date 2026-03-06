@@ -2,22 +2,25 @@
 
 import { useAdvisor } from '@/lib/advisor-context';
 
-export default function AdvisorStarters() {
+interface AdvisorStartersProps {
+  hidden?: boolean;
+}
+
+export default function AdvisorStarters({ hidden }: AdvisorStartersProps) {
   const { starters, sendMessage, loading, isLimited, paymentTier, messageLimit } = useAdvisor();
 
-  if (isLimited) return null;
+  if (isLimited || hidden) return null;
 
   const limitLabel = messageLimit === Infinity ? 'Unlimited' : `${messageLimit} messages per session`;
   const tierLabel = paymentTier === 'free' ? 'Free' : paymentTier.charAt(0).toUpperCase() + paymentTier.slice(1);
 
   return (
-    <div className="text-center py-8 px-2">
-      <p className="text-xs text-secondary mb-1">How can I help?</p>
-      <p className="text-[10px] text-secondary mb-4">
+    <div className="px-3 pt-3 pb-2">
+      <p className="text-[10px] text-secondary mb-2">
         {tierLabel} plan: {limitLabel}
       </p>
-      <div className="flex flex-col gap-2">
-        {starters.map(q => (
+      <div className="grid grid-cols-2 gap-2">
+        {starters.slice(0, 4).map(q => (
           <button
             key={q}
             onClick={() => sendMessage(q)}

@@ -1,14 +1,21 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAdvisor } from '@/lib/advisor-context';
 import AdvisorHeader from './AdvisorHeader';
 import AdvisorMessages from './AdvisorMessages';
-import AdvisorInput from './AdvisorInput';
 import AdvisorToggle from './AdvisorToggle';
 
 export default function AdvisorSidebar() {
-  const { isOpen, close } = useAdvisor();
+  const { isOpen, close, sendMessage, loading, isLimited } = useAdvisor();
+  const [inputValue, setInputValue] = useState('');
+
+  const handleSubmit = useCallback(() => {
+    const trimmed = inputValue.trim();
+    if (!trimmed || loading || isLimited) return;
+    setInputValue('');
+    sendMessage(trimmed);
+  }, [inputValue, loading, isLimited, sendMessage]);
 
   // ESC key to dismiss
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -33,13 +40,16 @@ export default function AdvisorSidebar() {
         }`}
         style={{ height: '100vh', position: 'sticky', top: 0 }}
         role="dialog"
-        aria-label="RELATE Advisor"
+        aria-label="Your Advisor"
         aria-hidden={!isOpen}
       >
         <div className={`flex flex-col h-full min-w-[320px] ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}>
-          <AdvisorHeader />
-          <AdvisorMessages />
-          <AdvisorInput />
+          <AdvisorHeader
+            inputValue={inputValue}
+            onInputChange={setInputValue}
+            onSubmit={handleSubmit}
+          />
+          <AdvisorMessages hideStarters={inputValue.length > 0} />
         </div>
       </div>
     </>
