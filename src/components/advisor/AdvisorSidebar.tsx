@@ -24,11 +24,11 @@ export default function AdvisorSidebar() {
     <>
       <AdvisorToggle />
 
-      {/* Sidebar — in-flow flex child, pushes content instead of overlaying */}
+      {/* Sidebar — left side, in-flow flex child, pushes content right */}
       <div
-        className={`flex-shrink-0 border-l border-stone-200 bg-white flex flex-col transition-all duration-300 ease-out overflow-hidden ${
+        className={`flex-shrink-0 border-r border-stone-200 bg-white flex flex-col transition-all duration-300 ease-out overflow-hidden ${
           isOpen
-            ? 'w-full sm:w-[50vw] xl:w-[33vw]'
+            ? 'w-screen sm:w-[50vw] xl:w-[33vw]'
             : 'w-0'
         }`}
         style={{ height: '100vh', position: 'sticky', top: 0 }}

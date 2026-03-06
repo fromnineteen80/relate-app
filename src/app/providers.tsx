@@ -9,6 +9,9 @@ function LayoutShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen">
+      {/* Advisor panel — left side, pushes content right */}
+      <AdvisorSidebar />
+
       {/* Main content area — shrinks when advisor is open */}
       <div
         className={`flex-1 min-w-0 transition-all duration-300 ease-out ${
@@ -17,9 +20,6 @@ function LayoutShell({ children }: { children: React.ReactNode }) {
       >
         {children}
       </div>
-
-      {/* Advisor panel — slides in from right, part of document flow */}
-      <AdvisorSidebar />
     </div>
   );
 }
