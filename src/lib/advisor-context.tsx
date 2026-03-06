@@ -167,10 +167,14 @@ function collectUserData(): any {
   const m4Scored = localStorage.getItem('relate_m4_scored');
   const results = localStorage.getItem('relate_results');
   const couplesReport = localStorage.getItem('relate_couples_report');
+  const profile = localStorage.getItem('relate_profile');
+  const marketData = localStorage.getItem('relate_market_data');
 
   return {
     gender,
+    profile: profile ? JSON.parse(profile) : null,
     demographics: demographics ? JSON.parse(demographics) : null,
+    marketData: marketData ? JSON.parse(marketData) : null,
     m1: m1Scored ? JSON.parse(m1Scored) : null,
     m2: m2Scored ? JSON.parse(m2Scored) : null,
     m3: m3Scored ? JSON.parse(m3Scored) : null,
@@ -283,7 +287,9 @@ export function AdvisorProvider({ children }: { children: ReactNode }) {
           },
           userData: {
             gender: userData.gender,
+            profile: userData.profile,
             demographics: userData.demographics,
+            marketData: userData.marketData,
             m1: userData.m1,
             m2: userData.m2,
             m3: userData.m3,

@@ -7,12 +7,14 @@ import { RELATE_SYSTEM_PROMPT, RELATE_MODELS, RELATE_MAX_TOKENS } from '@/lib/pr
 function buildAdvisorContext(body: any): string {
   const { persona, results, mode, couplesReport, partnerPersona, locationContext, progress, userData } = body;
 
+  const firstName = userData?.profile?.firstName || '';
+
   let context = `
 
 ## ADVISOR MODE: Additional Context
 
 Only reference scores explicitly provided below. Never invent data you don't have.
-
+${firstName ? `\n**User's first name: ${firstName}** — Use their name naturally in your very first response to make it personal. Don't overuse it after that.\n` : ''}
 `;
 
   // Location awareness
@@ -20,14 +22,34 @@ Only reference scores explicitly provided below. Never invent data you don't hav
     context += `## Current Location\n${locationContext}\n\n`;
   }
 
-  // Demographics
-  if (userData?.demographics) {
-    const d = userData.demographics;
+  // Demographics & Profile
+  if (userData?.demographics || userData?.profile) {
+    const d = userData.demographics || {};
     context += `## Demographics\n`;
+    if (firstName) context += `- Name: ${firstName}\n`;
     if (userData.gender) context += `- Gender: ${userData.gender === 'M' ? 'Man' : 'Woman'}\n`;
     if (d.age) context += `- Age: ${d.age}\n`;
     if (d.relationshipStatus) context += `- Relationship status: ${d.relationshipStatus}\n`;
     if (d.seeking) context += `- Seeking: ${d.seeking}\n`;
+    if (userData.profile?.city && userData.profile?.state) {
+      context += `- Location: ${userData.profile.city}, ${userData.profile.state}\n`;
+    }
+    context += '\n';
+  }
+
+  // Dating market data
+  if (userData?.marketData) {
+    const md = userData.marketData;
+    context += `## Dating Market Analysis\n`;
+    if (md.location?.cbsaLabel) context += `- Metro Area: ${md.location.cbsaLabel}\n`;
+    if (md.location?.population) context += `- Metro Population: ${md.location.population.toLocaleString()}\n`;
+    if (md.matchPool) {
+      if (md.matchPool.localSinglePool) context += `- Local Singles Pool: ~${md.matchPool.localSinglePool.toLocaleString()}\n`;
+      if (md.matchPool.preferredPool) context += `- Preferred Pool (age/preference match): ~${md.matchPool.preferredPool.toLocaleString()}\n`;
+      if (md.matchPool.idealPool) context += `- Ideal Matches: ~${md.matchPool.idealPool.toLocaleString()}\n`;
+    }
+    if (md.matchProbability?.percentage) context += `- Match Probability: ${md.matchProbability.percentage}\n`;
+    if (md.relateScore?.score != null) context += `- RELATE Score: ${md.relateScore.score}/100\n`;
     context += '\n';
   }
 
