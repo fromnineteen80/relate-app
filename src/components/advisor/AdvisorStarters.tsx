@@ -25,7 +25,7 @@ export default function AdvisorStarters({ hidden }: AdvisorStartersProps) {
             key={q}
             onClick={() => sendMessage(q)}
             disabled={loading}
-            className="text-left text-[13px] border border-stone-200 rounded-md px-3 py-2.5 hover:border-accent hover:text-accent transition-colors disabled:opacity-50"
+            className="text-left text-xs border border-stone-200 rounded-md px-3 py-2.5 hover:border-accent hover:text-accent transition-colors disabled:opacity-50"
           >
             {q}
           </button>

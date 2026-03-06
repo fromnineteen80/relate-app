@@ -54,7 +54,7 @@ export default function AdvisorToggle({ inputValue = '', onInputChange, onSubmit
             onKeyDown={handleKeyDown}
             placeholder={isLimited ? 'Upgrade for more messages' : 'Ask anything...'}
             disabled={loading || isLimited}
-            className="w-56 sm:w-72 border border-stone-200 bg-white rounded-full px-4 py-2.5 text-[13px] shadow-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent disabled:opacity-50 disabled:bg-stone-50"
+            className="w-56 sm:w-72 border border-stone-200 bg-white rounded-full px-4 py-2.5 text-xs shadow-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent disabled:opacity-50 disabled:bg-stone-50"
           />
           <button
             type="button"
