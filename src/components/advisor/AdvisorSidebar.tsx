@@ -29,26 +29,25 @@ export default function AdvisorSidebar() {
 
   return (
     <>
-      <AdvisorToggle />
+      <AdvisorToggle
+        inputValue={inputValue}
+        onInputChange={setInputValue}
+        onSubmit={handleSubmit}
+      />
 
-      {/* Sidebar — left side, in-flow flex child, pushes content right */}
+      {/* Sidebar — fixed to left edge, full viewport height, independent of main scroll */}
       <div
-        className={`flex-shrink-0 border-r border-stone-200 bg-white flex flex-col transition-all duration-300 ease-out overflow-hidden ${
+        className={`fixed top-0 left-0 h-screen bg-white border-r border-stone-200 flex flex-col transition-all duration-300 ease-out overflow-hidden z-30 ${
           isOpen
             ? 'w-screen sm:w-[50vw] xl:w-[33vw]'
             : 'w-0'
         }`}
-        style={{ height: '100vh', position: 'sticky', top: 0 }}
         role="dialog"
         aria-label="Your Advisor"
         aria-hidden={!isOpen}
       >
         <div className={`flex flex-col h-full min-w-[320px] ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}>
-          <AdvisorHeader
-            inputValue={inputValue}
-            onInputChange={setInputValue}
-            onSubmit={handleSubmit}
-          />
+          <AdvisorHeader />
           <AdvisorMessages hideStarters={inputValue.length > 0} />
         </div>
       </div>
