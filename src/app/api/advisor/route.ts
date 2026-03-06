@@ -163,6 +163,27 @@ ${firstName ? `\n**User's first name: ${firstName}** — Use their name naturall
     context += '\n';
   }
 
+  // Growth plan progress
+  if (userData?.growthPlan) {
+    const gp = userData.growthPlan;
+    if (gp.points > 0 || gp.completedExercises?.length > 0 || gp.activeExercise) {
+      context += `## Growth Plan Progress\n`;
+      context += `- Points: ${gp.points}\n`;
+      context += `- Exercises completed: ${gp.completedExercises?.length || 0}\n`;
+      if (gp.activeExercise) {
+        context += `- Currently working on: ${gp.activeExercise.title} (${gp.activeExercise.framework})\n`;
+      }
+      if (gp.completedExercises?.length > 0) {
+        const recent = gp.completedExercises.slice(-3);
+        context += `\n**Recent exercises:**\n`;
+        recent.forEach((ex: any) => {
+          context += `- ${ex.title} (${ex.framework})${ex.reflection ? ` — Reflection: "${ex.reflection}"` : ''}\n`;
+        });
+      }
+      context += `\nReference their growth plan progress when coaching. Acknowledge completed exercises and build on reflections they've written. If they're on the /growth page, suggest which exercise to do next based on their assessment data.\n\n`;
+    }
+  }
+
   // Couples mode context
   if (mode === 'couples' && couplesReport) {
     const overview = couplesReport.overview || {};

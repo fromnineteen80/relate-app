@@ -525,6 +525,9 @@ function ResultsDashboard() {
               ) : (
                 <p className="text-xs text-secondary mt-1.5">{stack.growthPath}</p>
               )}
+              <Link href="/growth" className="text-xs text-accent hover:underline mt-2 inline-block">
+                Start your Growth Plan →
+              </Link>
             </div>
           )}
         </div>
