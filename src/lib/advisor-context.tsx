@@ -48,13 +48,26 @@ const AdvisorContext = createContext<AdvisorContextType>({
   starters: [],
 });
 
-// Contextual starters based on current route
+// Personalized starters based on route and user data
 function getStarters(pathname: string, hasCouples: boolean): string[] {
+  // Read user results for personalization
+  let personaName = '';
+  let topMatchName = '';
+  try {
+    const stored = typeof window !== 'undefined' ? localStorage.getItem('relate_results') : null;
+    if (stored) {
+      const r = JSON.parse(stored);
+      personaName = r?.persona?.name || '';
+      topMatchName = r?.matches?.[0]?.name || '';
+    }
+  } catch { /* */ }
+
   if (pathname.includes('module-1')) {
     return [
       "I'm not sure how to answer this question",
       "What if I want both options?",
       "How do my preferences affect my matches?",
+      "Can I change my answers later?",
     ];
   }
   if (pathname.includes('module-2')) {
@@ -62,6 +75,7 @@ function getStarters(pathname: string, hasCouples: boolean): string[] {
       "This question feels uncomfortable",
       "I answered differently than I expected",
       "What if I'm not sure who I really am?",
+      "How honest should I be here?",
     ];
   }
   if (pathname.includes('module-3')) {
@@ -69,6 +83,7 @@ function getStarters(pathname: string, hasCouples: boolean): string[] {
       "What does 'context-switching' mean?",
       "Is it bad to want more than I offer?",
       "How does attentiveness affect relationships?",
+      "What if my partner needs differ from mine?",
     ];
   }
   if (pathname.includes('module-4')) {
@@ -76,21 +91,23 @@ function getStarters(pathname: string, hasCouples: boolean): string[] {
       "I don't like what this says about me",
       "Can I change my conflict patterns?",
       "What are the Gottman horsemen?",
+      "Is my conflict style hurting my relationships?",
     ];
   }
   if (pathname.includes('/couples')) {
     return [
       "Where do we clash the most?",
       "What's our biggest risk as a couple?",
-      "Give us a conversation starter",
+      "Give us a conversation starter for tonight",
       "Suggest a date based on our profiles",
     ];
   }
   if (pathname.includes('/results')) {
     return [
-      "Explain my persona to me",
+      personaName ? `What does being a ${personaName} say about me?` : "Explain my persona to me",
+      topMatchName ? `Why is ${topMatchName} my top match?` : "Why is this my top match?",
       "What should I work on first?",
-      "How do I talk to my partner about this?",
+      "How do I talk to my partner about my results?",
     ];
   }
   if (pathname.includes('/assessment')) {
@@ -98,20 +115,30 @@ function getStarters(pathname: string, hasCouples: boolean): string[] {
       "How long does this take?",
       "Why these specific questions?",
       "What will I learn about myself?",
+      "How is my persona determined?",
     ];
   }
   if (hasCouples) {
     return [
-      "What's our biggest strength?",
+      "What's our biggest strength as a couple?",
       "How can we improve our conflict pattern?",
       "Suggest something for us this week",
+      "What should we talk about tonight?",
+    ];
+  }
+  if (personaName) {
+    return [
+      `What are my biggest strengths as a ${personaName}?`,
+      topMatchName ? `Tell me about my match with ${topMatchName}` : "What should I look for in a partner?",
+      "What's my biggest blind spot in relationships?",
+      "What can I work on to be a better partner?",
     ];
   }
   return [
     "What are my biggest strengths in relationships?",
     "Help me understand my attachment style",
     "What should I look for in a partner?",
-    "How many ideal matches are within 100 miles?",
+    "What can I work on to be a better partner?",
   ];
 }
 

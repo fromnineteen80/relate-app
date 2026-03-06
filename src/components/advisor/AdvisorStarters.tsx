@@ -7,18 +7,12 @@ interface AdvisorStartersProps {
 }
 
 export default function AdvisorStarters({ hidden }: AdvisorStartersProps) {
-  const { starters, sendMessage, loading, isLimited, paymentTier, messageLimit } = useAdvisor();
+  const { starters, sendMessage, loading, isLimited } = useAdvisor();
 
   if (isLimited || hidden) return null;
 
-  const limitLabel = messageLimit === Infinity ? 'Unlimited' : `${messageLimit} messages per session`;
-  const tierLabel = paymentTier === 'free' ? 'Free' : paymentTier.charAt(0).toUpperCase() + paymentTier.slice(1);
-
   return (
     <div className="px-3 pt-3 pb-2">
-      <p className="text-[10px] text-secondary mb-2">
-        {tierLabel} plan: {limitLabel}
-      </p>
       <div className="grid grid-cols-2 gap-2">
         {starters.slice(0, 4).map(q => (
           <button
