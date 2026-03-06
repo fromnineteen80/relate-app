@@ -33,6 +33,8 @@ const FEMALE_DIMENSION_LABELS: Record<string, string> = {
   E: 'Thrill', F: 'Peace', G: 'Traditional', H: 'Egalitarian',
 };
 
+
+
 function tierColor(tier: string) {
   const colors: Record<string, string> = {
     ideal: 'text-success', kismet: 'text-success/70', effort: 'text-warning',
@@ -160,10 +162,10 @@ export default function PersonasPage() {
               </div>
               <div>
                 <p className="text-xs text-secondary font-mono mb-1">LIFESTYLE</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">E</span> = Thrill</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">E</span> = Adventure</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You are energized by novelty, adventure, and spontaneous experiences. A life without surprises feels stagnant to you.</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">F</span> = Peace</p>
-                <p className="text-[11px] text-secondary/80 leading-snug">You are grounded by routine, consistency, and intentional calm. You build a life that feels secure and sustainable over time.</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">F</span> = Stability</p>
+                <p className="text-[11px] text-secondary/80 leading-snug">You are grounded by routine, consistency, and a reliable foundation. You build a life that feels secure and sustainable over time.</p>
               </div>
               <div>
                 <p className="text-xs text-secondary font-mono mb-1">VALUES</p>
