@@ -23,7 +23,7 @@ export default function AdvisorMessages({ hideStarters }: AdvisorMessagesProps) 
       {messages.map((msg, i) => (
         <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
           <div
-            className={`max-w-[85%] px-3 py-2 rounded-md text-sm leading-relaxed ${
+            className={`max-w-[85%] px-3 py-2 rounded-md text-xs leading-relaxed ${
               msg.role === 'user'
                 ? 'bg-stone-100 text-foreground'
                 : 'text-foreground'

@@ -8,19 +8,18 @@ function LayoutShell({ children }: { children: React.ReactNode }) {
   const { isOpen } = useAdvisor();
 
   return (
-    <div className="flex min-h-screen">
-      {/* Advisor panel — left side, pushes content right */}
+    <>
       <AdvisorSidebar />
 
-      {/* Main content area — shrinks when advisor is open */}
+      {/* Main content — shifts right when advisor is open */}
       <div
-        className={`flex-1 min-w-0 transition-all duration-300 ease-out ${
-          isOpen ? 'advisor-open' : ''
+        className={`min-h-screen transition-all duration-300 ease-out ${
+          isOpen ? 'sm:ml-[50vw] xl:ml-[33vw]' : ''
         }`}
       >
         {children}
       </div>
-    </div>
+    </>
   );
 }
 
