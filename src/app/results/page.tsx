@@ -764,7 +764,7 @@ function ResultsDashboard() {
               {Object.entries(dimensions).map(([dim, data]: [string, any]) => {
                 if (!data || typeof data !== 'object') return null;
                 const strength = data.strength || Math.max(data.poleAScore || 50, data.poleBScore || 50);
-                const pole = data.assignedPole || '-';
+                const pole = data.poleName || data.assignedPole || '-';
                 const desc = (() => {
                   const strong = strength >= 70;
                   const moderate = strength >= 40 && strength < 70;
