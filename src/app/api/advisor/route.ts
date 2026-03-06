@@ -184,6 +184,27 @@ ${firstName ? `\n**User's first name: ${firstName}** — Use their name naturall
     }
   }
 
+  // Couples growth plan progress
+  if (userData?.couplesGrowth) {
+    const cg = userData.couplesGrowth;
+    if (cg.points > 0 || cg.completedChallenges?.length > 0 || cg.activeChallenge) {
+      context += `## Couples Growth Plan Progress\n`;
+      context += `- Points: ${cg.points}\n`;
+      context += `- Challenges completed: ${cg.completedChallenges?.length || 0}\n`;
+      if (cg.activeChallenge) {
+        context += `- Currently working on: ${cg.activeChallenge.title}\n`;
+      }
+      if (cg.completedChallenges?.length > 0) {
+        const recent = cg.completedChallenges.slice(-3);
+        context += `\n**Recent challenges:**\n`;
+        recent.forEach((ch: any) => {
+          context += `- ${ch.title} (${ch.category})\n`;
+        });
+      }
+      context += `\nAcknowledge couples challenge progress. Suggest next challenges based on their compatibility report. If they're on the /couples page, help them pick what to work on next.\n\n`;
+    }
+  }
+
   // Couples mode context
   if (mode === 'couples' && couplesReport) {
     const overview = couplesReport.overview || {};

@@ -753,7 +753,14 @@ ${couplesReport ? `1. **Reference couples assessment data** from assessment-data
    - Couple archetype: ${couplesReport.archetype || '?'}
 2. **Identify the dynamic being described:** which section of the couples report does it fall under?
 3. **Reference both partners' conflict profiles:** how do their patterns interact?
-4. **Coach the interaction, not just the individual:** "When you ${conflictApproach}, your partner likely responds by..."` : `1. **Note:** No couples assessment data is available
+4. **Coach the interaction, not just the individual:** "When you ${conflictApproach}, your partner likely responds by..."
+5. **Prescribe from the Growth Plan challenges:**
+   - High Gottman risk → Gottman Antidote challenge (practice the antidote to their highest horseman for 1 week)
+   - Driver collision → Driver Awareness challenge (name the driver out loud when triggered, 2 weeks)
+   - Connection tension → Morning Check-In (share intentions daily, 7 days) or Active Listening Exercise (5 min structured listening)
+   - Conflict patterns → Repair Ritual (20-min cool-down before re-engaging) or Softened Startup (replace criticism with requests)
+   - General growth → Weekly State of the Union (30-min relationship check-in), Vulnerability Share, Dream Mapping
+   - Direct them to the Couples Dashboard (/couples) where they can start challenges and track progress together` : `1. **Note:** No couples assessment data is available
    - Suggest their partner take the RELATE assessment at relate.date for couples-specific coaching
 2. **Coach from their individual profile:**
    - Their conflict approach: ${conflictApproach}

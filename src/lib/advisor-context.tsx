@@ -181,6 +181,9 @@ function collectUserData(): any {
   const growthCompleted = localStorage.getItem('relate_growth_exercises_completed');
   const growthPoints = localStorage.getItem('relate_individual_growth_points');
   const growthActive = localStorage.getItem('relate_growth_active_exercise');
+  const couplesCompleted = localStorage.getItem('relate_completed_challenges');
+  const couplesPoints = localStorage.getItem('relate_growth_points');
+  const couplesActive = localStorage.getItem('relate_active_challenge');
 
   return {
     gender,
@@ -197,6 +200,11 @@ function collectUserData(): any {
       completedExercises: growthCompleted ? JSON.parse(growthCompleted) : [],
       points: growthPoints ? parseInt(growthPoints, 10) : 0,
       activeExercise: growthActive ? JSON.parse(growthActive) : null,
+    },
+    couplesGrowth: {
+      completedChallenges: couplesCompleted ? JSON.parse(couplesCompleted) : [],
+      points: couplesPoints ? parseInt(couplesPoints, 10) : 0,
+      activeChallenge: couplesActive ? JSON.parse(couplesActive) : null,
     },
   };
 }
@@ -312,6 +320,7 @@ export function AdvisorProvider({ children }: { children: ReactNode }) {
             m3: userData.m3,
             m4: userData.m4,
             growthPlan: userData.growthPlan,
+            couplesGrowth: userData.couplesGrowth,
           },
         }),
       });
