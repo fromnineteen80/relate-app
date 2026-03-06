@@ -119,7 +119,7 @@ export default function M2Reward({ scoredData, onContinue }: Props) {
         >
           {polePairs.map((p) => (
             <div key={p.dim} className="text-center">
-              <span className="inline-block text-xs border border-border rounded-md px-3 py-1.5 mb-1.5">
+              <span className="inline-block text-[10px] border border-border rounded-md px-2 py-1 mb-2.5 mt-1">
                 {p.pole}
               </span>
               <p className="text-[10px] text-secondary capitalize">{p.dim}</p>

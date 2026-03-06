@@ -20,41 +20,27 @@ export default function AdvisorSidebar() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
-  // Prevent body scroll when sidebar is open on mobile
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
-  }, [isOpen]);
-
   return (
     <>
       <AdvisorToggle />
 
-      {/* Overlay */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/20 transition-opacity duration-200"
-          onClick={close}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Sidebar */}
+      {/* Sidebar — left side, in-flow flex child, pushes content right */}
       <div
-        className={`fixed top-0 right-0 z-50 h-full bg-white border-l border-stone-200 shadow-xl flex flex-col transition-transform duration-300 ease-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        } w-full sm:w-[400px]`}
+        className={`flex-shrink-0 border-r border-stone-200 bg-white flex flex-col transition-all duration-300 ease-out overflow-hidden ${
+          isOpen
+            ? 'w-screen sm:w-[50vw] xl:w-[33vw]'
+            : 'w-0'
+        }`}
+        style={{ height: '100vh', position: 'sticky', top: 0 }}
         role="dialog"
         aria-label="RELATE Advisor"
         aria-hidden={!isOpen}
       >
-        <AdvisorHeader />
-        <AdvisorMessages />
-        <AdvisorInput />
+        <div className={`flex flex-col h-full min-w-[320px] ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}>
+          <AdvisorHeader />
+          <AdvisorMessages />
+          <AdvisorInput />
+        </div>
       </div>
     </>
   );

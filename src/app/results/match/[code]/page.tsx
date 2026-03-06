@@ -57,6 +57,36 @@ function tierTextColor(tier: string) {
   return colors[tier] || 'text-secondary';
 }
 
+function scoreContext(key: string, value: number): string {
+  const v = Math.round(value);
+  const high = v >= 70;
+  const mid = v >= 40 && v < 70;
+  switch (key) {
+    case 'tier':
+      return high ? 'Strong persona-level alignment — your core personalities are naturally compatible.'
+        : mid ? 'Moderate persona alignment — workable with mutual effort and awareness.'
+        : 'Lower persona alignment — meaningful differences in how you each approach relationships.';
+    case 'preference':
+      return high ? 'You closely match what this persona typically looks for in a partner.'
+        : mid ? 'You partially match this persona\'s stated preferences.'
+        : 'You fall outside several of this persona\'s typical preferences.';
+    case 'dimension':
+      return high ? 'Your behavioral patterns and lifestyle values are closely aligned.'
+        : mid ? 'Some behavioral overlap, but notable differences in a few areas.'
+        : 'Significant differences in day-to-day behavioral tendencies.';
+    case 'intimacy':
+      return high ? 'High alignment in how you each express and receive intimacy.'
+        : mid ? 'Some differences in intimacy needs — communication will be important.'
+        : 'Very different intimacy styles — requires intentional understanding.';
+    case 'conflict':
+      return high ? 'You handle disagreements in complementary ways, reducing friction.'
+        : mid ? 'Some differences in conflict style that may require adjustment.'
+        : 'Opposing conflict styles — may need clear strategies for disagreements.';
+    default:
+      return '';
+  }
+}
+
 function InsightCard({ title, items, accent }: { title: string; items: string[]; accent?: boolean }) {
   if (!items || items.length === 0) return null;
   return (
@@ -74,14 +104,17 @@ function InsightCard({ title, items, accent }: { title: string; items: string[];
   );
 }
 
-function ScoreBar({ label, value }: { label: string; value: number }) {
+function ScoreBar({ label, value, description }: { label: string; value: number; description?: string }) {
   return (
-    <div className="flex items-center gap-3">
-      <span className="text-xs text-secondary w-20 shrink-0">{label}</span>
-      <div className="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
-        <div className="h-full bg-accent rounded-full transition-all" style={{ width: `${Math.min(100, value)}%` }} />
+    <div>
+      <div className="flex items-center gap-3">
+        <span className="text-xs text-secondary w-20 shrink-0">{label}</span>
+        <div className="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
+          <div className="h-full bg-accent rounded-full transition-all" style={{ width: `${Math.min(100, value)}%` }} />
+        </div>
+        <span className="font-mono text-xs text-secondary w-8 text-right">{Math.round(value)}</span>
       </div>
-      <span className="font-mono text-xs text-secondary w-8 text-right">{Math.round(value)}</span>
+      {description && <p className="text-[11px] text-secondary/70 mt-1 ml-[92px] leading-snug">{description}</p>}
     </div>
   );
 }
@@ -173,7 +206,7 @@ export default function MatchDetailPage() {
               <div className="flex flex-wrap gap-3">
                 {codeKeys.map((k) => (
                   <div key={k.dim} className="card text-center flex-1 min-w-[120px]">
-                    <span className="inline-block text-xs border border-accent text-accent rounded-md px-3 py-1.5 mb-1.5 font-medium capitalize">
+                    <span className="inline-block text-[10px] border border-accent text-accent rounded-md px-2 py-1 mb-2.5 mt-1 font-medium capitalize">
                       {k.dim}
                     </span>
                     <p className="font-serif text-sm font-semibold text-primary mb-1">{k.pole}</p>
@@ -199,12 +232,12 @@ export default function MatchDetailPage() {
         {match.subScores && (
           <section className="card mb-4">
             <h3 className="font-serif font-semibold mb-3">Score Breakdown</h3>
-            <div className="space-y-2.5">
-              <ScoreBar label="Persona" value={match.subScores.tier} />
-              <ScoreBar label="Preference" value={match.subScores.preference} />
-              <ScoreBar label="Behavioral" value={match.subScores.dimension} />
-              <ScoreBar label="Intimacy" value={match.subScores.intimacy} />
-              <ScoreBar label="Conflict" value={match.subScores.conflict} />
+            <div className="space-y-3.5">
+              <ScoreBar label="Persona" value={match.subScores.tier} description={scoreContext('tier', match.subScores.tier)} />
+              <ScoreBar label="Preference" value={match.subScores.preference} description={scoreContext('preference', match.subScores.preference)} />
+              <ScoreBar label="Behavioral" value={match.subScores.dimension} description={scoreContext('dimension', match.subScores.dimension)} />
+              <ScoreBar label="Intimacy" value={match.subScores.intimacy} description={scoreContext('intimacy', match.subScores.intimacy)} />
+              <ScoreBar label="Conflict" value={match.subScores.conflict} description={scoreContext('conflict', match.subScores.conflict)} />
             </div>
           </section>
         )}

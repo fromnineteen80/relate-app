@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { useAdvisor } from '@/lib/advisor-context';
 
 type SiteHeaderProps = {
   variant?: 'default' | 'landing' | 'auth';
@@ -14,6 +15,7 @@ type SiteHeaderProps = {
 
 export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeaderProps) {
   const { user, signOut } = useAuth();
+  const { isOpen: advisorOpen } = useAdvisor();
   const pathname = usePathname();
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -21,6 +23,9 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isAuth = variant === 'auth';
+
+  // When advisor is open, collapse desktop nav to hamburger format
+  const collapseNav = advisorOpen;
 
   // Close dropdown when clicking/tapping outside (pointerdown works across mouse, touch, pen)
   useEffect(() => {
@@ -74,15 +79,15 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-sm" style={{ overflow: 'visible' }}>
-      <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="px-6 py-4 flex items-center justify-between">
         <Link href="/" className="font-serif text-xl font-semibold tracking-tight">
           RELATE
         </Link>
 
         {isAuth ? null : (
           <div className="flex items-center gap-2">
-            {/* Desktop nav links */}
-            <nav className="hidden md:flex items-center gap-6">
+            {/* Desktop nav links — hidden when advisor pushes content */}
+            <nav className={`${collapseNav ? 'hidden' : 'hidden md:flex'} items-center gap-6`}>
               {navLinks.map(link =>
                 link.isAnchor ? (
                   <a key={link.label} href={link.href} className="text-sm text-secondary hover:text-foreground transition-colors">
@@ -124,10 +129,10 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
               </>
             )}
 
-            {/* Mobile hamburger */}
+            {/* Hamburger — always visible on mobile, also on desktop when advisor is open */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden w-8 h-8 flex items-center justify-center text-secondary hover:text-foreground transition-colors"
+              className={`${collapseNav ? '' : 'md:hidden '}w-8 h-8 flex items-center justify-center text-secondary hover:text-foreground transition-colors`}
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
               {mobileMenuOpen ? (
@@ -147,9 +152,9 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
         )}
       </div>
 
-      {/* Mobile menu dropdown */}
+      {/* Menu dropdown — shows on mobile, or desktop when advisor is open */}
       {!isAuth && mobileMenuOpen && (
-        <div className="md:hidden border-t border-border bg-white px-6 py-4 animate-fade-in">
+        <div className={`${collapseNav ? '' : 'md:hidden '}border-t border-border bg-white px-6 py-4 animate-fade-in`}>
           <nav className="flex flex-col gap-3">
             {navLinks.map(link =>
               link.isAnchor ? (
