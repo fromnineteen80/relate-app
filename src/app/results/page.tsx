@@ -589,8 +589,8 @@ function ResultsDashboard() {
       {/* Sub-Navigation */}
       <SubNav items={navItems.map(n => ({ ...n, href: `#${n.id}` }))} />
 
-      <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
-        <div className="flex items-baseline justify-between mb-8">
+      <main className="flex-1 max-w-3xl mx-auto px-6 pt-[37px] pb-8 w-full">
+        <div className="flex items-baseline justify-between mb-[27px]">
           <h1 className="font-serif text-2xl font-semibold">Results</h1>
           {canDownload && (
             <button onClick={handleDownloadPDF} disabled={downloading} className="text-xs text-accent hover:underline">
