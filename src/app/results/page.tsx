@@ -768,12 +768,13 @@ function ResultsDashboard() {
                 const desc = (() => {
                   const strong = strength >= 70;
                   const moderate = strength >= 40 && strength < 70;
+                  const pn = persona?.name || 'your persona';
                   switch (dim) {
-                    case 'physical': return strong ? `Strong leaning toward ${pole} — this is a defining part of how you present yourself.` : moderate ? `Moderate ${pole} tendency — you show elements of both sides.` : `Mild preference — physical presentation isn't a strong differentiator for you.`;
-                    case 'social': return strong ? `Clear ${pole} orientation — this shapes how people experience you socially.` : moderate ? `Balanced social style with a slight lean toward ${pole}.` : `Flexible social approach — you adapt to different settings easily.`;
-                    case 'lifestyle': return strong ? `Strong ${pole} drive — this defines what energizes you day to day.` : moderate ? `You lean toward ${pole} but can flex when needed.` : `No strong lifestyle preference — you're comfortable with variety.`;
-                    case 'values': return strong ? `Firmly ${pole} in your partnership values — this guides your relationship expectations.` : moderate ? `Leaning ${pole}, but open to some flexibility in how roles are shared.` : `Balanced values orientation — you're adaptable in how you structure partnerships.`;
-                    default: return `Your ${dim} dimension leans toward ${pole}.`;
+                    case 'physical': return strong ? `Strong ${pole} signal — this is core to what makes you ${pn}.` : moderate ? `Moderate ${pole} tendency — you show elements of both sides, but your ${pn} identity leans this way.` : `Mild preference — physical presentation isn't a strong differentiator within your ${pn} profile.`;
+                    case 'social': return strong ? `Clear ${pole} orientation — this is how people experience you as ${pn}.` : moderate ? `Balanced social style with a slight lean toward ${pole}, consistent with ${pn}.` : `Flexible social approach — you adapt across settings, which adds range to your ${pn} profile.`;
+                    case 'lifestyle': return strong ? `Strong ${pole} drive — this defines your day-to-day energy as ${pn}.` : moderate ? `You lean toward ${pole} but can flex when needed — a hallmark of the ${pn} profile.` : `No strong lifestyle preference — your ${pn} identity is shaped more by other dimensions.`;
+                    case 'values': return strong ? `Firmly ${pole} in your partnership values — this anchors how ${pn} approaches relationships.` : moderate ? `Leaning ${pole}, with some flexibility — your ${pn} profile allows room to negotiate roles.` : `Balanced values orientation — as ${pn}, you're adaptable in how you structure partnerships.`;
+                    default: return `Your ${dim} dimension leans toward ${pole}, contributing to your ${pn} profile.`;
                   }
                 })();
                 return (
