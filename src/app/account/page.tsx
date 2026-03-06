@@ -581,8 +581,8 @@ function AccountPage() {
         { id: 'coaching', label: 'Coaching', href: '#coaching', show: true },
       ]} />
 
-      <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
-        <h1 className="font-serif text-3xl font-semibold mb-8">Account</h1>
+      <main className="flex-1 max-w-3xl mx-auto px-6 pt-[37px] pb-8 w-full">
+        <h1 className="font-serif text-2xl font-semibold mb-[27px]">Account</h1>
 
         {/* ── Payment Success Toast ── */}
         {paymentSuccess && (
