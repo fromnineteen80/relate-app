@@ -37,10 +37,10 @@ export default function AdvisorSidebar() {
 
       {/* Sidebar — fixed to left edge, full viewport height, independent of main scroll */}
       <div
-        className={`fixed top-0 left-0 h-screen bg-white border-r border-stone-200 flex flex-col transition-all duration-300 ease-out overflow-hidden z-30 ${
+        className={`fixed top-0 left-0 h-screen bg-white border-r border-stone-200 flex flex-col transition-all duration-300 ease-out overflow-hidden ${
           isOpen
-            ? 'w-screen sm:w-[50vw] xl:w-[33vw]'
-            : 'w-0'
+            ? 'w-screen sm:w-[50vw] xl:w-[33vw] z-[60] sm:z-30'
+            : 'w-0 z-30'
         }`}
         role="dialog"
         aria-label="Your Advisor"

@@ -58,6 +58,7 @@ export function SubNav({ items = [] }: SubNavProps) {
   const universalLinks: SubNavItem[] = [
     { id: 'account', label: 'Account', href: '/account', show: true },
     { id: 'results', label: 'Results', href: '/results', show: hasResults },
+    { id: 'growth', label: 'Growth Plan', href: '/growth', show: hasResults },
     { id: 'couples', label: 'Couples', href: '/results/compare', show: hasPartner },
   ];
 

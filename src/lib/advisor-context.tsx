@@ -94,6 +94,14 @@ function getStarters(pathname: string, hasCouples: boolean): string[] {
       "Is my conflict style hurting my relationships?",
     ];
   }
+  if (pathname.includes('/growth')) {
+    return [
+      "What patterns should I focus on first?",
+      "Explain my cognitive distortions",
+      "How do my attachment and driver interact?",
+      "What exercise would help me most right now?",
+    ];
+  }
   if (pathname.includes('/couples')) {
     return [
       "Where do we clash the most?",
@@ -150,6 +158,7 @@ function getLocationContext(pathname: string): string {
   if (pathname.includes('module-4')) return 'The user is currently in Module 4 (When Things Get Hard). They are answering questions about conflict patterns.';
   if (pathname.includes('/results/compare')) return 'The user is viewing their couples compatibility report.';
   if (pathname.includes('/results')) return 'The user is viewing their individual results. They have access to their persona, matches, and conflict profile.';
+  if (pathname.includes('/growth')) return 'The user is on their individual growth plan page, working through CBT-based exercises and pattern recognition. They can see their pattern insights and are actively developing self-awareness.';
   if (pathname.includes('/couples')) return 'The user is on the couples dashboard, working on their relationship growth plan.';
   if (pathname.includes('/assessment')) return 'The user is on the assessment hub, deciding which module to complete next.';
   return 'The user is browsing the app.';
@@ -169,6 +178,12 @@ function collectUserData(): any {
   const couplesReport = localStorage.getItem('relate_couples_report');
   const profile = localStorage.getItem('relate_profile');
   const marketData = localStorage.getItem('relate_market_data');
+  const growthCompleted = localStorage.getItem('relate_growth_exercises_completed');
+  const growthPoints = localStorage.getItem('relate_individual_growth_points');
+  const growthActive = localStorage.getItem('relate_growth_active_exercise');
+  const couplesCompleted = localStorage.getItem('relate_completed_challenges');
+  const couplesPoints = localStorage.getItem('relate_growth_points');
+  const couplesActive = localStorage.getItem('relate_active_challenge');
 
   return {
     gender,
@@ -181,6 +196,16 @@ function collectUserData(): any {
     m4: m4Scored ? JSON.parse(m4Scored) : null,
     results: results ? JSON.parse(results) : null,
     couplesReport: couplesReport ? JSON.parse(couplesReport) : null,
+    growthPlan: {
+      completedExercises: growthCompleted ? JSON.parse(growthCompleted) : [],
+      points: growthPoints ? parseInt(growthPoints, 10) : 0,
+      activeExercise: growthActive ? JSON.parse(growthActive) : null,
+    },
+    couplesGrowth: {
+      completedChallenges: couplesCompleted ? JSON.parse(couplesCompleted) : [],
+      points: couplesPoints ? parseInt(couplesPoints, 10) : 0,
+      activeChallenge: couplesActive ? JSON.parse(couplesActive) : null,
+    },
   };
 }
 
@@ -294,6 +319,8 @@ export function AdvisorProvider({ children }: { children: ReactNode }) {
             m2: userData.m2,
             m3: userData.m3,
             m4: userData.m4,
+            growthPlan: userData.growthPlan,
+            couplesGrowth: userData.couplesGrowth,
           },
         }),
       });
