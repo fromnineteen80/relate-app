@@ -51,7 +51,7 @@ const FRAMEWORKS = [
 const FAQS = [
   {
     q: 'How long does the assessment take?',
-    a: 'About 75 minutes total across 4 modules. You can save progress and return anytime, so there is no need to complete it in one sitting.',
+    a: 'About 80 minutes total across 5 modules. You can save progress and return anytime, so there is no need to complete it in one sitting.',
   },
   {
     q: 'What do I get for free?',
@@ -106,7 +106,7 @@ export default function LandingPage() {
       <section className="border-y border-border bg-white px-6 py-6">
         <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8 text-center">
           <div>
-            <p className="font-serif text-2xl font-semibold">367</p>
+            <p className="font-serif text-2xl font-semibold">391</p>
             <p className="text-xs text-secondary">Assessment Questions</p>
           </div>
           <div className="w-px h-8 bg-border hidden sm:block" />
@@ -132,7 +132,7 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">The Assessment</p>
-            <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">Four modules. One complete profile.</h2>
+            <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">Five modules. One complete profile.</h2>
             <p className="text-secondary max-w-lg mx-auto">
               Each module measures a different dimension of how you relate. Together, they build the most detailed relationship profile you&apos;ll ever receive.
             </p>
@@ -285,7 +285,7 @@ export default function LandingPage() {
               <p className="text-sm text-secondary mt-3 mb-6">Discover your persona.</p>
               <div className="space-y-2.5 mb-8 flex-1">
                 {[
-                  '367-question assessment',
+                  '391-question assessment',
                   'Your persona code and traits',
                   'Top 3 match rankings',
                   '3 advisor messages',
@@ -415,7 +415,7 @@ export default function LandingPage() {
             Ready to meet yourself?
           </h2>
           <p className="text-secondary mb-8 max-w-md mx-auto">
-            The assessment is free, saves your progress, and takes about 75 minutes across 4 modules. Your persona is waiting.
+            The assessment is free, saves your progress, and takes about 80 minutes across 5 modules. Your persona is waiting.
           </p>
           <DynamicCTA fallbackLabel="Begin the Assessment" />
         </div>

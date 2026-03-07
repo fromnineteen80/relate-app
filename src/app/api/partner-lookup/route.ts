@@ -138,7 +138,7 @@ export async function GET(request: NextRequest) {
         .single(),
       supabase
         .from('user_progress')
-        .select('m1_completed, m2_completed, m3_completed, m4_completed, results, m2_scored')
+        .select('m1_completed, m2_completed, m3_completed, m4_completed, m5_completed, results, m2_scored')
         .eq('user_id', partnerId)
         .maybeSingle(),
     ]);
@@ -162,7 +162,8 @@ export async function GET(request: NextRequest) {
       partnerProgress?.m1_completed &&
       partnerProgress?.m2_completed &&
       partnerProgress?.m3_completed &&
-      partnerProgress?.m4_completed
+      partnerProgress?.m4_completed &&
+      partnerProgress?.m5_completed
     );
 
     return NextResponse.json({

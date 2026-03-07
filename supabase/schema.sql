@@ -128,14 +128,17 @@ create table if not exists public.user_progress (
   m2_responses jsonb,
   m3_responses jsonb,
   m4_responses jsonb,
+  m5_responses jsonb,
   m1_completed boolean default false,
   m2_completed boolean default false,
   m3_completed boolean default false,
   m4_completed boolean default false,
+  m5_completed boolean default false,
   m1_scored jsonb,
   m2_scored jsonb,
   m3_scored jsonb,
   m4_scored jsonb,
+  m5_scored jsonb,
   results jsonb,
   updated_at timestamp with time zone default now()
 );

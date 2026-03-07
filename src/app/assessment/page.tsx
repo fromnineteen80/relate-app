@@ -18,6 +18,7 @@ const MODULES = [
   { id: 2, title: 'Who You Are', desc: 'Self-assessment with validation', time: '~25 min', path: '/assessment/module-2' },
   { id: 3, title: 'How You Connect', desc: 'Intimacy access patterns', time: '~10 min', path: '/assessment/module-3' },
   { id: 4, title: 'When Things Get Hard', desc: 'Conflict, repair, capacity', time: '~15 min', path: '/assessment/module-4' },
+  { id: 5, title: 'Know Your Patterns', desc: 'Vulnerability, desire & internal alignment', time: '~5 min', path: '/assessment/module-5' },
 ];
 
 export default function AssessmentHub() {
@@ -46,7 +47,7 @@ export default function AssessmentHub() {
 
       setGender(localStorage.getItem('relate_gender'));
       const s: Record<number, ModuleStatus> = {};
-      for (let m = 1; m <= 4; m++) {
+      for (let m = 1; m <= 5; m++) {
         const saved = localStorage.getItem(`relate_m${m}_responses`);
         const completed = localStorage.getItem(`relate_m${m}_completed`) === 'true';
         s[m] = { completed, questionIndex: saved ? Object.keys(JSON.parse(saved)).length : 0, total: 0 };
@@ -80,8 +81,10 @@ export default function AssessmentHub() {
     );
   }
 
-  const allCompleted = [1, 2, 3, 4].every(m => statuses[m]?.completed);
-  const hasAnyProgress = [1, 2, 3, 4].some(m => statuses[m]?.completed || statuses[m]?.questionIndex > 0);
+  const allCompleted = [1, 2, 3, 4, 5].every(m => statuses[m]?.completed);
+  const m1to4Complete = [1, 2, 3, 4].every(m => statuses[m]?.completed);
+  const needsM5 = m1to4Complete && !statuses[5]?.completed;
+  const hasAnyProgress = [1, 2, 3, 4, 5].some(m => statuses[m]?.completed || statuses[m]?.questionIndex > 0);
 
   function getModuleState(moduleId: number) {
     if (statuses[moduleId]?.completed) return 'completed';
@@ -96,7 +99,19 @@ export default function AssessmentHub() {
       <SubNav />
       <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-3xl font-semibold mb-2">Assessment</h2>
-        <p className="text-secondary mb-8">Complete all 4 modules to receive your persona and compatibility rankings.</p>
+        <p className="text-secondary mb-8">Complete all 5 modules to receive your persona and compatibility rankings.</p>
+
+        {needsM5 && (
+          <div className="card border-accent/30 bg-accent/5 mb-6">
+            <p className="font-serif font-semibold mb-1">New: Module 5 Available</p>
+            <p className="text-sm text-secondary mb-3">
+              Complete Module 5 to unlock your full Tension Stack profile—vulnerability armor, desire patterns, and internal alignment. Takes about 5 minutes.
+            </p>
+            <Link href="/assessment/module-5" className="btn-primary text-sm inline-block">
+              Take Module 5
+            </Link>
+          </div>
+        )}
 
         <div className="space-y-3">
           {MODULES.map((mod) => {

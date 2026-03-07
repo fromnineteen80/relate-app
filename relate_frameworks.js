@@ -1006,7 +1006,7 @@ const EROTIC_DIMENSION_CONFIG = {
  * @param {string} gender - 'M' or 'W'
  * @returns {Object} Erotic dimension profile with pattern, signals, narratives
  */
-function computeEroticDimension(m1, m2, m3, gender) {
+function computeEroticDimension(m1, m2, m3, gender, m5) {
   // Validate inputs
   const requiredPaths = [
     'm1.dimensions.lifestyle.direction',
@@ -1039,28 +1039,40 @@ function computeEroticDimension(m1, m2, m3, gender) {
   const highRangeOffer = m3OfferScore > 60;
   const lowRangeOffer = m3OfferScore < 40;
   
+  // M5 erotic signals (if available)
+  const hasM5Erotic = m5 && m5.eroticDimension;
+  const m5Polarity = hasM5Erotic ? m5.eroticDimension.polarityScore : null;
+  const m5Novelty = hasM5Erotic ? m5.eroticDimension.noveltyScore : null;
+  const m5Familiarity = hasM5Erotic ? m5.eroticDimension.familiarityScore : null;
+
   // Determine primary desire pattern
   let primaryPattern = 'integrated';
   let patternConfidence = 50;
   let patternRationale = [];
-  
+
   // Check for Polarity-Dependent
-  if (hasStrongLifestyleGap) {
+  if (hasStrongLifestyleGap || (m5Polarity !== null && m5Polarity > 70)) {
     primaryPattern = 'polarityDependent';
-    patternConfidence = Math.min(90, 50 + lifestyleGapStrength);
+    const baseConf = hasStrongLifestyleGap ? 50 + lifestyleGapStrength : 50;
+    patternConfidence = Math.min(90, hasM5Erotic ? baseConf * 0.4 + m5Polarity * 0.6 : baseConf);
     patternRationale.push(`Strong lifestyle gap: you want ${m1WantsThrill ? 'Thrill' : 'Peace'} but offer ${m2OffersPeace ? 'Peace' : 'Thrill'}`);
+    if (m5Polarity !== null && m5Polarity > 60) patternRationale.push('Direct assessment confirms attraction-sustainment divergence');
   }
   // Check for Novelty-Dependent
-  else if (m1WantsThrill && highMysteryWant) {
+  else if ((m1WantsThrill && highMysteryWant) || (m5Novelty !== null && m5Novelty > 70)) {
     primaryPattern = 'noveltyDependent';
-    patternConfidence = Math.min(85, 50 + (m3WantScore - 50));
+    const baseConf = (m1WantsThrill && highMysteryWant) ? 50 + (m3WantScore - 50) : 45;
+    patternConfidence = Math.min(85, hasM5Erotic ? baseConf * 0.4 + m5Novelty * 0.6 : baseConf);
     patternRationale.push('You want Thrill and seek high exclusive access');
+    if (m5Novelty !== null && m5Novelty > 60) patternRationale.push('Direct assessment confirms need for mystery and unpredictability');
   }
   // Check for Familiarity-Dependent
-  else if (!m1WantsThrill && highRangeOffer) {
+  else if ((!m1WantsThrill && highRangeOffer) || (m5Familiarity !== null && m5Familiarity > 70)) {
     primaryPattern = 'familiarityDependent';
-    patternConfidence = Math.min(85, 50 + (m3OfferScore - 50));
+    const baseConf = (!m1WantsThrill && highRangeOffer) ? 50 + (m3OfferScore - 50) : 45;
+    patternConfidence = Math.min(85, hasM5Erotic ? baseConf * 0.4 + m5Familiarity * 0.6 : baseConf);
     patternRationale.push('You want Peace and offer consistent presence');
+    if (m5Familiarity !== null && m5Familiarity > 60) patternRationale.push('Direct assessment confirms safety-driven desire');
   }
   // Default to Integrated
   else {
@@ -1300,7 +1312,7 @@ function computeEroticCompatibility(user1Erotic, user2Erotic) {
 const VULNERABILITY_PROFILE_CONFIG = {
   name: 'Vulnerability Profile',
   author: 'Brené Brown',
-  sources: ['M2.overallSelfPerceptionGap', 'M3.offerScore', 'M4.emotionalDrivers', 'M4.gottmanScreener', 'M4.conflictApproach'],
+  sources: ['M2.overallSelfPerceptionGap', 'M3.offerScore', 'M4.emotionalDrivers', 'M4.gottmanScreener', 'M4.conflictApproach', 'M5.vulnerability (direct)'],
   
   // Gender-specific shame patterns
   genderLens: {
@@ -1459,9 +1471,34 @@ const VULNERABILITY_PROFILE_CONFIG = {
         partnerExperience: 'They feel overwhelmed, like they can never do enough to calm the storm.',
         repairPath: 'Practice the pause. Feel the feeling, then count to ten before expressing it. The feeling will still be there. You\'re just giving them time to meet you.'
       }
+    },
+
+    hypervigilance: {
+      name: 'Hypervigilance',
+      core: 'If I watch closely enough, I can prevent the pain before it arrives.',
+
+      detection: {
+        primary: 'High M5 hypervigilance score + Abandonment driver',
+        secondary: 'Pursue conflict approach + High emotional capacity'
+      },
+
+      starters: {
+        male: `You notice everything. The pause before she answers. The way her laugh sounds different tonight. The text that took an hour longer than usual. You're not paranoid. you're pattern-matching from old data. Somewhere you learned that if you watch closely enough, you can see the leaving before it happens. The problem is you're so busy scanning for threats that you can't actually be present. She feels watched, not loved. Monitored, not chosen. Your vigilance is exhausting both of you.`,
+
+        female: `You read the room before you enter it. You know his mood from the way he closes the car door. You've memorized his patterns so thoroughly that any deviation triggers your alarm system. This isn't intuition. it's hypervigilance dressed up as emotional intelligence. You learned early that safety requires surveillance. But relationships aren't security systems. The more you monitor, the more you create the distance you're trying to prevent.`,
+
+        general: `Hypervigilance is the armor of someone who was blindsided once and swore it would never happen again. You watch everything. Micro-expressions, response times, tone shifts. Your nervous system is permanently set to "detect threat." This makes you incredibly attuned to others, but it also means you can't rest. You're so busy watching for danger that you miss the safety that's already there.`
+      },
+
+      inRelationship: {
+        gives: 'Attentiveness, emotional awareness, someone who notices the small things.',
+        costs: 'Trust, peace, the ability to let a good moment just be good.',
+        partnerExperience: 'They feel like they\'re under surveillance. Every move is analyzed. They start hiding normal things just to avoid triggering an interrogation.',
+        repairPath: 'Practice trusting silence. When you notice yourself scanning, name it: "I\'m scanning right now." Then choose one thing that\'s actually going well and sit with that instead.'
+      }
     }
   },
-  
+
   // Shame trigger patterns by driver
   shameByDriver: {
     abandonment: {
@@ -1493,107 +1530,162 @@ const VULNERABILITY_PROFILE_CONFIG = {
 
 /**
  * Computes Vulnerability Profile from module results
- * 
+ *
+ * Uses a blended scoring approach:
+ * - If M5 data is available: 60% direct M5 scores + 40% module-derived signals
+ * - If M5 data is not available: 100% module-derived signals (backward compatible)
+ *
+ * No more broken default fallback. Every user gets their actual best-fit armor type.
+ *
  * @param {M2Results} m2 - Module 2 results (self-perception)
  * @param {M3Results} m3 - Module 3 results (what they offer)
  * @param {M4Results} m4 - Module 4 results (drivers, conflict, gottman)
  * @param {string} gender - 'M' or 'W'
+ * @param {M5Results} [m5] - Module 5 results (direct tension stack assessment, optional)
  * @returns {Object} Vulnerability profile with armor type, shame patterns, narratives
  */
-function computeVulnerabilityProfile(m2, m3, m4, gender) {
+function computeVulnerabilityProfile(m2, m3, m4, gender, m5) {
   // Extract values safely using verified interface paths
   const selfPerceptionGap = safeGet(m2, 'overallSelfPerceptionGap.average', 0.5);
   const gapInterpretation = safeGet(m2, 'overallSelfPerceptionGap.interpretation', 'moderate');
   const mismatchedDimensions = safeGet(m2, 'overallSelfPerceptionGap.mismatchedDimensions', []);
-  
+
   const m3OfferScore = safeGet(m3, 'offerScore', 50);
   const m3WantScore = safeGet(m3, 'wantScore', 50);
-  
+
   const primaryDriver = safeGet(m4, 'emotionalDrivers.primary', 'inadequacy');
   const inadequacyScore = safeGet(m4, 'emotionalDrivers.scores.inadequacy', 50);
+  const abandonmentScore = safeGet(m4, 'emotionalDrivers.scores.abandonment', 50);
   const conflictApproach = safeGet(m4, 'conflictApproach.approach', 'pursue');
   const conflictIntensity = safeGet(m4, 'conflictApproach.intensity', 25);
   const capacityLevel = safeGet(m4, 'emotionalCapacity.level', 'medium');
   const capacityScore = safeGet(m4, 'emotionalCapacity.score', 50);
-  
+
   const criticismScore = safeGet(m4, 'gottmanScreener.horsemen.criticism.score', 8);
   const stonewallingScore = safeGet(m4, 'gottmanScreener.horsemen.stonewalling.score', 8);
   const contemptScore = safeGet(m4, 'gottmanScreener.horsemen.contempt.score', 8);
-  
-  // Compute armor detection signals
-  const highSelfPerceptionGap = selfPerceptionGap > 0.8;
-  const lowOffer = m3OfferScore < 40;
-  const highOffer = m3OfferScore > 65;
-  const highWant = m3WantScore > 65;
-  const isWithdrawer = conflictApproach === 'withdraw';
-  const isPursuer = conflictApproach === 'pursue';
-  const lowCapacity = capacityLevel === 'low';
-  const highCapacity = capacityLevel === 'high';
-  const highStonewalling = stonewallingScore > 12;
-  const highCriticism = criticismScore > 12;
-  
-  // Determine primary armor type
-  let primaryArmor = 'numbing'; // default
-  let armorConfidence = 50;
-  let armorRationale = [];
-  
-  // Perfectionism: High gap + wants to be seen well + inadequacy
-  if (highSelfPerceptionGap && highWant && inadequacyScore > 50) {
-    primaryArmor = 'perfectionism';
-    armorConfidence = Math.min(90, 50 + (selfPerceptionGap * 20) + (inadequacyScore - 50) / 2);
-    armorRationale.push('High self-perception gap suggests image management');
-    armorRationale.push('High want score indicates need to control how you\'re seen');
-    if (inadequacyScore > 60) armorRationale.push('Inadequacy driver suggests fear of not being enough');
-  }
-  // Numbing: Low offer + withdraw + low capacity or high stonewalling
-  else if (lowOffer && isWithdrawer && (lowCapacity || highStonewalling)) {
-    primaryArmor = 'numbing';
-    armorConfidence = Math.min(85, 50 + (40 - m3OfferScore) + conflictIntensity);
-    armorRationale.push('Low offer score suggests protected emotional access');
-    armorRationale.push('Withdraw approach indicates moving away from intensity');
-    if (highStonewalling) armorRationale.push('High stonewalling suggests shutdown under stress');
-    if (lowCapacity) armorRationale.push('Low emotional capacity suggests difficulty holding feelings');
-  }
+
+  // =========================================================================
+  // STEP 1: Compute module-derived scores for each armor type (0-100)
+  // Each type gets a continuous score based on how well the M2/M3/M4 signals match
+  // =========================================================================
+  const moduleDerivedScores = {};
+
+  // Perfectionism: High self-perception gap + High want + inadequacy driver
+  moduleDerivedScores.perfectionism = Math.round(
+    (Math.min(100, selfPerceptionGap * 100) * 0.35) +
+    (m3WantScore * 0.30) +
+    (inadequacyScore * 0.35)
+  );
+
+  // Numbing: Low offer + withdraw + low capacity + high stonewalling
+  const withdrawSignal = conflictApproach === 'withdraw' ? 70 + conflictIntensity * 0.3 : 20;
+  const stonewallingNorm = Math.round(((stonewallingScore - 4) / 16) * 100);
+  moduleDerivedScores.numbing = Math.round(
+    ((100 - m3OfferScore) * 0.30) +
+    (withdrawSignal * 0.25) +
+    ((100 - capacityScore) * 0.20) +
+    (stonewallingNorm * 0.25)
+  );
+
   // Cynicism: Low want + high criticism + injustice driver
-  else if (m3WantScore < 40 && highCriticism && primaryDriver === 'injustice') {
-    primaryArmor = 'cynicism';
-    armorConfidence = Math.min(85, 50 + (40 - m3WantScore) + (criticismScore - 8));
-    armorRationale.push('Low want score suggests pre-emptive self-protection');
-    armorRationale.push('High criticism pattern suggests focus on flaws');
-    armorRationale.push('Injustice driver sees unfairness everywhere');
-  }
-  // Control: High want + high gap + engulfment
-  else if (highWant && highSelfPerceptionGap && primaryDriver === 'engulfment') {
-    primaryArmor = 'control';
-    armorConfidence = Math.min(85, 50 + (m3WantScore - 50) + (selfPerceptionGap * 15));
-    armorRationale.push('High want score indicates need to know and manage');
-    armorRationale.push('Engulfment driver fears loss of autonomy, so controls environment');
-  }
+  const injusticeScore = safeGet(m4, 'emotionalDrivers.scores.injustice', 50);
+  const criticismNorm = Math.round(((criticismScore - 4) / 16) * 100);
+  moduleDerivedScores.cynicism = Math.round(
+    ((100 - m3WantScore) * 0.30) +
+    (criticismNorm * 0.35) +
+    (injusticeScore * 0.35)
+  );
+
+  // Control: High want + high gap + engulfment driver
+  const engulfmentScore = safeGet(m4, 'emotionalDrivers.scores.engulfment', 50);
+  moduleDerivedScores.control = Math.round(
+    (m3WantScore * 0.30) +
+    (Math.min(100, selfPerceptionGap * 100) * 0.30) +
+    (engulfmentScore * 0.40)
+  );
+
   // Flooding: High offer + pursue + high capacity + abandonment
-  else if (highOffer && isPursuer && highCapacity && primaryDriver === 'abandonment') {
-    primaryArmor = 'flooding';
-    armorConfidence = Math.min(85, 50 + (m3OfferScore - 50) + conflictIntensity);
-    armorRationale.push('High offer score indicates emotional openness');
-    armorRationale.push('Pursue approach means moving toward intensity');
-    armorRationale.push('Abandonment driver uses intensity as bid for connection');
+  const pursueSignal = conflictApproach === 'pursue' ? 70 + conflictIntensity * 0.3 : 20;
+  moduleDerivedScores.flooding = Math.round(
+    (m3OfferScore * 0.25) +
+    (pursueSignal * 0.25) +
+    (capacityScore * 0.20) +
+    (abandonmentScore * 0.30)
+  );
+
+  // Hypervigilance: Abandonment driver + pursue + high capacity (always scanning)
+  moduleDerivedScores.hypervigilance = Math.round(
+    (abandonmentScore * 0.40) +
+    (pursueSignal * 0.20) +
+    (capacityScore * 0.15) +
+    ((100 - m3OfferScore) * 0.10) +
+    (m3WantScore * 0.15)
+  );
+
+  // =========================================================================
+  // STEP 2: Blend with M5 direct scores if available
+  // =========================================================================
+  const hasM5 = m5 && m5.vulnerability && m5.vulnerability.armorScores;
+  const blendedScores = {};
+  const armorTypes = ['perfectionism', 'numbing', 'cynicism', 'control', 'flooding', 'hypervigilance'];
+
+  for (const type of armorTypes) {
+    if (hasM5) {
+      // 60% direct M5 + 40% module-derived
+      const m5Score = m5.vulnerability.armorScores[type] || 0;
+      const moduleScore = moduleDerivedScores[type] || 0;
+      blendedScores[type] = Math.round(m5Score * 0.6 + moduleScore * 0.4);
+    } else {
+      // 100% module-derived (backward compatible)
+      blendedScores[type] = moduleDerivedScores[type] || 0;
+    }
   }
-  // Secondary detection: Pursue + high offer without abandonment = still flooding tendency
-  else if (highOffer && isPursuer && conflictIntensity > 30) {
-    primaryArmor = 'flooding';
-    armorConfidence = 65;
-    armorRationale.push('High emotional offer combined with pursue approach');
+
+  // =========================================================================
+  // STEP 3: Pick winner — highest blended score wins (no more default fallback)
+  // =========================================================================
+  const sorted = Object.entries(blendedScores).sort((a, b) => b[1] - a[1]);
+  let primaryArmor = sorted[0][0];
+  const primaryBlendedScore = sorted[0][1];
+  const secondaryBlendedScore = sorted[1][1];
+
+  // Confidence = based on margin between #1 and #2
+  const margin = primaryBlendedScore - secondaryBlendedScore;
+  let armorConfidence = hasM5
+    ? Math.min(95, 55 + margin * 1.5)  // M5 gives higher confidence
+    : Math.min(85, 45 + margin * 1.2); // Module-only caps lower
+  armorConfidence = Math.max(30, Math.round(armorConfidence));
+
+  // Build rationale from top signals
+  let armorRationale = [];
+  if (hasM5) {
+    armorRationale.push(`Direct assessment score: ${m5.vulnerability.armorScores[primaryArmor]}% for ${primaryArmor}`);
   }
-  // Secondary detection: Withdraw + low offer = numbing
-  else if (lowOffer && isWithdrawer) {
-    primaryArmor = 'numbing';
-    armorConfidence = 60;
-    armorRationale.push('Low offer combined with withdraw pattern');
-  }
-  // Default to checking self-perception gap for perfectionism
-  else if (highSelfPerceptionGap) {
-    primaryArmor = 'perfectionism';
-    armorConfidence = 55;
-    armorRationale.push('Self-perception gap suggests managed self-presentation');
+  // Add module-derived rationale for top type
+  if (primaryArmor === 'perfectionism') {
+    if (selfPerceptionGap > 0.6) armorRationale.push('High self-perception gap suggests image management');
+    if (m3WantScore > 55) armorRationale.push('High want score indicates need to control how you\'re seen');
+    if (inadequacyScore > 50) armorRationale.push('Inadequacy driver suggests fear of not being enough');
+  } else if (primaryArmor === 'numbing') {
+    if (m3OfferScore < 45) armorRationale.push('Low offer score suggests protected emotional access');
+    if (conflictApproach === 'withdraw') armorRationale.push('Withdraw approach indicates moving away from intensity');
+    if (stonewallingScore > 10) armorRationale.push('Stonewalling pattern suggests shutdown under stress');
+  } else if (primaryArmor === 'cynicism') {
+    if (m3WantScore < 45) armorRationale.push('Low want score suggests pre-emptive self-protection');
+    if (criticismScore > 10) armorRationale.push('Criticism pattern suggests focus on flaws');
+    if (primaryDriver === 'injustice') armorRationale.push('Injustice driver sees unfairness everywhere');
+  } else if (primaryArmor === 'control') {
+    if (m3WantScore > 55) armorRationale.push('High want score indicates need to know and manage');
+    if (engulfmentScore > 50) armorRationale.push('Engulfment driver fears loss of autonomy');
+  } else if (primaryArmor === 'flooding') {
+    if (m3OfferScore > 55) armorRationale.push('High offer score indicates emotional openness');
+    if (conflictApproach === 'pursue') armorRationale.push('Pursue approach means moving toward intensity');
+    if (abandonmentScore > 50) armorRationale.push('Abandonment driver uses intensity as bid for connection');
+  } else if (primaryArmor === 'hypervigilance') {
+    if (abandonmentScore > 50) armorRationale.push('Abandonment driver creates scanning behavior');
+    if (conflictApproach === 'pursue') armorRationale.push('Pursue approach driven by need to detect and address threats');
+    if (m3WantScore > 55) armorRationale.push('High want score reflects need for reassurance signals');
   }
   
   const armor = VULNERABILITY_PROFILE_CONFIG.armorTypes[primaryArmor];
@@ -2099,7 +2191,7 @@ const ATTRACTION_ATTACHMENT_CONFIG = {
  * @param {string} gender - 'M' or 'W'
  * @returns {Object} Attraction-attachment profile
  */
-function computeAttractionAttachment(m1, m4, gender) {
+function computeAttractionAttachment(m1, m4, gender, m5) {
   // Extract values safely
   const lifestyleDir = safeGet(m1, 'dimensions.lifestyle.direction', 'A');
   const lifestyleStrength = safeGet(m1, 'dimensions.lifestyle.strength', 50);
@@ -2201,11 +2293,28 @@ function computeAttractionAttachment(m1, m4, gender) {
   }
   
   // Calculate alignment score (0-100, higher = more aligned)
-  const alignmentScore = alignment === 'aligned' 
-    ? 85 + Math.random() * 10 
-    : alignment === 'mild-conflict'
-      ? 60 - (conflictIntensity * 0.2)
-      : 40 - (conflictIntensity * 0.3);
+  // Blend with M5 if available
+  const hasM5AA = m5 && m5.attractionAttachment;
+  let alignmentScore;
+  if (hasM5AA) {
+    const moduleScore = alignment === 'aligned'
+      ? 85
+      : alignment === 'mild-conflict'
+        ? 60 - (conflictIntensity * 0.2)
+        : 40 - (conflictIntensity * 0.3);
+    // M5 conflictScore is 0-100 where high = more conflict
+    const m5AlignScore = 100 - m5.attractionAttachment.conflictScore;
+    alignmentScore = moduleScore * 0.4 + m5AlignScore * 0.6;
+    if (m5.attractionAttachment.conflictScore > 65) {
+      customizations.push('Your direct responses confirm a pattern of mistaking anxiety for chemistry. This is worth examining.');
+    }
+  } else {
+    alignmentScore = alignment === 'aligned'
+      ? 85 + Math.random() * 10
+      : alignment === 'mild-conflict'
+        ? 60 - (conflictIntensity * 0.2)
+        : 40 - (conflictIntensity * 0.3);
+  }
   
   return {
     // Core pattern
@@ -2467,7 +2576,7 @@ const INTIMACY_CONFLICT_BRIDGE_CONFIG = {
  * @param {string} gender - 'M' or 'W'
  * @returns {Object} Intimacy-conflict bridge profile
  */
-function computeIntimacyConflictBridge(m3, m4, gender) {
+function computeIntimacyConflictBridge(m3, m4, gender, m5) {
   // Extract values safely
   const m3Type = safeGet(m3, 'contextSwitchingType', 2);
   const wantScore = safeGet(m3, 'wantScore', 50);
@@ -2579,6 +2688,11 @@ function computeIntimacyConflictBridge(m3, m4, gender) {
     bridgeHealth = 25 + (capacityScore * 0.1);
   } else {
     bridgeHealth = 50;
+  }
+  // Blend with M5 direct bridge health if available
+  const hasM5ICB = m5 && m5.intimacyConflictBridge;
+  if (hasM5ICB) {
+    bridgeHealth = bridgeHealth * 0.4 + m5.intimacyConflictBridge.bridgeHealth * 0.6;
   }
   
   return {
@@ -2782,7 +2896,7 @@ const INTERNAL_CONFLICT_COHERENCE_CONFIG = {
  * @param {string} gender - 'M' or 'W'
  * @returns {Object} Internal coherence profile
  */
-function computeInternalConflictCoherence(m4, gender) {
+function computeInternalConflictCoherence(m4, gender, m5) {
   // Extract all M4 signals
   const conflictApproach = safeGet(m4, 'conflictApproach.approach', 'pursue');
   const conflictIntensity = safeGet(m4, 'conflictApproach.intensity', 25);
@@ -2926,7 +3040,12 @@ function computeInternalConflictCoherence(m4, gender) {
   
   // Calculate coherence score (0-100, higher = more coherent)
   const maxPossibleSeverity = 15; // If they had ALL incoherences
-  const coherenceScore = Math.round(100 - (totalSeverity / maxPossibleSeverity * 100));
+  let coherenceScore = Math.round(100 - (totalSeverity / maxPossibleSeverity * 100));
+  // Blend with M5 direct coherence if available
+  const hasM5ICC = m5 && m5.internalConflictCoherence;
+  if (hasM5ICC) {
+    coherenceScore = Math.round(coherenceScore * 0.4 + m5.internalConflictCoherence.coherenceScore * 0.6);
+  }
   
   // Identify coherences (healthy alignments)
   const coherences = [];
@@ -3579,22 +3698,23 @@ function computeMarketCompatibility(user1Market, user2Market) {
 
 /**
  * Computes all six Tension Stacks for a user
- * 
+ *
  * @param {M1Results} m1 - Module 1 results
  * @param {M2Results} m2 - Module 2 results
  * @param {M3Results} m3 - Module 3 results
  * @param {M4Results} m4 - Module 4 results
  * @param {DemographicsResults} demographics - Demographics results
  * @param {string} gender - 'M' or 'W'
+ * @param {M5Results} [m5] - Module 5 results (optional, enhances tension stack accuracy)
  * @returns {Object} All tension stack results
  */
-function computeAllTensionStacks(m1, m2, m3, m4, demographics, gender) {
+function computeAllTensionStacks(m1, m2, m3, m4, demographics, gender, m5) {
   return {
-    eroticDimension: computeEroticDimension(m1, m2, m3, gender),
-    vulnerabilityProfile: computeVulnerabilityProfile(m2, m3, m4, gender),
-    attractionAttachment: computeAttractionAttachment(m1, m4, gender),
-    intimacyConflictBridge: computeIntimacyConflictBridge(m3, m4, gender),
-    internalConflictCoherence: computeInternalConflictCoherence(m4, gender),
+    eroticDimension: computeEroticDimension(m1, m2, m3, gender, m5),
+    vulnerabilityProfile: computeVulnerabilityProfile(m2, m3, m4, gender, m5),
+    attractionAttachment: computeAttractionAttachment(m1, m4, gender, m5),
+    intimacyConflictBridge: computeIntimacyConflictBridge(m3, m4, gender, m5),
+    internalConflictCoherence: computeInternalConflictCoherence(m4, gender, m5),
     marketReality: computeMarketReality(demographics, m1, m2, gender)
   };
 }

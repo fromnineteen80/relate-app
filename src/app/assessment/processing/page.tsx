@@ -27,6 +27,7 @@ export default function ProcessingPage() {
         const m2 = JSON.parse(localStorage.getItem('relate_m2_responses') || '{}');
         const m3 = JSON.parse(localStorage.getItem('relate_m3_responses') || '{}');
         const m4 = JSON.parse(localStorage.getItem('relate_m4_responses') || '{}');
+        const m5 = JSON.parse(localStorage.getItem('relate_m5_responses') || '{}');
         const demographics = JSON.parse(localStorage.getItem('relate_demographics') || '{}');
 
         setProgress(30);
@@ -41,6 +42,7 @@ export default function ProcessingPage() {
             m2Responses: m2,
             m3Responses: m3,
             m4Responses: m4,
+            m5Responses: m5,
             demographics,
           }),
         });

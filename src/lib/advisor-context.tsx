@@ -156,6 +156,7 @@ function getLocationContext(pathname: string): string {
   if (pathname.includes('module-2')) return 'The user is currently in Module 2 (Who They Are). They are answering questions about themselves.';
   if (pathname.includes('module-3')) return 'The user is currently in Module 3 (How They Connect). They are answering questions about intimacy and attention patterns.';
   if (pathname.includes('module-4')) return 'The user is currently in Module 4 (When Things Get Hard). They are answering questions about conflict patterns.';
+  if (pathname.includes('module-5')) return 'The user is currently in Module 5 (Know Your Patterns). They are answering questions about vulnerability armor, desire patterns, attraction-attachment alignment, and internal conflict coherence.';
   if (pathname.includes('/results/compare')) return 'The user is viewing their couples compatibility report.';
   if (pathname.includes('/results')) return 'The user is viewing their individual results. They have access to their persona, matches, and conflict profile.';
   if (pathname.includes('/growth')) return 'The user is on their individual growth plan page, working through CBT-based exercises and pattern recognition. They can see their pattern insights and are actively developing self-awareness.';
@@ -174,6 +175,7 @@ function collectUserData(): any {
   const m2Scored = localStorage.getItem('relate_m2_scored');
   const m3Scored = localStorage.getItem('relate_m3_scored');
   const m4Scored = localStorage.getItem('relate_m4_scored');
+  const m5Scored = localStorage.getItem('relate_m5_scored');
   const results = localStorage.getItem('relate_results');
   const couplesReport = localStorage.getItem('relate_couples_report');
   const profile = localStorage.getItem('relate_profile');
@@ -194,6 +196,7 @@ function collectUserData(): any {
     m2: m2Scored ? JSON.parse(m2Scored) : null,
     m3: m3Scored ? JSON.parse(m3Scored) : null,
     m4: m4Scored ? JSON.parse(m4Scored) : null,
+    m5: m5Scored ? JSON.parse(m5Scored) : null,
     results: results ? JSON.parse(results) : null,
     couplesReport: couplesReport ? JSON.parse(couplesReport) : null,
     growthPlan: {
@@ -307,6 +310,7 @@ export function AdvisorProvider({ children }: { children: ReactNode }) {
             m2Complete: !!userData.m2,
             m3Complete: !!userData.m3,
             m4Complete: !!userData.m4,
+            m5Complete: !!userData.m5,
             resultsComplete: !!userData.results,
             couplesComplete: !!userData.couplesReport,
           },

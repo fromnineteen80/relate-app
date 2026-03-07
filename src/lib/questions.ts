@@ -189,3 +189,31 @@ export function flattenM4Questions(questionBank: Record<string, unknown>, seed?:
 
   return questions;
 }
+
+/**
+ * Flatten M5 question structure into a linear array.
+ * Sections stay in order. Questions shuffled within each section.
+ */
+export function flattenM5Questions(questionBank: Record<string, unknown>, seed?: string): FlatQuestion[] {
+  const questions: FlatQuestion[] = [];
+  const rand = seed ? seededRandom(hashSeed(seed)) : null;
+
+  for (const section of ['vulnerability', 'eroticDimension', 'attractionAttachment', 'intimacyConflictBridge', 'internalConflictCoherence']) {
+    const qs = questionBank[section] as Array<Record<string, unknown>> | undefined;
+    if (qs) {
+      const batch: FlatQuestion[] = [];
+      for (const q of qs) {
+        batch.push({
+          id: q.id as string,
+          text: q.text as string,
+          type: 'likert',
+          reversed: q.reversed as boolean,
+          section,
+        });
+      }
+      questions.push(...(rand ? shuffleArray(batch, rand) : batch));
+    }
+  }
+
+  return questions;
+}

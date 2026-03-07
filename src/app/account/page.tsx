@@ -563,7 +563,7 @@ function AccountPage() {
   if (authLoading) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
 
   const completedModules = Object.values(moduleProgress).filter(Boolean).length;
-  const assessmentComplete = completedModules === 4;
+  const assessmentComplete = completedModules >= 5;
   const initial = profileData?.firstName ? profileData.firstName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || '?';
   const hasPaid = currentTier !== 'free';
   const canDownload = hasPaid;
@@ -823,7 +823,7 @@ function AccountPage() {
         <section id="assessment" className="card mb-4 scroll-mt-32">
           <div className="flex items-center justify-between gap-6 flex-wrap mb-4">
             <h2 className="font-serif text-lg font-semibold">Assessment Progress</h2>
-            <span className="text-xs font-mono text-secondary">{completedModules}/4 modules</span>
+            <span className="text-xs font-mono text-secondary">{completedModules}/5 modules</span>
           </div>
 
           <div className="space-y-2">
@@ -832,6 +832,7 @@ function AccountPage() {
               { id: 2, name: 'Who You Are' },
               { id: 3, name: 'How You Connect' },
               { id: 4, name: 'When Things Get Hard' },
+              { id: 5, name: 'Know Your Patterns' },
             ].map((mod) => (
               <div key={mod.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                 <div className="flex items-center gap-3">
