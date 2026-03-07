@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "RELATE | Relationship Intelligence",
-  description: "A 367-question relationship assessment. Discover your persona, compatibility rankings, and personalized coaching.",
+  description: "A 391-question relationship assessment. Discover your persona, compatibility rankings, and personalized coaching.",
 };
 
 export default function RootLayout({
