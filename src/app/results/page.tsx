@@ -206,6 +206,16 @@ function ResultsDashboard() {
     const demoStr = localStorage.getItem('relate_demographics');
     const gender = localStorage.getItem('relate_gender');
     if (!demoStr) return;
+
+    // Use cached market data if demographics unchanged and cache is < 5 min old
+    const cached = localStorage.getItem('relate_market_data');
+    const cachedDemoSnap = localStorage.getItem('relate_market_demo_snapshot');
+    const cachedAt = parseInt(localStorage.getItem('relate_market_cached_at') || '0', 10);
+    const cacheAge = Date.now() - cachedAt;
+    if (cached && cachedDemoSnap === demoStr && cacheAge < 2 * 60 * 1000) {
+      try { setMarketData(JSON.parse(cached)); marketFetchedRef.current = true; return; } catch { /* refetch */ }
+    }
+
     let demo: Record<string, any>;
     try { demo = JSON.parse(demoStr); } catch { return; }
     if (!demo.zipCode && !demo.zip_code) return;
@@ -246,6 +256,9 @@ function ResultsDashboard() {
         if (data.success) {
           const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount, stateComparison: data.stateComparison, nationalComparison: data.nationalComparison };
           setMarketData(md);
+          localStorage.setItem('relate_market_data', JSON.stringify(md));
+          localStorage.setItem('relate_market_demo_snapshot', demoStr);
+          localStorage.setItem('relate_market_cached_at', String(Date.now()));
         }
       })
       .catch(() => { })
@@ -317,6 +330,10 @@ function ResultsDashboard() {
       if (data.success) {
         const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount, stateComparison: data.stateComparison, nationalComparison: data.nationalComparison };
         setMarketData(md);
+        const updatedDemo = localStorage.getItem('relate_demographics') || '';
+        localStorage.setItem('relate_market_data', JSON.stringify(md));
+        localStorage.setItem('relate_market_demo_snapshot', updatedDemo);
+        localStorage.setItem('relate_market_cached_at', String(Date.now()));
       }
     } catch { /* */ }
     setMarketLoading(false);

@@ -297,6 +297,15 @@ function AccountPage() {
     const profile = getProfile();
     if (!demoStr || !profile?.zipCode) return;
 
+    // Use cached market data if demographics unchanged and cache is < 5 min old
+    const cached = localStorage.getItem('relate_market_data');
+    const cachedDemoSnap = localStorage.getItem('relate_market_demo_snapshot');
+    const cachedAt = parseInt(localStorage.getItem('relate_market_cached_at') || '0', 10);
+    const cacheAge = Date.now() - cachedAt;
+    if (cached && cachedDemoSnap === demoStr && cacheAge < 2 * 60 * 1000) {
+      try { setMarketData(JSON.parse(cached)); marketFetchedRef.current = true; return; } catch { /* refetch */ }
+    }
+
     let demo: Demographics;
     try { demo = JSON.parse(demoStr); } catch { return; }
 
@@ -351,6 +360,9 @@ function AccountPage() {
             matchCount: data.matchCount,
           };
           setMarketData(md);
+          localStorage.setItem('relate_market_data', JSON.stringify(md));
+          localStorage.setItem('relate_market_demo_snapshot', demoStr);
+          localStorage.setItem('relate_market_cached_at', String(Date.now()));
         }
       })
       .catch(() => { /* silent fail, market data is optional */ })
