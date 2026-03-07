@@ -117,7 +117,7 @@ export default function GrowthPage() {
         <div>
           <h1 className="font-serif text-2xl font-semibold">Growth Plan</h1>
           <p className="text-sm text-secondary mt-1">
-            Evidence-based exercises grounded in CBT, Gottman, Attachment Theory, EFT, and IFS
+            Evidence-based exercises grounded in Cognitive Behavioral Therapy, Gottman Method, Attachment Theory, Emotionally Focused Therapy, and Internal Family Systems
           </p>
         </div>
 
@@ -184,7 +184,7 @@ export default function GrowthPage() {
 
             <div className="bg-stone-50 rounded p-4 mb-4">
               <p className="text-xs font-medium mb-2">Instructions</p>
-              <p className="text-xs text-secondary leading-relaxed">{activeExercise.instruction}</p>
+              <p className="text-xs text-secondary leading-relaxed whitespace-pre-line">{activeExercise.instruction}</p>
             </div>
 
             <div className="mb-4">
