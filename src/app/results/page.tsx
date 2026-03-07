@@ -836,25 +836,27 @@ function ResultsDashboard() {
             <div className="space-y-3">
               {(matchesExpanded ? visibleMatches : visibleMatches.slice(0, 5)).map((match: any) => (
                 <div key={match.code} className="card">
-                  <div className="flex items-start justify-between gap-4 flex-wrap mb-1">
-                    <div className="flex items-center gap-2 min-w-0 flex-wrap">
-                      <span className="font-mono text-xs text-secondary">#{match.rank}</span>
-                      {hasPaid ? (
-                        <Link href={`/results/match/${match.code}`} className="text-sm font-semibold text-accent hover:underline">{match.name}</Link>
-                      ) : <span className="text-sm font-semibold">{match.name}</span>}
-                      <span className="font-mono text-xs text-secondary">{match.code}</span>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-mono text-xs text-secondary">#{match.rank}</span>
+                        {hasPaid ? (
+                          <Link href={`/results/match/${match.code}`} className="text-sm font-semibold text-accent hover:underline">{match.name}</Link>
+                        ) : <span className="text-sm font-semibold">{match.name}</span>}
+                        <span className="font-mono text-xs text-secondary">{match.code}</span>
+                      </div>
+                      {match.traits && <p className="text-xs text-secondary mt-1">{match.traits.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
                     </div>
-                    <div className="text-center shrink-0">
+                    <div className="text-right shrink-0">
                       <span className="font-mono text-sm font-semibold block">{match.compatibilityScore}</span>
                       <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>
                       {(() => {
                         const note = rankingNote(match, visibleMatches);
-                        return note ? <p className="text-[10px] text-secondary/60 mt-0.5 max-w-[120px] leading-tight">{note}</p> : null;
+                        return note ? <p className="text-[10px] text-secondary/60 mt-0.5 max-w-[120px] leading-tight ml-auto">{note}</p> : null;
                       })()}
                     </div>
                   </div>
-                  {match.traits && <p className="text-xs text-secondary mb-1">{match.traits.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
-                  {match.summary && <p className="text-sm text-secondary">{match.summary.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
+                  {match.summary && <p className="text-sm text-secondary mt-2">{match.summary.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
                 </div>
               ))}
             </div>
