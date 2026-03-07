@@ -23,7 +23,7 @@ const config: Config = {
         secondary: '#78716c',
         border: '#e7e5e4',
         success: '#047857',
-        warning: '#d97706',
+        warning: '#F9A825',
         danger: '#be123c',
       },
     },
