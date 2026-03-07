@@ -31,7 +31,7 @@ export default function MethodologyPage() {
             Assessment Methodology
           </h1>
           <p className="text-lg text-secondary max-w-3xl mx-auto leading-relaxed">
-            Relate&apos;s assessment draws from four clinical frameworks to create a comprehensive picture of how you date, who you are, how you connect, and how you handle conflict.
+            Relate&apos;s assessment draws from eight clinical frameworks to create a comprehensive picture of how you date, who you are, how you connect, and how you handle conflict.
           </p>
         </div>
       </section>
