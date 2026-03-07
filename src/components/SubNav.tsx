@@ -70,12 +70,16 @@ export function SubNav({ items = [] }: SubNavProps) {
   ] : [];
 
   const visibleUniversal = universalLinks.filter(l => l.show !== false);
-  const allPageItems = [...resultsSubLinks, ...items].filter(l => l.show !== false);
+  const visibleResultsSubLinks = resultsSubLinks.filter(l => l.show !== false);
+  const visiblePageItems = items.filter(l => l.show !== false);
+
+  // All "before divider" links: universal + results sub-links, all styled dark
+  const beforeDividerLinks = [...visibleUniversal, ...visibleResultsSubLinks];
 
   return (
     <nav className="border-b border-border bg-background sticky top-[65px] z-10">
       <div className="px-6 flex gap-1 overflow-x-auto">
-        {visibleUniversal.map(link => {
+        {beforeDividerLinks.map(link => {
           const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
           return (
             <Link
@@ -91,10 +95,10 @@ export function SubNav({ items = [] }: SubNavProps) {
             </Link>
           );
         })}
-        {allPageItems.length > 0 && (
+        {visiblePageItems.length > 0 && (
           <span className="self-center mx-1 text-border select-none" aria-hidden="true">|</span>
         )}
-        {allPageItems.map(link => {
+        {visiblePageItems.map(link => {
           const isAnchor = link.href.startsWith('#');
           if (isAnchor) {
             return (
