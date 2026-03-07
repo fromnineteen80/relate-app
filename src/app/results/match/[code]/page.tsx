@@ -90,12 +90,12 @@ function scoreContext(key: string, value: number, userName?: string, matchName?:
   }
 }
 
-function InsightCard({ title, icon, items, accent }: { title: string; icon: string; items: string[]; accent?: boolean }) {
+function InsightCard({ title, icon, items, accent, iconColor }: { title: string; icon: string; items: string[]; accent?: boolean; iconColor?: string }) {
   if (!items || items.length === 0) return null;
   return (
     <section className={`card mb-4 ${accent ? 'border-accent/30' : ''}`}>
-      <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2"><Icon name={icon} size={20} className="text-accent" />{title}</h3>
-      <ul className="bullet-list">
+      <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2"><Icon name={icon} size={20} className={iconColor || 'text-accent'} />{title}</h3>
+      <ul className="list-disc pl-5 space-y-2 text-sm text-secondary marker:text-secondary">
         {items.map((item, i) => (
           <li key={i}>{item}</li>
         ))}
@@ -104,13 +104,13 @@ function InsightCard({ title, icon, items, accent }: { title: string; icon: stri
   );
 }
 
-function ScoreBar({ label, value, description }: { label: string; value: number; description?: string }) {
+function ScoreBar({ label, value, description, barColor }: { label: string; value: number; description?: string; barColor?: string }) {
   return (
     <div>
       <div className="flex items-center gap-3">
         <span className="text-xs text-secondary w-20 shrink-0">{label}</span>
         <div className="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
-          <div className="h-full bg-accent rounded-full transition-all" style={{ width: `${Math.min(100, value)}%` }} />
+          <div className={`h-full ${barColor || 'bg-accent'} rounded-full transition-all`} style={{ width: `${Math.min(100, value)}%` }} />
         </div>
         <span className="font-mono text-xs text-secondary w-8 text-right">{Math.round(value)}</span>
       </div>
@@ -177,6 +177,11 @@ export default function MatchDetailPage() {
   const userName = report.persona?.name || 'your persona';
   const matchName = match.name || 'this persona';
 
+  // Gender-based colors: male user (wants female) = pink, female user (wants male) = blue
+  const genderColor = report.gender === 'M' ? 'text-rose-400' : 'text-blue-500';
+  const genderBorder = report.gender === 'M' ? 'border-rose-400' : 'border-blue-500';
+  const genderBg = report.gender === 'M' ? 'bg-rose-400' : 'bg-blue-500';
+
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
@@ -208,7 +213,7 @@ export default function MatchDetailPage() {
               <div className="flex flex-wrap gap-3">
                 {codeKeys.map((k) => (
                   <div key={k.dim} className="card text-center flex-1 min-w-[120px]">
-                    <span className="inline-block text-[10px] border border-accent text-accent rounded-md px-2 py-1 mb-2.5 mt-1 font-medium capitalize">
+                    <span className={`inline-block text-[10px] border ${genderBorder} ${genderColor} rounded-md px-2 py-1 mb-2.5 mt-1 font-medium capitalize`}>
                       {k.dim}
                     </span>
                     <p className="font-serif text-sm font-semibold text-foreground mb-1">{k.pole}</p>
@@ -225,7 +230,7 @@ export default function MatchDetailPage() {
         {/* Compatibility summary */}
         {match.summary && (
           <section className="card mb-4 border-accent/30">
-            <h3 className="font-serif text-lg font-semibold mb-2 flex items-center gap-2"><Icon name="handshake" size={20} className="text-accent" />Compatibility Summary</h3>
+            <h3 className="font-serif text-lg font-semibold mb-2 flex items-center gap-2"><Icon name="handshake" size={20} className={genderColor} />Compatibility Summary</h3>
             <p className="text-sm text-secondary leading-relaxed">{match.summary.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>
           </section>
         )}
@@ -233,20 +238,20 @@ export default function MatchDetailPage() {
         {/* Score breakdown */}
         {match.subScores && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2"><Icon name="bar_chart" size={20} className="text-accent" />Score Breakdown</h3>
+            <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2"><Icon name="bar_chart" size={20} className={genderColor} />Persona Signatures</h3>
             <div className="space-y-3.5">
-              <ScoreBar label="Persona" value={match.subScores.tier} description={scoreContext('tier', match.subScores.tier, userName, matchName)} />
-              <ScoreBar label="Preference" value={match.subScores.preference} description={scoreContext('preference', match.subScores.preference, userName, matchName)} />
-              <ScoreBar label="Behavioral" value={match.subScores.dimension} description={scoreContext('dimension', match.subScores.dimension, userName, matchName)} />
-              <ScoreBar label="Intimacy" value={match.subScores.intimacy} description={scoreContext('intimacy', match.subScores.intimacy, userName, matchName)} />
-              <ScoreBar label="Conflict" value={match.subScores.conflict} description={scoreContext('conflict', match.subScores.conflict, userName, matchName)} />
+              <ScoreBar label="Persona" value={match.subScores.tier} description={scoreContext('tier', match.subScores.tier, userName, matchName)} barColor={genderBg} />
+              <ScoreBar label="Preference" value={match.subScores.preference} description={scoreContext('preference', match.subScores.preference, userName, matchName)} barColor={genderBg} />
+              <ScoreBar label="Behavioral" value={match.subScores.dimension} description={scoreContext('dimension', match.subScores.dimension, userName, matchName)} barColor={genderBg} />
+              <ScoreBar label="Intimacy" value={match.subScores.intimacy} description={scoreContext('intimacy', match.subScores.intimacy, userName, matchName)} barColor={genderBg} />
+              <ScoreBar label="Conflict" value={match.subScores.conflict} description={scoreContext('conflict', match.subScores.conflict, userName, matchName)} barColor={genderBg} />
             </div>
           </section>
         )}
 
         {/* Persona insight cards */}
         <div className="mt-8 mb-2">
-          <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="person" size={20} className="text-accent" />About {match.name}</h3>
+          <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="person" size={20} className={genderColor} />About {match.name}</h3>
           <p className="text-xs text-secondary mt-1">What to expect from this persona</p>
         </div>
 
@@ -255,42 +260,49 @@ export default function MatchDetailPage() {
           title={`What draws people to ${matchGenderPronoun}`}
           items={match.mostAttractive}
           accent
+          iconColor={genderColor}
         />
 
         <InsightCard
           icon="touch_app"
           title="How they date"
           items={match.datingBehavior}
+          iconColor={genderColor}
         />
 
         <InsightCard
           icon="people"
           title="In a relationship"
           items={match.inRelationships}
+          iconColor={genderColor}
         />
 
         <InsightCard
           icon="volunteer_activism"
           title={`How partners value ${matchGenderPronoun}`}
           items={match.howValued}
+          iconColor={genderColor}
         />
 
         <InsightCard
           icon="visibility"
           title="Watch out for"
           items={match.leastAttractive}
+          iconColor={genderColor}
         />
 
         <InsightCard
           icon="sentiment_dissatisfied"
           title={`What disappoints ${matchGenderPronoun}`}
           items={match.disappointments}
+          iconColor={genderColor}
         />
 
         <InsightCard
           icon="spa"
           title={`Where ${matchGenderCap.toLowerCase()} struggles`}
           items={match.struggles}
+          iconColor={genderColor}
         />
 
         <div className="flex gap-3 mt-8">
