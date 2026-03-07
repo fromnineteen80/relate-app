@@ -14,6 +14,7 @@ import { Icon } from '@/components/Icon';
 import { loadAndHydrateProgress } from '@/lib/supabase/progress';
 import { getProfile } from '@/lib/onboarding';
 import { getSupabase } from '@/lib/supabase/client';
+import { buildMarketRequestBody } from '@/lib/market-request';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -207,53 +208,24 @@ function ResultsDashboard() {
   // Fetch market data
   useEffect(() => {
     if (!user || marketFetchedRef.current) return;
-    const demoStr = localStorage.getItem('relate_demographics');
-    const gender = localStorage.getItem('relate_gender');
-    if (!demoStr) return;
+    const req = buildMarketRequestBody(user.id);
+    if (!req) return;
 
-    // Use cached market data if demographics unchanged and cache is < 5 min old
+    // Use cached market data if demographics unchanged and cache is < 30s old
     const cached = localStorage.getItem('relate_market_data');
     const cachedDemoSnap = localStorage.getItem('relate_market_demo_snapshot');
     const cachedAt = parseInt(localStorage.getItem('relate_market_cached_at') || '0', 10);
     const cacheAge = Date.now() - cachedAt;
-    if (cached && cachedDemoSnap === demoStr && cacheAge < 30 * 1000) {
+    if (cached && cachedDemoSnap === req.demoStr && cacheAge < 30 * 1000) {
       try { setMarketData(JSON.parse(cached)); marketFetchedRef.current = true; return; } catch { /* refetch */ }
     }
 
-    let demo: Record<string, any>;
-    try { demo = JSON.parse(demoStr); } catch { return; }
-    if (!demo.zipCode && !demo.zip_code) return;
     marketFetchedRef.current = true;
     setMarketLoading(true);
     fetch('/api/demographics-market', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId: user.id,
-        demographics: {
-          gender, age: demo.age, zipCode: demo.zipCode || demo.zip_code,
-          ethnicity: demo.ethnicity, orientation: demo.orientation, income: demo.income,
-          education: demo.education, height: demo.height,
-          bodyType: demo.bodyType || demo.body_type, fitness: demo.fitness || demo.fitness_level,
-          political: demo.political, smoking: demo.smoking,
-          hasKids: demo.hasKids ?? demo.has_kids, wantKids: demo.wantKids || demo.want_kids,
-          relationshipStatus: demo.relationshipStatus || demo.relationship_status,
-        },
-        preferences: {
-          prefAgeMin: demo.pref_age_min || demo.prefAgeMin,
-          prefAgeMax: demo.pref_age_max || demo.prefAgeMax,
-          prefIncomeMin: demo.pref_income_min ?? demo.prefIncome ?? 0,
-          prefHeightMin: demo.pref_height_min || demo.prefHeight || null,
-          prefBodyTypes: (demo.pref_body_types || demo.prefBodyTypes)?.length ? (demo.pref_body_types || demo.prefBodyTypes) : ['No preference'],
-          prefFitnessLevels: (demo.pref_fitness_levels || demo.prefFitnessLevels)?.length ? (demo.pref_fitness_levels || demo.prefFitnessLevels) : ['No preference'],
-          prefPolitical: (demo.pref_political || demo.prefPolitical)?.length ? (demo.pref_political || demo.prefPolitical) : ['No preference'],
-          prefEthnicities: (demo.pref_ethnicities || demo.prefEthnicities)?.length ? (demo.pref_ethnicities || demo.prefEthnicities) : ['No preference'],
-          prefEducation: (demo.pref_education_levels || demo.prefEducation)?.length ? (demo.pref_education_levels || demo.prefEducation) : ['No preference'],
-          prefHasKids: demo.pref_has_kids || demo.prefHasKids || 'No preference',
-          prefWantKids: demo.pref_want_kids || demo.prefWantKids || 'No preference',
-          prefSmoking: demo.pref_smoking || demo.prefSmoking || 'No preference',
-        },
-      }),
+      body: JSON.stringify(req.body),
     })
       .then(r => r.json())
       .then(data => {
@@ -261,7 +233,7 @@ function ResultsDashboard() {
           const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount, stateComparison: data.stateComparison, nationalComparison: data.nationalComparison };
           setMarketData(md);
           localStorage.setItem('relate_market_data', JSON.stringify(md));
-          localStorage.setItem('relate_market_demo_snapshot', demoStr);
+          localStorage.setItem('relate_market_demo_snapshot', req.demoStr);
           localStorage.setItem('relate_market_cached_at', String(Date.now()));
         }
       })
@@ -273,7 +245,6 @@ function ResultsDashboard() {
   const recalculateMarket = useCallback(async (prefKey: string, value: any) => {
     if (!user) return;
     const demoStr = localStorage.getItem('relate_demographics');
-    const gender = localStorage.getItem('relate_gender');
     if (!demoStr) return;
     let demo: Record<string, any>;
     try { demo = JSON.parse(demoStr); } catch { return; }
@@ -297,47 +268,24 @@ function ResultsDashboard() {
       }
     } catch { /* non-blocking */ }
 
-    // Re-fetch market data
+    // Re-fetch market data using the same shared builder (reads updated localStorage)
     setMarketLoading(true);
     try {
-      const res = await fetch('/api/demographics-market', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user.id,
-          demographics: {
-            gender, age: demo.age, zipCode: demo.zipCode || demo.zip_code,
-            ethnicity: demo.ethnicity, orientation: demo.orientation, income: demo.income,
-            education: demo.education, height: demo.height,
-            bodyType: demo.bodyType || demo.body_type, fitness: demo.fitness || demo.fitness_level,
-            political: demo.political, smoking: demo.smoking,
-            hasKids: demo.hasKids ?? demo.has_kids, wantKids: demo.wantKids || demo.want_kids,
-            relationshipStatus: demo.relationshipStatus || demo.relationship_status,
-          },
-          preferences: {
-            prefAgeMin: demo.pref_age_min || demo.prefAgeMin,
-            prefAgeMax: demo.pref_age_max || demo.prefAgeMax,
-            prefIncomeMin: demo.pref_income_min ?? demo.prefIncome ?? 0,
-            prefHeightMin: demo.pref_height_min || demo.prefHeight || null,
-            prefBodyTypes: demo.pref_body_types || demo.prefBodyTypes || ['No preference'],
-            prefFitnessLevels: demo.pref_fitness_levels || demo.prefFitnessLevels || ['No preference'],
-            prefPolitical: demo.pref_political || demo.prefPolitical || ['No preference'],
-            prefEthnicities: demo.pref_ethnicities || demo.prefEthnicities || ['No preference'],
-            prefEducation: demo.pref_education_levels || demo.prefEducation || ['No preference'],
-            prefHasKids: demo.pref_has_kids || demo.prefHasKids || 'No preference',
-            prefWantKids: demo.pref_want_kids || demo.prefWantKids || 'No preference',
-            prefSmoking: demo.pref_smoking || demo.prefSmoking || 'No preference',
-          },
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount, stateComparison: data.stateComparison, nationalComparison: data.nationalComparison };
-        setMarketData(md);
-        const updatedDemo = localStorage.getItem('relate_demographics') || '';
-        localStorage.setItem('relate_market_data', JSON.stringify(md));
-        localStorage.setItem('relate_market_demo_snapshot', updatedDemo);
-        localStorage.setItem('relate_market_cached_at', String(Date.now()));
+      const req = buildMarketRequestBody(user.id);
+      if (req) {
+        const res = await fetch('/api/demographics-market', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(req.body),
+        });
+        const data = await res.json();
+        if (data.success) {
+          const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount, stateComparison: data.stateComparison, nationalComparison: data.nationalComparison };
+          setMarketData(md);
+          localStorage.setItem('relate_market_data', JSON.stringify(md));
+          localStorage.setItem('relate_market_demo_snapshot', req.demoStr);
+          localStorage.setItem('relate_market_cached_at', String(Date.now()));
+        }
       }
     } catch { /* */ }
     setMarketLoading(false);

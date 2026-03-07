@@ -15,6 +15,7 @@ import { SubNav } from '@/components/SubNav';
 import { TestAccessCard } from '@/components/TestAccessCard';
 import { Icon } from '@/components/Icon';
 import { clearAllProgress } from '@/lib/supabase/progress';
+import { buildMarketRequestBody } from '@/lib/market-request';
 
 type Demographics = { age?: number; gender?: string; relationshipStatus?: string; seeking?: string; [key: string]: unknown };
 
@@ -296,62 +297,24 @@ function AccountPage() {
   const marketFetchedRef = useRef(false);
   useEffect(() => {
     if (!user || marketFetchedRef.current) return;
+    const req = buildMarketRequestBody(user.id);
+    if (!req) return;
 
-    const demoStr = localStorage.getItem('relate_demographics');
-    const profile = getProfile();
-    if (!demoStr || !profile?.zipCode) return;
-
-    // Use cached market data if demographics unchanged and cache is < 5 min old
+    // Use cached market data if demographics unchanged and cache is < 30s old
     const cached = localStorage.getItem('relate_market_data');
     const cachedDemoSnap = localStorage.getItem('relate_market_demo_snapshot');
     const cachedAt = parseInt(localStorage.getItem('relate_market_cached_at') || '0', 10);
     const cacheAge = Date.now() - cachedAt;
-    if (cached && cachedDemoSnap === demoStr && cacheAge < 30 * 1000) {
+    if (cached && cachedDemoSnap === req.demoStr && cacheAge < 30 * 1000) {
       try { setMarketData(JSON.parse(cached)); marketFetchedRef.current = true; return; } catch { /* refetch */ }
     }
-
-    let demo: Demographics;
-    try { demo = JSON.parse(demoStr); } catch { return; }
 
     marketFetchedRef.current = true;
     setMarketLoading(true);
     fetch('/api/demographics-market', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId: user.id,
-        demographics: {
-          zipCode: profile.zipCode,
-          gender: demo.gender,
-          age: demo.age,
-          ethnicity: (demo as Record<string, unknown>).ethnicity || 'White',
-          orientation: (demo as Record<string, unknown>).orientation || 'Straight',
-          income: (demo as Record<string, unknown>).income || 50000,
-          education: (demo as Record<string, unknown>).education || "Bachelor's Degree",
-          height: (demo as Record<string, unknown>).height || null,
-          bodyType: (demo as Record<string, unknown>).body_type || 'Average',
-          fitness: (demo as Record<string, unknown>).fitness_level || '2 to 3 days a week',
-          political: (demo as Record<string, unknown>).political || 'Moderate',
-          smoking: (demo as Record<string, unknown>).smoking || false,
-          hasKids: (demo as Record<string, unknown>).has_kids || false,
-          wantKids: (demo as Record<string, unknown>).want_kids || 'Not sure',
-          relationshipStatus: demo.relationshipStatus || 'Single',
-        },
-        preferences: {
-          prefAgeMin: (demo as Record<string, unknown>).pref_age_min || ((demo.age || 30) - 5),
-          prefAgeMax: (demo as Record<string, unknown>).pref_age_max || ((demo.age || 30) + 5),
-          prefIncomeMin: (demo as Record<string, unknown>).pref_income_min || 0,
-          prefHeightMin: (demo as Record<string, unknown>).pref_height_min || null,
-          prefBodyTypes: (demo as Record<string, unknown>).pref_body_types || ['No preference'],
-          prefFitnessLevels: (demo as Record<string, unknown>).pref_fitness_levels || ['No preference'],
-          prefPolitical: (demo as Record<string, unknown>).pref_political || ['No preference'],
-          prefEthnicities: ((demo as Record<string, unknown>).pref_ethnicities as string[] | undefined)?.length ? (demo as Record<string, unknown>).pref_ethnicities : ['No preference'],
-          prefEducation: ((demo as Record<string, unknown>).pref_education_levels as string[] | undefined)?.length ? (demo as Record<string, unknown>).pref_education_levels : ['No preference'],
-          prefHasKids: (demo as Record<string, unknown>).pref_has_kids || 'No preference',
-          prefWantKids: (demo as Record<string, unknown>).pref_want_kids || 'No preference',
-          prefSmoking: (demo as Record<string, unknown>).pref_smoking || 'No preference',
-        },
-      }),
+      body: JSON.stringify(req.body),
     })
       .then(res => res.json())
       .then(data => {
@@ -365,7 +328,7 @@ function AccountPage() {
           };
           setMarketData(md);
           localStorage.setItem('relate_market_data', JSON.stringify(md));
-          localStorage.setItem('relate_market_demo_snapshot', demoStr);
+          localStorage.setItem('relate_market_demo_snapshot', req.demoStr);
           localStorage.setItem('relate_market_cached_at', String(Date.now()));
         }
       })
