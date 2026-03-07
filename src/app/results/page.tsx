@@ -514,8 +514,8 @@ function ResultsDashboard() {
               <span className="text-xs font-mono text-success uppercase tracking-wider">Healthy Alignments</span>
               <ul className="mt-2 space-y-1">
                 {stack.coherences.map((coh: any, i: number) => (
-                  <li key={i} className="text-sm text-secondary flex gap-2">
-                    <span className="text-success flex-shrink-0">&#8226;</span>
+                  <li key={i} className="text-sm flex gap-2">
+                    <span className="text-secondary">&#8226;</span>
                     {coh.note || coh.specific || coh.name || String(coh)}
                   </li>
                 ))}
@@ -580,10 +580,10 @@ function ResultsDashboard() {
             <div className="mt-3 pt-3 border-t border-border">
               <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
               <ul className="mt-1.5 space-y-1.5">
-                <li className="text-xs text-secondary"><span className="font-medium text-foreground">Trigger:</span> {stack.shamePattern.trigger}</li>
-                <li className="text-xs text-secondary"><span className="font-medium text-foreground">Internal message:</span> {stack.shamePattern.shameMessage}</li>
-                <li className="text-xs text-secondary"><span className="font-medium text-foreground">Your response:</span> {stack.shamePattern.behavioralResponse}</li>
-                <li className="text-xs text-secondary"><span className="font-medium text-foreground">Partner experiences:</span> {stack.shamePattern.partnerExperience}</li>
+                <li className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span><span><span className="font-medium">Trigger:</span> {stack.shamePattern.trigger}</span></li>
+                <li className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span><span><span className="font-medium">Internal message:</span> {stack.shamePattern.shameMessage}</span></li>
+                <li className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span><span><span className="font-medium">Your response:</span> {stack.shamePattern.behavioralResponse}</span></li>
+                <li className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span><span><span className="font-medium">Partner experiences:</span> {stack.shamePattern.partnerExperience}</span></li>
               </ul>
             </div>
           )}
@@ -660,23 +660,24 @@ function ResultsDashboard() {
                     ? Object.values(v.interpretation).find((x: any) => typeof x === 'string') || JSON.stringify(v.interpretation)
                     : v.interpretation;
                   return (
-                    <li key={k} className="text-xs text-secondary">
-                      <span className="font-medium text-foreground capitalize">{v.name || k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}
-                      {interpValue as string}
+                    <li key={k} className="text-sm flex gap-2">
+                      <span className="text-secondary">&#8226;</span>
+                      <span><span className="font-medium capitalize">{v.name || k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}{interpValue as string}</span>
                     </li>
                   );
                 }
                 if (v && typeof v === 'object') {
                   return (
-                    <li key={k} className="text-xs text-secondary">
-                      <span className="font-medium text-foreground capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}
-                      {v.value !== undefined ? String(v.value) : JSON.stringify(v)}
+                    <li key={k} className="text-sm flex gap-2">
+                      <span className="text-secondary">&#8226;</span>
+                      <span><span className="font-medium capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}{v.value !== undefined ? String(v.value) : JSON.stringify(v)}</span>
                     </li>
                   );
                 }
                 return (
-                  <li key={k} className="text-xs text-secondary">
-                    <span className="font-medium text-foreground capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span> {String(v)}
+                  <li key={k} className="text-sm flex gap-2">
+                    <span className="text-secondary">&#8226;</span>
+                    <span><span className="font-medium capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span> {String(v)}</span>
                   </li>
                 );
               })}
@@ -688,7 +689,7 @@ function ResultsDashboard() {
             <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
             <ul className="mt-1.5 space-y-1">
               {stack.signals.map((s: string, i: number) => (
-                <li key={i} className="text-xs text-secondary">{s}</li>
+                <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{s}</li>
               ))}
             </ul>
           </div>
@@ -1033,7 +1034,7 @@ function ResultsDashboard() {
               })}
             </div>
 
-            <p className="text-sm text-secondary mt-4">
+            <p className="text-xs text-secondary mt-4">
               When Offer and Want overlap in the center, you are giving close to what you need.
               When they pull apart, there is a gap between what you bring to the relationship and what you ask from it.
             </p>
