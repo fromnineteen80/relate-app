@@ -1545,7 +1545,7 @@ function ResultsDashboard() {
           </div>
         </div>
       )}
-      <SiteFooter />
+      <SiteFooter spacerClassName={hasResults && canDownload ? 'bg-stone-100' : 'bg-background'} />
     </div>
   );
 }

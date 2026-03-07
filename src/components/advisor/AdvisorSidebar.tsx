@@ -78,8 +78,8 @@ export default function AdvisorSidebar() {
       <div
         className={`fixed top-0 left-0 h-screen border-r border-stone-200 flex flex-col transition-all duration-300 ease-out overflow-hidden ${
           isOpen
-            ? 'w-screen sm:w-[50vw] xl:w-[33vw] z-[60] sm:z-30 bg-stone-50'
-            : 'w-0 z-30 bg-background'
+            ? 'w-screen sm:w-[50vw] xl:w-[33vw] z-[60] sm:z-30 bg-white'
+            : 'w-0 z-30 bg-stone-50'
         }`}
         role="dialog"
         aria-label="Your Advisor"
