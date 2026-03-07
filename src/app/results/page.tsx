@@ -892,15 +892,16 @@ function ResultsDashboard() {
         {/* ── Score Breakdown ── */}
         {hasDimensions && (() => {
           const dimOrder = ['physical', 'social', 'lifestyle', 'values'] as const;
-          const dimBarColor: Record<string, string> = { physical: 'bg-accent/80', social: 'bg-accent/60', lifestyle: 'bg-accent/40', values: 'bg-accent/20' };
           const isMale = report?.gender === 'M';
+          const genderBarBase = isMale ? 'bg-rose-400' : 'bg-blue-500';
+          const dimBarColor: Record<string, string> = { physical: `${genderBarBase}/80`, social: `${genderBarBase}/60`, lifestyle: `${genderBarBase}/40`, values: `${genderBarBase}/20` };
           // Dimensions come from M2/W2 (what you offer)
           const polePairs: Record<string, { A: string; B: string }> = isMale
             ? { physical: { A: 'Fitness', B: 'Maturity' }, social: { A: 'Leadership', B: 'Presence' }, lifestyle: { A: 'Adventure', B: 'Stability' }, values: { A: 'Traditional', B: 'Egalitarian' } }
             : { physical: { A: 'Beauty', B: 'Confidence' }, social: { A: 'Allure', B: 'Charm' }, lifestyle: { A: 'Thrill', B: 'Peace' }, values: { A: 'Traditional', B: 'Egalitarian' } };
           return (
           <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2"><Icon name="bar_chart" size={20} className="text-accent" />Score Breakdown</h3>
+            <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2"><Icon name="bar_chart" size={20} className={isMale ? 'text-rose-400' : 'text-blue-500'} />Persona Signatures</h3>
             <div className="space-y-3.5">
               {dimOrder.map((dim) => {
                 const data = (dimensions as any)[dim];

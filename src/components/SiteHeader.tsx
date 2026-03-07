@@ -97,7 +97,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
               </span>
             </button>
           )}
-          <Link href="/" className="font-serif text-sm font-semibold tracking-tight">
+          <Link href="/" className="font-serif text-base font-semibold tracking-tight">
             RELATE
           </Link>
         </div>

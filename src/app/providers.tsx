@@ -15,8 +15,8 @@ function LayoutShell({ children }: { children: React.ReactNode }) {
       <div
         className={`min-h-screen transition-all duration-300 ease-out ${
           isOpen
-            ? 'sm:ml-[50vw] xl:ml-[33vw] advisor-open'
-            : 'md:ml-8'
+            ? 'sm:ml-[280px] advisor-open'
+            : 'md:ml-[72px]'
         }`}
       >
         {children}

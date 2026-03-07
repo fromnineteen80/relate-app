@@ -64,7 +64,7 @@ export default function AdvisorSidebar() {
         aria-label="Your Advisor"
         aria-hidden={!isOpen}
       >
-        <div className={`flex flex-col h-full min-w-[320px] ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}>
+        <div className={`flex flex-col h-full min-w-[280px] ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}>
           <AdvisorHeader />
           <AdvisorMessages hideStarters={inputValue.length > 0} />
 
