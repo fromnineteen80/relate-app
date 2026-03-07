@@ -1172,7 +1172,7 @@ function ResultsDashboard() {
                 </p>
                 {gottman.overallRisk && (
                   <p className="text-xs text-secondary mb-3">
-                    Overall risk: <span className={`font-semibold ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-yellow-600' : 'text-success'}`}>
+                    Overall risk: <span className={`font-semibold ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-warning' : 'text-success'}`}>
                       {gottman.overallRisk}
                     </span>
                   </p>
@@ -1183,8 +1183,8 @@ function ResultsDashboard() {
                     const rawScore = data.score ?? 4;
                     const normalized = Math.round(((rawScore - 4) / 16) * 10);
                     const pct = normalized * 10;
-                    const barColor = pct >= 63 ? 'bg-danger' : pct >= 32 ? 'bg-yellow-400' : 'bg-success';
-                    const riskColor = pct >= 63 ? 'text-danger' : pct >= 32 ? 'text-yellow-600' : 'text-success';
+                    const barColor = pct >= 63 ? 'bg-danger' : pct >= 32 ? 'bg-warning' : 'bg-success';
+                    const riskColor = pct >= 63 ? 'text-danger' : pct >= 32 ? 'text-warning' : 'text-success';
                     const HORSEMAN_DESC: Record<string, string> = {
                       criticism: 'Attacking your partner\'s character instead of addressing a specific behavior.',
                       contempt: 'Expressing superiority or disgust through sarcasm, eye-rolling, or mockery.',
@@ -1243,7 +1243,7 @@ function ResultsDashboard() {
                   [
                     { items: ic.attachmentTiers.bestMatches, tier: 'Best', color: 'text-success', bg: 'bg-success/10 border-success/30' },
                     { items: ic.attachmentTiers.goodMatches, tier: 'Good', color: 'text-accent', bg: 'bg-accent/10 border-accent/30' },
-                    { items: ic.attachmentTiers.workableMatches, tier: 'Workable', color: 'text-yellow-600', bg: 'bg-yellow-50 border-yellow-300' },
+                    { items: ic.attachmentTiers.workableMatches, tier: 'Workable', color: 'text-warning', bg: 'bg-warning/10 border-warning/30' },
                     { items: ic.attachmentTiers.riskyMatches, tier: 'Risky', color: 'text-danger/70', bg: 'bg-danger/5 border-danger/20' },
                     { items: ic.attachmentTiers.avoidMatches, tier: 'Avoid', color: 'text-danger', bg: 'bg-danger/10 border-danger/30' },
                   ].forEach(group => {
@@ -1273,7 +1273,7 @@ function ResultsDashboard() {
                     [
                       { items: ic.driverTiers.bestMatches, tier: 'Best', color: 'text-success', bg: 'bg-success/10 border-success/30' },
                       { items: ic.driverTiers.goodMatches, tier: 'Good', color: 'text-accent', bg: 'bg-accent/10 border-accent/30' },
-                      { items: ic.driverTiers.workableMatches, tier: 'Workable', color: 'text-yellow-600', bg: 'bg-yellow-50 border-yellow-300' },
+                      { items: ic.driverTiers.workableMatches, tier: 'Workable', color: 'text-warning', bg: 'bg-warning/10 border-warning/30' },
                       { items: ic.driverTiers.avoidMatches, tier: 'Avoid', color: 'text-danger', bg: 'bg-danger/10 border-danger/30' },
                     ].forEach(group => {
                       if (Array.isArray(group.items)) {
@@ -1311,7 +1311,7 @@ function ResultsDashboard() {
                 )}
                 {Array.isArray(ic.horsemenInsights?.avoid) && ic.horsemenInsights.avoid.length > 0 && (
                   <div className="mt-3">
-                    <span className="text-xs font-mono text-yellow-600 uppercase tracking-wider">Be cautious of</span>
+                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Be cautious of</span>
                     <ul className="mt-2 space-y-1.5">
                       {ic.horsemenInsights.avoid.map((item: any, i: number) => (
                         <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary flex-shrink-0">&#8226;</span><span><span className="font-medium text-foreground">{item.partnerTrait}</span>: {item.reason}</span></li>
