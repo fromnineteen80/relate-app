@@ -229,7 +229,7 @@ export default function MatchDetailPage() {
 
         {/* Compatibility summary */}
         {match.summary && (
-          <section className="card mb-4 border-accent/30">
+          <section className="card mb-4">
             <h3 className="font-serif text-lg font-semibold mb-2 flex items-center gap-2"><Icon name="handshake" size={20} className={genderColor} />Compatibility Summary</h3>
             <p className="text-sm text-secondary leading-relaxed">{match.summary.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>
           </section>
@@ -259,13 +259,12 @@ export default function MatchDetailPage() {
           icon="star"
           title={`What draws people to ${matchGenderPronoun}`}
           items={match.mostAttractive}
-          accent
           iconColor={genderColor}
         />
 
         <InsightCard
           icon="touch_app"
-          title="How they date"
+          title={`How ${report.gender === 'M' ? 'she' : 'he'} dates`}
           items={match.datingBehavior}
           iconColor={genderColor}
         />
