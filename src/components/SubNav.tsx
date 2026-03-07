@@ -81,10 +81,10 @@ export function SubNav({ items = [] }: SubNavProps) {
             <Link
               key={link.id}
               href={link.href}
-              className={`text-xs font-semibold px-3 py-2.5 border-b-2 transition-colors whitespace-nowrap ${
+              className={`relative text-xs font-semibold px-3 py-2.5 transition-colors whitespace-nowrap ${
                 isActive
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-secondary hover:text-primary hover:border-primary'
+                  ? 'text-accent after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-accent'
+                  : 'text-foreground hover:text-accent hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent'
               }`}
             >
               {link.label}
@@ -101,7 +101,7 @@ export function SubNav({ items = [] }: SubNavProps) {
               <a
                 key={link.id}
                 href={link.href}
-                className="text-xs font-medium px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap text-secondary hover:text-primary"
+                className="relative text-xs font-medium px-3 py-2.5 transition-colors whitespace-nowrap text-secondary hover:text-foreground hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent"
               >
                 {link.label}
               </a>
@@ -112,10 +112,10 @@ export function SubNav({ items = [] }: SubNavProps) {
             <Link
               key={link.id}
               href={link.href}
-              className={`text-xs font-medium px-3 py-2.5 border-b-2 transition-colors whitespace-nowrap ${
+              className={`relative text-xs font-medium px-3 py-2.5 transition-colors whitespace-nowrap ${
                 isActive
-                  ? 'border-accent text-primary'
-                  : 'border-transparent text-secondary hover:text-primary hover:border-accent'
+                  ? 'text-foreground after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-accent'
+                  : 'text-secondary hover:text-foreground hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent'
               }`}
             >
               {link.label}

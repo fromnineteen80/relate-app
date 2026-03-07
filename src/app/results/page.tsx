@@ -514,8 +514,8 @@ function ResultsDashboard() {
               <span className="text-xs font-mono text-success uppercase tracking-wider">Healthy Alignments</span>
               <ul className="mt-2 space-y-1">
                 {stack.coherences.map((coh: any, i: number) => (
-                  <li key={i} className="text-sm text-secondary flex gap-2">
-                    <span className="text-success flex-shrink-0">&#8226;</span>
+                  <li key={i} className="text-sm flex gap-2">
+                    <span className="text-secondary">&#8226;</span>
                     {coh.note || coh.specific || coh.name || String(coh)}
                   </li>
                 ))}
@@ -560,18 +560,18 @@ function ResultsDashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {Array.isArray(stack.inRelationship.costs) && stack.inRelationship.costs.length > 0 && (
                 <div>
-                  <span className="text-xs font-mono text-warning uppercase tracking-wider">Risks</span>
+                  <span className="text-xs font-mono text-secondary uppercase tracking-wider">Risks</span>
                   <ul className="mt-1.5 space-y-1">
                     {stack.inRelationship.costs.map((r: string, i: number) => (
-                      <li key={i} className="text-xs text-secondary">{r}</li>
+                      <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{r}</li>
                     ))}
                   </ul>
                 </div>
               )}
               {stack.repairPath && (
                 <div>
-                  <span className="text-xs font-mono text-success uppercase tracking-wider">Growth Path</span>
-                  <p className="text-xs text-secondary mt-1.5">{stack.repairPath}</p>
+                  <span className="text-xs font-mono text-secondary uppercase tracking-wider">Growth Path</span>
+                  <p className="text-sm flex gap-2 mt-1.5"><span className="text-secondary">&#8226;</span>{stack.repairPath}</p>
                 </div>
               )}
             </div>
@@ -580,10 +580,10 @@ function ResultsDashboard() {
             <div className="mt-3 pt-3 border-t border-border">
               <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
               <ul className="mt-1.5 space-y-1.5">
-                <li className="text-xs text-secondary"><span className="font-medium text-foreground">Trigger:</span> {stack.shamePattern.trigger}</li>
-                <li className="text-xs text-secondary"><span className="font-medium text-foreground">Internal message:</span> {stack.shamePattern.shameMessage}</li>
-                <li className="text-xs text-secondary"><span className="font-medium text-foreground">Your response:</span> {stack.shamePattern.behavioralResponse}</li>
-                <li className="text-xs text-secondary"><span className="font-medium text-foreground">Partner experiences:</span> {stack.shamePattern.partnerExperience}</li>
+                <li className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span><span><span className="font-medium">Trigger:</span> {stack.shamePattern.trigger}</span></li>
+                <li className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span><span><span className="font-medium">Internal message:</span> {stack.shamePattern.shameMessage}</span></li>
+                <li className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span><span><span className="font-medium">Your response:</span> {stack.shamePattern.behavioralResponse}</span></li>
+                <li className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span><span><span className="font-medium">Partner experiences:</span> {stack.shamePattern.partnerExperience}</span></li>
               </ul>
             </div>
           )}
@@ -624,25 +624,25 @@ function ResultsDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {Array.isArray(stack.risks) && stack.risks.length > 0 && (
             <div>
-              <span className="text-xs font-mono text-warning uppercase tracking-wider">Risks</span>
+              <span className="text-xs font-mono text-secondary uppercase tracking-wider">Risks</span>
               <ul className="mt-1.5 space-y-1">
                 {stack.risks.map((r: string, i: number) => (
-                  <li key={i} className="text-xs text-secondary">{r}</li>
+                  <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{r}</li>
                 ))}
               </ul>
             </div>
           )}
           {stack.growthPath && (
             <div>
-              <span className="text-xs font-mono text-success uppercase tracking-wider">Growth Path</span>
+              <span className="text-xs font-mono text-secondary uppercase tracking-wider">Growth Path</span>
               {Array.isArray(stack.growthPath) ? (
                 <ul className="mt-1.5 space-y-1">
                   {stack.growthPath.map((g: string, i: number) => (
-                    <li key={i} className="text-xs text-secondary">{g}</li>
+                    <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{g}</li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-xs text-secondary mt-1.5">{stack.growthPath}</p>
+                <p className="text-sm text-secondary mt-1.5">{stack.growthPath}</p>
               )}
               <Link href="/growth" className="text-xs text-accent hover:underline mt-2 inline-block">
                 Start your Growth Plan →
@@ -660,23 +660,24 @@ function ResultsDashboard() {
                     ? Object.values(v.interpretation).find((x: any) => typeof x === 'string') || JSON.stringify(v.interpretation)
                     : v.interpretation;
                   return (
-                    <li key={k} className="text-xs text-secondary">
-                      <span className="font-medium text-foreground capitalize">{v.name || k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}
-                      {interpValue as string}
+                    <li key={k} className="text-sm flex gap-2">
+                      <span className="text-secondary">&#8226;</span>
+                      <span><span className="font-medium capitalize">{v.name || k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}{interpValue as string}</span>
                     </li>
                   );
                 }
                 if (v && typeof v === 'object') {
                   return (
-                    <li key={k} className="text-xs text-secondary">
-                      <span className="font-medium text-foreground capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}
-                      {v.value !== undefined ? String(v.value) : JSON.stringify(v)}
+                    <li key={k} className="text-sm flex gap-2">
+                      <span className="text-secondary">&#8226;</span>
+                      <span><span className="font-medium capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}{v.value !== undefined ? String(v.value) : JSON.stringify(v)}</span>
                     </li>
                   );
                 }
                 return (
-                  <li key={k} className="text-xs text-secondary">
-                    <span className="font-medium text-foreground capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span> {String(v)}
+                  <li key={k} className="text-sm flex gap-2">
+                    <span className="text-secondary">&#8226;</span>
+                    <span><span className="font-medium capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span> {String(v)}</span>
                   </li>
                 );
               })}
@@ -688,7 +689,7 @@ function ResultsDashboard() {
             <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
             <ul className="mt-1.5 space-y-1">
               {stack.signals.map((s: string, i: number) => (
-                <li key={i} className="text-xs text-secondary">{s}</li>
+                <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{s}</li>
               ))}
             </ul>
           </div>
@@ -836,25 +837,27 @@ function ResultsDashboard() {
             <div className="space-y-3">
               {(matchesExpanded ? visibleMatches : visibleMatches.slice(0, 5)).map((match: any) => (
                 <div key={match.code} className="card">
-                  <div className="flex items-start justify-between gap-4 flex-wrap mb-1">
-                    <div className="flex items-center gap-2 min-w-0 flex-wrap">
-                      <span className="font-mono text-xs text-secondary">#{match.rank}</span>
-                      {hasPaid ? (
-                        <Link href={`/results/match/${match.code}`} className="text-sm font-semibold text-accent hover:underline">{match.name}</Link>
-                      ) : <span className="text-sm font-semibold">{match.name}</span>}
-                      <span className="font-mono text-xs text-secondary">{match.code}</span>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-mono text-xs text-secondary">#{match.rank}</span>
+                        {hasPaid ? (
+                          <Link href={`/results/match/${match.code}`} className="text-sm font-semibold text-accent hover:underline">{match.name}</Link>
+                        ) : <span className="text-sm font-semibold">{match.name}</span>}
+                        <span className="font-mono text-xs text-secondary">{match.code}</span>
+                      </div>
+                      {match.traits && <p className="text-xs text-secondary mt-1">{match.traits.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
                     </div>
-                    <div className="text-center shrink-0">
+                    <div className="text-right shrink-0">
                       <span className="font-mono text-sm font-semibold block">{match.compatibilityScore}</span>
                       <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>
                       {(() => {
                         const note = rankingNote(match, visibleMatches);
-                        return note ? <p className="text-[10px] text-secondary/60 mt-0.5 max-w-[120px] leading-tight">{note}</p> : null;
+                        return note ? <p className="text-[10px] text-secondary/60 mt-0.5 max-w-[120px] leading-tight ml-auto">{note}</p> : null;
                       })()}
                     </div>
                   </div>
-                  {match.traits && <p className="text-xs text-secondary mb-1">{match.traits.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
-                  {match.summary && <p className="text-sm text-secondary">{match.summary.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
+                  {match.summary && <p className="text-sm text-secondary mt-2">{match.summary.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
                 </div>
               ))}
             </div>
@@ -1031,24 +1034,40 @@ function ResultsDashboard() {
               })}
             </div>
 
-            <p className="text-sm text-secondary mt-4">
+            <p className="text-xs text-secondary mt-4">
               When Offer and Want overlap in the center, you are giving close to what you need.
               When they pull apart, there is a gap between what you bring to the relationship and what you ask from it.
             </p>
 
             {ic.m3States.insights && (
-              <div className="mt-4 pt-4 border-t border-border space-y-2">
-                <span className={`text-xs font-mono px-2 py-0.5 rounded ${
-                  ic.m3States.insights.gapExpansionLevel === 'HIGH' ? 'bg-danger/10 text-danger' :
-                  ic.m3States.insights.gapExpansionLevel === 'MODERATE' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
-                }`}>
-                  Gap expansion under stress: {ic.m3States.insights.gapExpansion > 0 ? '+' : ''}{ic.m3States.insights.gapExpansion} pts ({ic.m3States.insights.gapExpansionLevel})
-                </span>
-                <p className="text-xs text-secondary">
-                  Repair effort: <span className={`font-mono ${ic.m3States.insights.repairSustainable ? 'text-success' : 'text-warning'}`}>
+              <div className="mt-4 pt-4 border-t border-border space-y-4">
+                <div>
+                  <h4 className="font-serif text-sm font-semibold mb-1">Gap Expansion Under Stress</h4>
+                  <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+                    ic.m3States.insights.gapExpansionLevel === 'HIGH' ? 'bg-danger/10 text-danger' :
+                    ic.m3States.insights.gapExpansionLevel === 'MODERATE' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
+                  }`}>
+                    {ic.m3States.insights.gapExpansion > 0 ? '+' : ''}{ic.m3States.insights.gapExpansion} pts ({ic.m3States.insights.gapExpansionLevel})
+                  </span>
+                  <p className="text-xs text-secondary mt-2">
+                    {ic.m3States.insights.gapExpansionLevel === 'HIGH'
+                      ? 'Under stress, the gap between what you need and what you give widens significantly. Conflict amplifies your unmet needs faster than your capacity to offer, which can create a destabilizing spiral if unaddressed.'
+                      : ic.m3States.insights.gapExpansionLevel === 'MODERATE'
+                      ? 'Under stress, your want-offer gap grows moderately. You shift under pressure but maintain enough balance to course-correct before the gap becomes destabilizing.'
+                      : 'Under stress, your want-offer gap stays relatively stable. You maintain balance between what you need and what you give, even when things get difficult.'}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-serif text-sm font-semibold mb-1">Repair Effort</h4>
+                  <span className={`text-xs font-mono px-2 py-0.5 rounded ${ic.m3States.insights.repairSustainable ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'}`}>
                     {ic.m3States.insights.repairSustainable ? 'Sustainable' : 'High strain'}
                   </span>
-                </p>
+                  <p className="text-xs text-secondary mt-2">
+                    {ic.m3States.insights.repairSustainable
+                      ? 'Your repair pattern is sustainable. When you shift into recovery mode, the effort you put in to close the gap does not exceed what you can maintain over time. This means your repair attempts are genuine and repeatable, not performative bursts.'
+                      : 'Your repair pattern shows high strain. When you try to recover from conflict, you overextend what you can sustainably offer. This means your repair attempts may feel intense but are difficult to maintain, leading to cycles of over-giving followed by withdrawal.'}
+                  </p>
+                </div>
               </div>
             )}
           </section>

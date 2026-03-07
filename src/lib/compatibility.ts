@@ -369,7 +369,7 @@ export function calculateIndividualM3States(m3Data: any, m4Data: any): M3StatesR
       want: Math.round(wantScore * modifiers.repair.want),
       offer: Math.min(100, Math.round(offerScore * modifiers.repair.offer)),
       gap: 0,
-      label: 'Making Effort',
+      label: 'Repair Effort',
     },
   };
 

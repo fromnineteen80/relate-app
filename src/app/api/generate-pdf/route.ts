@@ -164,7 +164,7 @@ function buildReportHTML(data: {
           <td style="padding:8px;border-bottom:1px solid #e5e5e5"><span style="${barStyle(states.conflict.want, '#d97706')}"></span> <span class="mono">${states.conflict.want}</span></td>
           <td style="padding:8px;border-bottom:1px solid #e5e5e5"><span style="${barStyle(states.conflict.offer, '#d97706')}"></span> <span class="mono">${states.conflict.offer}</span></td>
           <td style="padding:8px;border-bottom:1px solid #e5e5e5" class="mono">${states.conflict.gap > 0 ? '+' : ''}${states.conflict.gap}</td></tr>
-      <tr><td style="padding:8px;border-bottom:1px solid #e5e5e5">Making Effort</td>
+      <tr><td style="padding:8px;border-bottom:1px solid #e5e5e5">Repair Effort</td>
           <td style="padding:8px;border-bottom:1px solid #e5e5e5"><span style="${barStyle(states.repair.want, '#16a34a')}"></span> <span class="mono">${states.repair.want}</span></td>
           <td style="padding:8px;border-bottom:1px solid #e5e5e5"><span style="${barStyle(states.repair.offer, '#16a34a')}"></span> <span class="mono">${states.repair.offer}</span></td>
           <td style="padding:8px;border-bottom:1px solid #e5e5e5" class="mono">${states.repair.gap > 0 ? '+' : ''}${states.repair.gap}</td></tr>

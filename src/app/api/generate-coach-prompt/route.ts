@@ -361,7 +361,7 @@ ${dimLines}
 |-------|------|-------|-----|
 | Baseline | ${states.normal?.want ?? '?'} | ${states.normal?.offer ?? '?'} | ${states.normal?.gap ?? '?'} |
 | Under Stress | ${states.conflict?.want ?? '?'} | ${states.conflict?.offer ?? '?'} | ${states.conflict?.gap ?? '?'} |
-| Making Effort | ${states.repair?.want ?? '?'} | ${states.repair?.offer ?? '?'} | ${states.repair?.gap ?? '?'} |`;
+| Repair Effort | ${states.repair?.want ?? '?'} | ${states.repair?.offer ?? '?'} | ${states.repair?.gap ?? '?'} |`;
 
       if (insights) {
         stressSection += `\n\n- Gap expansion under stress: ${insights.gapExpansion > 0 ? '+' : ''}${insights.gapExpansion} points (${insights.gapExpansionLevel})`;
