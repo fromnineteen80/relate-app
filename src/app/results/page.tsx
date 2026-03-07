@@ -257,8 +257,8 @@ function ResultsDashboard() {
       .finally(() => setMarketLoading(false));
   }, [user, marketData]);
 
-  // Recalculate market data after relaxing a preference
-  const recalculateMarket = useCallback(async (prefKey: string) => {
+  // Recalculate market data after adjusting a preference
+  const recalculateMarket = useCallback(async (prefKey: string, value: any) => {
     if (!user) return;
     const demoStr = localStorage.getItem('relate_demographics');
     const gender = localStorage.getItem('relate_gender');
@@ -266,19 +266,15 @@ function ResultsDashboard() {
     let demo: Record<string, any>;
     try { demo = JSON.parse(demoStr); } catch { return; }
 
-    // Set the preference to "No preference"
-    const noPreference = ['prefBodyTypes', 'prefFitnessLevels', 'prefPolitical', 'prefEthnicities', 'prefEducation',
-      'pref_body_types', 'pref_fitness_levels', 'pref_political', 'pref_ethnicities', 'pref_education_levels'].includes(prefKey)
-      ? ['No preference'] : prefKey === 'prefHeightMin' || prefKey === 'pref_height_min' ? 'No preference' : 'No preference';
-
     // Normalize key to the DB format used in localStorage
     const dbKeyMap: Record<string, string> = {
       prefHeightMin: 'pref_height_min', prefBodyTypes: 'pref_body_types', prefFitnessLevels: 'pref_fitness_levels',
       prefPolitical: 'pref_political', prefHasKids: 'pref_has_kids', prefWantKids: 'pref_want_kids',
       prefSmoking: 'pref_smoking', prefEthnicities: 'pref_ethnicities', prefEducation: 'pref_education_levels',
+      prefIncomeMin: 'pref_income_min',
     };
     const dbKey = dbKeyMap[prefKey] || prefKey;
-    demo[dbKey] = noPreference;
+    demo[dbKey] = value;
     localStorage.setItem('relate_demographics', JSON.stringify(demo));
     localStorage.removeItem('relate_market_data');
 
@@ -286,7 +282,7 @@ function ResultsDashboard() {
     try {
       const supabase = getSupabase();
       if (supabase) {
-        await supabase.from('users').update({ [dbKey]: noPreference }).eq('id', user.id);
+        await supabase.from('users').update({ [dbKey]: value }).eq('id', user.id);
       }
     } catch { /* non-blocking */ }
 
@@ -1435,7 +1431,7 @@ function ResultsDashboard() {
         {/* ── Dating Market ── */}
         {hasMarket && (
           <div className="scroll-mt-32">
-            <DatingMarketViz data={marketData} loading={marketLoading} onRelaxPreference={recalculateMarket} />
+            <DatingMarketViz data={marketData} loading={marketLoading} onRelaxPreference={recalculateMarket} demographics={demographics} />
           </div>
         )}
 
@@ -1569,7 +1565,18 @@ function ResultsDashboard() {
 }
 
 // ── Dating Market Visualization ──
-function DatingMarketViz({ data, loading, onRelaxPreference }: { data: MarketData | null; loading: boolean; onRelaxPreference?: (prefKey: string) => void }) {
+const HEIGHTS = [
+  '4\'10"','4\'11"','5\'0"','5\'1"','5\'2"','5\'3"','5\'4"','5\'5"','5\'6"','5\'7"',
+  '5\'8"','5\'9"','5\'10"','5\'11"','6\'0"','6\'1"','6\'2"','6\'3"','6\'4"','6\'5"','6\'6"','6\'7"','6\'8"',
+];
+
+function formatCurrencyShort(val: number) {
+  if (val >= 1000000) return '$1M+';
+  if (val === 0) return '$0';
+  return '$' + val.toLocaleString();
+}
+
+function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { data: MarketData | null; loading: boolean; onRelaxPreference?: (prefKey: string, value: any) => void; demographics?: any }) {
   const [relaxing, setRelaxing] = useState<string | null>(null);
 
   if (loading) {
@@ -1618,18 +1625,20 @@ function DatingMarketViz({ data, loading, onRelaxPreference }: { data: MarketDat
   // Identify relaxable filters when ideal pool is zero
   const idealPool = pool?.idealPool || 0;
   const funnel = pool?.funnel || [];
-  const funnelPrefKeyMap: Record<string, { key: string; label: string }> = {
-    'Political': { key: 'prefPolitical', label: 'Political Views' },
-    'Has kids': { key: 'prefHasKids', label: 'Partner Has Kids' },
-    'Wants kids': { key: 'prefWantKids', label: 'Partner Wants Kids' },
-    'Smoking': { key: 'prefSmoking', label: 'Smoking' },
-    'Height': { key: 'prefHeightMin', label: 'Minimum Height' },
-    'Body type': { key: 'prefBodyTypes', label: 'Body Type' },
-    'Fitness': { key: 'prefFitnessLevels', label: 'Fitness Level' },
+  type FilterType = 'toggle' | 'height' | 'income';
+  const funnelPrefKeyMap: Record<string, { key: string; label: string; type: FilterType }> = {
+    'Political': { key: 'prefPolitical', label: 'Political Views', type: 'toggle' },
+    'Has kids': { key: 'prefHasKids', label: 'Partner Has Kids', type: 'toggle' },
+    'Wants kids': { key: 'prefWantKids', label: 'Partner Wants Kids', type: 'toggle' },
+    'Smoking': { key: 'prefSmoking', label: 'Smoking', type: 'toggle' },
+    'Height': { key: 'prefHeightMin', label: 'Minimum Height', type: 'height' },
+    'Body type': { key: 'prefBodyTypes', label: 'Body Type', type: 'toggle' },
+    'Fitness': { key: 'prefFitnessLevels', label: 'Fitness Level', type: 'toggle' },
+    'Income': { key: 'prefIncomeMin', label: 'Minimum Income', type: 'income' },
   };
 
   // Build list of filters that reduced the pool, sorted by biggest impact
-  const relaxableFilters: { key: string; label: string; stage: string; lostPct: number }[] = [];
+  const relaxableFilters: { key: string; label: string; stage: string; lostPct: number; type: FilterType; currentValue?: string }[] = [];
   if (idealPool === 0) {
     for (const entry of funnel) {
       if (entry.isMilestone || !entry.filter) continue;
@@ -1638,7 +1647,9 @@ function DatingMarketViz({ data, loading, onRelaxPreference }: { data: MarketDat
       const lostPct = 100 - filterPct;
       for (const [prefix, info] of Object.entries(funnelPrefKeyMap)) {
         if (entry.stage.startsWith(prefix)) {
-          relaxableFilters.push({ key: info.key, label: info.label, stage: entry.stage, lostPct });
+          // Extract current value from stage (e.g. "Height ≥ 5'10\"" → "5'10\"")
+          const currentValue = entry.stage.includes('≥') ? entry.stage.split('≥')[1]?.trim() : entry.stage.split(':')[1]?.trim();
+          relaxableFilters.push({ key: info.key, label: info.label, stage: entry.stage, lostPct, type: info.type, currentValue });
           break;
         }
       }
@@ -1646,10 +1657,22 @@ function DatingMarketViz({ data, loading, onRelaxPreference }: { data: MarketDat
     relaxableFilters.sort((a, b) => b.lostPct - a.lostPct);
   }
 
-  const handleRelax = async (prefKey: string) => {
+  // Read current preference values from localStorage for slider/dropdown controls
+  let currentIncomeMin = 0;
+  let currentHeightMin = '';
+  try {
+    const demoStr = localStorage.getItem('relate_demographics');
+    if (demoStr) {
+      const d = JSON.parse(demoStr);
+      currentIncomeMin = d.pref_income_min ?? d.prefIncome ?? 0;
+      currentHeightMin = d.pref_height_min || d.prefHeight || '';
+    }
+  } catch { /* */ }
+
+  const handleRelax = async (prefKey: string, value: any) => {
     if (!onRelaxPreference) return;
     setRelaxing(prefKey);
-    await onRelaxPreference(prefKey);
+    await onRelaxPreference(prefKey, value);
     setRelaxing(null);
   };
 
@@ -1660,22 +1683,65 @@ function DatingMarketViz({ data, loading, onRelaxPreference }: { data: MarketDat
           <span className="font-mono text-xs text-red-600 tracking-wider uppercase">Zero Matches</span>
           <p className="text-sm font-medium mt-1">Your preferences have filtered your match pool to zero.</p>
           <p className="text-sm text-secondary mt-1 mb-3">
-            Relax one requirement below to see matches. This will update your profile automatically.
+            Adjust your preferences below to find matches. Each change updates your profile automatically.
           </p>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {relaxableFilters.map(f => (
-              <div key={f.key} className="flex items-center justify-between bg-white border border-red-200 rounded-md px-3 py-2">
-                <div>
+              <div key={f.key} className="bg-white border border-red-200 rounded-md px-3 py-2.5">
+                <div className="flex items-center justify-between mb-1">
                   <span className="text-sm font-medium">{f.label}</span>
-                  <span className="text-xs text-secondary ml-2">removes {Math.round(f.lostPct)}% of pool</span>
+                  <span className="text-xs text-red-500 font-mono">-{Math.round(f.lostPct)}% of pool</span>
                 </div>
-                <button
-                  onClick={() => handleRelax(f.key)}
-                  disabled={!!relaxing}
-                  className="text-xs px-3 py-1 rounded-md bg-red-600 hover:bg-red-700 text-white font-medium transition-colors disabled:opacity-50"
-                >
-                  {relaxing === f.key ? 'Updating...' : 'Set to No Preference'}
-                </button>
+                {f.type === 'income' && (
+                  <div className="mt-2">
+                    <input
+                      type="range" min={0} max={1000000} step={10000}
+                      defaultValue={currentIncomeMin}
+                      disabled={!!relaxing}
+                      className="w-full accent-red-500"
+                      onChange={e => {
+                        const el = e.target;
+                        const label = el.nextElementSibling;
+                        if (label) label.textContent = formatCurrencyShort(parseInt(el.value));
+                      }}
+                      onMouseUp={e => handleRelax('prefIncomeMin', parseInt((e.target as HTMLInputElement).value))}
+                      onTouchEnd={e => handleRelax('prefIncomeMin', parseInt((e.target as HTMLInputElement).value))}
+                    />
+                    <div className="flex justify-between text-xs text-secondary mt-0.5">
+                      <span>$0</span>
+                      <span>{formatCurrencyShort(currentIncomeMin)}</span>
+                      <span>$1M+</span>
+                    </div>
+                  </div>
+                )}
+                {f.type === 'height' && (
+                  <div className="mt-2">
+                    <select
+                      defaultValue={currentHeightMin}
+                      disabled={!!relaxing}
+                      className="input text-sm"
+                      onChange={e => {
+                        const val = e.target.value;
+                        handleRelax('prefHeightMin', val || null);
+                      }}
+                    >
+                      <option value="">No preference</option>
+                      {HEIGHTS.map(h => <option key={h} value={h}>{h}</option>)}
+                    </select>
+                  </div>
+                )}
+                {f.type === 'toggle' && (
+                  <button
+                    onClick={() => {
+                      const isArray = ['prefBodyTypes', 'prefFitnessLevels', 'prefPolitical', 'prefEthnicities', 'prefEducation'].includes(f.key);
+                      handleRelax(f.key, isArray ? ['No preference'] : 'No preference');
+                    }}
+                    disabled={!!relaxing}
+                    className="mt-1 text-xs px-3 py-1 rounded-md bg-red-600 hover:bg-red-700 text-white font-medium transition-colors disabled:opacity-50"
+                  >
+                    {relaxing === f.key ? 'Updating...' : 'Set to No Preference'}
+                  </button>
+                )}
               </div>
             ))}
           </div>
