@@ -90,7 +90,7 @@ export default function AdvisorSidebar() {
           <AdvisorMessages hideStarters={inputValue.length > 0} />
 
           {/* Input field — fixed at the bottom of the sidebar */}
-          <div className="border-t border-border p-3 flex-shrink-0">
+          <div className="p-3 flex-shrink-0">
             <div className="relative">
               <textarea
                 ref={textareaRef}
