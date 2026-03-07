@@ -213,7 +213,7 @@ export default function MatchDetailPage() {
                     <span className="inline-block text-[10px] border border-accent text-accent rounded-md px-2 py-1 mb-2.5 mt-1 font-medium capitalize">
                       {k.dim}
                     </span>
-                    <p className="font-serif text-sm font-semibold text-primary mb-1">{k.pole}</p>
+                    <p className="font-serif text-sm font-semibold text-foreground mb-1">{k.pole}</p>
                     {k.description && (
                       <p className="text-[11px] text-secondary/80 leading-snug">{k.description}</p>
                     )}
