@@ -1445,6 +1445,13 @@ function ResultsDashboard() {
             persona={persona || null}
           />
         )}
+
+        {/* ── Market Data Sources Caveat ── */}
+        {hasMarket && !marketLoading && marketData && (
+          <p className="text-xs text-secondary text-center max-w-2xl mx-auto mb-6">
+            Demographic data sourced from public datasets provided by the U.S. Census Bureau, Centers for Disease Control and Prevention (CDC), and Pew Research Center. Segments of the population that are homeless or have committed felonies have been automatically excluded using local county and FBI data.
+          </p>
+        )}
       </main>
 
       {/* ── Ongoing Coaching Section ── */}
@@ -1847,9 +1854,6 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
           <p className="text-xs text-secondary mt-1">Number of Singles from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats</p>
         </div>
       </div>
-      <p className="text-xs text-secondary mt-4 border-t border-border pt-3">
-        Demographic data sourced from public datasets provided by the U.S. Census Bureau, Centers for Disease Control and Prevention (CDC), and Pew Research Center. Segments of the population that are homeless or have committed felonies have been automatically excluded using local county and FBI data.
-      </p>
     </section>
   );
 }
