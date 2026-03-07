@@ -302,7 +302,7 @@ function AccountPage() {
     const cachedDemoSnap = localStorage.getItem('relate_market_demo_snapshot');
     const cachedAt = parseInt(localStorage.getItem('relate_market_cached_at') || '0', 10);
     const cacheAge = Date.now() - cachedAt;
-    if (cached && cachedDemoSnap === demoStr && cacheAge < 2 * 60 * 1000) {
+    if (cached && cachedDemoSnap === demoStr && cacheAge < 30 * 1000) {
       try { setMarketData(JSON.parse(cached)); marketFetchedRef.current = true; return; } catch { /* refetch */ }
     }
 
