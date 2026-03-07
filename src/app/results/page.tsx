@@ -202,14 +202,20 @@ function ResultsDashboard() {
 
   // Fetch market data
   useEffect(() => {
-    if (!user || marketData || marketFetchedRef.current) return;
-    const cached = localStorage.getItem('relate_market_data');
-    if (cached) {
-      try { setMarketData(JSON.parse(cached)); return; } catch { /* */ }
-    }
+    if (!user || marketFetchedRef.current) return;
     const demoStr = localStorage.getItem('relate_demographics');
     const gender = localStorage.getItem('relate_gender');
     if (!demoStr) return;
+
+    // Use cached market data if demographics unchanged and cache is < 5 min old
+    const cached = localStorage.getItem('relate_market_data');
+    const cachedDemoSnap = localStorage.getItem('relate_market_demo_snapshot');
+    const cachedAt = parseInt(localStorage.getItem('relate_market_cached_at') || '0', 10);
+    const cacheAge = Date.now() - cachedAt;
+    if (cached && cachedDemoSnap === demoStr && cacheAge < 30 * 1000) {
+      try { setMarketData(JSON.parse(cached)); marketFetchedRef.current = true; return; } catch { /* refetch */ }
+    }
+
     let demo: Record<string, any>;
     try { demo = JSON.parse(demoStr); } catch { return; }
     if (!demo.zipCode && !demo.zip_code) return;
@@ -251,11 +257,13 @@ function ResultsDashboard() {
           const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount, stateComparison: data.stateComparison, nationalComparison: data.nationalComparison };
           setMarketData(md);
           localStorage.setItem('relate_market_data', JSON.stringify(md));
+          localStorage.setItem('relate_market_demo_snapshot', demoStr);
+          localStorage.setItem('relate_market_cached_at', String(Date.now()));
         }
       })
       .catch(() => { })
       .finally(() => setMarketLoading(false));
-  }, [user, marketData]);
+  }, [user]);
 
   // Recalculate market data after adjusting a preference
   const recalculateMarket = useCallback(async (prefKey: string, value: any) => {
@@ -276,7 +284,6 @@ function ResultsDashboard() {
     const dbKey = dbKeyMap[prefKey] || prefKey;
     demo[dbKey] = value;
     localStorage.setItem('relate_demographics', JSON.stringify(demo));
-    localStorage.removeItem('relate_market_data');
 
     // Update Supabase
     try {
@@ -323,7 +330,10 @@ function ResultsDashboard() {
       if (data.success) {
         const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount, stateComparison: data.stateComparison, nationalComparison: data.nationalComparison };
         setMarketData(md);
+        const updatedDemo = localStorage.getItem('relate_demographics') || '';
         localStorage.setItem('relate_market_data', JSON.stringify(md));
+        localStorage.setItem('relate_market_demo_snapshot', updatedDemo);
+        localStorage.setItem('relate_market_cached_at', String(Date.now()));
       }
     } catch { /* */ }
     setMarketLoading(false);
@@ -1162,7 +1172,7 @@ function ResultsDashboard() {
                 </p>
                 {gottman.overallRisk && (
                   <p className="text-xs text-secondary mb-3">
-                    Overall risk: <span className={`font-semibold ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-warning' : 'text-success'}`}>
+                    Overall risk: <span className={`font-semibold ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-yellow-600' : 'text-success'}`}>
                       {gottman.overallRisk}
                     </span>
                   </p>
@@ -1173,8 +1183,8 @@ function ResultsDashboard() {
                     const rawScore = data.score ?? 4;
                     const normalized = Math.round(((rawScore - 4) / 16) * 10);
                     const pct = normalized * 10;
-                    const barColor = pct >= 63 ? 'bg-danger' : pct >= 32 ? 'bg-warning' : 'bg-success';
-                    const riskColor = pct >= 63 ? 'text-danger' : pct >= 32 ? 'text-warning' : 'text-success';
+                    const barColor = pct >= 63 ? 'bg-danger' : pct >= 32 ? 'bg-yellow-400' : 'bg-success';
+                    const riskColor = pct >= 63 ? 'text-danger' : pct >= 32 ? 'text-yellow-600' : 'text-success';
                     const HORSEMAN_DESC: Record<string, string> = {
                       criticism: 'Attacking your partner\'s character instead of addressing a specific behavior.',
                       contempt: 'Expressing superiority or disgust through sarcasm, eye-rolling, or mockery.',

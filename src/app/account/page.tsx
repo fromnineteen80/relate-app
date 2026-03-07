@@ -291,17 +291,20 @@ function AccountPage() {
   // Fetch dating market data when demographics are available
   const marketFetchedRef = useRef(false);
   useEffect(() => {
-    if (!user || marketData || marketFetchedRef.current) return;
-
-    // Check for cached market data first
-    const cached = localStorage.getItem('relate_market_data');
-    if (cached) {
-      try { setMarketData(JSON.parse(cached)); return; } catch { /* fetch fresh */ }
-    }
+    if (!user || marketFetchedRef.current) return;
 
     const demoStr = localStorage.getItem('relate_demographics');
     const profile = getProfile();
     if (!demoStr || !profile?.zipCode) return;
+
+    // Use cached market data if demographics unchanged and cache is < 5 min old
+    const cached = localStorage.getItem('relate_market_data');
+    const cachedDemoSnap = localStorage.getItem('relate_market_demo_snapshot');
+    const cachedAt = parseInt(localStorage.getItem('relate_market_cached_at') || '0', 10);
+    const cacheAge = Date.now() - cachedAt;
+    if (cached && cachedDemoSnap === demoStr && cacheAge < 30 * 1000) {
+      try { setMarketData(JSON.parse(cached)); marketFetchedRef.current = true; return; } catch { /* refetch */ }
+    }
 
     let demo: Demographics;
     try { demo = JSON.parse(demoStr); } catch { return; }
@@ -358,11 +361,13 @@ function AccountPage() {
           };
           setMarketData(md);
           localStorage.setItem('relate_market_data', JSON.stringify(md));
+          localStorage.setItem('relate_market_demo_snapshot', demoStr);
+          localStorage.setItem('relate_market_cached_at', String(Date.now()));
         }
       })
       .catch(() => { /* silent fail, market data is optional */ })
       .finally(() => setMarketLoading(false));
-  }, [user, marketData]);
+  }, [user]);
 
   async function handleSignOut() {
     await signOut();
