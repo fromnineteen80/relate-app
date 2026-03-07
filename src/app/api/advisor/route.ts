@@ -45,7 +45,8 @@ ${firstName ? `\n**User's first name: ${firstName}.** Use their name naturally i
     if (md.location?.population) context += `- Metro Population: ${md.location.population.toLocaleString()}\n`;
     if (md.matchPool) {
       if (md.matchPool.localSinglePool) context += `- Local Singles Pool: ~${md.matchPool.localSinglePool.toLocaleString()}\n`;
-      if (md.matchPool.preferredPool) context += `- Preferred Pool (age/preference match): ~${md.matchPool.preferredPool.toLocaleString()}\n`;
+      if (md.matchPool.identityPool) context += `- Identity Pool (ethnicity): ~${md.matchPool.identityPool.toLocaleString()}\n`;
+      if (md.matchPool.preferredPool) context += `- Preferred Pool (lifestyle + education): ~${md.matchPool.preferredPool.toLocaleString()}\n`;
       if (md.matchPool.idealPool) context += `- Ideal Matches: ~${md.matchPool.idealPool.toLocaleString()}\n`;
     }
     if (md.matchProbability?.percentage) context += `- Match Probability: ${md.matchProbability.percentage}\n`;

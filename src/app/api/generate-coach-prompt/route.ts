@@ -490,8 +490,9 @@ ${dimLines}
     if (pool) {
       marketSection += `\n**Pool Sizes:**\n`;
       marketSection += `- Local Singles: ${pool.localSinglePool?.toLocaleString()}\n`;
+      marketSection += `- Identity Pool (ethnicity): ${pool.identityPool?.toLocaleString()}\n`;
       marketSection += `- Realistic Pool (age + income): ${pool.realisticPool?.toLocaleString()}\n`;
-      marketSection += `- Preferred Pool (lifestyle): ${pool.preferredPool?.toLocaleString()}\n`;
+      marketSection += `- Preferred Pool (lifestyle + education): ${pool.preferredPool?.toLocaleString()}\n`;
       marketSection += `- Ideal Pool (all preferences): ${pool.idealPool?.toLocaleString()}\n`;
       marketSection += `- **Estimated Matches (mutual interest):** ${matchCount.toLocaleString()}\n`;
       if (prob) marketSection += `- **Match Probability:** ${prob.percentage} (${prob.rate.toFixed(3)} rate)\n`;
@@ -1045,6 +1046,7 @@ function buildReportSummary(data: SkillData): string {
     let ms = '## Market Summary\n\n';
     ms += `- **Metro:** ${metro}\n`;
     ms += `- **Local Singles:** ${pool.localSinglePool?.toLocaleString()}\n`;
+    ms += `- **Identity Pool:** ${pool.identityPool?.toLocaleString()}\n`;
     ms += `- **Ideal Pool:** ${pool.idealPool?.toLocaleString()}\n`;
     ms += `- **Estimated Matches:** ${matchCount.toLocaleString()}\n`;
     if (pool.localSinglePool > 0 && pool.idealPool > 0) {

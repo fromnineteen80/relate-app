@@ -30,7 +30,7 @@ type MarketComparisonData = {
 type MarketData = {
   location?: { cbsaName?: string; cbsaLabel?: string; population?: number };
   relateScore?: { score: number; components?: Record<string, { national?: number; local?: number; score?: number; weight: number }>; marriagePremium?: number };
-  matchPool?: { localSinglePool: number; realisticPool: number; preferredPool: number; idealPool: number; funnel?: { stage: string; count: number; filter?: string; isMilestone?: boolean }[]; contextPools?: { allGender: number; eligiblePool: number; eligibleEthnicityPool: number; userEthnicity: string; targetGenderLabel: string; orientationLabel: string } };
+  matchPool?: { localSinglePool: number; identityPool: number; realisticPool: number; preferredPool: number; idealPool: number; funnel?: { stage: string; count: number; filter?: string; isMilestone?: boolean }[]; contextPools?: { allGender: number; eligiblePool: number; eligibleEthnicityPool: number; userEthnicity: string; targetGenderLabel: string; orientationLabel: string } };
   matchProbability?: { rate: number; percentage: string };
   matchCount?: number;
   stateComparison?: MarketComparisonData | null;
@@ -1192,6 +1192,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
   const milestones = [
     { label: 'Metro Population', value: metroPop, desc: 'Total population in your metro area' },
     { label: 'Metro Singles Pool', value: pool?.localSinglePool || 0, desc: 'Unmarried adults of your preferred gender and orientation' },
+    { label: 'Identity Pool', value: pool?.identityPool || 0, desc: 'Singles matching your preferred ethnicity' },
     { label: 'Your Realistic Match Pool', value: pool?.realisticPool || 0, desc: 'Singles within your age range and income requirements' },
     { label: 'Your Preferred Pool', value: pool?.preferredPool || 0, desc: 'Singles who additionally meet your lifestyle preferences' },
     { label: 'Your Ideal Match Pool', value: pool?.idealPool || 0, desc: 'Singles who meet every preference you set' },
