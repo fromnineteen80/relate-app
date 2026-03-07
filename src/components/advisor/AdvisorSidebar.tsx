@@ -78,8 +78,8 @@ export default function AdvisorSidebar() {
       <div
         className={`fixed top-0 left-0 h-screen border-r border-stone-200 flex flex-col transition-all duration-300 ease-out overflow-hidden ${
           isOpen
-            ? 'w-screen sm:w-[50vw] xl:w-[33vw] z-[60] sm:z-30 bg-stone-50'
-            : 'w-0 z-30 bg-background'
+            ? 'w-screen sm:w-[50vw] xl:w-[33vw] z-[60] sm:z-30 bg-white'
+            : 'w-0 z-30 bg-stone-50'
         }`}
         role="dialog"
         aria-label="Your Advisor"
@@ -90,7 +90,7 @@ export default function AdvisorSidebar() {
           <AdvisorMessages hideStarters={inputValue.length > 0} />
 
           {/* Input field — fixed at the bottom of the sidebar */}
-          <div className="border-t border-border p-3 flex-shrink-0">
+          <div className="p-3 flex-shrink-0">
             <div className="relative">
               <textarea
                 ref={textareaRef}
@@ -100,7 +100,7 @@ export default function AdvisorSidebar() {
                 placeholder={isLimited ? 'Upgrade for more messages' : 'Ask anything...'}
                 disabled={loading || isLimited}
                 rows={5}
-                className="w-full border border-stone-200 bg-white rounded-lg px-3 py-2.5 pr-10 text-xs focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent disabled:opacity-50 disabled:bg-stone-50 resize-none leading-[18px]"
+                className="w-full border border-stone-200 bg-white rounded-lg px-3 py-2.5 pr-10 text-xs text-secondary placeholder:text-secondary focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent disabled:opacity-50 disabled:bg-stone-50 resize-none leading-[18px]"
                 style={{ minHeight: '110px' }}
               />
 
@@ -141,7 +141,7 @@ export default function AdvisorSidebar() {
                 onClick={handleSubmit}
                 disabled={loading || isLimited || !inputValue.trim()}
                 aria-label="Send message"
-                className="absolute bottom-2.5 right-2.5 bg-accent text-white w-7 h-7 rounded-md flex items-center justify-center hover:bg-accent-hover transition-colors disabled:opacity-30"
+                className="absolute bottom-2.5 right-2.5 bg-accent text-white w-[27px] h-[27px] rounded-md flex items-center justify-center hover:bg-accent-hover transition-colors"
               >
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="8" y1="14" x2="8" y2="2" />

@@ -1,10 +1,10 @@
 import Link from 'next/link';
 
-export function SiteFooter() {
+export function SiteFooter({ spacerClassName }: { spacerClassName?: string } = {}) {
   return (
     <>
-      {/* Spacer above footer — matches main content background */}
-      <div className="h-16 bg-background" />
+      {/* Spacer above footer */}
+      <div className={`h-16 ${spacerClassName || 'bg-background'}`} />
       <footer className="border-t border-border bg-white px-6 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
