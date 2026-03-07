@@ -21,7 +21,7 @@ export default function AdvisorToggle() {
         title="Open sidebar"
         className="group w-[54px] h-full bg-stone-50 border-r border-border flex flex-col items-center pt-3 hover:bg-stone-100 transition-colors"
       >
-        <Icon name="thumbnail_bar" size={20} fill={false} className="text-secondary group-hover:text-foreground transition-colors" />
+        <Icon name="thumbnail_bar" size={19} fill={false} className="text-secondary group-hover:text-foreground transition-colors" />
         {/* Tooltip */}
         <span className="absolute left-[58px] top-2 px-2 py-1 text-xs text-secondary bg-white border border-border rounded shadow-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
           Open sidebar

@@ -138,12 +138,12 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
               {mobileMenuOpen ? (
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                   <line x1="4" y1="4" x2="16" y2="16" />
                   <line x1="16" y1="4" x2="4" y2="16" />
                 </svg>
               ) : (
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                   <line x1="3" y1="6" x2="17" y2="6" />
                   <line x1="3" y1="10" x2="17" y2="10" />
                   <line x1="3" y1="14" x2="17" y2="14" />
@@ -252,12 +252,14 @@ function ProfileAvatar({
     <div className="relative ml-2" ref={dropdownRef}>
       <button
         onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold transition-colors overflow-hidden border-2 border-transparent hover:border-accent focus:border-accent focus:outline-none"
+        className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold transition-colors overflow-hidden border-2 border-transparent focus:outline-none ${
+          isWoman ? 'hover:border-rose-400 focus:border-rose-400' : 'hover:border-blue-500 focus:border-blue-500'
+        }`}
       >
         {photoUrl ? (
           <Image src={photoUrl} alt="Profile" width={28} height={28} className="w-full h-full object-cover rounded-full" />
         ) : (
-          <span className={`w-full h-full flex items-center justify-center text-white ${isWoman ? 'bg-rose-400' : 'bg-blue-500'}`}>
+          <span className={`w-full h-full flex items-center justify-center ${isWoman ? 'text-rose-400 bg-rose-400/15' : 'text-blue-500 bg-blue-500/15'}`}>
             {initial}
           </span>
         )}
