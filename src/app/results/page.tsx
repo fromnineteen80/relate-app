@@ -1889,7 +1889,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
       {pool && (
         <div className="mb-6">
           <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
-          <p className="text-[11px] text-secondary mt-1 mb-3">The {metroShort} metro population is <span className="font-medium">{metroPop.toLocaleString()}</span>.</p>
+          <p className="text-[12px] text-foreground font-serif mt-1 mb-3">The {metroShort} metro population is <span className="font-medium">{metroPop.toLocaleString()}</span>.</p>
           <div className="mt-3 space-y-1">
             {milestones.map((m, i) => {
               const baseVal = singlesPool || 1;
