@@ -73,7 +73,7 @@ export default function VerifyEmailPage() {
           </div>
 
           <h1 className="font-serif text-3xl font-semibold mb-2">Verify your email</h1>
-          <p className="text-sm text-secondary mb-6">
+          <p className="explainer mb-6">
             We sent a verification link to <span className="font-medium text-foreground">{user?.email}</span>. Check your inbox and click the link to continue.
           </p>
 

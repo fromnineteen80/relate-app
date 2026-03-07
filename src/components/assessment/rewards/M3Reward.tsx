@@ -88,7 +88,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
         <span className="font-mono text-xs text-secondary">Your Connection Style</span>
         <h2 className="font-serif text-2xl font-semibold mt-1 mb-4">How You Connect</h2>
 
-        <p className="text-sm text-secondary mb-8 leading-relaxed">
+        <p className="explainer mb-8 leading-relaxed">
           These scores measure context switching: how much differentiated access you seek from a partner and how much you provide. Higher scores mean more range across situations. Lower scores mean more consistency. Neither is better; what matters is the balance between them.
         </p>
 

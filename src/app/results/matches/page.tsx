@@ -62,7 +62,7 @@ export default function MatchesPage() {
         <p className="text-xs text-secondary mb-1">Click on each persona to read the full match experience</p>
         <h2 className="font-serif text-2xl font-semibold mb-2">All Compatibility Rankings</h2>
         {persona && (
-          <p className="text-sm text-secondary mb-6">
+          <p className="explainer mb-6">
             Based on your <span className="font-semibold text-foreground">{persona.name}</span> <span className="font-mono text-xs text-accent">{persona.code}</span> persona
           </p>
         )}

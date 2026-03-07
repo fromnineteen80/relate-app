@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
 import { SiteFooter } from '@/components/SiteFooter';
+import { Icon } from '@/components/Icon';
 import { getPersonalizedDates, DATE_IDEAS } from '@/lib/couples';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -60,7 +61,7 @@ export default function DatesPage() {
 
       <main className="max-w-3xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-1">Date Ideas</h2>
-        <p className="text-sm text-secondary mb-6">Personalized suggestions based on both your profiles</p>
+        <p className="explainer mb-6">Personalized suggestions based on both your profiles</p>
 
         {/* Category filter */}
         <div className="flex gap-2 mb-6 overflow-x-auto">
@@ -92,7 +93,7 @@ export default function DatesPage() {
                   onClick={() => toggleSave(date.id)}
                   className={`ml-3 text-lg flex-shrink-0 ${savedDates.has(date.id) ? 'text-accent' : 'text-stone-300 hover:text-stone-400'}`}
                 >
-                  {savedDates.has(date.id) ? '★' : '☆'}
+                  <Icon name="star" size={18} fill={savedDates.has(date.id)} />
                 </button>
               </div>
             </div>

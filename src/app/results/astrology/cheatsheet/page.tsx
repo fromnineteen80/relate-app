@@ -11,6 +11,7 @@ import { loadChartResult, type BirthChartResult } from '@/lib/astrology/engine';
 import { ALL_SIGNS, SIGN_DATA, ELEMENT_COLORS } from '@/lib/astrology/signs';
 import { generateCompatibilityRead, type CompatibilityRead } from '@/lib/astrology/compatibility';
 import type { ZodiacSign } from '@/lib/astrology/engine';
+import { Icon } from '@/components/Icon';
 
 export default function CheatSheetPage() {
   const { user, loading } = useAuth();
@@ -46,7 +47,7 @@ export default function CheatSheetPage() {
         <SubNav />
         <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full text-center">
           <h1 className="font-serif text-2xl font-semibold mb-4">Calculate Your Chart First</h1>
-          <p className="text-sm text-secondary mb-6">
+          <p className="explainer mb-6">
             Your cheat sheet is personalized to your specific Sun, Moon, and Rising placements. Complete your birth chart to unlock it.
           </p>
           <Link href="/results/astrology" className="btn-primary text-sm">Enter Birth Details</Link>
@@ -65,7 +66,7 @@ export default function CheatSheetPage() {
         <Link href="/results/astrology" className="text-xs text-secondary hover:text-foreground mb-4 inline-block">&larr; Back to Profile</Link>
         <span className="font-mono text-xs text-secondary uppercase tracking-wider block">Sun, Moon &amp; Rise</span>
         <h1 className="font-serif text-2xl font-semibold mt-1 mb-2">Your 12 Sign Cheat Sheet</h1>
-        <p className="text-sm text-secondary mb-6">
+        <p className="explainer mb-6">
           These reads are personalized to your <span className="font-medium text-foreground">{herSunSign} Sun</span>, <span className="font-medium text-foreground">{chart.moon.sign} Moon</span>, and <span className="font-medium text-foreground">{chart.rising.sign} Rising</span>. Tap any sign to see how that type of man connects with your specific chart.
         </p>
 
@@ -92,16 +93,16 @@ export default function CheatSheetPage() {
                       <span className="block text-xs text-secondary">{sign.dateRange} · {sign.element} · {sign.rulingPlanet}</span>
                     </div>
                   </div>
-                  <span className="text-secondary text-xs">{isExpanded ? '▲' : '▼'}</span>
+                  <Icon name={isExpanded ? 'expand_less' : 'expand_more'} size={16} className="text-secondary" />
                 </button>
 
                 {isExpanded && read && (
                   <div className="px-4 pb-4 space-y-3 animate-fade-in">
                     <div className="border-t border-border pt-3" />
                     <CheatRow label="Dating Read" content={read.dating} />
-                    <CheatRow label="Superpower" content={read.strength} icon="✦" iconColor="text-success" />
-                    <CheatRow label="Watch Out For" content={read.challenge} icon="⚡" iconColor="text-warning" />
-                    <CheatRow label="Tip for You" content={read.tip} icon="♡" iconColor="text-accent" />
+                    <CheatRow label="Superpower" content={read.strength} icon={<Icon name="star" size={16} className="text-success" />} />
+                    <CheatRow label="Watch Out For" content={read.challenge} icon={<Icon name="bolt" size={16} className="text-warning" />} />
+                    <CheatRow label="Tip for You" content={read.tip} icon={<Icon name="favorite" size={16} className="text-accent" />} />
                   </div>
                 )}
               </div>
@@ -118,12 +119,12 @@ export default function CheatSheetPage() {
   );
 }
 
-function CheatRow({ label, content, icon, iconColor }: { label: string; content: string; icon?: string; iconColor?: string }) {
+function CheatRow({ label, content, icon }: { label: string; content: string; icon?: React.ReactNode }) {
   return (
     <div>
       <span className="font-mono text-xs text-secondary uppercase tracking-wider">{label}</span>
       <p className="text-sm mt-0.5 flex gap-2">
-        {icon && <span className={iconColor || 'text-secondary'}>{icon}</span>}
+        {icon && <span className="mt-0.5">{icon}</span>}
         <span>{content}</span>
       </p>
     </div>

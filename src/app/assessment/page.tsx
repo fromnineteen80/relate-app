@@ -8,6 +8,7 @@ import { isProfileComplete, hasDemographics } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
+import { Icon } from '@/components/Icon';
 import { loadAndHydrateProgress, loadProfileFromDb, clearAllProgress } from '@/lib/supabase/progress';
 import { fetchPaymentTier } from '@/lib/payments';
 
@@ -124,7 +125,7 @@ export default function AssessmentHub() {
                     state === 'active' ? 'bg-accent text-white' :
                     'bg-stone-200 text-secondary'
                   }`}>
-                    {state === 'completed' ? '✓' : mod.id}
+                    {state === 'completed' ? <Icon name="check" size={14} /> : mod.id}
                   </div>
                   <div>
                     <h3 className="font-serif font-semibold">{mod.title}</h3>

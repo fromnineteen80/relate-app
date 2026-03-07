@@ -105,7 +105,7 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
                 <span className="text-xs font-mono text-secondary w-28">{f.label}:</span>
                 <span className="font-serif font-semibold uppercase">{f.value || '-'}</span>
               </div>
-              {f.desc && <p className="text-sm text-secondary ml-[7.5rem] leading-relaxed">{f.desc}</p>}
+              {f.desc && <p className="explainer ml-[7.5rem] leading-relaxed">{f.desc}</p>}
             </div>
           ))}
         </div>

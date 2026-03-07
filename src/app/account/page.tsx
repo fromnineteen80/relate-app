@@ -13,6 +13,7 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 import { TestAccessCard } from '@/components/TestAccessCard';
+import { Icon } from '@/components/Icon';
 import { clearAllProgress } from '@/lib/supabase/progress';
 
 type Demographics = { age?: number; gender?: string; relationshipStatus?: string; seeking?: string; [key: string]: unknown };
@@ -125,7 +126,7 @@ class AccountErrorBoundary extends Component<{ children: ReactNode }, { hasError
       return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-background px-6 text-center">
           <h1 className="font-serif text-2xl font-semibold mb-2">Something went wrong</h1>
-          <p className="text-sm text-secondary mb-4">There was an error loading your account page. This is usually caused by stale cached data.</p>
+          <p className="explainer mb-4">There was an error loading your account page. This is usually caused by stale cached data.</p>
           <div className="flex gap-3">
             <button onClick={() => { localStorage.removeItem('relate_payment_tier'); window.location.reload(); }} className="btn-primary text-xs">Clear Cache &amp; Reload</button>
             <button onClick={() => window.location.href = '/results'} className="btn-secondary text-xs">Go to Results</button>
@@ -595,7 +596,7 @@ function AccountPage() {
         {/* ── Payment Success Toast ── */}
         {paymentSuccess && (
           <div className="mb-4 p-3 bg-success/10 border border-success/20 rounded-md flex items-center gap-3 animate-fade-in">
-            <span className="text-success text-lg">✓</span>
+            <Icon name="check" size={20} className="text-success" />
             <div>
               <p className="text-sm font-medium">Payment successful</p>
               <p className="text-xs text-secondary">Your account has been upgraded to {(PRICING[currentTier]?.label || currentTier)}.</p>
@@ -847,7 +848,7 @@ function AccountPage() {
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-mono ${
                     moduleProgress[mod.id] ? 'bg-success text-white' : 'bg-stone-200 text-secondary'
                   }`}>
-                    {moduleProgress[mod.id] ? '✓' : mod.id}
+                    {moduleProgress[mod.id] ? <Icon name="check" size={14} /> : mod.id}
                   </div>
                   <span className="text-sm">Module {mod.id}: {mod.name}</span>
                 </div>
@@ -1018,7 +1019,7 @@ function AccountPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
             <div className="bg-white rounded-lg shadow-lg max-w-sm mx-4 p-6">
               <h3 className="font-serif text-lg font-semibold mb-2">Delete your account?</h3>
-              <p className="text-sm text-secondary mb-4">
+              <p className="explainer mb-4">
                 This will permanently delete your account, assessment data, results, and all associated information. This action cannot be undone.
               </p>
               <div className="flex justify-end gap-3">
@@ -1039,7 +1040,7 @@ function AccountPage() {
         <div id="coaching" ref={coachingSectionRef} className="bg-stone-100 border-t border-border scroll-mt-32">
           <div className="max-w-2xl mx-auto px-6 py-10">
             <h2 className="font-serif text-2xl font-semibold mb-2">Ongoing Coaching</h2>
-            <p className="text-sm text-secondary mb-6">
+            <p className="explainer mb-6">
               Take your RELATE results with you. Download a personalized AI coaching prompt built from your assessment data, conflict patterns, dating market analysis, and compatibility profile.
             </p>
 
@@ -1092,7 +1093,7 @@ function AccountPage() {
 
               <div className="space-y-4">
                 <div>
-                  <p className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">Option 1: Claude.ai Skill (Best experience)</p>
+                  <p className="card-subheader text-accent">Option 1: Claude.ai Skill (Best experience)</p>
                   <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
                     <li>Go to <a href="https://claude.ai/customize/skills" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai/customize/skills</a> (profile icon &rarr; Customize &rarr; Skills)</li>
                     <li>Click <strong>&quot;Add Skill&quot;</strong> and upload <code className="bg-stone-100 px-1 rounded">relate-coach.zip</code></li>
@@ -1101,7 +1102,7 @@ function AccountPage() {
                 </div>
 
                 <div>
-                  <p className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">Option 2: Claude.ai Project</p>
+                  <p className="card-subheader text-accent">Option 2: Claude.ai Project</p>
                   <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
                     <li>Unzip the file, then create a new <strong>Project</strong> in <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai</a> called &quot;RELATE Coach&quot;</li>
                     <li>Add all files from the <code className="bg-stone-100 px-1 rounded">relate-coach/</code> folder as project knowledge</li>
@@ -1110,7 +1111,7 @@ function AccountPage() {
                 </div>
 
                 <div>
-                  <p className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">Option 3: Any AI (ChatGPT, Gemini, etc.)</p>
+                  <p className="card-subheader text-accent">Option 3: Any AI (ChatGPT, Gemini, etc.)</p>
                   <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
                     <li>Download the <strong>.md file</strong> above</li>
                     <li>Upload <code className="bg-stone-100 px-1 rounded">relate-coach.md</code> to any AI chat as a file attachment, or paste its contents as a message</li>
@@ -1122,7 +1123,7 @@ function AccountPage() {
 
             {/* Example prompts */}
             <div className="bg-white border border-border rounded-lg p-4 mb-4">
-              <p className="text-[11px] font-semibold uppercase tracking-wider mb-2">What you can ask your coach</p>
+              <p className="card-subheader mb-2">What you can ask your coach</p>
               <div className="flex flex-wrap gap-1.5">
                 {[
                   'Should I lower my income filter?',

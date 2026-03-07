@@ -70,38 +70,38 @@ export function SubNav({ items = [] }: SubNavProps) {
   ] : [];
 
   const visibleUniversal = universalLinks.filter(l => l.show !== false);
-  const allPageItems = [...resultsSubLinks, ...items].filter(l => l.show !== false);
+  const visibleResultsSubLinks = resultsSubLinks.filter(l => l.show !== false);
+  const visiblePageItems = items.filter(l => l.show !== false);
+
+  // All "before divider" links: universal + results sub-links, all styled dark
+  const beforeDividerLinks = [...visibleUniversal, ...visibleResultsSubLinks];
 
   return (
     <nav className="border-b border-border bg-background sticky top-[65px] z-10">
       <div className="px-6 flex gap-1 overflow-x-auto">
-        {visibleUniversal.map(link => {
+        {beforeDividerLinks.map(link => {
           const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
           return (
             <Link
               key={link.id}
               href={link.href}
-              className={`relative text-xs font-semibold px-3 py-2.5 transition-colors whitespace-nowrap ${
-                isActive
-                  ? 'text-accent after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-accent'
-                  : 'text-foreground hover:text-accent hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent'
-              }`}
+              className={`subnav-tab ${isActive ? 'subnav-tab-active' : 'subnav-tab-inactive'}`}
             >
               {link.label}
             </Link>
           );
         })}
-        {allPageItems.length > 0 && (
+        {visiblePageItems.length > 0 && (
           <span className="self-center mx-1 text-border select-none" aria-hidden="true">|</span>
         )}
-        {allPageItems.map(link => {
+        {visiblePageItems.map(link => {
           const isAnchor = link.href.startsWith('#');
           if (isAnchor) {
             return (
               <a
                 key={link.id}
                 href={link.href}
-                className="relative text-xs font-medium px-3 py-2.5 transition-colors whitespace-nowrap text-secondary hover:text-foreground hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent"
+                className="subnav-page-tab subnav-page-tab-inactive"
               >
                 {link.label}
               </a>
@@ -112,11 +112,7 @@ export function SubNav({ items = [] }: SubNavProps) {
             <Link
               key={link.id}
               href={link.href}
-              className={`relative text-xs font-medium px-3 py-2.5 transition-colors whitespace-nowrap ${
-                isActive
-                  ? 'text-foreground after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-accent'
-                  : 'text-secondary hover:text-foreground hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent'
-              }`}
+              className={`subnav-page-tab ${isActive ? 'subnav-page-tab-active' : 'subnav-page-tab-inactive'}`}
             >
               {link.label}
             </Link>

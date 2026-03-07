@@ -32,7 +32,7 @@ function AdvisorRedirect() {
       <main className="flex-1 flex items-center justify-center px-6">
         <div className="max-w-md text-center">
           <h2 className="font-serif text-2xl font-semibold mb-3">Your Advisor</h2>
-          <p className="text-sm text-secondary mb-6">
+          <p className="explainer mb-6">
             The advisor is available as a sidebar on every page. Click the button in the bottom-left corner to open it anytime.
           </p>
           <div className="flex gap-3 justify-center">

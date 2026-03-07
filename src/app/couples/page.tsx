@@ -7,6 +7,7 @@ import { getGrowthLevel, getRecommendedChallenges, CHALLENGE_LIBRARY } from '@/l
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
 import { SiteFooter } from '@/components/SiteFooter';
+import { Icon } from '@/components/Icon';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -127,19 +128,19 @@ export default function CouplesDashboard() {
         {/* Quick Actions */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <button onClick={() => setShowCheckin(true)} className="card text-center hover:border-accent transition-colors">
-            <p className="text-lg mb-1">◎</p>
+            <p className="mb-1"><Icon name="adjust" size={20} className="text-accent" /></p>
             <p className="text-xs font-medium">Check-In</p>
           </button>
           <Link href="/couples/dates" className="card text-center hover:border-accent transition-colors">
-            <p className="text-lg mb-1">◆</p>
+            <p className="mb-1"><Icon name="diamond" size={20} className="text-accent" /></p>
             <p className="text-xs font-medium">Date Ideas</p>
           </Link>
           <Link href="/couples/cards" className="card text-center hover:border-accent transition-colors">
-            <p className="text-lg mb-1">◇</p>
+            <p className="mb-1"><Icon name="style" size={20} className="text-accent" /></p>
             <p className="text-xs font-medium">Card Decks</p>
           </Link>
           <Link href="/advisor?mode=couples" className="card text-center hover:border-accent transition-colors">
-            <p className="text-lg mb-1">○</p>
+            <p className="mb-1"><Icon name="support_agent" size={20} className="text-accent" /></p>
             <p className="text-xs font-medium">Advisor</p>
           </Link>
         </div>
@@ -176,7 +177,7 @@ export default function CouplesDashboard() {
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] text-secondary capitalize">{challenge.category} · {challenge.duration}</span>
                     <button onClick={() => startChallenge(challenge)} className="text-xs text-accent hover:underline">
-                      Start →
+                      Start <Icon name="arrow_forward" size={12} />
                     </button>
                   </div>
                 </div>
@@ -228,7 +229,7 @@ export default function CouplesDashboard() {
                     <p className="text-xs font-medium">{c.title}</p>
                     <p className="text-[10px] text-secondary">{new Date(c.completedAt).toLocaleDateString()}</p>
                   </div>
-                  <span className="font-mono text-xs text-success">+{c.points}pts ✓</span>
+                  <span className="font-mono text-xs text-success">+{c.points}pts <Icon name="check" size={12} /></span>
                 </div>
               ))}
             </div>

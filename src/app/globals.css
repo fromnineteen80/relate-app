@@ -40,6 +40,47 @@ h1, h2, h3, h4, h5, h6 {
   .label {
     @apply block text-sm font-medium text-foreground mb-1;
   }
+
+  /* Sub-navigation tabs */
+  .subnav-tab {
+    @apply relative text-xs font-semibold px-3 py-2.5 transition-colors whitespace-nowrap;
+  }
+  .subnav-tab-active {
+    @apply text-accent after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-accent;
+  }
+  .subnav-tab-inactive {
+    @apply text-foreground hover:text-accent hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent;
+  }
+  .subnav-page-tab {
+    @apply relative text-xs font-medium px-3 py-2.5 transition-colors whitespace-nowrap;
+  }
+  .subnav-page-tab-active {
+    @apply text-foreground after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-accent;
+  }
+  .subnav-page-tab-inactive {
+    @apply text-secondary hover:text-foreground hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent;
+  }
+
+  /* Card subheader (small uppercase label) */
+  .card-subheader {
+    @apply text-[11px] font-semibold uppercase tracking-wider mb-1.5;
+  }
+
+  /* Explainer / description text */
+  .explainer {
+    @apply text-sm text-secondary;
+  }
+  .explainer-xs {
+    @apply text-xs text-secondary;
+  }
+
+  /* Bullet list with accent-colored disc markers */
+  .bullet-list {
+    @apply list-disc pl-5 space-y-1 text-sm text-secondary marker:text-accent;
+  }
+  .bullet-list-xs {
+    @apply list-disc pl-4 space-y-1 text-xs text-secondary marker:text-accent;
+  }
 }
 
 @keyframes fadeIn {

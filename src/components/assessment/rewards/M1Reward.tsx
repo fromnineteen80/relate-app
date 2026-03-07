@@ -90,7 +90,7 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
         <h2 className="font-serif text-2xl font-semibold mt-1 mb-8">What You&apos;re Looking For</h2>
 
         {balancedCount >= 3 && (
-          <p className="text-sm text-secondary italic mb-6 leading-relaxed">
+          <p className="explainer italic mb-6 leading-relaxed">
             Your preferences didn&apos;t lean strongly in any direction across most dimensions. This can mean you&apos;re genuinely open, or that you haven&apos;t yet encountered enough contrast to know what you need. Either way, experience will sharpen these over time.
           </p>
         )}
@@ -155,7 +155,7 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
       <p className="text-lg font-serif leading-relaxed mb-4">
         You know what you want. Now let&apos;s see who you are, and whether those two things align.
       </p>
-      <p className="text-sm text-secondary mb-8">
+      <p className="explainer mb-8">
         Module 2 measures how you show up, not what you seek. The gap between them reveals your growth edges.
       </p>
       <button onClick={onContinue} className="btn-primary px-8 py-3">

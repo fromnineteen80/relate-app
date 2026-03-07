@@ -10,6 +10,7 @@ import { useAuth } from '@/lib/auth-context';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
+import { Icon } from '@/components/Icon';
 import { loadAndHydrateProgress } from '@/lib/supabase/progress';
 import { getProfile } from '@/lib/onboarding';
 import { getSupabase } from '@/lib/supabase/client';
@@ -44,7 +45,7 @@ class ResultsErrorBoundary extends Component<{ children: ReactNode }, { error: E
         <div className="min-h-screen flex flex-col">
           <div className="max-w-3xl mx-auto px-6 py-16 w-full text-center">
             <h1 className="font-serif text-2xl font-semibold mb-4">Something went wrong</h1>
-            <p className="text-sm text-secondary mb-4">{this.state.error.message}</p>
+            <p className="explainer mb-4">{this.state.error.message}</p>
             <pre className="text-xs text-left bg-stone-100 p-4 rounded overflow-auto max-h-48 mb-6">{this.state.error.stack}</pre>
             <button onClick={() => this.setState({ error: null })} className="btn-primary text-sm">Try again</button>
           </div>
@@ -645,7 +646,7 @@ function ResultsDashboard() {
                 <p className="text-sm text-secondary mt-1.5">{stack.growthPath}</p>
               )}
               <Link href="/growth" className="text-xs text-accent hover:underline mt-2 inline-block">
-                Start your Growth Plan →
+                Start your Growth Plan <Icon name="arrow_forward" size={12} />
               </Link>
             </div>
           )}
@@ -726,7 +727,7 @@ function ResultsDashboard() {
         {!hasResults && (
           <section className="card mb-6 text-center py-12">
             <h3 className="font-serif text-lg font-semibold mb-2">Assessment Not Complete</h3>
-            <p className="text-sm text-secondary mb-6 max-w-md mx-auto">
+            <p className="explainer mb-6 max-w-md mx-auto">
               Complete all five modules of your RELATE assessment to generate your persona, compatibility rankings, dating market analysis, and personalized coaching.
             </p>
             <Link href="/assessment" className="btn-primary text-sm inline-block">
@@ -759,7 +760,7 @@ function ResultsDashboard() {
               </div>
               <Link href="/results/persona" className="btn-secondary text-xs">Details</Link>
             </div>
-            {persona.traits && <p className="text-sm text-secondary mb-4">{persona.traits}</p>}
+            {persona.traits && <p className="explainer mb-4">{persona.traits}</p>}
 
             {/* Dating Behavior */}
             {persona.datingBehavior?.length > 0 && (
@@ -959,7 +960,7 @@ function ResultsDashboard() {
               </p>
             )}
             {m3.typeDescription && (
-              <p className="text-sm text-secondary mb-4">{m3.typeDescription}</p>
+              <p className="explainer mb-4">{m3.typeDescription}</p>
             )}
             {m3.typeDetails && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
@@ -995,7 +996,7 @@ function ResultsDashboard() {
         {ic?.m3States?.states?.normal && (
           <section className="card mb-4">
             <h3 className="font-serif text-lg font-semibold mb-1">Intimacy Under Stress</h3>
-            <p className="text-sm text-secondary mb-4">How your Want and Offer shift across relationship states</p>
+            <p className="explainer mb-4">How your Want and Offer shift across relationship states</p>
 
             {/* Legend */}
             <div className="flex items-center gap-6 mb-4 text-xs text-secondary">
@@ -1080,14 +1081,14 @@ function ResultsDashboard() {
         {ic?.attachment && (
           <section className="card mb-4">
             <h3 className="font-serif text-lg font-semibold mb-1">Your Attachment Style</h3>
-            <p className="text-sm text-secondary mb-4">How you connect, protect, and respond in close relationships</p>
+            <p className="explainer mb-4">How you connect, protect, and respond in close relationships</p>
             <div className="flex items-center gap-3 mb-4">
               <span className="font-mono text-lg font-semibold capitalize">{ic.attachment.style}</span>
               {ic.attachment.subtype && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded capitalize">{ic.attachment.subtype}</span>}
               {ic.attachment.leaningToward && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded">leaning {ic.attachment.leaningToward}</span>}
               <span className="text-xs font-mono text-secondary ml-auto">{Math.round((ic.attachment.confidence ?? 0) * 100)}% confidence</span>
             </div>
-            {ic.attachment.description && <p className="text-sm text-secondary mb-4">{ic.attachment.description}</p>}
+            {ic.attachment.description && <p className="explainer mb-4">{ic.attachment.description}</p>}
             {ic.attachment.strengths && Array.isArray(ic.attachment.strengths) && ic.attachment.strengths.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
                 <div>
@@ -1251,7 +1252,7 @@ function ResultsDashboard() {
         {ic?.attachmentTiers && (
           <section className="card mb-4">
             <h3 className="font-serif text-lg font-semibold mb-1">Ideal Partner Profile</h3>
-            <p className="text-sm text-secondary mb-4">The attachment styles, emotional drivers, and conflict behaviors that complement yours best</p>
+            <p className="explainer mb-4">The attachment styles, emotional drivers, and conflict behaviors that complement yours best</p>
 
             {/* Attachment Style */}
             <div className="mb-4">
@@ -1501,7 +1502,7 @@ function ResultsDashboard() {
               </div>
             ) : (
               <div>
-                <p className="text-sm text-secondary mb-4">
+                <p className="explainer mb-4">
                   Connect with your partner to unlock your compatibility report, growth plan, and shared advisor.
                 </p>
                 <Link href="/invite" className="btn-primary text-xs">Connect Partner</Link>
@@ -1553,7 +1554,7 @@ function ResultsDashboard() {
         <div id="coaching" className="bg-stone-100 border-t border-border scroll-mt-12">
           <div className="max-w-3xl mx-auto px-6 py-10">
             <h2 className="font-serif text-2xl font-semibold mb-2">Ongoing Coaching</h2>
-            <p className="text-sm text-secondary mb-6">
+            <p className="explainer mb-6">
               Take your RELATE results with you. Download a personalized AI coaching prompt built from your assessment data, conflict patterns, dating market analysis, and compatibility profile.
             </p>
 
@@ -1605,7 +1606,7 @@ function ResultsDashboard() {
               <h3 className="text-sm font-semibold mb-3">How to Use Your Coach</h3>
               <div className="space-y-4">
                 <div>
-                  <p className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">Option 1: Claude.ai Skill (Best experience)</p>
+                  <p className="card-subheader text-accent">Option 1: Claude.ai Skill (Best experience)</p>
                   <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
                     <li>Go to <a href="https://claude.ai/customize/skills" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai/customize/skills</a> (profile icon &rarr; Customize &rarr; Skills)</li>
                     <li>Click <strong>&quot;Add Skill&quot;</strong> and upload <code className="bg-stone-100 px-1 rounded">relate-coach.zip</code></li>
@@ -1613,7 +1614,7 @@ function ResultsDashboard() {
                   </ol>
                 </div>
                 <div>
-                  <p className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">Option 2: Claude.ai Project</p>
+                  <p className="card-subheader text-accent">Option 2: Claude.ai Project</p>
                   <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
                     <li>Unzip the file, then create a new <strong>Project</strong> in <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai</a> called &quot;RELATE Coach&quot;</li>
                     <li>Add all files from the <code className="bg-stone-100 px-1 rounded">relate-coach/</code> folder as project knowledge</li>
@@ -1621,7 +1622,7 @@ function ResultsDashboard() {
                   </ol>
                 </div>
                 <div>
-                  <p className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1.5">Option 3: Any AI (ChatGPT, Gemini, etc.)</p>
+                  <p className="card-subheader text-accent">Option 3: Any AI (ChatGPT, Gemini, etc.)</p>
                   <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
                     <li>Download the <strong>.md file</strong> above</li>
                     <li>Upload <code className="bg-stone-100 px-1 rounded">relate-coach.md</code> to any AI chat as a file attachment, or paste its contents as a message</li>
@@ -1633,7 +1634,7 @@ function ResultsDashboard() {
 
             {/* Example prompts */}
             <div className="bg-white border border-border rounded-lg p-4 mb-4">
-              <p className="text-[11px] font-semibold uppercase tracking-wider mb-2">What you can ask your coach</p>
+              <p className="card-subheader mb-2">What you can ask your coach</p>
               <div className="flex flex-wrap gap-1.5">
                 {[
                   'Should I lower my income filter?',
@@ -1684,7 +1685,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
     return (
       <section className="card mb-4">
         <h3 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h3>
-        <p className="text-sm text-secondary mb-4">{relaxing ? 'Recalculating your market...' : 'Analyzing your local market...'}</p>
+        <p className="explainer mb-4">{relaxing ? 'Recalculating your market...' : 'Analyzing your local market...'}</p>
         <div className="flex items-center justify-center py-8">
           <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
         </div>
@@ -1850,7 +1851,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
         </div>
       )}
       <h3 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h3>
-      <p className="text-sm text-secondary mb-4">{metro}</p>
+      <p className="explainer mb-4">{metro}</p>
 
       <div className="mb-6">
         <div className="flex items-end justify-between mb-2">
@@ -2233,7 +2234,7 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
   return (
     <section className="card mb-4">
       <h3 className="font-serif text-lg font-semibold mb-1">Market Coaching</h3>
-      <p className="text-sm text-secondary mb-4">Actionable insights from your dating market data and assessment results</p>
+      <p className="explainer mb-4">Actionable insights from your dating market data and assessment results</p>
       <div className="space-y-4">
         {insights.map((insight, i) => (
           <div key={i} className="border border-border rounded-md p-3">
