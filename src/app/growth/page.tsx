@@ -173,7 +173,7 @@ export default function GrowthPage() {
               {projection.borderlineDimensions.map(b => {
                 const pct = b.strength;
                 const gap = pct - 50;
-                const dimBarColor: Record<string, string> = { physical: 'bg-accent/45', social: 'bg-accent/35', lifestyle: 'bg-accent/25', values: 'bg-accent/15' };
+                const dimBarColor: Record<string, string> = { physical: 'bg-accent/80', social: 'bg-accent/60', lifestyle: 'bg-accent/40', values: 'bg-accent/20' };
                 return (
                   <div key={b.dimension}>
                     <div className="flex items-center justify-between mb-1">

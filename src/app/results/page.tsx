@@ -889,7 +889,7 @@ function ResultsDashboard() {
         {/* ── Score Breakdown ── */}
         {hasDimensions && (() => {
           const dimOrder = ['physical', 'social', 'lifestyle', 'values'] as const;
-          const dimBarColor: Record<string, string> = { physical: 'bg-accent/45', social: 'bg-accent/35', lifestyle: 'bg-accent/25', values: 'bg-accent/15' };
+          const dimBarColor: Record<string, string> = { physical: 'bg-accent/80', social: 'bg-accent/60', lifestyle: 'bg-accent/40', values: 'bg-accent/20' };
           const isMale = report?.gender === 'M';
           // Dimensions come from M2/W2 (what you offer)
           const polePairs: Record<string, { A: string; B: string }> = isMale

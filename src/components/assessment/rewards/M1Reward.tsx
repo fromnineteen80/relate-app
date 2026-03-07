@@ -108,7 +108,7 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
             // Position: 0 = full A, 100 = full B
             const position = direction === 'A' ? Math.max(5, 50 - strength / 2) : Math.min(95, 50 + strength / 2);
             const desc = getDimDescription(dim, direction, gender);
-            const dimDotColor: Record<string, string> = { physical: 'bg-accent/45', social: 'bg-accent/35', lifestyle: 'bg-accent/25', values: 'bg-accent/15' };
+            const dimDotColor: Record<string, string> = { physical: 'bg-accent/80', social: 'bg-accent/60', lifestyle: 'bg-accent/40', values: 'bg-accent/20' };
 
             return (
               <div
