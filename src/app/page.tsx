@@ -31,6 +31,12 @@ const MODULES = [
     desc: 'Conflict approach, emotional drivers, repair speed, capacity under stress, and a full Gottman Four Horsemen screening. This is the module that predicts longevity.',
     time: '15 minutes',
   },
+  {
+    num: '05',
+    title: 'Know Your Patterns',
+    desc: 'Vulnerability armor, desire patterns, and internal alignment. Your Tension Stack profile reveals the hidden dynamics shaping your relationships.',
+    time: '5 minutes',
+  },
 ];
 
 const PERSONAS_PREVIEW = [
@@ -47,6 +53,10 @@ const FRAMEWORKS = [
   { name: 'Attachment Theory', desc: 'How early patterns shape your adult relationship behaviors' },
   { name: 'Emotionally Focused Therapy', desc: 'Pursue-withdraw cycles and underlying emotional needs' },
   { name: 'Internal Family Systems', desc: 'Parts and protectors driving seemingly contradictory behaviors' },
+  { name: 'Cognitive Behavioral Therapy', desc: 'Identifying thought patterns, distortions, and reframing strategies' },
+  { name: 'Dialectical Behavior Therapy', desc: 'Distress tolerance and emotional regulation under pressure' },
+  { name: 'Behavioral Activation', desc: 'Concrete actions and behavioral experiments for growth' },
+  { name: 'Neuroscience', desc: 'Physiological regulation and nervous system awareness' },
 ];
 
 const FAQS = [
@@ -117,7 +127,7 @@ export default function LandingPage() {
           </div>
           <div className="w-px h-8 bg-border hidden sm:block" />
           <div>
-            <p className="font-serif text-2xl font-semibold">4</p>
+            <p className="font-serif text-2xl font-semibold">8</p>
             <p className="text-xs text-secondary">Clinical Frameworks</p>
           </div>
           <div className="w-px h-8 bg-border hidden sm:block" />
@@ -161,7 +171,7 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Your Results</p>
-            <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">More than a personality test.</h2>
+            <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">Not a one-dimensional personality test.</h2>
             <p className="text-secondary max-w-lg mx-auto">
               You don&apos;t get a label. You get a complete relational profile with actionable insight.
             </p>
