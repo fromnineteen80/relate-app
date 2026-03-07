@@ -57,14 +57,14 @@ export default function AdvisorSidebar() {
       <div
         className={`fixed top-0 left-0 h-screen bg-white border-r border-stone-200 flex flex-col transition-all duration-300 ease-out overflow-hidden ${
           isOpen
-            ? 'w-screen sm:w-[280px] z-[60] sm:z-30'
+            ? 'w-screen sm:w-[50vw] xl:w-[33vw] z-[60] sm:z-30'
             : 'w-0 z-30'
         }`}
         role="dialog"
         aria-label="Your Advisor"
         aria-hidden={!isOpen}
       >
-        <div className={`flex flex-col h-full min-w-[280px] ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}>
+        <div className={`flex flex-col h-full min-w-[320px] ${isOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}>
           <AdvisorHeader />
           <AdvisorMessages hideStarters={inputValue.length > 0} />
 

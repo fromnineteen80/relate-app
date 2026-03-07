@@ -79,25 +79,9 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-sm" style={{ overflow: 'visible' }}>
-      <div className="px-6 py-3 flex items-center justify-between">
+      <div className="px-6 py-2 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          {/* Sidebar toggle icon — only visible on mobile; on desktop the toggle lives in the sidebar */}
-          {!isAuth && (
-            <button
-              onClick={toggleAdvisor}
-              aria-label={advisorOpen ? 'Close sidebar' : 'Open sidebar'}
-              className="group relative md:hidden w-6 h-6 flex items-center justify-center text-secondary hover:text-foreground transition-colors"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M2 4v16h20V4H2zm2 14V6h5v12H4zm7 0V6h9v12h-9z"/>
-              </svg>
-              {/* Tooltip */}
-              <span className="absolute top-full mt-1 left-0 px-2 py-1 text-xs text-secondary bg-white border border-border rounded shadow-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
-                {advisorOpen ? 'Close sidebar' : 'Open sidebar'}
-              </span>
-            </button>
-          )}
-          <Link href="/" className="font-serif text-base font-semibold tracking-tight">
+<Link href="/" className="font-serif text-base font-semibold tracking-tight">
             RELATE
           </Link>
         </div>
@@ -108,18 +92,18 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
             <nav className={`${collapseNav ? 'hidden' : 'hidden md:flex'} items-center gap-6`}>
               {navLinks.map(link =>
                 link.isAnchor ? (
-                  <a key={link.label} href={link.href} className="text-xs font-semibold text-secondary hover:text-foreground transition-colors">
+                  <a key={link.label} href={link.href} className="text-xs font-medium text-secondary hover:text-foreground transition-colors">
                     {link.label}
                   </a>
                 ) : (
-                  <Link key={link.label} href={link.href} className="text-xs font-semibold text-secondary hover:text-foreground transition-colors">
+                  <Link key={link.label} href={link.href} className="text-xs font-medium text-secondary hover:text-foreground transition-colors">
                     {link.label}
                   </Link>
                 )
               )}
               {!user && (
                 <div className="flex items-center gap-3">
-                  <Link href="/auth/login" className="text-xs font-semibold text-secondary hover:text-foreground transition-colors">
+                  <Link href="/auth/login" className="text-xs font-medium text-secondary hover:text-foreground transition-colors">
                     Log in
                   </Link>
                   <Link href="/auth/signup" className="btn-primary text-xs px-3 py-1.5">
@@ -180,7 +164,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
                   key={link.label}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-xs font-semibold text-secondary hover:text-foreground transition-colors py-1"
+                  className="text-xs font-medium text-secondary hover:text-foreground transition-colors py-1"
                 >
                   {link.label}
                 </a>
@@ -188,7 +172,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-xs font-semibold text-secondary hover:text-foreground transition-colors py-1"
+                  className="text-xs font-medium text-secondary hover:text-foreground transition-colors py-1"
                 >
                   {link.label}
                 </Link>
@@ -197,7 +181,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
             {!user && (
               <>
                 <div className="border-t border-border my-1" />
-                <Link href="/auth/login" className="text-xs font-semibold text-secondary hover:text-foreground transition-colors py-1">
+                <Link href="/auth/login" className="text-xs font-medium text-secondary hover:text-foreground transition-colors py-1">
                   Log in
                 </Link>
                 <Link href="/auth/signup" className="btn-primary text-center text-xs py-2">
