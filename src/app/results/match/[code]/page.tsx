@@ -57,31 +57,33 @@ function tierTextColor(tier: string) {
   return colors[tier] || 'text-secondary';
 }
 
-function scoreContext(key: string, value: number): string {
+function scoreContext(key: string, value: number, userName?: string, matchName?: string): string {
   const v = Math.round(value);
   const high = v >= 70;
   const mid = v >= 40 && v < 70;
+  const you = userName || 'your persona';
+  const them = matchName || 'this persona';
   switch (key) {
     case 'tier':
-      return high ? 'Strong persona-level alignment — your core personalities are naturally compatible.'
-        : mid ? 'Moderate persona alignment — workable with mutual effort and awareness.'
-        : 'Lower persona alignment — meaningful differences in how you each approach relationships.';
+      return high ? `Strong alignment between ${you} and ${them} — your core personalities are naturally compatible.`
+        : mid ? `Moderate alignment between ${you} and ${them} — workable with mutual effort and awareness.`
+        : `Lower alignment between ${you} and ${them} — meaningful differences in how you each approach relationships.`;
     case 'preference':
-      return high ? 'You closely match what this persona typically looks for in a partner.'
-        : mid ? 'You partially match this persona\'s stated preferences.'
-        : 'You fall outside several of this persona\'s typical preferences.';
+      return high ? `As ${you}, you closely match what ${them} typically looks for in a partner.`
+        : mid ? `You partially match what ${them} looks for — some gaps to be aware of.`
+        : `As ${you}, you fall outside several of ${them}'s typical preferences.`;
     case 'dimension':
-      return high ? 'Your behavioral patterns and lifestyle values are closely aligned.'
-        : mid ? 'Some behavioral overlap, but notable differences in a few areas.'
-        : 'Significant differences in day-to-day behavioral tendencies.';
+      return high ? `${you} and ${them} share closely aligned behavioral patterns and lifestyle values.`
+        : mid ? `Some behavioral overlap between ${you} and ${them}, but notable differences in a few areas.`
+        : `Significant differences in day-to-day tendencies between ${you} and ${them}.`;
     case 'intimacy':
-      return high ? 'High alignment in how you each express and receive intimacy.'
-        : mid ? 'Some differences in intimacy needs — communication will be important.'
-        : 'Very different intimacy styles — requires intentional understanding.';
+      return high ? `High alignment in how ${you} and ${them} each express and receive intimacy.`
+        : mid ? `Some differences in intimacy needs between ${you} and ${them} — communication will be important.`
+        : `${you} and ${them} have very different intimacy styles — requires intentional understanding.`;
     case 'conflict':
-      return high ? 'You handle disagreements in complementary ways, reducing friction.'
-        : mid ? 'Some differences in conflict style that may require adjustment.'
-        : 'Opposing conflict styles — may need clear strategies for disagreements.';
+      return high ? `${you} and ${them} handle disagreements in complementary ways, reducing friction.`
+        : mid ? `Some differences in conflict style between ${you} and ${them} that may require adjustment.`
+        : `${you} and ${them} have opposing conflict styles — may need clear strategies for disagreements.`;
     default:
       return '';
   }
@@ -174,6 +176,8 @@ export default function MatchDetailPage() {
   // Matches are the OPPOSITE gender of the user
   const matchGenderPronoun = report.gender === 'M' ? 'her' : 'him';
   const matchGenderCap = report.gender === 'M' ? 'She' : 'He';
+  const userName = report.persona?.name || 'your persona';
+  const matchName = match.name || 'this persona';
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -233,11 +237,11 @@ export default function MatchDetailPage() {
           <section className="card mb-4">
             <h3 className="font-serif font-semibold mb-3">Score Breakdown</h3>
             <div className="space-y-3.5">
-              <ScoreBar label="Persona" value={match.subScores.tier} description={scoreContext('tier', match.subScores.tier)} />
-              <ScoreBar label="Preference" value={match.subScores.preference} description={scoreContext('preference', match.subScores.preference)} />
-              <ScoreBar label="Behavioral" value={match.subScores.dimension} description={scoreContext('dimension', match.subScores.dimension)} />
-              <ScoreBar label="Intimacy" value={match.subScores.intimacy} description={scoreContext('intimacy', match.subScores.intimacy)} />
-              <ScoreBar label="Conflict" value={match.subScores.conflict} description={scoreContext('conflict', match.subScores.conflict)} />
+              <ScoreBar label="Persona" value={match.subScores.tier} description={scoreContext('tier', match.subScores.tier, userName, matchName)} />
+              <ScoreBar label="Preference" value={match.subScores.preference} description={scoreContext('preference', match.subScores.preference, userName, matchName)} />
+              <ScoreBar label="Behavioral" value={match.subScores.dimension} description={scoreContext('dimension', match.subScores.dimension, userName, matchName)} />
+              <ScoreBar label="Intimacy" value={match.subScores.intimacy} description={scoreContext('intimacy', match.subScores.intimacy, userName, matchName)} />
+              <ScoreBar label="Conflict" value={match.subScores.conflict} description={scoreContext('conflict', match.subScores.conflict, userName, matchName)} />
             </div>
           </section>
         )}
