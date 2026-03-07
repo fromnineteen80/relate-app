@@ -60,10 +60,10 @@ function generatePairingOverview(user1: any, user2: any): any {
 
 function determinePairingArchetype(alignment: number, m3: number, m4: number): { name: string; description: string; emoji: string } {
   const avg = (alignment + m3 + m4) / 3;
-  if (avg >= 75) return { name: 'Natural Partners', description: 'Strong instinctive alignment across values, connection style, and conflict approach. Your relationship has a high natural baseline.', emoji: '◆' };
-  if (avg >= 60) return { name: 'Complementary Pair', description: 'Your differences create strength. Where one leads, the other supports. The key is recognizing and valuing what each brings.', emoji: '◇' };
-  if (avg >= 45) return { name: 'Growth Partners', description: 'Your relationship will push both of you to grow. The areas of friction are also your greatest opportunities for development.', emoji: '○' };
-  return { name: 'Challenge Pair', description: 'Significant differences require conscious effort and strong communication. Success depends on both partners\' commitment to understanding each other.', emoji: '△' };
+  if (avg >= 75) return { name: 'Natural Partners', description: 'Strong instinctive alignment across values, connection style, and conflict approach. Your relationship has a high natural baseline.', emoji: 'diamond' as const };
+  if (avg >= 60) return { name: 'Complementary Pair', description: 'Your differences create strength. Where one leads, the other supports. The key is recognizing and valuing what each brings.', emoji: 'diamond-outline' as const };
+  if (avg >= 45) return { name: 'Growth Partners', description: 'Your relationship will push both of you to grow. The areas of friction are also your greatest opportunities for development.', emoji: 'circle' as const };
+  return { name: 'Challenge Pair', description: 'Significant differences require conscious effort and strong communication. Success depends on both partners\' commitment to understanding each other.', emoji: 'triangle' as const };
 }
 
 // ── Section 2: Where You Align ──

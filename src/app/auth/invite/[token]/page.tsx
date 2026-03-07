@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useAuth } from '@/lib/auth-context';
+import { Icon } from '@/components/Icon';
 
 type InviteInfo = {
   id: string;
@@ -127,11 +128,11 @@ export default function InviteAcceptPage() {
         <SiteHeader />
         <main className="flex-1 flex items-center justify-center px-6">
           <div className="w-full max-w-sm text-center">
-            <div className="w-12 h-12 rounded-full bg-success/10 text-success flex items-center justify-center text-xl mx-auto mb-4">
-              ✓
+            <div className="w-12 h-12 rounded-full bg-success/10 text-success flex items-center justify-center mx-auto mb-4">
+              <Icon name="check" size={24} />
             </div>
             <h2 className="font-serif text-2xl font-semibold mb-2">Partnership Accepted</h2>
-            <p className="text-sm text-secondary mb-6">
+            <p className="explainer mb-6">
               You&apos;re now connected! Complete the assessment to unlock your couples compatibility report.
             </p>
             <Link href="/assessment" className="btn-primary w-full block text-center">
@@ -152,7 +153,7 @@ export default function InviteAcceptPage() {
         <main className="flex-1 flex items-center justify-center px-6">
           <div className="w-full max-w-sm text-center">
             <h2 className="font-serif text-2xl font-semibold mb-2">Already Accepted</h2>
-            <p className="text-sm text-secondary mb-6">This invitation has already been accepted.</p>
+            <p className="explainer mb-6">This invitation has already been accepted.</p>
             <Link href="/auth/login" className="btn-primary w-full block text-center">Sign In</Link>
           </div>
         </main>
@@ -169,7 +170,7 @@ export default function InviteAcceptPage() {
         <main className="flex-1 flex items-center justify-center px-6">
           <div className="w-full max-w-sm">
             <h2 className="font-serif text-2xl font-semibold mb-2">You&apos;ve been invited</h2>
-            <p className="text-sm text-secondary mb-6">
+            <p className="explainer mb-6">
               Accept this partner invitation to connect your accounts and unlock couples features.
             </p>
             {error && <p className="text-sm text-danger mb-4">{error}</p>}
@@ -193,7 +194,7 @@ export default function InviteAcceptPage() {
       <main className="flex-1 flex items-center justify-center px-6">
         <div className="w-full max-w-sm">
           <h2 className="font-serif text-2xl font-semibold mb-2">You&apos;ve been invited</h2>
-          <p className="text-sm text-secondary mb-6">
+          <p className="explainer mb-6">
             Create an account to take the assessment and see your couples compatibility report.
           </p>
           {error && <p className="text-sm text-danger mb-4">{error}</p>}

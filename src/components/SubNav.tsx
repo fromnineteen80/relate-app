@@ -85,11 +85,7 @@ export function SubNav({ items = [] }: SubNavProps) {
             <Link
               key={link.id}
               href={link.href}
-              className={`relative text-xs font-semibold px-3 py-2.5 transition-colors whitespace-nowrap ${
-                isActive
-                  ? 'text-accent after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-accent'
-                  : 'text-foreground hover:text-accent hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent'
-              }`}
+              className={`subnav-tab ${isActive ? 'subnav-tab-active' : 'subnav-tab-inactive'}`}
             >
               {link.label}
             </Link>
@@ -105,7 +101,7 @@ export function SubNav({ items = [] }: SubNavProps) {
               <a
                 key={link.id}
                 href={link.href}
-                className="relative text-xs font-medium px-3 py-2.5 transition-colors whitespace-nowrap text-secondary hover:text-foreground hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent"
+                className="subnav-page-tab subnav-page-tab-inactive"
               >
                 {link.label}
               </a>
@@ -116,11 +112,7 @@ export function SubNav({ items = [] }: SubNavProps) {
             <Link
               key={link.id}
               href={link.href}
-              className={`relative text-xs font-medium px-3 py-2.5 transition-colors whitespace-nowrap ${
-                isActive
-                  ? 'text-foreground after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-accent'
-                  : 'text-secondary hover:text-foreground hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent'
-              }`}
+              className={`subnav-page-tab ${isActive ? 'subnav-page-tab-active' : 'subnav-page-tab-inactive'}`}
             >
               {link.label}
             </Link>

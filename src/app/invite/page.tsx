@@ -194,7 +194,7 @@ export default function InvitePage() {
 
       <main className="flex-1 max-w-3xl mx-auto px-6 py-12 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-2">Couples</h2>
-        <p className="text-sm text-secondary mb-8">
+        <p className="explainer mb-8">
           Connect with your partner to unlock your couples compatibility report, growth plan, and shared advisor.
         </p>
 

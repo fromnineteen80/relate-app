@@ -76,7 +76,7 @@ export default function CardsPage() {
 
       <main className="max-w-3xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-1">Conversation Cards</h2>
-        <p className="text-sm text-secondary mb-6">Choose a deck and draw a card. Take turns answering honestly.</p>
+        <p className="explainer mb-6">Choose a deck and draw a card. Take turns answering honestly.</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {deckKeys.map(key => {

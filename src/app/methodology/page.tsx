@@ -45,25 +45,25 @@ export default function MethodologyPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="card">
               <h3 className="font-serif font-semibold mb-2">Gottman Method</h3>
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 Developed by Drs. John and Julie Gottman over 40 years of research, this framework identifies the &quot;Four Horsemen&quot; that predict relationship failure: criticism, contempt, defensiveness, and stonewalling. Module 4 screens for these patterns and their intensity.
               </p>
             </div>
             <div className="card">
               <h3 className="font-serif font-semibold mb-2">Emotionally Focused Therapy</h3>
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 Created by Dr. Sue Johnson, EFT maps the pursue-withdraw cycle that drives most relationship distress. Module 4 identifies your conflict approach and emotional drivers, revealing the underlying needs behind your conflict behavior.
               </p>
             </div>
             <div className="card">
               <h3 className="font-serif font-semibold mb-2">Attachment Theory</h3>
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 Rooted in the work of Bowlby and Ainsworth, attachment theory explains how early bonding experiences shape adult relationship patterns. Module 3 measures how you seek and offer emotional connection, reflecting your attachment style in action.
               </p>
             </div>
             <div className="card">
               <h3 className="font-serif font-semibold mb-2">Internal Family Systems</h3>
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 Dr. Richard Schwartz&apos;s IFS model recognizes that we all carry multiple &quot;parts&quot; with different needs and fears. Module 4&apos;s emotional driver assessment identifies which parts are activated during conflict: the abandoned child, the engulfed protector, the inadequate self, or the justice seeker.
               </p>
             </div>
@@ -90,7 +90,7 @@ export default function MethodologyPage() {
               </div>
             </div>
             <div className="pl-13 space-y-3">
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 This module maps your partner preferences across four dimensions. Each dimension has two poles, and your responses reveal which pole you lean toward and how strongly.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -99,7 +99,7 @@ export default function MethodologyPage() {
                 <DimensionCard dim="Lifestyle" desc="The energy you want in your life together. Are you drawn to adventure and spontaneity, or to stability and consistency?" />
                 <DimensionCard dim="Values" desc="Your worldview alignment. Do you lean toward clearly defined roles and traditions, or toward shared responsibility and equality?" />
               </div>
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 Three question types are used: direct preference statements (Likert scale), behavioral scenarios based on past choices, and forced-choice tradeoffs. The combination reduces social desirability bias and captures both conscious and unconscious preferences.
               </p>
               <p className="text-sm text-secondary">
@@ -118,10 +118,10 @@ export default function MethodologyPage() {
               </div>
             </div>
             <div className="pl-13 space-y-3">
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 Module 2 measures how you actually present yourself across the same four dimensions. Instead of asking what you want, it asks who you are. Your answers are scored against gender-specific poles, and the resulting 4-letter code maps to one of 16 personas.
               </p>
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 The system also calculates your self-perception gap: the distance between how you see yourself (Module 2) and what you want in a partner (Module 1). A large gap can signal blind spots in self-awareness or misalignment between your expectations and what you offer.
               </p>
               <p className="text-sm text-secondary">
@@ -140,7 +140,7 @@ export default function MethodologyPage() {
               </div>
             </div>
             <div className="pl-13 space-y-3">
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 This module measures your intimacy access patterns through the lens of context switching: whether you show different sides of yourself in different situations, and whether you seek that same range from a partner.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -153,7 +153,7 @@ export default function MethodologyPage() {
                   <p className="text-sm text-secondary">How much differentiated access you provide. High scorers naturally adapt their energy and behavior to different situations and relationships.</p>
                 </div>
               </div>
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 The gap between your Want and Offer scores reveals important patterns. A large positive gap means you want more from a partner than you provide. A large negative gap means you give more range than you expect to receive.
               </p>
               <p className="text-sm text-secondary">
@@ -172,7 +172,7 @@ export default function MethodologyPage() {
               </div>
             </div>
             <div className="pl-13 space-y-3">
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 The final module maps your complete conflict signature. This is where the clinical frameworks come together most directly, measuring five distinct components of how you handle relational stress.
               </p>
 
@@ -204,7 +204,7 @@ export default function MethodologyPage() {
                   <h3 className="font-serif font-semibold">{h.name}</h3>
                   <span className="text-xs font-mono text-success">Antidote: {h.antidote}</span>
                 </div>
-                <p className="text-sm text-secondary leading-relaxed">{h.desc}</p>
+                <p className="explainer leading-relaxed">{h.desc}</p>
               </div>
             ))}
           </div>
@@ -255,7 +255,7 @@ export default function MethodologyPage() {
             </div>
           </div>
 
-          <p className="text-sm text-secondary leading-relaxed">
+          <p className="explainer leading-relaxed">
             Each persona comes with a detailed profile: dating behavior patterns, relationship tendencies, what makes them most and least attractive to potential partners, and their shadow side. Personas are not fixed labels. They represent your current behavioral center of gravity and can evolve as you grow.
           </p>
 
@@ -365,28 +365,28 @@ export default function MethodologyPage() {
           <div className="space-y-6">
             <div>
               <h3 className="font-serif font-semibold mb-2">Dimension Scoring (Modules 1 and 2)</h3>
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 Each dimension uses 32 questions across three formats: 12 direct preference statements on a Likert scale, 8 behavioral scenarios, and 12 forced-choice comparisons. Pole A and Pole B scores are calculated independently and normalized to a 0-100 scale. The stronger pole becomes your assigned direction, and the margin determines your strength percentage.
               </p>
             </div>
 
             <div>
               <h3 className="font-serif font-semibold mb-2">Connection Scoring (Module 3)</h3>
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 Want and Offer scores are each calculated from 12 questions, normalized to 0-100. The gap between them is the primary insight. Context switching types are assigned based on whether your Want and Offer fall above or below the midpoint threshold.
               </p>
             </div>
 
             <div>
               <h3 className="font-serif font-semibold mb-2">Conflict Scoring (Module 4)</h3>
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 Conflict approach is scored from 12 questions (6 pursue, 6 withdraw), normalized to a 0-100 scale where 100 is pure pursue and 0 is pure withdraw. Emotional drivers use 16 questions (4 per driver), each normalized independently. Repair speed and mode use 6 questions each. The Gottman screener uses 16 questions (4 per horseman), with risk thresholds calibrated to published clinical guidelines.
               </p>
             </div>
 
             <div>
               <h3 className="font-serif font-semibold mb-2">Attentiveness</h3>
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 A cross-module measure combining Module 3 Offer score, Module 3 Want score, Gottman contempt and criticism levels, and self-perception gap from Module 2. The composite determines whether you are strongly other-focused, balanced, moderately self-focused, or self-absorbed.
               </p>
             </div>
@@ -406,7 +406,7 @@ export default function MethodologyPage() {
           <div className="space-y-6">
             <div>
               <h3 className="font-serif font-semibold mb-2">How the Funnel Works</h3>
-              <p className="text-sm text-secondary leading-relaxed mb-3">
+              <p className="explainer leading-relaxed mb-3">
                 The funnel applies your preferences as sequential filters against the population of your metro area (CBSA). Each step reduces the pool by the percentage of people who do not meet that criterion. The process follows the same elimination logic used in actuarial science, market sizing, and persona-based audience segmentation, standard approaches for estimating the size of a target population from known distributions.
               </p>
               <div className="space-y-2">
@@ -418,14 +418,14 @@ export default function MethodologyPage() {
                 <FunnelStep number="6" title="Relationship Status" desc="Filter to singles using local CBSA relationship status data. This produces the Local Singles pool, the total number of available, eligible singles of the right gender and orientation in your area." />
                 <FunnelStep number="7" title="Your Preferences" desc="Apply your specific requirements: age range, minimum income, lifestyle preferences (smoking, drinking, children, religion, pets, diet), and physical preferences (height range, body type, fitness level). Each filter uses CBSA-level data where available or national distributions as a fallback." />
               </div>
-              <p className="text-sm text-secondary leading-relaxed mt-3">
+              <p className="explainer leading-relaxed mt-3">
                 The result is your Ideal Match Pool: the estimated number of people who meet every criterion you specified. This number is then multiplied by your match probability (derived from your Relate Score) to produce your final match count, the number of people in your pool who would likely be a mutual fit.
               </p>
             </div>
 
             <div>
               <h3 className="font-serif font-semibold mb-2">Context Percentages</h3>
-              <p className="text-sm text-secondary leading-relaxed mb-3">
+              <p className="explainer leading-relaxed mb-3">
                 Raw pool numbers are hard to interpret on their own. Is 2,000 people a lot or a little? It depends on the size of the population you are drawing from and how many filters you have applied. To provide context, the results page shows your ideal pool as a percentage of three progressively narrower base populations:
               </p>
               <div className="space-y-2 text-sm text-secondary">
@@ -433,49 +433,37 @@ export default function MethodologyPage() {
                 <p><span className="font-medium text-foreground">% of eligible:</span> Your ideal pool divided by the subset that shares the right orientation, has no criminal record, and falls within your preferred age range. This removes people who were never realistic candidates, isolating the effect of your lifestyle, income, and physical preferences.</p>
                 <p><span className="font-medium text-foreground">% of ethnicity match:</span> The eligible pool narrowed further to people of your own ethnic background. Because felon rates, income distributions, education levels, and lifestyle patterns vary by ethnicity, this provides the most directly comparable view of how selective your preferences are within a demographically similar group.</p>
               </div>
-              <p className="text-sm text-secondary leading-relaxed mt-3">
+              <p className="explainer leading-relaxed mt-3">
                 All three percentages are computed independently for your metro area, your state, and the nation, so you can see how your selectivity plays out at different geographic scales.
               </p>
             </div>
 
             <div>
               <h3 className="font-serif font-semibold mb-2">The Relate Score and Match Probability</h3>
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 The Relate Score (0-100) measures how well your profile aligns with the demographic realities of your metro area. It incorporates factors like gender ratio favorability, local single rates, income distributions, and lifestyle compatibility with the local population. A higher score means you are fishing in a pond that is well-stocked for someone like you. The match probability is a direct function of this score: it represents the likelihood that any given person in your ideal pool would also consider you a match based on the same demographic factors. Scores above 70 convert at higher rates; scores below 40 face significantly steeper odds.
               </p>
             </div>
 
             <div>
               <h3 className="font-serif font-semibold mb-2">Data Sources</h3>
-              <p className="text-sm text-secondary leading-relaxed mb-3">
+              <p className="explainer leading-relaxed mb-3">
                 All demographic data used in the funnel is sourced from publicly available datasets. No proprietary or paywalled data is used. The primary sources are:
               </p>
-              <ul className="space-y-1.5 text-sm text-secondary">
-                <li className="flex items-start gap-2">
-                  <span className="text-accent mt-0.5">•</span>
-                  <span><span className="font-medium text-foreground">U.S. Census Bureau</span>: Population estimates, age distributions, gender ratios, household income, ethnic composition, and relationship status by CBSA, county, state, and nation (American Community Survey 5-Year Estimates).</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-accent mt-0.5">•</span>
-                  <span><span className="font-medium text-foreground">U.S. Centers for Disease Control and Prevention (CDC)</span>: National Health Interview Survey and Behavioral Risk Factor Surveillance System data for substance use rates, disability prevalence, and health behavior distributions.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-accent mt-0.5">•</span>
-                  <span><span className="font-medium text-foreground">Pew Research Center</span>: Survey data on sexual orientation, religious affiliation, lifestyle attitudes, and relationship patterns used to supplement Census data where granularity is needed.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-accent mt-0.5">•</span>
-                  <span><span className="font-medium text-foreground">Bureau of Justice Statistics</span>: Felony conviction and incarceration rates by gender, ethnicity, and age used in the criminal record exclusion step.</span>
-                </li>
+              <ul className="bullet-list">
+                <li><span className="font-medium text-foreground">U.S. Census Bureau</span>: Population estimates, age distributions, gender ratios, household income, ethnic composition, and relationship status by CBSA, county, state, and nation (American Community Survey 5-Year Estimates).</li>
+                <li><span className="font-medium text-foreground">U.S. Centers for Disease Control and Prevention (CDC)</span>: National Health Interview Survey and Behavioral Risk Factor Surveillance System data for substance use rates, disability prevalence, and health behavior distributions.</li>
+                <li><span className="font-medium text-foreground">Pew Research Center</span>: Survey data on sexual orientation, religious affiliation, lifestyle attitudes, and relationship patterns used to supplement Census data where granularity is needed.</li>
+                <li><span className="font-medium text-foreground">Bureau of Justice Statistics</span>: Felony conviction and incarceration rates by gender, ethnicity, and age used in the criminal record exclusion step.</li>
               </ul>
-              <p className="text-sm text-secondary leading-relaxed mt-3">
+              <p className="explainer leading-relaxed mt-3">
                 Where CBSA-level data is available, it is used directly. Where only state or national data exists, it is applied as a proportional estimate. All rates are static snapshots, not real-time data, and are updated periodically as new survey releases become available.
               </p>
             </div>
 
             <div>
               <h3 className="font-serif font-semibold mb-2">Limitations</h3>
-              <p className="text-sm text-secondary leading-relaxed">
+              <p className="explainer leading-relaxed">
                 These are estimates, not counts of real individuals. The model assumes statistical independence between filters (for example, that income and fitness level are uncorrelated), which is a simplification. Some preferences like body type and fitness level rely on national survey distributions rather than local data. The funnel does not account for whether someone is actively dating, on a dating app, or open to meeting new people. It estimates the theoretical pool. Actual availability will be smaller. The model is designed to give you a realistic order-of-magnitude sense of your dating market, not a precise headcount.
               </p>
             </div>

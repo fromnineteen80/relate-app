@@ -50,7 +50,7 @@ export default function M5Reward({ scoredData, totalQuestions, onContinue }: Pro
         <span className="font-mono text-xs text-secondary tracking-wider">YOUR PRIMARY ARMOR</span>
         <h2 className="font-serif text-3xl font-semibold mt-2 mb-3">{armorLabel}</h2>
         <p className="text-secondary text-sm italic mb-6">&ldquo;{armorCore}&rdquo;</p>
-        <p className="text-sm text-secondary leading-relaxed mb-8">
+        <p className="explainer leading-relaxed mb-8">
           This is the protection strategy you developed early and still reach for under stress.
           It served you once. Your full report explores what it costs you now and what the first step toward something different looks like.
         </p>

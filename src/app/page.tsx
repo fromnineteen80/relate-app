@@ -4,6 +4,7 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { DynamicCTA } from '@/components/DynamicCTA';
 import { TestAccessCard } from '@/components/TestAccessCard';
+import { Icon } from '@/components/Icon';
 
 const MODULES = [
   {
@@ -206,7 +207,7 @@ export default function LandingPage() {
           </div>
           <div className="text-center mt-6">
             <Link href="/personas" className="text-sm text-accent hover:underline">
-              View all 32 personas →
+              View all 32 personas <Icon name="arrow_forward" size={14} />
             </Link>
           </div>
         </div>

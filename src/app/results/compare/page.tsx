@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
+import { Icon } from '@/components/Icon';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -112,7 +113,7 @@ export default function ComparePage() {
         <main className="flex-1 flex items-center justify-center px-6">
           <div className="text-center">
             <div className="w-12 h-12 rounded-full border-2 border-accent border-t-transparent animate-spin mx-auto mb-4" />
-            <p className="text-sm text-secondary">Generating your couples report...</p>
+            <p className="explainer">Generating your couples report...</p>
           </div>
         </main>
         <SiteFooter />
@@ -232,7 +233,7 @@ function OverviewSection({ data }: { data: any }) {
           </div>
         </div>
         <p className="font-serif text-xl font-semibold">{data.archetype?.name}</p>
-        <p className="text-sm text-secondary mt-1 max-w-lg mx-auto">{data.archetype?.description}</p>
+        <p className="explainer mt-1 max-w-lg mx-auto">{data.archetype?.description}</p>
       </div>
 
       {/* Score breakdown */}
@@ -280,7 +281,7 @@ function AlignmentSection({ data, overview }: { data: any; overview: any }) {
     <div className="space-y-6">
       <div>
         <h2 className="font-serif text-2xl font-semibold mb-1">Where You Align</h2>
-        <p className="text-sm text-secondary">{data.totalParallels} parallel{data.totalParallels !== 1 ? 's' : ''} found across your profiles</p>
+        <p className="explainer">{data.totalParallels} parallel{data.totalParallels !== 1 ? 's' : ''} found across your profiles</p>
       </div>
 
       {data.parallels?.length > 0 ? (
@@ -288,8 +289,8 @@ function AlignmentSection({ data, overview }: { data: any; overview: any }) {
           {data.parallels.map((p: any, i: number) => (
             <div key={i} className="card">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-success/10 text-success flex items-center justify-center flex-shrink-0 text-sm">
-                  ✓
+                <div className="w-8 h-8 rounded-full bg-success/10 text-success flex items-center justify-center flex-shrink-0">
+                  <Icon name="check" size={18} />
                 </div>
                 <div>
                   <p className="text-sm font-medium capitalize">{p.dimension} -{p.type === 'shared_desire' ? 'Shared Desire' : 'Want-Offer Match'}</p>
@@ -346,7 +347,7 @@ function ClashSection({ data, overview }: { data: any; overview: any }) {
     <div className="space-y-6">
       <div>
         <h2 className="font-serif text-2xl font-semibold mb-1">Where You Clash</h2>
-        <p className="text-sm text-secondary">
+        <p className="explainer">
           {data.totalClashes === 0 ? 'No major clashes detected' : `${data.totalClashes} area${data.totalClashes !== 1 ? 's' : ''} of tension identified`}
         </p>
       </div>
@@ -386,7 +387,7 @@ function ClashSection({ data, overview }: { data: any; overview: any }) {
 
       {data.totalClashes === 0 && (
         <div className="card text-center">
-          <p className="text-sm text-secondary">
+          <p className="explainer">
             Minimal clashes suggests strong baseline compatibility. Focus on maintaining this through continued awareness.
           </p>
         </div>
@@ -401,7 +402,7 @@ function ConflictSection({ data, overview }: { data: any; overview: any }) {
     <div className="space-y-6">
       <div>
         <h2 className="font-serif text-2xl font-semibold mb-1">Conflict Choreography</h2>
-        <p className="text-sm text-secondary">How you move through disagreements together</p>
+        <p className="explainer">How you move through disagreements together</p>
       </div>
 
       {/* Conflict dynamic */}
@@ -491,7 +492,7 @@ function RepairSection({ data }: { data: any }) {
     <div className="space-y-6">
       <div>
         <h2 className="font-serif text-2xl font-semibold mb-1">Repair Compatibility</h2>
-        <p className="text-sm text-secondary">
+        <p className="explainer">
           Overall risk: <span className={`font-mono ${data.overallRisk === 'high' ? 'text-danger' : data.overallRisk === 'moderate' ? 'text-warning' : 'text-success'}`}>
             {data.overallRisk}
           </span>
@@ -554,24 +555,24 @@ function RepairSection({ data }: { data: any }) {
 function DailyLifeSection({ data }: { data: any }) {
   if (!data) return <p className="text-secondary">No daily life data available.</p>;
 
-  const areaIcons: Record<string, string> = {
-    'Daily Connection': '◎',
-    'Decision Making': '◈',
-    'Social Life': '◉',
-    'Under Stress': '◊',
+  const areaIcons: Record<string, JSX.Element> = {
+    'Daily Connection': <Icon name="favorite" size={18} className="text-accent" />,
+    'Decision Making': <Icon name="balance" size={18} className="text-accent" />,
+    'Social Life': <Icon name="group" size={18} className="text-accent" />,
+    'Under Stress': <Icon name="bolt" size={18} className="text-warning" />,
   };
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="font-serif text-2xl font-semibold mb-1">Daily Life Preview</h2>
-        <p className="text-sm text-secondary">How your profiles play out in everyday situations</p>
+        <p className="explainer">How your profiles play out in everyday situations</p>
       </div>
 
       {data.scenarios?.map((s: any, i: number) => (
         <div key={i} className="card">
           <div className="flex items-start gap-3">
-            <span className="text-lg">{areaIcons[s.area] || '·'}</span>
+            <span className="text-lg">{areaIcons[s.area] || <Icon name="circle" size={18} className="text-secondary" />}</span>
             <div>
               <p className="font-serif text-sm font-semibold mb-1">{s.area}</p>
               <p className="text-xs text-secondary">{s.dynamic}</p>
@@ -589,7 +590,7 @@ function CeilingFloorSection({ data }: { data: any }) {
     <div className="space-y-6">
       <div>
         <h2 className="font-serif text-2xl font-semibold mb-1">Your Ceiling & Floor</h2>
-        <p className="text-sm text-secondary">The range of your relationship&apos;s potential</p>
+        <p className="explainer">The range of your relationship&apos;s potential</p>
       </div>
 
       {/* Visual range */}
@@ -646,7 +647,7 @@ function CeilingFloorSection({ data }: { data: any }) {
         <ul className="space-y-2">
           {data.ceilingFactors?.map((f: string, i: number) => (
             <li key={i} className="flex items-start gap-2 text-xs">
-              <span className="text-success mt-0.5">↑</span>
+              <Icon name="arrow_upward" size={14} className="text-success mt-0.5" />
               <span className="text-secondary">{f}</span>
             </li>
           ))}
@@ -659,7 +660,7 @@ function CeilingFloorSection({ data }: { data: any }) {
         <ul className="space-y-2">
           {data.floorFactors?.map((f: string, i: number) => (
             <li key={i} className="flex items-start gap-2 text-xs">
-              <span className="text-warning mt-0.5">↓</span>
+              <Icon name="arrow_downward" size={14} className="text-warning mt-0.5" />
               <span className="text-secondary">{f}</span>
             </li>
           ))}
@@ -668,7 +669,7 @@ function CeilingFloorSection({ data }: { data: any }) {
 
       {/* Narrative */}
       <div className="card bg-stone-50">
-        <p className="text-sm text-secondary italic">{data.narrative}</p>
+        <p className="explainer italic">{data.narrative}</p>
       </div>
     </div>
   );
@@ -688,7 +689,7 @@ function EnhancedCompatibilitySection({ data, overview }: { data: any; overview:
     <div className="space-y-6">
       <div>
         <h2 className="font-serif text-2xl font-semibold mb-1">Deep Compatibility Analysis</h2>
-        <p className="text-sm text-secondary">9-dimension scoring across normal, conflict, and repair states</p>
+        <p className="explainer">9-dimension scoring across normal, conflict, and repair states</p>
       </div>
 
       {/* Overall score + state scores */}

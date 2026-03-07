@@ -8,6 +8,7 @@ import { fetchPaymentTier } from '@/lib/payments';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
 import { SiteFooter } from '@/components/SiteFooter';
+import { Icon } from '@/components/Icon';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -175,7 +176,7 @@ export default function BillingPage() {
             <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${
               paid ? 'bg-accent/10 text-accent' : 'bg-stone-200 text-secondary'
             }`}>
-              {paid ? '✓' : '-'}
+              {paid ? <Icon name="check" size={18} /> : '-'}
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium">{tierLabel}</p>
@@ -278,7 +279,7 @@ export default function BillingPage() {
                 <span className="text-[10px] font-mono uppercase text-secondary">{subscription.paymentMethod.brand}</span>
               </div>
               <div>
-                <p className="text-sm font-mono">•••• •••• •••• {subscription.paymentMethod.last4}</p>
+                <p className="text-sm font-mono">**** **** **** {subscription.paymentMethod.last4}</p>
                 <p className="text-xs text-secondary">
                   Expires {subscription.paymentMethod.expMonth.toString().padStart(2, '0')}/{subscription.paymentMethod.expYear}
                 </p>

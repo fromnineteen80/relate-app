@@ -6,6 +6,7 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useAuth } from '@/lib/auth-context';
+import { Icon } from '@/components/Icon';
 
 const CATEGORIES = [
   'General Feedback',
@@ -80,11 +81,11 @@ export default function FeedbackPage() {
         <SubNav />
         <main className="flex-1 max-w-3xl mx-auto px-6 py-12 w-full text-center">
           <div className="card">
-            <div className="w-12 h-12 rounded-full bg-success/10 text-success flex items-center justify-center mx-auto mb-4 text-lg">
-              ✓
+            <div className="w-12 h-12 rounded-full bg-success/10 text-success flex items-center justify-center mx-auto mb-4">
+              <Icon name="check" size={24} />
             </div>
             <h1 className="font-serif text-2xl font-semibold mb-2">Thank You</h1>
-            <p className="text-sm text-secondary mb-6">
+            <p className="explainer mb-6">
               Your feedback has been sent. We read every submission and use it to improve RELATE.
             </p>
             <div className="flex gap-3 justify-center">
@@ -110,7 +111,7 @@ export default function FeedbackPage() {
 
       <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
         <h1 className="font-serif text-3xl font-semibold mb-2">Feedback</h1>
-        <p className="text-sm text-secondary mb-8">
+        <p className="explainer mb-8">
           Help us improve RELATE. Share your experience, report issues, or suggest features.
         </p>
 

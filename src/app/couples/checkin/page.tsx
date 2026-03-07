@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
 import { SiteFooter } from '@/components/SiteFooter';
+import { Icon } from '@/components/Icon';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -43,8 +44,11 @@ export default function CheckinHistoryPage() {
     return 'stable';
   }
 
-  const trendIcons = { up: '↑', down: '↓', stable: '→' };
-  const trendColors = { up: 'text-success', down: 'text-danger', stable: 'text-secondary' };
+  const trendIcons = {
+    up: <Icon name="arrow_upward" size={14} className="text-success" />,
+    down: <Icon name="arrow_downward" size={14} className="text-danger" />,
+    stable: <Icon name="arrow_forward" size={14} className="text-secondary" />,
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -53,11 +57,11 @@ export default function CheckinHistoryPage() {
 
       <main className="max-w-3xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-1">Check-In History</h2>
-        <p className="text-sm text-secondary mb-6">{checkins.length} check-in{checkins.length !== 1 ? 's' : ''} recorded</p>
+        <p className="explainer mb-6">{checkins.length} check-in{checkins.length !== 1 ? 's' : ''} recorded</p>
 
         {checkins.length === 0 ? (
           <div className="card text-center">
-            <p className="text-sm text-secondary mb-4">No check-ins yet. Start tracking your relationship progress.</p>
+            <p className="explainer mb-4">No check-ins yet. Start tracking your relationship progress.</p>
             <Link href="/couples" className="btn-primary text-sm">Go to Dashboard</Link>
           </div>
         ) : (
@@ -72,7 +76,7 @@ export default function CheckinHistoryPage() {
                 <div key={m.label} className="card text-center">
                   <div className="flex items-center justify-center gap-1">
                     <span className="font-mono text-xl font-semibold">{m.avg}</span>
-                    <span className={`text-sm ${trendColors[m.trend]}`}>{trendIcons[m.trend]}</span>
+                    <span className="text-sm">{trendIcons[m.trend]}</span>
                   </div>
                   <p className="text-[10px] text-secondary mt-1">{m.label}</p>
                 </div>

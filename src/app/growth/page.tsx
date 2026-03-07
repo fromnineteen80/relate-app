@@ -17,6 +17,7 @@ import {
 import { getPersonaName } from '@/lib/scoring';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
+import { Icon } from '@/components/Icon';
 import { SiteFooter } from '@/components/SiteFooter';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -177,7 +178,7 @@ export default function GrowthPage() {
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-medium capitalize">{b.dimension}</span>
                       <span className="text-[10px] text-secondary">
-                        {b.currentPole} ({pct}%) → {b.oppositePole}
+                        {b.currentPole} ({pct}%) <Icon name="arrow_forward" size={10} /> {b.oppositePole}
                       </span>
                     </div>
                     <div className="relative h-2 bg-stone-200 rounded-full overflow-hidden">
@@ -201,7 +202,7 @@ export default function GrowthPage() {
                 <div className="mt-4 pt-3 border-t border-stone-100">
                   <p className="text-xs text-secondary">
                     <span className="font-medium text-foreground">Growth trajectory: </span>
-                    {projection.originalName} ({projection.originalCode}) →{' '}
+                    {projection.originalName} ({projection.originalCode}) <Icon name="arrow_forward" size={12} />{' '}
                     <Link href={`/results/match/${projection.projectedCode}`} className="text-accent hover:underline font-medium">
                       {projectedLabel} ({projection.projectedCode})
                     </Link>
@@ -229,7 +230,7 @@ export default function GrowthPage() {
                   {patternInsights.length} pattern{patternInsights.length !== 1 ? 's' : ''} identified from your assessment
                 </p>
               </div>
-              <span className="text-secondary text-sm">{showInsights ? '−' : '+'}</span>
+              <Icon name={showInsights ? 'remove' : 'add'} size={18} className="text-secondary" />
             </button>
             {showInsights && (
               <div className="mt-4 space-y-4">
@@ -339,7 +340,7 @@ export default function GrowthPage() {
                       <span className="text-[10px] text-accent/60">{exercise.framework}</span>
                     </div>
                     <button onClick={() => startExercise(exercise)} className="text-xs text-accent hover:underline">
-                      Start →
+                      Start <Icon name="arrow_forward" size={12} />
                     </button>
                   </div>
                 </div>
