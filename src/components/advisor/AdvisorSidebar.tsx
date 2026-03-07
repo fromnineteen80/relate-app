@@ -100,7 +100,7 @@ export default function AdvisorSidebar() {
                 placeholder={isLimited ? 'Upgrade for more messages' : 'Ask anything...'}
                 disabled={loading || isLimited}
                 rows={5}
-                className="w-full border border-stone-200 bg-white rounded-lg px-3 py-2.5 pr-10 text-xs focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent disabled:opacity-50 disabled:bg-stone-50 resize-none leading-[18px]"
+                className="w-full border border-stone-200 bg-white rounded-lg px-3 py-2.5 pr-10 text-xs text-secondary placeholder:text-secondary focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent disabled:opacity-50 disabled:bg-stone-50 resize-none leading-[18px]"
                 style={{ minHeight: '110px' }}
               />
 
