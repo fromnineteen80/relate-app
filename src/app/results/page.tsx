@@ -403,9 +403,8 @@ function ResultsDashboard() {
 
   // Sub-nav items, grouped
   const navItems = [
-    { id: 'persona', label: 'Persona', show: !!persona },
-    { id: 'know-yourself', label: 'Know Yourself', show: hasDimensions || !!m3 || !!m4Summary || !!ic?.attachment || !!(tensionStacks && Object.keys(tensionStacks).length > 0) },
-    { id: 'know-your-match', label: 'Know Your Ideal Match', show: !!(ic?.attachmentTiers) || !!modifiers || (hasResults && true) },
+    { id: 'persona', label: 'Persona', show: !!persona || hasDimensions || !!ic?.attachment || !!m4Summary || !!(tensionStacks && Object.keys(tensionStacks).length > 0) },
+    { id: 'how-you-date', label: 'How You Date', show: matches.length > 0 || !!(ic?.attachmentTiers) || !!m3 || (hasResults && true) },
     { id: 'know-your-market', label: 'Know Your Market', show: hasMarket },
   ].filter(n => n.show);
 
@@ -640,12 +639,7 @@ function ResultsDashboard() {
     );
   }
 
-  // Tension stack keys that belong to Group 1 (Know Yourself)
-  const group1TensionKeys = ['eroticDimension', 'intimacyConflictBridge', 'vulnerabilityProfile', 'attractionAttachment', 'internalConflictCoherence'];
-  // Keys for Group 2 (anything not in Group 1 and not marketReality)
-  const group2TensionKeys = tensionStacks
-    ? Object.keys(tensionStacks).filter(k => k !== 'marketReality' && !group1TensionKeys.includes(k))
-    : [];
+  // Tension stack keys rendered explicitly (no generic rendering needed)
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -690,9 +684,21 @@ function ResultsDashboard() {
           </section>
         )}
 
+        {/* ══════════════════════════════════════════════════
+            GROUP 1: PERSONA
+        ══════════════════════════════════════════════════ */}
+        {(persona || hasDimensions || m4Summary || ic?.attachment || tensionStacks) && (
+          <div id="persona" className="scroll-mt-32 mb-2">
+            <div className="flex items-baseline gap-3 mb-4 mt-6">
+              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">01</span>
+              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Persona</span>
+            </div>
+          </div>
+        )}
+
         {/* ── Persona ── */}
         {persona && (
-          <section id="persona" className="card mb-4 scroll-mt-32">
+          <section className="card mb-4 scroll-mt-32">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <span className="text-xs font-mono text-secondary uppercase tracking-wider">Your Persona</span>
@@ -769,74 +775,6 @@ function ResultsDashboard() {
           </section>
         )}
 
-        {/* ── Matches (below persona) ── */}
-        {matches.length > 0 && (
-          <section className="card mb-4 scroll-mt-32">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="leaderboard" size={20} className="text-accent" />Compatibility Rankings</h3>
-              {hasPaid && <Link href="/results/matches" className="text-xs text-accent hover:underline">View all</Link>}
-            </div>
-            <div className="space-y-3">
-              {(matchesExpanded ? visibleMatches : visibleMatches.slice(0, 5)).map((match: any) => (
-                <div key={match.code} className="card">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono text-xs text-secondary">#{match.rank}</span>
-                        {hasPaid ? (
-                          <Link href={`/results/match/${match.code}`} className="text-sm font-semibold text-accent hover:underline">{match.name}</Link>
-                        ) : <span className="text-sm font-semibold">{match.name}</span>}
-                        <span className="font-mono text-xs text-secondary">{match.code}</span>
-                      </div>
-                      {match.traits && <p className="text-xs text-secondary mt-1">{match.traits.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
-                    </div>
-                    <div className="text-right shrink-0">
-                      <span className="font-mono text-sm font-semibold block">{match.compatibilityScore}</span>
-                      <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>
-                      {(() => {
-                        const note = rankingNote(match, visibleMatches);
-                        return note ? <p className="text-[10px] text-secondary/60 mt-0.5 max-w-[120px] leading-tight ml-auto">{note}</p> : null;
-                      })()}
-                    </div>
-                  </div>
-                  {match.summary && <p className="text-sm text-secondary mt-2">{match.summary.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
-                </div>
-              ))}
-            </div>
-            {visibleMatches.length > 5 && !matchesExpanded && (
-              <button onClick={() => setMatchesExpanded(true)} className="text-xs text-accent hover:underline mt-3">
-                Show all {visibleMatches.length} matches
-              </button>
-            )}
-            {matchesExpanded && visibleMatches.length > 5 && (
-              <button onClick={() => setMatchesExpanded(false)} className="text-xs text-accent hover:underline mt-3">
-                Show top 5
-              </button>
-            )}
-            {!hasPaid && matches.length > freeMatchLimit && (
-              <div className="mt-4 card border-accent text-center">
-                <p className="text-sm text-secondary mb-3">{matches.length - freeMatchLimit} more matches available with Plus</p>
-                <div className="flex gap-2 justify-center">
-                  <a href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary inline-block text-sm">Plus ($29.99/mo)</a>
-                  <a href={`/api/checkout?product=premium&email=${encodeURIComponent(user?.email || '')}`} className="btn-primary inline-block text-sm">Premium ($49.99/mo)</a>
-                </div>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* ══════════════════════════════════════════════════
-            GROUP 1: KNOW YOURSELF
-        ══════════════════════════════════════════════════ */}
-        {(hasDimensions || m3 || m4Summary || ic?.attachment || tensionStacks) && (
-          <div id="know-yourself" className="scroll-mt-32 mb-2">
-            <div className="flex items-baseline gap-3 mb-4 mt-6">
-              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">01</span>
-              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Know Yourself</span>
-            </div>
-          </div>
-        )}
-
         {/* ── Score Breakdown ── */}
         {hasDimensions && (() => {
           const dimOrder = ['physical', 'social', 'lifestyle', 'values'] as const;
@@ -908,150 +846,7 @@ function ResultsDashboard() {
           );
         })()}
 
-        {/* ── Connection Style ── */}
-        {m3 && (
-          <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="sync_alt" size={20} className="text-accent" />Connection Style</h3>
-            <div className="grid grid-cols-3 gap-6 text-center mb-4">
-              <div>
-                <span className="font-mono text-lg font-semibold">{m3.wantScore ?? '-'}</span>
-                <p className="text-xs text-secondary mt-1">Want Score</p>
-              </div>
-              <div>
-                <span className="font-mono text-lg font-semibold">{m3.offerScore ?? '-'}</span>
-                <p className="text-xs text-secondary mt-1">Offer Score</p>
-              </div>
-              <div>
-                <span className="font-mono text-lg font-semibold">{m3.typeName ?? '-'}</span>
-                <p className="text-xs text-secondary mt-1">Type</p>
-              </div>
-            </div>
-            {m3.wantOfferGap !== undefined && (
-              <p className="text-xs text-secondary text-center mb-4">
-                Gap: <span className={`font-mono ${Math.abs(m3.wantOfferGap) <= 5 ? 'text-success' : Math.abs(m3.wantOfferGap) <= 20 ? 'text-warning' : 'text-danger'}`}>
-                  {m3.wantOfferGap > 0 ? '+' : ''}{m3.wantOfferGap}
-                </span>
-              </p>
-            )}
-            {m3.typeDescription && (
-              <p className="explainer mb-4">{m3.typeDescription}</p>
-            )}
-            {m3.typeDetails && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
-                {m3.typeDetails.strengths?.length > 0 && (
-                  <div>
-                    <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
-                    <ul className="bullet-list mt-2">
-                      {m3.typeDetails.strengths.map((s: string, i: number) => (
-                        <li key={i}>{s}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {m3.typeDetails.challenges?.length > 0 && (
-                  <div>
-                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
-                    <ul className="bullet-list mt-2">
-                      {m3.typeDetails.challenges.map((c: string, i: number) => (
-                        <li key={i}>{c}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* ── Erotic Dimension ── */}
-        {tensionStacks?.eroticDimension && renderTensionStack('eroticDimension', tensionStacks.eroticDimension)}
-
-        {/* ── Intimacy Under Stress ── (moved up from below Attachment) */}
-        {ic?.m3States?.states?.normal && (
-          <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="local_fire_department" size={20} className="text-accent" />Intimacy Under Stress</h3>
-            <p className="explainer mb-4">How your Want and Offer shift across relationship states</p>
-
-            {/* Legend */}
-            <div className="flex items-center gap-6 mb-4 text-xs text-secondary">
-              <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-sm bg-blue-500 inline-block" /> Offer (what you give)</span>
-              <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-sm bg-rose-400 inline-block" /> Want (what you need)</span>
-            </div>
-
-            <div className="space-y-5">
-              {[
-                { key: 'normal', data: ic.m3States.states.normal, label: 'Normal' },
-                { key: 'conflict', data: ic.m3States.states.conflict, label: 'During Conflict' },
-                { key: 'repair', data: ic.m3States.states.repair, label: 'During Repair' },
-              ].filter(s => s.data).map(({ key, data, label }) => {
-                const offerPct = Math.min(50, (data.offer / 100) * 50);
-                const wantPct = Math.min(50, (data.want / 100) * 50);
-                return (
-                  <div key={key}>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-medium">{data.label || label}</span>
-                      <span className={`text-xs font-mono px-1.5 py-0.5 rounded ${
-                        Math.abs(data.gap) <= 5 ? 'bg-success/10 text-success' :
-                        Math.abs(data.gap) <= 15 ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
-                      }`}>gap {data.gap > 0 ? '+' : ''}{data.gap}</span>
-                    </div>
-                    <div className="relative h-5 bg-stone-100 rounded-full overflow-hidden">
-                      <div className="absolute left-0 top-0 h-full bg-blue-500/70 rounded-l-full transition-all duration-300"
-                        style={{ width: `${offerPct}%` }} />
-                      <div className="absolute right-0 top-0 h-full bg-rose-400/70 rounded-r-full transition-all duration-300"
-                        style={{ width: `${wantPct}%` }} />
-                      <div className="absolute left-1/2 top-0 w-px h-full bg-stone-300" />
-                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-blue-800">{data.offer}</span>
-                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-rose-800">{data.want}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <p className="text-xs text-secondary mt-4">
-              When Offer and Want overlap in the center, you are giving close to what you need.
-              When they pull apart, there is a gap between what you bring to the relationship and what you ask from it.
-            </p>
-
-            {ic.m3States.insights && (
-              <div className="mt-4 pt-4 border-t border-border space-y-4">
-                <div>
-                  <h4 className="font-serif text-sm font-semibold mb-1">Gap Expansion Under Stress</h4>
-                  <span className={`text-xs font-mono px-2 py-0.5 rounded ${
-                    ic.m3States.insights.gapExpansionLevel === 'HIGH' ? 'bg-danger/10 text-danger' :
-                    ic.m3States.insights.gapExpansionLevel === 'MODERATE' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
-                  }`}>
-                    {ic.m3States.insights.gapExpansion > 0 ? '+' : ''}{ic.m3States.insights.gapExpansion} pts ({ic.m3States.insights.gapExpansionLevel})
-                  </span>
-                  <p className="text-xs text-secondary mt-2">
-                    {ic.m3States.insights.gapExpansionLevel === 'HIGH'
-                      ? 'Under stress, the gap between what you need and what you give widens significantly. Conflict amplifies your unmet needs faster than your capacity to offer, which can create a destabilizing spiral if unaddressed.'
-                      : ic.m3States.insights.gapExpansionLevel === 'MODERATE'
-                      ? 'Under stress, your want-offer gap grows moderately. You shift under pressure but maintain enough balance to course-correct before the gap becomes destabilizing.'
-                      : 'Under stress, your want-offer gap stays relatively stable. You maintain balance between what you need and what you give, even when things get difficult.'}
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-serif text-sm font-semibold mb-1">Repair Effort</h4>
-                  <span className={`text-xs font-mono px-2 py-0.5 rounded ${ic.m3States.insights.repairSustainable ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'}`}>
-                    {ic.m3States.insights.repairSustainable ? 'Sustainable' : 'High strain'}
-                  </span>
-                  <p className="text-xs text-secondary mt-2">
-                    {ic.m3States.insights.repairSustainable
-                      ? 'Your repair pattern is sustainable. When you shift into recovery mode, the effort you put in to close the gap does not exceed what you can maintain over time. This means your repair attempts are genuine and repeatable, not performative bursts.'
-                      : 'Your repair pattern shows high strain. When you try to recover from conflict, you overextend what you can sustainably offer. This means your repair attempts may feel intense but are difficult to maintain, leading to cycles of over-giving followed by withdrawal.'}
-                  </p>
-                </div>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* ── Intimacy Conflict Bridge ── */}
-        {tensionStacks?.intimacyConflictBridge && renderTensionStack('intimacyConflictBridge', tensionStacks.intimacyConflictBridge)}
-
-        {/* ── Your Attachment Style ── (moved down) */}
+        {/* ── Your Attachment Style ── */}
         {ic?.attachment && (
           <section className="card mb-4">
             <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="shield" size={20} className="text-accent" />Your Attachment Style</h3>
@@ -1212,15 +1007,71 @@ function ResultsDashboard() {
         {tensionStacks?.internalConflictCoherence && renderTensionStack('internalConflictCoherence', tensionStacks.internalConflictCoherence)}
 
         {/* ══════════════════════════════════════════════════
-            GROUP 2: KNOW YOUR IDEAL MATCH
+            GROUP 2: HOW YOU DATE
         ══════════════════════════════════════════════════ */}
-        {(ic?.attachmentTiers || modifiers || hasResults) && (
-          <div id="know-your-match" className="scroll-mt-32 mb-2">
+        {(matches.length > 0 || ic?.attachmentTiers || m3 || hasResults) && (
+          <div id="how-you-date" className="scroll-mt-32 mb-2">
             <div className="flex items-baseline gap-3 mb-4 mt-10">
               <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">02</span>
-              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Know Your Ideal Match</span>
+              <span className="font-mono text-xs text-secondary uppercase tracking-widest">How You Date</span>
             </div>
           </div>
+        )}
+
+        {/* ── Compatibility Rankings ── */}
+        {matches.length > 0 && (
+          <section className="card mb-4 scroll-mt-32">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="leaderboard" size={20} className="text-accent" />Compatibility Rankings</h3>
+              {hasPaid && <Link href="/results/matches" className="text-xs text-accent hover:underline">View all</Link>}
+            </div>
+            <div className="space-y-3">
+              {(matchesExpanded ? visibleMatches : visibleMatches.slice(0, 5)).map((match: any) => (
+                <div key={match.code} className="card">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-mono text-xs text-secondary">#{match.rank}</span>
+                        {hasPaid ? (
+                          <Link href={`/results/match/${match.code}`} className="text-sm font-semibold text-accent hover:underline">{match.name}</Link>
+                        ) : <span className="text-sm font-semibold">{match.name}</span>}
+                        <span className="font-mono text-xs text-secondary">{match.code}</span>
+                      </div>
+                      {match.traits && <p className="text-xs text-secondary mt-1">{match.traits.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
+                    </div>
+                    <div className="text-right shrink-0">
+                      <span className="font-mono text-sm font-semibold block">{match.compatibilityScore}</span>
+                      <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>
+                      {(() => {
+                        const note = rankingNote(match, visibleMatches);
+                        return note ? <p className="text-[10px] text-secondary/60 mt-0.5 max-w-[120px] leading-tight ml-auto">{note}</p> : null;
+                      })()}
+                    </div>
+                  </div>
+                  {match.summary && <p className="text-sm text-secondary mt-2">{match.summary.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
+                </div>
+              ))}
+            </div>
+            {visibleMatches.length > 5 && !matchesExpanded && (
+              <button onClick={() => setMatchesExpanded(true)} className="text-xs text-accent hover:underline mt-3">
+                Show all {visibleMatches.length} matches
+              </button>
+            )}
+            {matchesExpanded && visibleMatches.length > 5 && (
+              <button onClick={() => setMatchesExpanded(false)} className="text-xs text-accent hover:underline mt-3">
+                Show top 5
+              </button>
+            )}
+            {!hasPaid && matches.length > freeMatchLimit && (
+              <div className="mt-4 card border-accent text-center">
+                <p className="text-sm text-secondary mb-3">{matches.length - freeMatchLimit} more matches available with Plus</p>
+                <div className="flex gap-2 justify-center">
+                  <a href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary inline-block text-sm">Plus ($29.99/mo)</a>
+                  <a href={`/api/checkout?product=premium&email=${encodeURIComponent(user?.email || '')}`} className="btn-primary inline-block text-sm">Premium ($49.99/mo)</a>
+                </div>
+              </div>
+            )}
+          </section>
         )}
 
         {/* ── Ideal Partner Profile ── */}
@@ -1327,90 +1178,148 @@ function ResultsDashboard() {
           </section>
         )}
 
-        {/* ── Other Tension Stacks (Group 2) ── */}
-        {group2TensionKeys.map(key => renderTensionStack(key, tensionStacks[key]))}
-
-        {/* ── Relationship Capacity / Modifiers ── */}
-        {modifiers && (
-          <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="speed" size={20} className="text-accent" />Relationship Capacity</h3>
-            {modifiers.relationshipCapacity && (
-              <div className="mb-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="font-mono text-lg font-semibold">
-                    {typeof modifiers.relationshipCapacity === 'object' ? modifiers.relationshipCapacity.score ?? modifiers.relationshipCapacity.level ?? '-' : modifiers.relationshipCapacity}
-                  </span>
-                  {modifiers.relationshipCapacity.level && (
-                    <span className={`text-xs font-mono px-2 py-0.5 rounded ${
-                      modifiers.relationshipCapacity.level === 'high' ? 'bg-success/10 text-success' :
-                      modifiers.relationshipCapacity.level === 'medium' ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
-                    }`}>
-                      {modifiers.relationshipCapacity.level}
-                    </span>
-                  )}
-                </div>
-                {modifiers.relationshipCapacity.description && (
-                  <p className="text-sm text-secondary">{modifiers.relationshipCapacity.description}</p>
+        {/* ── Connection Style ── */}
+        {m3 && (
+          <section className="card mb-4 scroll-mt-32">
+            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="sync_alt" size={20} className="text-accent" />Connection Style</h3>
+            <div className="grid grid-cols-3 gap-6 text-center mb-4">
+              <div>
+                <span className="font-mono text-lg font-semibold">{m3.wantScore ?? '-'}</span>
+                <p className="text-xs text-secondary mt-1">Want Score</p>
+              </div>
+              <div>
+                <span className="font-mono text-lg font-semibold">{m3.offerScore ?? '-'}</span>
+                <p className="text-xs text-secondary mt-1">Offer Score</p>
+              </div>
+              <div>
+                <span className="font-mono text-lg font-semibold">{m3.typeName ?? '-'}</span>
+                <p className="text-xs text-secondary mt-1">Type</p>
+              </div>
+            </div>
+            {m3.wantOfferGap !== undefined && (
+              <p className="text-xs text-secondary text-center mb-4">
+                Gap: <span className={`font-mono ${Math.abs(m3.wantOfferGap) <= 5 ? 'text-success' : Math.abs(m3.wantOfferGap) <= 20 ? 'text-warning' : 'text-danger'}`}>
+                  {m3.wantOfferGap > 0 ? '+' : ''}{m3.wantOfferGap}
+                </span>
+              </p>
+            )}
+            {m3.typeDescription && (
+              <p className="explainer mb-4">{m3.typeDescription}</p>
+            )}
+            {m3.typeDetails && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
+                {m3.typeDetails.strengths?.length > 0 && (
+                  <div>
+                    <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
+                    <ul className="bullet-list mt-2">
+                      {m3.typeDetails.strengths.map((s: string, i: number) => (
+                        <li key={i}>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {m3.typeDetails.challenges?.length > 0 && (
+                  <div>
+                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
+                    <ul className="bullet-list mt-2">
+                      {m3.typeDetails.challenges.map((c: string, i: number) => (
+                        <li key={i}>{c}</li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
               </div>
             )}
-            {Array.isArray(modifiers.strengths) && modifiers.strengths.length > 0 && (
-              <div className="mb-3">
-                <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
-                <ul className="bullet-list mt-1.5">
-                  {modifiers.strengths.map((s: string, i: number) => (
-                    <li key={i}>{s}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {Array.isArray(modifiers.growthAreas) && modifiers.growthAreas.length > 0 && (
-              <div className="mb-3">
-                <span className="text-xs font-mono text-warning uppercase tracking-wider">Growth Areas</span>
-                <ul className="bullet-list mt-1.5">
-                  {modifiers.growthAreas.map((g: string, i: number) => (
-                    <li key={i}>{g}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {Array.isArray(modifiers.coachingRecommendations) && modifiers.coachingRecommendations.length > 0 && (
-              <div className="pt-3 border-t border-border">
-                <span className="text-xs font-mono text-success uppercase tracking-wider">Recommendations</span>
-                <ul className="bullet-list mt-1.5">
-                  {modifiers.coachingRecommendations.map((rec: any, i: number) => (
-                    <li key={i}>
-                      {typeof rec === 'string' ? rec : (
-                        <div>
-                          {rec.title && <span className="font-medium">{rec.title}: </span>}
-                          <span className="text-secondary">{rec.description || rec.recommendation || JSON.stringify(rec)}</span>
-                        </div>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {modifiers.modifierList && Array.isArray(modifiers.modifierList) && modifiers.modifierList.length > 0 && (
-              <div className="mt-3 pt-3 border-t border-border">
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Active Modifiers</span>
-                <div className="mt-2 space-y-2">
-                  {modifiers.modifierList.map((mod: any, i: number) => (
-                    <div key={i} className="flex items-start gap-2">
-                      <span className={`text-xs font-mono mt-0.5 ${mod.direction === 'positive' ? 'text-success' : mod.direction === 'negative' ? 'text-danger' : 'text-secondary'}`}>
-                        {mod.direction === 'positive' ? '+' : mod.direction === 'negative' ? '−' : '·'}
-                      </span>
-                      <div>
-                        <span className="text-sm font-medium">{mod.name || mod.label}</span>
-                        {mod.description && <p className="text-xs text-secondary">{mod.description}</p>}
-                      </div>
+          </section>
+        )}
+
+        {/* ── Erotic Dimension ── */}
+        {tensionStacks?.eroticDimension && renderTensionStack('eroticDimension', tensionStacks.eroticDimension)}
+
+        {/* ── Intimacy Under Stress ── */}
+        {ic?.m3States?.states?.normal && (
+          <section className="card mb-4">
+            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="local_fire_department" size={20} className="text-accent" />Intimacy Under Stress</h3>
+            <p className="explainer mb-4">How your Want and Offer shift across relationship states</p>
+
+            {/* Legend */}
+            <div className="flex items-center gap-6 mb-4 text-xs text-secondary">
+              <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-sm bg-blue-500 inline-block" /> Offer (what you give)</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-sm bg-rose-400 inline-block" /> Want (what you need)</span>
+            </div>
+
+            <div className="space-y-5">
+              {[
+                { key: 'normal', data: ic.m3States.states.normal, label: 'Normal' },
+                { key: 'conflict', data: ic.m3States.states.conflict, label: 'During Conflict' },
+                { key: 'repair', data: ic.m3States.states.repair, label: 'During Repair' },
+              ].filter(s => s.data).map(({ key, data, label }) => {
+                const offerPct = Math.min(50, (data.offer / 100) * 50);
+                const wantPct = Math.min(50, (data.want / 100) * 50);
+                return (
+                  <div key={key}>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-medium">{data.label || label}</span>
+                      <span className={`text-xs font-mono px-1.5 py-0.5 rounded ${
+                        Math.abs(data.gap) <= 5 ? 'bg-success/10 text-success' :
+                        Math.abs(data.gap) <= 15 ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
+                      }`}>gap {data.gap > 0 ? '+' : ''}{data.gap}</span>
                     </div>
-                  ))}
+                    <div className="relative h-5 bg-stone-100 rounded-full overflow-hidden">
+                      <div className="absolute left-0 top-0 h-full bg-blue-500/70 rounded-l-full transition-all duration-300"
+                        style={{ width: `${offerPct}%` }} />
+                      <div className="absolute right-0 top-0 h-full bg-rose-400/70 rounded-r-full transition-all duration-300"
+                        style={{ width: `${wantPct}%` }} />
+                      <div className="absolute left-1/2 top-0 w-px h-full bg-stone-300" />
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-blue-800">{data.offer}</span>
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-rose-800">{data.want}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <p className="text-xs text-secondary mt-4">
+              When Offer and Want overlap in the center, you are giving close to what you need.
+              When they pull apart, there is a gap between what you bring to the relationship and what you ask from it.
+            </p>
+
+            {ic.m3States.insights && (
+              <div className="mt-4 pt-4 border-t border-border space-y-4">
+                <div>
+                  <h4 className="font-serif text-sm font-semibold mb-1">Gap Expansion Under Stress</h4>
+                  <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+                    ic.m3States.insights.gapExpansionLevel === 'HIGH' ? 'bg-danger/10 text-danger' :
+                    ic.m3States.insights.gapExpansionLevel === 'MODERATE' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
+                  }`}>
+                    {ic.m3States.insights.gapExpansion > 0 ? '+' : ''}{ic.m3States.insights.gapExpansion} pts ({ic.m3States.insights.gapExpansionLevel})
+                  </span>
+                  <p className="text-xs text-secondary mt-2">
+                    {ic.m3States.insights.gapExpansionLevel === 'HIGH'
+                      ? 'Under stress, the gap between what you need and what you give widens significantly. Conflict amplifies your unmet needs faster than your capacity to offer, which can create a destabilizing spiral if unaddressed.'
+                      : ic.m3States.insights.gapExpansionLevel === 'MODERATE'
+                      ? 'Under stress, your want-offer gap grows moderately. You shift under pressure but maintain enough balance to course-correct before the gap becomes destabilizing.'
+                      : 'Under stress, your want-offer gap stays relatively stable. You maintain balance between what you need and what you give, even when things get difficult.'}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-serif text-sm font-semibold mb-1">Repair Effort</h4>
+                  <span className={`text-xs font-mono px-2 py-0.5 rounded ${ic.m3States.insights.repairSustainable ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'}`}>
+                    {ic.m3States.insights.repairSustainable ? 'Sustainable' : 'High strain'}
+                  </span>
+                  <p className="text-xs text-secondary mt-2">
+                    {ic.m3States.insights.repairSustainable
+                      ? 'Your repair pattern is sustainable. When you shift into recovery mode, the effort you put in to close the gap does not exceed what you can maintain over time. This means your repair attempts are genuine and repeatable, not performative bursts.'
+                      : 'Your repair pattern shows high strain. When you try to recover from conflict, you overextend what you can sustainably offer. This means your repair attempts may feel intense but are difficult to maintain, leading to cycles of over-giving followed by withdrawal.'}
+                  </p>
                 </div>
               </div>
             )}
           </section>
         )}
+
+        {/* ── Intimacy Conflict Bridge ── */}
+        {tensionStacks?.intimacyConflictBridge && renderTensionStack('intimacyConflictBridge', tensionStacks.intimacyConflictBridge)}
 
         {/* ── Couples Mode ── */}
         {hasResults && (

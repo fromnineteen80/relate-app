@@ -58,7 +58,8 @@ h1, h2, h3, h4, h5, h6 {
     @apply text-foreground after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-accent;
   }
   .subnav-page-tab-inactive {
-    @apply text-secondary hover:text-foreground hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent;
+    color: #78716c;
+    @apply hover:text-foreground hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent;
   }
 
   /* Card subheader (small uppercase label) */
