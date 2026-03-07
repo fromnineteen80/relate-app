@@ -7,7 +7,7 @@ export default function AdvisorHeader() {
   const { close } = useAdvisor();
 
   return (
-    <div className="border-b border-border bg-white px-4 pt-[10px] pb-[7px] flex-shrink-0">
+    <div className="border-b border-border bg-white px-4 pt-[10px] pb-[6px] flex-shrink-0">
       <div className="flex items-center justify-between">
         <h2 className="font-serif text-base font-semibold text-secondary">Your Advisor</h2>
         {/* Sidebar panel icon — close sidebar, matches hamburger icon style */}
