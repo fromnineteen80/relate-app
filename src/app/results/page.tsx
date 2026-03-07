@@ -1847,6 +1847,9 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
           <p className="text-xs text-secondary mt-1">Number of Singles from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats</p>
         </div>
       </div>
+      <p className="text-xs text-secondary mt-4 border-t border-border pt-3">
+        Demographic data sourced from public datasets provided by the U.S. Census Bureau, Centers for Disease Control and Prevention (CDC), and Pew Research Center. Segments of the population that are homeless or have committed felonies have been automatically excluded using local county and FBI data.
+      </p>
     </section>
   );
 }
