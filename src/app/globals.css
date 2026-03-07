@@ -46,20 +46,21 @@ h1, h2, h3, h4, h5, h6 {
     @apply relative text-xs font-semibold px-3 py-2.5 transition-colors whitespace-nowrap;
   }
   .subnav-tab-active {
-    @apply text-accent after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-accent;
+    @apply text-foreground after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-secondary;
   }
   .subnav-tab-inactive {
-    @apply text-foreground hover:text-accent hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent;
+    color: #78716c;
+    @apply hover:text-foreground hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-secondary;
   }
   .subnav-page-tab {
     @apply relative text-xs font-medium px-3 py-2.5 transition-colors whitespace-nowrap;
   }
   .subnav-page-tab-active {
-    @apply text-foreground after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-secondary;
+    @apply text-accent after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-accent;
   }
   .subnav-page-tab-inactive {
     color: #78716c;
-    @apply hover:text-foreground hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-secondary;
+    @apply hover:text-accent hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent;
   }
 
   /* Card subheader (small uppercase label) */
