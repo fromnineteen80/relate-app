@@ -12,6 +12,7 @@ import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 import { loadAndHydrateProgress } from '@/lib/supabase/progress';
 import { getProfile } from '@/lib/onboarding';
+import { getSupabase } from '@/lib/supabase/client';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -20,7 +21,7 @@ type FunnelStage = { stage: string; count: number; filter?: string; percentage?:
 type MarketData = {
   location?: { cbsaName?: string; cbsaLabel?: string; population?: number };
   relateScore?: { score: number; components?: Record<string, { national?: number; local?: number; score?: number; weight: number }>; marriagePremium?: number };
-  matchPool?: { localSinglePool: number; realisticPool: number; preferredPool: number; idealPool: number; funnel?: FunnelStage[]; contextPools?: any };
+  matchPool?: { localSinglePool: number; identityPool: number; realisticPool: number; preferredPool: number; idealPool: number; funnel?: FunnelStage[]; contextPools?: any };
   matchProbability?: { rate: number; percentage: string };
   matchCount?: number;
   stateComparison?: any;
@@ -233,9 +234,11 @@ function ResultsDashboard() {
           prefAgeMax: demo.pref_age_max || demo.prefAgeMax,
           prefIncomeMin: demo.pref_income_min ?? demo.prefIncome ?? 0,
           prefHeightMin: demo.pref_height_min || demo.prefHeight || null,
-          prefBodyTypes: demo.pref_body_types || demo.prefBodyTypes || ['No preference'],
-          prefFitnessLevels: demo.pref_fitness_levels || demo.prefFitnessLevels || ['No preference'],
-          prefPolitical: demo.pref_political || demo.prefPolitical || ['No preference'],
+          prefBodyTypes: (demo.pref_body_types || demo.prefBodyTypes)?.length ? (demo.pref_body_types || demo.prefBodyTypes) : ['No preference'],
+          prefFitnessLevels: (demo.pref_fitness_levels || demo.prefFitnessLevels)?.length ? (demo.pref_fitness_levels || demo.prefFitnessLevels) : ['No preference'],
+          prefPolitical: (demo.pref_political || demo.prefPolitical)?.length ? (demo.pref_political || demo.prefPolitical) : ['No preference'],
+          prefEthnicities: (demo.pref_ethnicities || demo.prefEthnicities)?.length ? (demo.pref_ethnicities || demo.prefEthnicities) : ['No preference'],
+          prefEducation: (demo.pref_education_levels || demo.prefEducation)?.length ? (demo.pref_education_levels || demo.prefEducation) : ['No preference'],
           prefHasKids: demo.pref_has_kids || demo.prefHasKids || 'No preference',
           prefWantKids: demo.pref_want_kids || demo.prefWantKids || 'No preference',
           prefSmoking: demo.pref_smoking || demo.prefSmoking || 'No preference',
@@ -253,6 +256,78 @@ function ResultsDashboard() {
       .catch(() => { })
       .finally(() => setMarketLoading(false));
   }, [user, marketData]);
+
+  // Recalculate market data after adjusting a preference
+  const recalculateMarket = useCallback(async (prefKey: string, value: any) => {
+    if (!user) return;
+    const demoStr = localStorage.getItem('relate_demographics');
+    const gender = localStorage.getItem('relate_gender');
+    if (!demoStr) return;
+    let demo: Record<string, any>;
+    try { demo = JSON.parse(demoStr); } catch { return; }
+
+    // Normalize key to the DB format used in localStorage
+    const dbKeyMap: Record<string, string> = {
+      prefHeightMin: 'pref_height_min', prefBodyTypes: 'pref_body_types', prefFitnessLevels: 'pref_fitness_levels',
+      prefPolitical: 'pref_political', prefHasKids: 'pref_has_kids', prefWantKids: 'pref_want_kids',
+      prefSmoking: 'pref_smoking', prefEthnicities: 'pref_ethnicities', prefEducation: 'pref_education_levels',
+      prefIncomeMin: 'pref_income_min',
+    };
+    const dbKey = dbKeyMap[prefKey] || prefKey;
+    demo[dbKey] = value;
+    localStorage.setItem('relate_demographics', JSON.stringify(demo));
+    localStorage.removeItem('relate_market_data');
+
+    // Update Supabase
+    try {
+      const supabase = getSupabase();
+      if (supabase) {
+        await supabase.from('users').update({ [dbKey]: value }).eq('id', user.id);
+      }
+    } catch { /* non-blocking */ }
+
+    // Re-fetch market data
+    setMarketLoading(true);
+    try {
+      const res = await fetch('/api/demographics-market', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          demographics: {
+            gender, age: demo.age, zipCode: demo.zipCode || demo.zip_code,
+            ethnicity: demo.ethnicity, orientation: demo.orientation, income: demo.income,
+            education: demo.education, height: demo.height,
+            bodyType: demo.bodyType || demo.body_type, fitness: demo.fitness || demo.fitness_level,
+            political: demo.political, smoking: demo.smoking,
+            hasKids: demo.hasKids ?? demo.has_kids, wantKids: demo.wantKids || demo.want_kids,
+            relationshipStatus: demo.relationshipStatus || demo.relationship_status,
+          },
+          preferences: {
+            prefAgeMin: demo.pref_age_min || demo.prefAgeMin,
+            prefAgeMax: demo.pref_age_max || demo.prefAgeMax,
+            prefIncomeMin: demo.pref_income_min ?? demo.prefIncome ?? 0,
+            prefHeightMin: demo.pref_height_min || demo.prefHeight || null,
+            prefBodyTypes: demo.pref_body_types || demo.prefBodyTypes || ['No preference'],
+            prefFitnessLevels: demo.pref_fitness_levels || demo.prefFitnessLevels || ['No preference'],
+            prefPolitical: demo.pref_political || demo.prefPolitical || ['No preference'],
+            prefEthnicities: demo.pref_ethnicities || demo.prefEthnicities || ['No preference'],
+            prefEducation: demo.pref_education_levels || demo.prefEducation || ['No preference'],
+            prefHasKids: demo.pref_has_kids || demo.prefHasKids || 'No preference',
+            prefWantKids: demo.pref_want_kids || demo.prefWantKids || 'No preference',
+            prefSmoking: demo.pref_smoking || demo.prefSmoking || 'No preference',
+          },
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount, stateComparison: data.stateComparison, nationalComparison: data.nationalComparison };
+        setMarketData(md);
+        localStorage.setItem('relate_market_data', JSON.stringify(md));
+      }
+    } catch { /* */ }
+    setMarketLoading(false);
+  }, [user]);
 
   const handleDownloadPDF = useCallback(async () => {
     if (!report) return;
@@ -748,8 +823,8 @@ function ResultsDashboard() {
                       })()}
                     </div>
                   </div>
-                  {match.traits && <p className="text-xs text-secondary mb-1">{match.traits}</p>}
-                  {match.summary && <p className="text-sm text-secondary">{match.summary}</p>}
+                  {match.traits && <p className="text-xs text-secondary mb-1">{match.traits.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
+                  {match.summary && <p className="text-sm text-secondary">{match.summary.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
                 </div>
               ))}
             </div>
@@ -801,10 +876,10 @@ function ResultsDashboard() {
                   const moderate = strength >= 40 && strength < 70;
                   const pn = persona?.name || 'your persona';
                   switch (dim) {
-                    case 'physical': return strong ? `Strong ${pole} signal — this is core to what makes you ${pn}.` : moderate ? `Moderate ${pole} tendency — you show elements of both sides, but your ${pn} identity leans this way.` : `Mild preference — physical presentation isn't a strong differentiator within your ${pn} profile.`;
-                    case 'social': return strong ? `Clear ${pole} orientation — this is how people experience you as ${pn}.` : moderate ? `Balanced social style with a slight lean toward ${pole}, consistent with ${pn}.` : `Flexible social approach — you adapt across settings, which adds range to your ${pn} profile.`;
-                    case 'lifestyle': return strong ? `Strong ${pole} drive — this defines your day-to-day energy as ${pn}.` : moderate ? `You lean toward ${pole} but can flex when needed — a hallmark of the ${pn} profile.` : `No strong lifestyle preference — your ${pn} identity is shaped more by other dimensions.`;
-                    case 'values': return strong ? `Firmly ${pole} in your partnership values — this anchors how ${pn} approaches relationships.` : moderate ? `Leaning ${pole}, with some flexibility — your ${pn} profile allows room to negotiate roles.` : `Balanced values orientation — as ${pn}, you're adaptable in how you structure partnerships.`;
+                    case 'physical': return strong ? `Strong ${pole} signal. This is core to what makes you ${pn}.` : moderate ? `Moderate ${pole} tendency. You show elements of both sides, but your ${pn} identity leans this way.` : `Mild preference. Physical presentation isn't a strong differentiator within your ${pn} profile.`;
+                    case 'social': return strong ? `Clear ${pole} orientation. This is how people experience you as ${pn}.` : moderate ? `Balanced social style with a slight lean toward ${pole}, consistent with ${pn}.` : `Flexible social approach. You adapt across settings, which adds range to your ${pn} profile.`;
+                    case 'lifestyle': return strong ? `Strong ${pole} drive. This defines your day-to-day energy as ${pn}.` : moderate ? `You lean toward ${pole} but can flex when needed, a hallmark of the ${pn} profile.` : `No strong lifestyle preference. Your ${pn} identity is shaped more by other dimensions.`;
+                    case 'values': return strong ? `Firmly ${pole} in your partnership values. This anchors how ${pn} approaches relationships.` : moderate ? `Leaning ${pole}, with some flexibility. Your ${pn} profile allows room to negotiate roles.` : `Balanced values orientation. As ${pn}, you're adaptable in how you structure partnerships.`;
                     default: return `Your ${dim} dimension leans toward ${pole}, contributing to your ${pn} profile.`;
                   }
                 })();
@@ -1356,7 +1431,7 @@ function ResultsDashboard() {
         {/* ── Dating Market ── */}
         {hasMarket && (
           <div className="scroll-mt-32">
-            <DatingMarketViz data={marketData} loading={marketLoading} />
+            <DatingMarketViz data={marketData} loading={marketLoading} onRelaxPreference={recalculateMarket} demographics={demographics} />
           </div>
         )}
 
@@ -1369,6 +1444,13 @@ function ResultsDashboard() {
             m4={fullM4}
             persona={persona || null}
           />
+        )}
+
+        {/* ── Market Data Sources Caveat ── */}
+        {hasMarket && !marketLoading && marketData && (
+          <p className="text-xs text-secondary text-center max-w-2xl mx-auto mb-6">
+            Demographic data sourced from public datasets provided by the U.S. Census Bureau, Centers for Disease Control and Prevention (CDC), and Pew Research Center. Segments of the population that are homeless or have committed felonies have been automatically excluded using local county and FBI data.
+          </p>
         )}
       </main>
 
@@ -1490,12 +1572,25 @@ function ResultsDashboard() {
 }
 
 // ── Dating Market Visualization ──
-function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: boolean }) {
+const HEIGHTS = [
+  '4\'10"','4\'11"','5\'0"','5\'1"','5\'2"','5\'3"','5\'4"','5\'5"','5\'6"','5\'7"',
+  '5\'8"','5\'9"','5\'10"','5\'11"','6\'0"','6\'1"','6\'2"','6\'3"','6\'4"','6\'5"','6\'6"','6\'7"','6\'8"',
+];
+
+function formatCurrencyShort(val: number) {
+  if (val >= 1000000) return '$1M+';
+  if (val === 0) return '$0';
+  return '$' + val.toLocaleString();
+}
+
+function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { data: MarketData | null; loading: boolean; onRelaxPreference?: (prefKey: string, value: any) => void; demographics?: any }) {
+  const [relaxing, setRelaxing] = useState<string | null>(null);
+
   if (loading) {
     return (
       <section className="card mb-4">
         <h3 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h3>
-        <p className="text-sm text-secondary mb-4">Analyzing your local market...</p>
+        <p className="text-sm text-secondary mb-4">{relaxing ? 'Recalculating your market...' : 'Analyzing your local market...'}</p>
         <div className="flex items-center justify-center py-8">
           <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
         </div>
@@ -1529,13 +1624,137 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
   const milestones = [
     { label: 'Metro Population', value: metroPop, desc: 'Total population in your metro area' },
     { label: 'Metro Singles Pool', value: pool?.localSinglePool || 0, desc: 'Unmarried adults of your preferred gender and orientation' },
+    { label: 'Identity Pool', value: pool?.identityPool || 0, desc: 'Singles matching your preferred ethnicity' },
     { label: 'Your Realistic Match Pool', value: pool?.realisticPool || 0, desc: 'Singles within your age range and income requirements' },
     { label: 'Your Preferred Pool', value: pool?.preferredPool || 0, desc: 'Singles who additionally meet your lifestyle preferences' },
     { label: 'Your Ideal Match Pool', value: pool?.idealPool || 0, desc: 'Singles who meet every preference you set' },
   ];
 
+  // Identify relaxable filters when ideal pool is zero
+  const idealPool = pool?.idealPool || 0;
+  const funnel = pool?.funnel || [];
+  type FilterType = 'toggle' | 'height' | 'income';
+  const funnelPrefKeyMap: Record<string, { key: string; label: string; type: FilterType }> = {
+    'Political': { key: 'prefPolitical', label: 'Political Views', type: 'toggle' },
+    'Has kids': { key: 'prefHasKids', label: 'Partner Has Kids', type: 'toggle' },
+    'Wants kids': { key: 'prefWantKids', label: 'Partner Wants Kids', type: 'toggle' },
+    'Smoking': { key: 'prefSmoking', label: 'Smoking', type: 'toggle' },
+    'Height': { key: 'prefHeightMin', label: 'Minimum Height', type: 'height' },
+    'Body type': { key: 'prefBodyTypes', label: 'Body Type', type: 'toggle' },
+    'Fitness': { key: 'prefFitnessLevels', label: 'Fitness Level', type: 'toggle' },
+    'Income': { key: 'prefIncomeMin', label: 'Minimum Income', type: 'income' },
+  };
+
+  // Build list of filters that reduced the pool, sorted by biggest impact
+  const relaxableFilters: { key: string; label: string; stage: string; lostPct: number; type: FilterType; currentValue?: string }[] = [];
+  if (idealPool === 0) {
+    for (const entry of funnel) {
+      if (entry.isMilestone || !entry.filter) continue;
+      const filterPct = parseFloat(entry.filter);
+      if (isNaN(filterPct) || filterPct >= 100) continue;
+      const lostPct = 100 - filterPct;
+      for (const [prefix, info] of Object.entries(funnelPrefKeyMap)) {
+        if (entry.stage.startsWith(prefix)) {
+          // Extract current value from stage (e.g. "Height ≥ 5'10\"" → "5'10\"")
+          const currentValue = entry.stage.includes('≥') ? entry.stage.split('≥')[1]?.trim() : entry.stage.split(':')[1]?.trim();
+          relaxableFilters.push({ key: info.key, label: info.label, stage: entry.stage, lostPct, type: info.type, currentValue });
+          break;
+        }
+      }
+    }
+    relaxableFilters.sort((a, b) => b.lostPct - a.lostPct);
+  }
+
+  // Read current preference values from localStorage for slider/dropdown controls
+  let currentIncomeMin = 0;
+  let currentHeightMin = '';
+  try {
+    const demoStr = localStorage.getItem('relate_demographics');
+    if (demoStr) {
+      const d = JSON.parse(demoStr);
+      currentIncomeMin = d.pref_income_min ?? d.prefIncome ?? 0;
+      currentHeightMin = d.pref_height_min || d.prefHeight || '';
+    }
+  } catch { /* */ }
+
+  const handleRelax = async (prefKey: string, value: any) => {
+    if (!onRelaxPreference) return;
+    setRelaxing(prefKey);
+    await onRelaxPreference(prefKey, value);
+    setRelaxing(null);
+  };
+
   return (
     <section className="card mb-4">
+      {idealPool === 0 && relaxableFilters.length > 0 && (
+        <div className="mb-6 border-2 border-dashed border-red-400/50 bg-red-50 rounded-lg p-4">
+          <span className="font-mono text-xs text-red-600 tracking-wider uppercase">Zero Matches</span>
+          <p className="text-sm font-medium mt-1">Your preferences have filtered your match pool to zero.</p>
+          <p className="text-sm text-secondary mt-1 mb-3">
+            Adjust your preferences below to find matches. Each change updates your profile automatically.
+          </p>
+          <div className="space-y-3">
+            {relaxableFilters.map(f => (
+              <div key={f.key} className="bg-white border border-red-200 rounded-md px-3 py-2.5">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium">{f.label}</span>
+                  <span className="text-xs text-red-500 font-mono">-{Math.round(f.lostPct)}% of pool</span>
+                </div>
+                {f.type === 'income' && (
+                  <div className="mt-2">
+                    <input
+                      type="range" min={0} max={1000000} step={10000}
+                      defaultValue={currentIncomeMin}
+                      disabled={!!relaxing}
+                      className="w-full accent-red-500"
+                      onChange={e => {
+                        const el = e.target;
+                        const label = el.nextElementSibling;
+                        if (label) label.textContent = formatCurrencyShort(parseInt(el.value));
+                      }}
+                      onMouseUp={e => handleRelax('prefIncomeMin', parseInt((e.target as HTMLInputElement).value))}
+                      onTouchEnd={e => handleRelax('prefIncomeMin', parseInt((e.target as HTMLInputElement).value))}
+                    />
+                    <div className="flex justify-between text-xs text-secondary mt-0.5">
+                      <span>$0</span>
+                      <span>{formatCurrencyShort(currentIncomeMin)}</span>
+                      <span>$1M+</span>
+                    </div>
+                  </div>
+                )}
+                {f.type === 'height' && (
+                  <div className="mt-2">
+                    <select
+                      defaultValue={currentHeightMin}
+                      disabled={!!relaxing}
+                      className="input text-sm"
+                      onChange={e => {
+                        const val = e.target.value;
+                        handleRelax('prefHeightMin', val || null);
+                      }}
+                    >
+                      <option value="">No preference</option>
+                      {HEIGHTS.map(h => <option key={h} value={h}>{h}</option>)}
+                    </select>
+                  </div>
+                )}
+                {f.type === 'toggle' && (
+                  <button
+                    onClick={() => {
+                      const isArray = ['prefBodyTypes', 'prefFitnessLevels', 'prefPolitical', 'prefEthnicities', 'prefEducation'].includes(f.key);
+                      handleRelax(f.key, isArray ? ['No preference'] : 'No preference');
+                    }}
+                    disabled={!!relaxing}
+                    className="mt-1 text-xs px-3 py-1 rounded-md bg-red-600 hover:bg-red-700 text-white font-medium transition-colors disabled:opacity-50"
+                  >
+                    {relaxing === f.key ? 'Updating...' : 'Set to No Preference'}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <h3 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h3>
       <p className="text-sm text-secondary mb-4">{metro}</p>
 

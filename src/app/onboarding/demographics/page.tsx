@@ -53,6 +53,8 @@ type FormData = {
   prefBodyTypes: string[];
   prefFitnessLevels: string[];
   prefPolitical: string[];
+  prefEthnicities: string[];
+  prefEducation: string[];
   prefHasKids: string;
   prefWantKids: string;
   prefSmoking: string;
@@ -86,6 +88,7 @@ export default function DemographicsPage() {
     political: '', smoking: '', hasKids: '', wantKids: '', relationshipStatus: '',
     prefAgeMin: '', prefAgeMax: '', prefIncome: 0, prefHeight: '',
     prefBodyTypes: [], prefFitnessLevels: [], prefPolitical: [],
+    prefEthnicities: [], prefEducation: [],
     prefHasKids: '', prefWantKids: '', prefSmoking: '', seeking: '',
   });
 
@@ -135,6 +138,8 @@ export default function DemographicsPage() {
             prefBodyTypes: d.pref_body_types || [],
             prefFitnessLevels: d.pref_fitness_levels || [],
             prefPolitical: d.pref_political || [],
+            prefEthnicities: d.pref_ethnicities || [],
+            prefEducation: d.pref_education_levels || [],
             prefHasKids: d.pref_has_kids || '',
             prefWantKids: d.pref_want_kids || '',
             prefSmoking: d.pref_smoking || '',
@@ -186,7 +191,7 @@ export default function DemographicsPage() {
     });
   }
 
-  function toggleMultiSelect(field: 'prefBodyTypes' | 'prefFitnessLevels' | 'prefPolitical', value: string) {
+  function toggleMultiSelect(field: 'prefBodyTypes' | 'prefFitnessLevels' | 'prefPolitical' | 'prefEthnicities' | 'prefEducation', value: string) {
     setForm(prev => {
       const current = prev[field];
       let updated: FormData;
@@ -226,6 +231,7 @@ export default function DemographicsPage() {
       case 2: {
         const base = form.prefAgeMin && form.prefAgeMax && form.prefBodyTypes.length > 0 &&
           form.prefFitnessLevels.length > 0 && form.prefPolitical.length > 0 &&
+          form.prefEthnicities.length > 0 && form.prefEducation.length > 0 &&
           form.prefHasKids && form.prefWantKids && form.prefSmoking;
         if (form.gender === 'Woman') return base && form.prefHeight;
         return base;
@@ -274,9 +280,9 @@ export default function DemographicsPage() {
       pref_smoking: form.prefSmoking,
       pref_has_kids: form.prefHasKids,
       pref_want_kids: form.prefWantKids,
-      pref_ethnicities: [],
+      pref_ethnicities: form.prefEthnicities,
       pref_political: form.prefPolitical,
-      pref_education_min: null,
+      pref_education_levels: form.prefEducation,
       seeking: form.seeking,
       birth_month: form.birthMonth ? parseInt(form.birthMonth) : null,
       birth_day: form.birthDay ? parseInt(form.birthDay) : null,
@@ -561,6 +567,32 @@ export default function DemographicsPage() {
                     form.prefPolitical.includes(pv) ? 'bg-accent text-white border-accent' : 'border-border hover:border-accent'
                   }`}>
                   {pv}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="label">Acceptable Ethnicities *</label>
+            <div className="flex flex-wrap gap-2 mt-1">
+              {['No preference', ...ETHNICITIES].map(eth => (
+                <button key={eth} type="button" onClick={() => toggleMultiSelect('prefEthnicities', eth)}
+                  className={`text-xs px-3 py-1.5 rounded-md border transition-colors ${
+                    form.prefEthnicities.includes(eth) ? 'bg-accent text-white border-accent' : 'border-border hover:border-accent'
+                  }`}>
+                  {eth}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="label">Acceptable Education Levels *</label>
+            <div className="flex flex-wrap gap-2 mt-1">
+              {['No preference', ...EDUCATION_LEVELS].map(ed => (
+                <button key={ed} type="button" onClick={() => toggleMultiSelect('prefEducation', ed)}
+                  className={`text-xs px-3 py-1.5 rounded-md border transition-colors ${
+                    form.prefEducation.includes(ed) ? 'bg-accent text-white border-accent' : 'border-border hover:border-accent'
+                  }`}>
+                  {ed}
                 </button>
               ))}
             </div>

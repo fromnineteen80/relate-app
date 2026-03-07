@@ -357,6 +357,22 @@ const DEMOGRAPHIC_QUESTIONS = {
       required: true,
       section: 'partnerPrefs'
     },
+    ethnicities: {
+      id: 'D_PREF_ETHNICITIES',
+      question: 'What ethnicities would you consider?',
+      type: 'multiSelect',
+      options: ['No preference', 'White', 'Hispanic/Latino', 'Black', 'Asian', 'Native American', 'Pacific Islander', 'Other/Mixed'],
+      required: true,
+      section: 'partnerPrefs'
+    },
+    educationLevels: {
+      id: 'D_PREF_EDUCATION',
+      question: 'What education levels would you consider?',
+      type: 'multiSelect',
+      options: ['No preference', 'Less than High School', 'High School Graduate', 'Trade/Vocational', 'Associate Degree', 'Some College', 'Bachelor\'s Degree', 'Graduate Degree'],
+      required: true,
+      section: 'partnerPrefs'
+    },
     partnerHasKids: {
       id: 'D_PREF_HAS_KIDS',
       question: 'Would you date someone who has kids?',
@@ -1089,6 +1105,30 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
     isMilestone: true
   });
   
+  // ========== IDENTITY POOL: ETHNICITY FILTER ==========
+
+  // Ethnicity preference filter
+  if (preferences.ethnicities && !preferences.ethnicities.includes('No preference')) {
+    let ethnicityPrefPct = 0;
+    for (const eth of preferences.ethnicities) {
+      const key = DEMOGRAPHIC_QUESTIONS.identity.ethnicity.cbsaKeyMap[eth];
+      ethnicityPrefPct += (cbsa[key] || 0) / 100;
+    }
+    pool = pool * ethnicityPrefPct;
+    funnel.push({
+      stage: `Ethnicity: ${preferences.ethnicities.join(', ')}`,
+      count: Math.round(pool),
+      filter: `${(ethnicityPrefPct * 100).toFixed(1)}%`
+    });
+  }
+
+  const identityPool = pool;
+  funnel.push({
+    stage: 'IDENTITY POOL',
+    count: Math.round(pool),
+    isMilestone: true
+  });
+
   // ========== TIER 1: REALISTIC POOL ==========
   
   // Age range filter
@@ -1176,7 +1216,22 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
       filter: `${(smokingPct * 100).toFixed(1)}%`
     });
   }
-  
+
+  // Education level filter
+  if (preferences.educationLevels && !preferences.educationLevels.includes('No preference')) {
+    let educationPct = 0;
+    for (const level of preferences.educationLevels) {
+      const key = DEMOGRAPHIC_QUESTIONS.aboutYou.education.cbsaKeyMap[level];
+      educationPct += (cbsa[key] || 0) / 100;
+    }
+    pool = pool * educationPct;
+    funnel.push({
+      stage: `Education: ${preferences.educationLevels.join(', ')}`,
+      count: Math.round(pool),
+      filter: `${(educationPct * 100).toFixed(1)}%`
+    });
+  }
+
   const preferredPool = pool;
   funnel.push({ 
     stage: 'MATCH YOUR LIFESTYLE', 
@@ -1252,6 +1307,7 @@ function calculateMatchPool(userProfile, preferences, cbsa) {
 
   return {
     localSinglePool: Math.round(localSinglePool),
+    identityPool: Math.round(identityPool),
     realisticPool: Math.round(realisticPool),
     preferredPool: Math.round(preferredPool),
     idealPool: Math.round(idealPool),
@@ -1310,6 +1366,8 @@ async function processDemographics(userInputs) {
     bodyTypes: userInputs.bodyTypes,
     fitnessLevels: userInputs.fitnessLevels,
     politicalViews: userInputs.politicalViews,
+    ethnicities: userInputs.ethnicities,
+    educationLevels: userInputs.educationLevels,
     partnerHasKids: userInputs.partnerHasKids,
     partnerWantKids: userInputs.partnerWantKids,
     partnerSmoking: userInputs.partnerSmoking
@@ -1391,6 +1449,7 @@ async function processDemographics(userInputs) {
     },
     matchPool: {
       localSinglePool: matchPool.localSinglePool,
+      identityPool: matchPool.identityPool,
       realisticPool: matchPool.realisticPool,
       preferredPool: matchPool.preferredPool,
       idealPool: matchPool.idealPool,
