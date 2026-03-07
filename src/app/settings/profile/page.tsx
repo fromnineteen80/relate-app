@@ -240,6 +240,39 @@ export default function ProfileSettings() {
           </div>
         )}
 
+        {/* Astrology — women only */}
+        {(() => {
+          const isWoman = demographics?.gender === 'W' || demographics?.gender === 'Woman';
+          if (!isWoman) return null;
+          const hasBirthData = !!(demographics?.birth_month != null && demographics?.birth_day && demographics?.birth_year);
+          const hasTime = !!(demographics?.birth_hour != null && demographics?.birth_minute != null && demographics?.birth_ampm);
+          return (
+            <div className="card mb-4">
+              <div className="flex items-center justify-between gap-6 flex-wrap mb-2">
+                <p className="text-sm font-medium">Sun, Moon &amp; Rise</p>
+                <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">
+                  {hasBirthData ? 'Edit' : 'Add birth data'}
+                </Link>
+              </div>
+              {hasBirthData ? (
+                <>
+                  <InfoRow label="Birthday" value={`${demographics.birth_month}/${demographics.birth_day}/${demographics.birth_year}`} />
+                  {hasTime && <InfoRow label="Birth Time" value={`${demographics.birth_hour}:${String(demographics.birth_minute).padStart(2, '0')} ${demographics.birth_ampm}`} />}
+                  <div className="mt-2">
+                    <Link href="/results/astrology" className="text-xs text-accent hover:underline">
+                      View your astrology profile
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                <p className="text-xs text-secondary">
+                  Add your birthday and birth time to unlock your Sun, Moon &amp; Rising astrology profile.
+                </p>
+              )}
+            </div>
+          );
+        })()}
+
         <div className="pt-4 border-t border-border flex justify-end">
           <button onClick={handleSignOut} className="btn-secondary text-xs">
             Sign out

@@ -143,10 +143,27 @@ function rankCompatiblePersonas(userResults: any) {
       tierScore * 0.35 + preferenceScore * 0.20 + dimensionScore * 0.15 + m3Score * 0.15 + m4Score * 0.15
     );
 
-    return { code, persona, tier, tierScore, preferenceScore, dimensionScore, m3Score, m4Score, compatibilityScore, rank: 0 };
+    return {
+      code, persona, tier, tierScore, preferenceScore, dimensionScore, m3Score, m4Score, compatibilityScore, rank: 0,
+      subScores: {
+        tier: tierScore,
+        preference: preferenceScore,
+        dimension: dimensionScore,
+        intimacy: m3Score,
+        conflict: m4Score,
+      },
+    };
   });
 
-  matches.sort((a, b) => b.compatibilityScore - a.compatibilityScore);
+  // Sort by compatibility score, break ties by tier rank then preference then dimension
+  const TIER_RANK: Record<string, number> = { ideal: 6, kismet: 5, effort: 4, longShot: 3, atRisk: 2, incompatible: 1 };
+  matches.sort((a, b) => {
+    if (b.compatibilityScore !== a.compatibilityScore) return b.compatibilityScore - a.compatibilityScore;
+    const tierDiff = (TIER_RANK[b.tier] || 0) - (TIER_RANK[a.tier] || 0);
+    if (tierDiff !== 0) return tierDiff;
+    if (b.preferenceScore !== a.preferenceScore) return b.preferenceScore - a.preferenceScore;
+    return b.dimensionScore - a.dimensionScore;
+  });
   matches.forEach((m, i) => { m.rank = i + 1; });
   return matches;
 }

@@ -444,3 +444,144 @@ export function generatePatternInsights(userData: any): string[] {
 
   return insights;
 }
+
+// ── Growth Projection ──
+// Shows users which dimensions are near the threshold and how exercises could shift their persona
+
+export interface GrowthProjection {
+  originalCode: string;
+  originalName: string;
+  borderlineDimensions: BorderlineDimension[];
+  projectedCode: string | null;    // null if no dimensions are borderline
+  projectedName: string | null;
+  matchImpactNote: string | null;  // narrative about what changes
+}
+
+interface BorderlineDimension {
+  dimension: string;
+  currentPole: string;
+  oppositePole: string;
+  strength: number;                // how close to 50 (the flip point)
+  targetExercises: string[];       // exercise IDs that address this
+  growthNote: string;              // what flipping would mean
+}
+
+// Map targetArea to the dimension(s) it can influence
+const TARGET_TO_DIMENSION: Record<string, string[]> = {
+  selfAwareness: ['social', 'values'],
+  emotionalCapacity: ['social'],
+  emotionalDrivers: ['social', 'lifestyle'],
+  attachment: ['social', 'values'],
+  connection: ['social'],
+  gottman: ['values'],
+  wantOffer: ['lifestyle', 'values'],
+  repair: ['social'],
+  relateScore: ['physical'],
+};
+
+const DIMENSION_ORDER = ['physical', 'social', 'lifestyle', 'values'];
+const CODE_LETTERS: Record<string, Record<string, string>> = {
+  physical: { A: 'A', B: 'B' },
+  social:   { A: 'C', B: 'D' },
+  lifestyle:{ A: 'E', B: 'F' },
+  values:   { A: 'G', B: 'H' },
+};
+
+export function projectGrowthImpact(userData: any): GrowthProjection | null {
+  const dimensions = userData?.dimensions;
+  const persona = userData?.persona;
+  const gender = userData?.gender;
+  if (!dimensions || !persona?.code || !persona?.name) return null;
+
+  const MEN_POLES: Record<string, Record<string, string>> = {
+    physical: { A: 'Fitness', B: 'Maturity' },
+    social:   { A: 'Leadership', B: 'Presence' },
+    lifestyle:{ A: 'Adventure', B: 'Stability' },
+    values:   { A: 'Traditional', B: 'Egalitarian' },
+  };
+  const WOMEN_POLES: Record<string, Record<string, string>> = {
+    physical: { A: 'Beauty', B: 'Confidence' },
+    social:   { A: 'Allure', B: 'Charm' },
+    lifestyle:{ A: 'Thrill', B: 'Peace' },
+    values:   { A: 'Traditional', B: 'Egalitarian' },
+  };
+  const poles = gender === 'M' ? MEN_POLES : WOMEN_POLES;
+
+  const borderline: BorderlineDimension[] = [];
+
+  for (const dim of DIMENSION_ORDER) {
+    const data = dimensions[dim];
+    if (!data) continue;
+    const strength = data.strength || 50;
+    // Borderline = strength under 62 (close to flipping)
+    if (strength < 62) {
+      const currentPoleKey = data.assignedPole || 'A';
+      const oppositePoleKey = currentPoleKey === 'A' ? 'B' : 'A';
+      const currentPole = data.poleName || poles[dim]?.[currentPoleKey] || currentPoleKey;
+      const oppositePole = poles[dim]?.[oppositePoleKey] || oppositePoleKey;
+
+      // Find exercises that target this dimension
+      const relevantExercises = GROWTH_EXERCISES.filter(ex => {
+        const dims = TARGET_TO_DIMENSION[ex.targetArea || ''] || [];
+        return dims.includes(dim);
+      }).map(ex => ex.id);
+
+      const growthNote = `Your ${dim} dimension is balanced (${strength}% toward ${currentPole}). Growth work could shift you toward ${oppositePole}, which would change how you're matched.`;
+
+      borderline.push({
+        dimension: dim,
+        currentPole,
+        oppositePole,
+        strength,
+        targetExercises: relevantExercises,
+        growthNote,
+      });
+    }
+  }
+
+  // Project what the new code would be if all borderline dimensions flipped
+  let projectedCode: string | null = null;
+  let projectedName: string | null = null;
+
+  if (borderline.length > 0) {
+    const codeChars = persona.code.split('');
+    for (const b of borderline) {
+      const dimIdx = DIMENSION_ORDER.indexOf(b.dimension);
+      if (dimIdx === -1) continue;
+      const currentKey = dimensions[b.dimension]?.assignedPole || 'A';
+      const flippedKey = currentKey === 'A' ? 'B' : 'A';
+      codeChars[dimIdx] = CODE_LETTERS[b.dimension][flippedKey];
+    }
+    projectedCode = codeChars.join('');
+    // Look up persona name for the projected code
+    if (projectedCode && projectedCode !== persona.code) {
+      try {
+        const storedResults = typeof window !== 'undefined' ? localStorage.getItem('relate_results') : null;
+        if (storedResults) {
+          const results = JSON.parse(storedResults);
+          const personaNames: Record<string, string> = results.personaNames || {};
+          projectedName = personaNames[projectedCode] || null;
+        }
+      } catch {
+        // ignore
+      }
+    } else {
+      projectedCode = null; // no change
+    }
+  }
+
+  const matchImpactNote = borderline.length > 0
+    ? borderline.length === 1
+      ? `Your ${borderline[0].dimension} dimension is close to the threshold. Focused growth in this area could shift your persona profile and reorder which matches are most compatible with you.`
+      : `You have ${borderline.length} dimensions near their threshold (${borderline.map(b => b.dimension).join(', ')}). Targeted growth work could shift your persona and open up new top matches.`
+    : null;
+
+  return {
+    originalCode: persona.code,
+    originalName: persona.name,
+    borderlineDimensions: borderline,
+    projectedCode,
+    projectedName,
+    matchImpactNote,
+  };
+}
