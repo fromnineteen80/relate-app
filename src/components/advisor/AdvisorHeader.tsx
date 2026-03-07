@@ -22,18 +22,8 @@ export default function AdvisorHeader() {
           title="Close sidebar"
           className="group relative text-secondary hover:text-foreground transition-colors p-1"
         >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <line x1="9" y1="3" x2="9" y2="21" />
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M2 4v16h20V4H2zm2 14V6h5v12H4zm7 0V6h9v12h-9z"/>
           </svg>
           {/* Tooltip */}
           <span className="absolute right-0 top-full mt-1 px-2 py-1 text-xs text-secondary bg-white border border-border rounded shadow-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">

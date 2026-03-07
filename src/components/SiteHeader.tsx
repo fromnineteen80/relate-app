@@ -79,27 +79,17 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-sm" style={{ overflow: 'visible' }}>
-      <div className="px-6 py-4 flex items-center justify-between">
+      <div className="px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          {/* Sidebar toggle icon — left of site title */}
+          {/* Sidebar toggle icon — only visible on mobile; on desktop the toggle lives in the sidebar */}
           {!isAuth && (
             <button
               onClick={toggleAdvisor}
               aria-label={advisorOpen ? 'Close sidebar' : 'Open sidebar'}
-              className="group relative w-7 h-7 flex items-center justify-center text-secondary hover:text-foreground transition-colors"
+              className="group relative md:hidden w-6 h-6 flex items-center justify-center text-secondary hover:text-foreground transition-colors"
             >
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <line x1="9" y1="3" x2="9" y2="21" />
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M2 4v16h20V4H2zm2 14V6h5v12H4zm7 0V6h9v12h-9z"/>
               </svg>
               {/* Tooltip */}
               <span className="absolute top-full mt-1 left-0 px-2 py-1 text-xs text-secondary bg-white border border-border rounded shadow-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
@@ -107,7 +97,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
               </span>
             </button>
           )}
-          <Link href="/" className="font-serif text-base font-semibold tracking-tight">
+          <Link href="/" className="font-serif text-sm font-semibold tracking-tight">
             RELATE
           </Link>
         </div>
@@ -118,18 +108,18 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
             <nav className={`${collapseNav ? 'hidden' : 'hidden md:flex'} items-center gap-6`}>
               {navLinks.map(link =>
                 link.isAnchor ? (
-                  <a key={link.label} href={link.href} className="text-sm text-secondary hover:text-foreground transition-colors">
+                  <a key={link.label} href={link.href} className="text-xs font-semibold text-secondary hover:text-foreground transition-colors">
                     {link.label}
                   </a>
                 ) : (
-                  <Link key={link.label} href={link.href} className="text-sm text-secondary hover:text-foreground transition-colors">
+                  <Link key={link.label} href={link.href} className="text-xs font-semibold text-secondary hover:text-foreground transition-colors">
                     {link.label}
                   </Link>
                 )
               )}
               {!user && (
                 <div className="flex items-center gap-3">
-                  <Link href="/auth/login" className="text-sm text-secondary hover:text-foreground transition-colors">
+                  <Link href="/auth/login" className="text-xs font-semibold text-secondary hover:text-foreground transition-colors">
                     Log in
                   </Link>
                   <Link href="/auth/signup" className="btn-primary text-xs px-3 py-1.5">
@@ -190,7 +180,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
                   key={link.label}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm text-secondary hover:text-foreground transition-colors py-1"
+                  className="text-xs font-semibold text-secondary hover:text-foreground transition-colors py-1"
                 >
                   {link.label}
                 </a>
@@ -198,7 +188,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-sm text-secondary hover:text-foreground transition-colors py-1"
+                  className="text-xs font-semibold text-secondary hover:text-foreground transition-colors py-1"
                 >
                   {link.label}
                 </Link>
@@ -207,10 +197,10 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
             {!user && (
               <>
                 <div className="border-t border-border my-1" />
-                <Link href="/auth/login" className="text-sm text-secondary hover:text-foreground transition-colors py-1">
+                <Link href="/auth/login" className="text-xs font-semibold text-secondary hover:text-foreground transition-colors py-1">
                   Log in
                 </Link>
-                <Link href="/auth/signup" className="btn-primary text-center text-sm py-2">
+                <Link href="/auth/signup" className="btn-primary text-center text-xs py-2">
                   Start Free
                 </Link>
               </>
@@ -278,12 +268,12 @@ function ProfileAvatar({
     <div className="relative ml-2" ref={dropdownRef}>
       <button
         onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors overflow-hidden border-2 border-transparent hover:border-accent focus:border-accent focus:outline-none"
+        className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold transition-colors overflow-hidden border-2 border-transparent hover:border-accent focus:border-accent focus:outline-none"
       >
         {photoUrl ? (
-          <Image src={photoUrl} alt="Profile" width={32} height={32} className="w-full h-full object-cover rounded-full" />
+          <Image src={photoUrl} alt="Profile" width={28} height={28} className="w-full h-full object-cover rounded-full" />
         ) : (
-          <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent">
+          <span className={`w-full h-full flex items-center justify-center text-white ${isWoman ? 'bg-rose-400' : 'bg-blue-500'}`}>
             {initial}
           </span>
         )}
