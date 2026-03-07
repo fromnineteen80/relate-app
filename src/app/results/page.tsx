@@ -1172,7 +1172,7 @@ function ResultsDashboard() {
                 </p>
                 {gottman.overallRisk && (
                   <p className="text-xs text-secondary mb-3">
-                    Overall risk: <span className={`font-semibold ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-yellow-600' : 'text-success'}`}>
+                    Overall risk: <span className={`font-semibold ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-warning' : 'text-success'}`}>
                       {gottman.overallRisk}
                     </span>
                   </p>
@@ -1183,8 +1183,8 @@ function ResultsDashboard() {
                     const rawScore = data.score ?? 4;
                     const normalized = Math.round(((rawScore - 4) / 16) * 10);
                     const pct = normalized * 10;
-                    const barColor = pct >= 63 ? 'bg-danger' : pct >= 32 ? 'bg-yellow-400' : 'bg-success';
-                    const riskColor = pct >= 63 ? 'text-danger' : pct >= 32 ? 'text-yellow-600' : 'text-success';
+                    const barColor = pct >= 63 ? 'bg-danger' : pct >= 32 ? 'bg-warning' : 'bg-success';
+                    const riskColor = pct >= 63 ? 'text-danger' : pct >= 32 ? 'text-warning' : 'text-success';
                     const HORSEMAN_DESC: Record<string, string> = {
                       criticism: 'Attacking your partner\'s character instead of addressing a specific behavior.',
                       contempt: 'Expressing superiority or disgust through sarcasm, eye-rolling, or mockery.',
@@ -1696,9 +1696,9 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
 
   const metroShort = metro.includes(',') ? metro.split(',')[0] : metro;
 
+  const singlesPool = pool?.localSinglePool || 0;
   const milestones = [
-    { label: 'Metro Population', value: metroPop, desc: 'Total population in your metro area' },
-    { label: 'Metro Singles Pool', value: pool?.localSinglePool || 0, desc: 'Unmarried adults of your preferred gender and orientation' },
+    { label: 'Metro Singles Pool', value: singlesPool, desc: 'Unmarried adults of your preferred gender and orientation' },
     { label: 'Identity Pool', value: pool?.identityPool || 0, desc: 'Singles matching your preferred ethnicity' },
     { label: 'Your Realistic Match Pool', value: pool?.realisticPool || 0, desc: 'Singles within your age range and income requirements' },
     { label: 'Your Preferred Pool', value: pool?.preferredPool || 0, desc: 'Singles who additionally meet your lifestyle preferences' },
@@ -1878,29 +1878,27 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
       {pool && (
         <div className="mb-6">
           <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
+          <p className="text-sm text-secondary mt-1 mb-3">The {metroShort} metro population is {metroPop.toLocaleString()}.</p>
           <div className="mt-3 space-y-1">
             {milestones.map((m, i) => {
-              const maxVal = milestones[0].value || 1;
-              const pct = (m.value / maxVal) * 100;
+              const baseVal = singlesPool || 1;
+              const pct = (m.value / baseVal) * 100;
               const isLast = i === milestones.length - 1;
-              const singlesPool = milestones[1].value || 1;
-              let pctOfSingles = '';
-              if (i >= 1) {
-                const raw = (m.value / singlesPool) * 100;
+              let pctLabel = '';
+              if (i > 0) {
                 if (isLast) {
-                  // Use enough decimals to show a non-zero result
                   let decimals = 1;
-                  while (decimals < 10 && Number(raw.toFixed(decimals)) === 0 && raw > 0) decimals++;
-                  pctOfSingles = `${raw.toFixed(decimals)}%`;
+                  while (decimals < 10 && Number(pct.toFixed(decimals)) === 0 && pct > 0) decimals++;
+                  pctLabel = `${pct.toFixed(decimals)}%`;
                 } else {
-                  pctOfSingles = `${raw.toFixed(1)}%`;
+                  pctLabel = `${pct.toFixed(1)}%`;
                 }
               }
               return (
                 <div key={m.label}>
                   <div className="flex items-center justify-between mb-0.5">
                     <span className={`text-xs ${isLast ? 'font-medium' : 'text-secondary'}`}>{m.label}</span>
-                    <span className={`text-xs font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{m.value.toLocaleString()}{pctOfSingles ? ` (${pctOfSingles})` : ''}</span>
+                    <span className={`text-xs font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{m.value.toLocaleString()}{pctLabel ? ` (${pctLabel})` : ''}</span>
                   </div>
                   <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
                     <div className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ${isLast ? 'bg-accent' : 'bg-stone-300'}`} style={{ width: `${Math.max(1, pct)}%` }} />
