@@ -12,6 +12,7 @@ import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 import { loadAndHydrateProgress } from '@/lib/supabase/progress';
 import { getProfile } from '@/lib/onboarding';
+import { getSupabase } from '@/lib/supabase/client';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -236,6 +237,8 @@ function ResultsDashboard() {
           prefBodyTypes: demo.pref_body_types || demo.prefBodyTypes || ['No preference'],
           prefFitnessLevels: demo.pref_fitness_levels || demo.prefFitnessLevels || ['No preference'],
           prefPolitical: demo.pref_political || demo.prefPolitical || ['No preference'],
+          prefEthnicities: demo.pref_ethnicities || demo.prefEthnicities || ['No preference'],
+          prefEducation: demo.pref_education_levels || demo.prefEducation || ['No preference'],
           prefHasKids: demo.pref_has_kids || demo.prefHasKids || 'No preference',
           prefWantKids: demo.pref_want_kids || demo.prefWantKids || 'No preference',
           prefSmoking: demo.pref_smoking || demo.prefSmoking || 'No preference',
@@ -253,6 +256,82 @@ function ResultsDashboard() {
       .catch(() => { })
       .finally(() => setMarketLoading(false));
   }, [user, marketData]);
+
+  // Recalculate market data after relaxing a preference
+  const recalculateMarket = useCallback(async (prefKey: string) => {
+    if (!user) return;
+    const demoStr = localStorage.getItem('relate_demographics');
+    const gender = localStorage.getItem('relate_gender');
+    if (!demoStr) return;
+    let demo: Record<string, any>;
+    try { demo = JSON.parse(demoStr); } catch { return; }
+
+    // Set the preference to "No preference"
+    const noPreference = ['prefBodyTypes', 'prefFitnessLevels', 'prefPolitical', 'prefEthnicities', 'prefEducation',
+      'pref_body_types', 'pref_fitness_levels', 'pref_political', 'pref_ethnicities', 'pref_education_levels'].includes(prefKey)
+      ? ['No preference'] : prefKey === 'prefHeightMin' || prefKey === 'pref_height_min' ? 'No preference' : 'No preference';
+
+    // Normalize key to the DB format used in localStorage
+    const dbKeyMap: Record<string, string> = {
+      prefHeightMin: 'pref_height_min', prefBodyTypes: 'pref_body_types', prefFitnessLevels: 'pref_fitness_levels',
+      prefPolitical: 'pref_political', prefHasKids: 'pref_has_kids', prefWantKids: 'pref_want_kids',
+      prefSmoking: 'pref_smoking', prefEthnicities: 'pref_ethnicities', prefEducation: 'pref_education_levels',
+    };
+    const dbKey = dbKeyMap[prefKey] || prefKey;
+    demo[dbKey] = noPreference;
+    localStorage.setItem('relate_demographics', JSON.stringify(demo));
+    localStorage.removeItem('relate_market_data');
+
+    // Update Supabase
+    try {
+      const supabase = getSupabase();
+      if (supabase) {
+        await supabase.from('users').update({ [dbKey]: noPreference }).eq('id', user.id);
+      }
+    } catch { /* non-blocking */ }
+
+    // Re-fetch market data
+    setMarketLoading(true);
+    try {
+      const res = await fetch('/api/demographics-market', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          demographics: {
+            gender, age: demo.age, zipCode: demo.zipCode || demo.zip_code,
+            ethnicity: demo.ethnicity, orientation: demo.orientation, income: demo.income,
+            education: demo.education, height: demo.height,
+            bodyType: demo.bodyType || demo.body_type, fitness: demo.fitness || demo.fitness_level,
+            political: demo.political, smoking: demo.smoking,
+            hasKids: demo.hasKids ?? demo.has_kids, wantKids: demo.wantKids || demo.want_kids,
+            relationshipStatus: demo.relationshipStatus || demo.relationship_status,
+          },
+          preferences: {
+            prefAgeMin: demo.pref_age_min || demo.prefAgeMin,
+            prefAgeMax: demo.pref_age_max || demo.prefAgeMax,
+            prefIncomeMin: demo.pref_income_min ?? demo.prefIncome ?? 0,
+            prefHeightMin: demo.pref_height_min || demo.prefHeight || null,
+            prefBodyTypes: demo.pref_body_types || demo.prefBodyTypes || ['No preference'],
+            prefFitnessLevels: demo.pref_fitness_levels || demo.prefFitnessLevels || ['No preference'],
+            prefPolitical: demo.pref_political || demo.prefPolitical || ['No preference'],
+            prefEthnicities: demo.pref_ethnicities || demo.prefEthnicities || ['No preference'],
+            prefEducation: demo.pref_education_levels || demo.prefEducation || ['No preference'],
+            prefHasKids: demo.pref_has_kids || demo.prefHasKids || 'No preference',
+            prefWantKids: demo.pref_want_kids || demo.prefWantKids || 'No preference',
+            prefSmoking: demo.pref_smoking || demo.prefSmoking || 'No preference',
+          },
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount, stateComparison: data.stateComparison, nationalComparison: data.nationalComparison };
+        setMarketData(md);
+        localStorage.setItem('relate_market_data', JSON.stringify(md));
+      }
+    } catch { /* */ }
+    setMarketLoading(false);
+  }, [user]);
 
   const handleDownloadPDF = useCallback(async () => {
     if (!report) return;
@@ -1356,7 +1435,7 @@ function ResultsDashboard() {
         {/* ── Dating Market ── */}
         {hasMarket && (
           <div className="scroll-mt-32">
-            <DatingMarketViz data={marketData} loading={marketLoading} />
+            <DatingMarketViz data={marketData} loading={marketLoading} onRelaxPreference={recalculateMarket} />
           </div>
         )}
 
@@ -1490,12 +1569,14 @@ function ResultsDashboard() {
 }
 
 // ── Dating Market Visualization ──
-function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: boolean }) {
+function DatingMarketViz({ data, loading, onRelaxPreference }: { data: MarketData | null; loading: boolean; onRelaxPreference?: (prefKey: string) => void }) {
+  const [relaxing, setRelaxing] = useState<string | null>(null);
+
   if (loading) {
     return (
       <section className="card mb-4">
         <h3 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h3>
-        <p className="text-sm text-secondary mb-4">Analyzing your local market...</p>
+        <p className="text-sm text-secondary mb-4">{relaxing ? 'Recalculating your market...' : 'Analyzing your local market...'}</p>
         <div className="flex items-center justify-center py-8">
           <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
         </div>
@@ -1534,8 +1615,72 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
     { label: 'Your Ideal Match Pool', value: pool?.idealPool || 0, desc: 'Singles who meet every preference you set' },
   ];
 
+  // Identify relaxable filters when ideal pool is zero
+  const idealPool = pool?.idealPool || 0;
+  const funnel = pool?.funnel || [];
+  const funnelPrefKeyMap: Record<string, { key: string; label: string }> = {
+    'Political': { key: 'prefPolitical', label: 'Political Views' },
+    'Has kids': { key: 'prefHasKids', label: 'Partner Has Kids' },
+    'Wants kids': { key: 'prefWantKids', label: 'Partner Wants Kids' },
+    'Smoking': { key: 'prefSmoking', label: 'Smoking' },
+    'Height': { key: 'prefHeightMin', label: 'Minimum Height' },
+    'Body type': { key: 'prefBodyTypes', label: 'Body Type' },
+    'Fitness': { key: 'prefFitnessLevels', label: 'Fitness Level' },
+  };
+
+  // Build list of filters that reduced the pool, sorted by biggest impact
+  const relaxableFilters: { key: string; label: string; stage: string; lostPct: number }[] = [];
+  if (idealPool === 0) {
+    for (const entry of funnel) {
+      if (entry.isMilestone || !entry.filter) continue;
+      const filterPct = parseFloat(entry.filter);
+      if (isNaN(filterPct) || filterPct >= 100) continue;
+      const lostPct = 100 - filterPct;
+      for (const [prefix, info] of Object.entries(funnelPrefKeyMap)) {
+        if (entry.stage.startsWith(prefix)) {
+          relaxableFilters.push({ key: info.key, label: info.label, stage: entry.stage, lostPct });
+          break;
+        }
+      }
+    }
+    relaxableFilters.sort((a, b) => b.lostPct - a.lostPct);
+  }
+
+  const handleRelax = async (prefKey: string) => {
+    if (!onRelaxPreference) return;
+    setRelaxing(prefKey);
+    await onRelaxPreference(prefKey);
+    setRelaxing(null);
+  };
+
   return (
     <section className="card mb-4">
+      {idealPool === 0 && relaxableFilters.length > 0 && (
+        <div className="mb-6 border-2 border-dashed border-red-400/50 bg-red-50 rounded-lg p-4">
+          <span className="font-mono text-xs text-red-600 tracking-wider uppercase">Zero Matches</span>
+          <p className="text-sm font-medium mt-1">Your preferences have filtered your match pool to zero.</p>
+          <p className="text-sm text-secondary mt-1 mb-3">
+            Relax one requirement below to see matches. This will update your profile automatically.
+          </p>
+          <div className="space-y-2">
+            {relaxableFilters.map(f => (
+              <div key={f.key} className="flex items-center justify-between bg-white border border-red-200 rounded-md px-3 py-2">
+                <div>
+                  <span className="text-sm font-medium">{f.label}</span>
+                  <span className="text-xs text-secondary ml-2">removes {Math.round(f.lostPct)}% of pool</span>
+                </div>
+                <button
+                  onClick={() => handleRelax(f.key)}
+                  disabled={!!relaxing}
+                  className="text-xs px-3 py-1 rounded-md bg-red-600 hover:bg-red-700 text-white font-medium transition-colors disabled:opacity-50"
+                >
+                  {relaxing === f.key ? 'Updating...' : 'Set to No Preference'}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <h3 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h3>
       <p className="text-sm text-secondary mb-4">{metro}</p>
 
