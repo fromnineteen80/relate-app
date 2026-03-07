@@ -215,7 +215,6 @@ export default function DemographicsPage() {
     switch (currentSection) {
       case 0: {
         const base = form.gender && form.age && form.ethnicity && form.orientation;
-        if (form.gender === 'Woman') return base && form.birthMonth !== '' && form.birthDay && form.birthYear && form.birthHour && form.birthMinute && form.birthAmPm;
         return base;
       }
       case 1: {
@@ -349,8 +348,8 @@ export default function DemographicsPage() {
           {form.gender === 'Woman' && (
             <>
               <div>
-                <label className="label">Birthday *</label>
-                <p className="text-xs text-secondary mb-1">Used for your Sun, Moon &amp; Rise profile.</p>
+                <label className="label">Birthday <span className="text-secondary font-normal">(optional)</span></label>
+                <p className="text-xs text-secondary mb-1">For your Sun, Moon &amp; Rise astrology profile. You can add this later in Settings.</p>
                 <div className="grid grid-cols-3 gap-2">
                   <select value={form.birthMonth} onChange={e => updateField('birthMonth', e.target.value)} className="input">
                     <option value="">Month</option>
@@ -367,8 +366,8 @@ export default function DemographicsPage() {
                 </div>
               </div>
               <div>
-                <label className="label">Birth Time *</label>
-                <p className="text-xs text-secondary mb-1">Check your birth certificate, needed for Moon &amp; Rising signs.</p>
+                <label className="label">Birth Time <span className="text-secondary font-normal">(optional)</span></label>
+                <p className="text-xs text-secondary mb-1">From your birth certificate. Needed for accurate Moon &amp; Rising signs.</p>
                 <div className="grid grid-cols-3 gap-2">
                   <select value={form.birthHour} onChange={e => updateField('birthHour', e.target.value)} className="input">
                     <option value="">Hour</option>

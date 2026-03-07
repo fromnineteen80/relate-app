@@ -78,6 +78,33 @@ function tierLabel(tier: string) {
   return labels[tier] || tier;
 }
 
+// Explain when a match ranks higher/lower than its tier suggests
+function rankingNote(match: any, allMatches: any[]): string | null {
+  const TIER_EXPECT: Record<string, number> = { ideal: 1, kismet: 2, effort: 3, longShot: 4, atRisk: 5, incompatible: 6 };
+  const tierRank = TIER_EXPECT[match.tier] || 6;
+  // Find highest-tier match that ranks below this one
+  const higherTierBelow = allMatches.find((m: any) => m.rank > match.rank && (TIER_EXPECT[m.tier] || 6) < tierRank);
+  // Find lower-tier match that ranks above this one
+  const lowerTierAbove = allMatches.find((m: any) => m.rank < match.rank && (TIER_EXPECT[m.tier] || 6) > tierRank);
+
+  if (lowerTierAbove && match.rank <= 5) {
+    // This match is outranked by a lower-tier match
+    const strongest = match.subScores
+      ? Object.entries(match.subScores as Record<string, number>)
+          .filter(([k]) => k !== 'tier')
+          .sort((a, b) => b[1] - a[1])[0]
+      : null;
+    if (strongest && strongest[1] >= 65) {
+      const labels: Record<string, string> = { preference: 'preference alignment', dimension: 'behavioral match', intimacy: 'intimacy alignment', conflict: 'conflict compatibility' };
+      return `Ranked by overall score. Strong ${labels[strongest[0]] || strongest[0]}.`;
+    }
+  }
+  if (higherTierBelow && match.rank <= 5) {
+    return `Ranked by overall compatibility across all dimensions.`;
+  }
+  return null;
+}
+
 function ResultsDashboard() {
   const { user } = useAuth();
   const [report, setReport] = useState<any>(null);
@@ -715,6 +742,10 @@ function ResultsDashboard() {
                     <div className="text-center shrink-0">
                       <span className="font-mono text-sm font-semibold block">{match.compatibilityScore}</span>
                       <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>
+                      {(() => {
+                        const note = rankingNote(match, visibleMatches);
+                        return note ? <p className="text-[10px] text-secondary/60 mt-0.5 max-w-[120px] leading-tight">{note}</p> : null;
+                      })()}
                     </div>
                   </div>
                   {match.traits && <p className="text-xs text-secondary mb-1">{match.traits}</p>}

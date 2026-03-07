@@ -9,8 +9,10 @@ import {
   getIndividualGrowthLevel,
   getRecommendedExercises,
   generatePatternInsights,
+  projectGrowthImpact,
   type GrowthExercise,
   type GrowthCategory,
+  type GrowthProjection,
 } from '@/lib/growth';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
@@ -27,6 +29,7 @@ export default function GrowthPage() {
   const [reflectionText, setReflectionText] = useState('');
   const [activeCategory, setActiveCategory] = useState<GrowthCategory | 'all' | 'recommended'>('recommended');
   const [showInsights, setShowInsights] = useState(false);
+  const [projection, setProjection] = useState<GrowthProjection | null>(null);
 
   useEffect(() => {
     // Need at least M2 to be meaningful
@@ -40,16 +43,24 @@ export default function GrowthPage() {
     const m3 = localStorage.getItem('relate_m3_scored');
     const m4 = localStorage.getItem('relate_m4_scored');
     const results = localStorage.getItem('relate_results');
-    const persona = results ? JSON.parse(results)?.persona : JSON.parse(m2)?.personaMetadata;
+    const parsedResults = results ? JSON.parse(results) : null;
+    const parsedM2 = JSON.parse(m2);
+    const persona = parsedResults?.persona || parsedM2?.personaMetadata;
+    const dimensions = parsedResults?.dimensions || parsedM2?.dimensions;
+    const gender = parsedResults?.gender || localStorage.getItem('relate_gender') || 'M';
 
-    setUserData({
+    const ud = {
       persona,
+      dimensions,
+      gender,
       m1: m1 ? JSON.parse(m1) : null,
-      m2: JSON.parse(m2),
+      m2: parsedM2,
       m3: m3 ? JSON.parse(m3) : null,
       m4: m4 ? JSON.parse(m4) : null,
-      individualCompatibility: results ? JSON.parse(results)?.individualCompatibility : null,
-    });
+      individualCompatibility: parsedResults?.individualCompatibility || null,
+    };
+    setUserData(ud);
+    setProjection(projectGrowthImpact(ud));
 
     const savedCompleted = JSON.parse(localStorage.getItem('relate_growth_exercises_completed') || '[]');
     const savedActive = localStorage.getItem('relate_growth_active_exercise');
@@ -142,6 +153,60 @@ export default function GrowthPage() {
             {completedExercises.length} exercises completed
           </p>
         </div>
+
+        {/* Growth Impact — shows borderline dimensions and persona evolution */}
+        {projection && projection.borderlineDimensions.length > 0 && (
+          <div className="card border-accent/30">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="font-serif text-sm font-semibold">Growth Impact</p>
+                <p className="text-xs text-secondary">Where targeted exercises can shift your profile</p>
+              </div>
+              <Link href="/results/persona" className="font-mono text-xs text-accent hover:underline">
+                {projection.originalName}
+              </Link>
+            </div>
+
+            <div className="space-y-3">
+              {projection.borderlineDimensions.map(b => {
+                const pct = b.strength;
+                const gap = pct - 50;
+                return (
+                  <div key={b.dimension}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-medium capitalize">{b.dimension}</span>
+                      <span className="text-[10px] text-secondary">
+                        {b.currentPole} ({pct}%) → {b.oppositePole}
+                      </span>
+                    </div>
+                    <div className="relative h-2 bg-stone-200 rounded-full overflow-hidden">
+                      <div className="absolute h-full bg-accent/60 rounded-full transition-all" style={{ width: `${pct}%` }} />
+                      <div className="absolute h-full border-r-2 border-dashed border-accent" style={{ left: '50%' }} />
+                    </div>
+                    <p className="text-[10px] text-secondary/70 mt-1 leading-snug">
+                      Only {gap} points from the threshold. {b.targetExercises.length > 0
+                        ? `${b.targetExercises.length} exercises in your plan target this area.`
+                        : 'Complete exercises that build this dimension.'}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
+            {projection.projectedCode && projection.projectedCode !== projection.originalCode && (
+              <div className="mt-4 pt-3 border-t border-stone-100">
+                <p className="text-xs text-secondary">
+                  <span className="font-medium text-foreground">Growth trajectory: </span>
+                  {projection.originalName} ({projection.originalCode}) → {projection.projectedName || projection.projectedCode}
+                </p>
+              </div>
+            )}
+
+            {projection.matchImpactNote && (
+              <p className="text-[11px] text-accent mt-3 leading-snug">{projection.matchImpactNote}</p>
+            )}
+          </div>
+        )}
 
         {/* Pattern Insights */}
         {patternInsights.length > 0 && (
