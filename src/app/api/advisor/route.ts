@@ -14,7 +14,7 @@ function buildAdvisorContext(body: any): string {
 ## ADVISOR MODE: Additional Context
 
 Only reference scores explicitly provided below. Never invent data you don't have.
-${firstName ? `\n**User's first name: ${firstName}** — Use their name naturally in your very first response to make it personal. Don't overuse it after that.\n` : ''}
+${firstName ? `\n**User's first name: ${firstName}.** Use their name naturally in your very first response to make it personal. Don't overuse it after that.\n` : ''}
 `;
 
   // Location awareness
@@ -177,7 +177,7 @@ ${firstName ? `\n**User's first name: ${firstName}** — Use their name naturall
         const recent = gp.completedExercises.slice(-3);
         context += `\n**Recent exercises:**\n`;
         recent.forEach((ex: any) => {
-          context += `- ${ex.title} (${ex.framework})${ex.reflection ? ` — Reflection: "${ex.reflection}"` : ''}\n`;
+          context += `- ${ex.title} (${ex.framework})${ex.reflection ? `. Reflection: "${ex.reflection}"` : ''}\n`;
         });
       }
       context += `\nReference their growth plan progress when coaching. Acknowledge completed exercises and build on reflections they've written. If they're on the /growth page, suggest which exercise to do next based on their assessment data.\n\n`;
