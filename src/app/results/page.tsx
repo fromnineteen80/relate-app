@@ -892,9 +892,9 @@ function ResultsDashboard() {
         {/* ── Score Breakdown ── */}
         {hasDimensions && (() => {
           const dimOrder = ['physical', 'social', 'lifestyle', 'values'] as const;
+          const isMale = report?.gender === 'M';
           const genderBarBase = isMale ? 'bg-rose-400' : 'bg-blue-500';
           const dimBarColor: Record<string, string> = { physical: `${genderBarBase}/80`, social: `${genderBarBase}/60`, lifestyle: `${genderBarBase}/40`, values: `${genderBarBase}/20` };
-          const isMale = report?.gender === 'M';
           // Dimensions come from M2/W2 (what you offer)
           const polePairs: Record<string, { A: string; B: string }> = isMale
             ? { physical: { A: 'Fitness', B: 'Maturity' }, social: { A: 'Leadership', B: 'Presence' }, lifestyle: { A: 'Adventure', B: 'Stability' }, values: { A: 'Traditional', B: 'Egalitarian' } }
