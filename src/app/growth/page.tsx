@@ -173,6 +173,7 @@ export default function GrowthPage() {
               {projection.borderlineDimensions.map(b => {
                 const pct = b.strength;
                 const gap = pct - 50;
+                const dimBarColor: Record<string, string> = { physical: 'bg-accent/80', social: 'bg-accent/60', lifestyle: 'bg-accent/40', values: 'bg-accent/20' };
                 return (
                   <div key={b.dimension}>
                     <div className="flex items-center justify-between mb-1">
@@ -182,7 +183,7 @@ export default function GrowthPage() {
                       </span>
                     </div>
                     <div className="relative h-2 bg-stone-200 rounded-full overflow-hidden">
-                      <div className="absolute h-full bg-accent/60 rounded-full transition-all" style={{ width: `${pct}%` }} />
+                      <div className={`absolute h-full ${dimBarColor[b.dimension]} rounded-full transition-all`} style={{ width: `${pct}%` }} />
                       <div className="absolute h-full border-r-2 border-dashed border-accent" style={{ left: '50%' }} />
                     </div>
                     <p className="text-[10px] text-secondary/70 mt-1 leading-snug">
