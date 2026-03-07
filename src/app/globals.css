@@ -91,3 +91,21 @@ h1, h2, h3, h4, h5, h6 {
 .animate-fade-in {
   animation: fadeIn 0.2s ease-out;
 }
+
+/* When sidebar is open, force the remaining content into mobile-like layout.
+   This uses container queries on the main wrapper so that when the sidebar
+   squishes the available space below 640px, grid/flex layouts stack. */
+.advisor-open {
+  container-type: inline-size;
+}
+
+/* Override md: breakpoints inside advisor-open to behave like mobile
+   when available space is < 640px */
+@container (max-width: 640px) {
+  .advisor-open .md\:flex-row { flex-direction: column !important; }
+  .advisor-open .md\:flex { display: flex !important; }
+  .advisor-open .md\:hidden { display: block !important; }
+  .advisor-open .md\:items-center { align-items: flex-start !important; }
+  .advisor-open .md\:grid-cols-2 { grid-template-columns: 1fr !important; }
+  .advisor-open .sm\:grid-cols-2 { grid-template-columns: 1fr !important; }
+}

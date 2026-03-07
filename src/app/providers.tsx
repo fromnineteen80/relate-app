@@ -11,10 +11,12 @@ function LayoutShell({ children }: { children: React.ReactNode }) {
     <>
       <AdvisorSidebar />
 
-      {/* Main content — shifts right when advisor is open */}
+      {/* Main content — shifts right when advisor is open, or nudged for collapsed bar on md+ */}
       <div
         className={`min-h-screen transition-all duration-300 ease-out ${
-          isOpen ? 'sm:ml-[50vw] xl:ml-[33vw]' : ''
+          isOpen
+            ? 'sm:ml-[50vw] xl:ml-[33vw] advisor-open'
+            : 'md:ml-8'
         }`}
       >
         {children}
