@@ -1039,18 +1039,34 @@ function ResultsDashboard() {
             </p>
 
             {ic.m3States.insights && (
-              <div className="mt-4 pt-4 border-t border-border space-y-2">
-                <span className={`text-xs font-mono px-2 py-0.5 rounded ${
-                  ic.m3States.insights.gapExpansionLevel === 'HIGH' ? 'bg-danger/10 text-danger' :
-                  ic.m3States.insights.gapExpansionLevel === 'MODERATE' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
-                }`}>
-                  Gap expansion under stress: {ic.m3States.insights.gapExpansion > 0 ? '+' : ''}{ic.m3States.insights.gapExpansion} pts ({ic.m3States.insights.gapExpansionLevel})
-                </span>
-                <p className="text-xs text-secondary">
-                  Repair effort: <span className={`font-mono ${ic.m3States.insights.repairSustainable ? 'text-success' : 'text-warning'}`}>
+              <div className="mt-4 pt-4 border-t border-border space-y-4">
+                <div>
+                  <h4 className="font-serif text-sm font-semibold mb-1">Gap Expansion Under Stress</h4>
+                  <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+                    ic.m3States.insights.gapExpansionLevel === 'HIGH' ? 'bg-danger/10 text-danger' :
+                    ic.m3States.insights.gapExpansionLevel === 'MODERATE' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
+                  }`}>
+                    {ic.m3States.insights.gapExpansion > 0 ? '+' : ''}{ic.m3States.insights.gapExpansion} pts ({ic.m3States.insights.gapExpansionLevel})
+                  </span>
+                  <p className="text-xs text-secondary mt-2">
+                    {ic.m3States.insights.gapExpansionLevel === 'HIGH'
+                      ? 'Under stress, the gap between what you need and what you give widens significantly. Conflict amplifies your unmet needs faster than your capacity to offer, which can create a destabilizing spiral if unaddressed.'
+                      : ic.m3States.insights.gapExpansionLevel === 'MODERATE'
+                      ? 'Under stress, your want-offer gap grows moderately. You shift under pressure but maintain enough balance to course-correct before the gap becomes destabilizing.'
+                      : 'Under stress, your want-offer gap stays relatively stable. You maintain balance between what you need and what you give, even when things get difficult.'}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-serif text-sm font-semibold mb-1">Repair Effort</h4>
+                  <span className={`text-xs font-mono px-2 py-0.5 rounded ${ic.m3States.insights.repairSustainable ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'}`}>
                     {ic.m3States.insights.repairSustainable ? 'Sustainable' : 'High strain'}
                   </span>
-                </p>
+                  <p className="text-xs text-secondary mt-2">
+                    {ic.m3States.insights.repairSustainable
+                      ? 'Your repair pattern is sustainable. When you shift into recovery mode, the effort you put in to close the gap does not exceed what you can maintain over time. This means your repair attempts are genuine and repeatable, not performative bursts.'
+                      : 'Your repair pattern shows high strain. When you try to recover from conflict, you overextend what you can sustainably offer. This means your repair attempts may feel intense but are difficult to maintain, leading to cycles of over-giving followed by withdrawal.'}
+                  </p>
+                </div>
               </div>
             )}
           </section>

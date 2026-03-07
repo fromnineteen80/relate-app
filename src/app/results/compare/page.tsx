@@ -754,7 +754,7 @@ function EnhancedCompatibilitySection({ data, overview }: { data: any; overview:
             {['normal', 'conflict', 'repair'].map(state => {
               const d = data.intimacyDynamics.dynamics?.[state];
               if (!d) return null;
-              const stateLabel = state === 'normal' ? 'Baseline' : state === 'conflict' ? 'Under Stress' : 'Making Effort';
+              const stateLabel = state === 'normal' ? 'Baseline' : state === 'conflict' ? 'Under Stress' : 'Repair Effort';
               return (
                 <div key={state} className="p-3 bg-stone-50 rounded-md">
                   <div className="flex items-center justify-between mb-2">
