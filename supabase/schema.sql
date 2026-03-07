@@ -38,7 +38,7 @@ create table if not exists public.users (
   pref_want_kids text,
   pref_ethnicities text[],
   pref_political text[],
-  pref_education_min text,
+  pref_education_levels text[],
   seeking text,
   birth_month integer,
   birth_day integer,
