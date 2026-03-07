@@ -75,9 +75,9 @@ export default function MethodologyPage() {
       <section className="px-6 py-16 bg-stone-50 border-b border-border">
         <div className="max-w-3xl mx-auto">
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">The Assessment</p>
-          <h2 className="font-serif text-3xl font-semibold mb-3">Four Modules, 367 Questions</h2>
+          <h2 className="font-serif text-3xl font-semibold mb-3">Five Modules, 391 Questions</h2>
           <p className="text-secondary mb-10">
-            The assessment takes approximately 75 minutes across four modules. Each module measures a distinct aspect of your relationship profile, and results build progressively as you complete each one.
+            The assessment takes approximately 80 minutes across five modules. Each module measures a distinct aspect of your relationship profile, and results build progressively as you complete each one.
           </p>
 
           {/* Module 1 */}
@@ -271,7 +271,7 @@ export default function MethodologyPage() {
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Matching</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">Compatibility Scoring</h2>
           <p className="text-secondary mb-8">
-            After completing all four modules, the system ranks all 16 opposite-gender personas by compatibility. Your score with each persona is calculated from four weighted components.
+            After completing all five modules, the system ranks all 16 opposite-gender personas by compatibility. Your score with each persona is calculated from four weighted components.
           </p>
 
           <div className="card mb-6">
@@ -490,7 +490,7 @@ export default function MethodologyPage() {
             Ready to discover your profile?
           </h2>
           <p className="text-secondary mb-8 max-w-md mx-auto">
-            The assessment is free, saves your progress, and takes about 75 minutes across 4 modules. Your persona is waiting.
+            The assessment is free, saves your progress, and takes about 80 minutes across 5 modules. Your persona is waiting.
           </p>
           <div className="flex gap-3 justify-center">
             <Link href="/auth/signup" className="btn-primary text-base px-8 py-3">

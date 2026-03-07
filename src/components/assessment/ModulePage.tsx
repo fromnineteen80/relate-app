@@ -144,7 +144,7 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
         <SiteHeader />
         <main className="flex-1 flex items-center justify-center px-6">
           <div className="max-w-md text-center">
-            <span className="font-mono text-xs text-secondary">Module {moduleNumber} of 4</span>
+            <span className="font-mono text-xs text-secondary">Module {moduleNumber} of 5</span>
             <h2 className="font-serif text-3xl font-semibold mt-2 mb-4">{title}</h2>
             <p className="text-secondary mb-8">
               {questions.length} questions · Answer honestly, there are no right or wrong answers.

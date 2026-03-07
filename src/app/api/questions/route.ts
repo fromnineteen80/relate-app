@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { flattenM1M2Questions, flattenM3Questions, flattenM4Questions } from '@/lib/questions';
-import { getM1Questions, getM2Questions, getM3Questions, getM4Questions } from '@/lib/scoring';
+import { flattenM1M2Questions, flattenM3Questions, flattenM4Questions, flattenM5Questions } from '@/lib/questions';
+import { getM1Questions, getM2Questions, getM3Questions, getM4Questions, getM5Questions } from '@/lib/scoring';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -22,6 +22,9 @@ export async function GET(request: NextRequest) {
         break;
       case 4:
         questions = flattenM4Questions(getM4Questions(gender), seed);
+        break;
+      case 5:
+        questions = flattenM5Questions(getM5Questions(gender), seed);
         break;
       default:
         return NextResponse.json({ error: 'Invalid module' }, { status: 400 });

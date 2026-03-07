@@ -94,8 +94,8 @@ export async function loadAndHydrateProgress(userId: string): Promise<any | null
   if (error || !data) return null;
 
   // Hydrate localStorage from DB data
-  for (let m = 1; m <= 4; m++) {
-    const key = `m${m}` as 'm1' | 'm2' | 'm3' | 'm4';
+  for (let m = 1; m <= 5; m++) {
+    const key = `m${m}`;
     if (data[`${key}_responses`]) {
       localStorage.setItem(`relate_${key}_responses`, JSON.stringify(data[`${key}_responses`]));
     }
@@ -119,7 +119,7 @@ export async function loadAndHydrateProgress(userId: string): Promise<any | null
  */
 export async function clearAllProgress(userId: string) {
   // Clear localStorage
-  for (let m = 1; m <= 4; m++) {
+  for (let m = 1; m <= 5; m++) {
     localStorage.removeItem(`relate_m${m}_responses`);
     localStorage.removeItem(`relate_m${m}_completed`);
     localStorage.removeItem(`relate_m${m}_scored`);
@@ -145,6 +145,9 @@ export async function clearAllProgress(userId: string) {
     m4_responses: null,
     m4_completed: false,
     m4_scored: null,
+    m5_responses: null,
+    m5_completed: false,
+    m5_scored: null,
     results: null,
     updated_at: new Date().toISOString(),
   }, { onConflict: 'user_id' });

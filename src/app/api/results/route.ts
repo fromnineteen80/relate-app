@@ -273,7 +273,7 @@ function generateMatchSummary(userResults: any, match: any): string {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { gender, m1Responses, m2Responses, m3Responses, m4Responses, demographics } = body;
+    const { gender, m1Responses, m2Responses, m3Responses, m4Responses, m5Responses, demographics } = body;
 
     // Scoring functions expect 'M' or 'W', not 'male'/'female'
     const genderArg = gender === 'M' ? 'M' : 'W';
@@ -284,6 +284,14 @@ export async function POST(request: NextRequest) {
     const m3Result = questionsModule.scoreModule3(genderArg, m3Responses);
     const m4Result = questionsModule.scoreModule4(genderArg, m4Responses);
 
+    // Score Module 5 if responses are available (optional — backward compatible)
+    let m5Result = null;
+    if (m5Responses && Object.keys(m5Responses).length > 0) {
+      try {
+        m5Result = questionsModule.scoreModule5(genderArg, m5Responses);
+      } catch { /* M5 is optional for backward compatibility */ }
+    }
+
     // Calculate attentiveness
     const allResponses = { ...m1Responses, ...m2Responses, ...m3Responses, ...m4Responses };
     let attentiveness = null;
@@ -293,10 +301,10 @@ export async function POST(request: NextRequest) {
       );
     } catch { /* attentiveness is optional */ }
 
-    // Calculate tension stacks
+    // Calculate tension stacks (pass M5 if available for enhanced accuracy)
     let tensionStacks = null;
     try {
-      tensionStacks = frameworksModule.computeAllTensionStacks(m1Result, m2Result, m3Result, m4Result, demographics || {}, genderArg);
+      tensionStacks = frameworksModule.computeAllTensionStacks(m1Result, m2Result, m3Result, m4Result, demographics || {}, genderArg, m5Result);
     } catch { /* tension stacks are optional */ }
 
     // Calculate modifiers
@@ -315,6 +323,7 @@ export async function POST(request: NextRequest) {
       m2: m2Result,
       m3: m3Result,
       m4: m4Result,
+      m5: m5Result,
       attentiveness,
       tensionStacks,
       modifiers,

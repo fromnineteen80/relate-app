@@ -12132,7 +12132,402 @@ function calculateProgress(currentSession, questionsInSession) {
 }
 
 
-// SECTION 5: UNIFIED EXPORTS
+// =============================================================================
+// SECTION 5: MODULE 5 - KNOW YOUR PATTERNS (Tension Stack Direct Assessment)
+// =============================================================================
+//
+// 24 questions that feed ONLY into Tension Stack cards.
+// These do not affect persona codes, M1-M4 scoring, or compatibility rankings.
+//
+// Sections:
+// - Vulnerability Armor (12 questions: 2 per armor type × 6 types)
+// - Erotic Dimension (3 questions)
+// - Attraction-Attachment (3 questions)
+// - Intimacy-Conflict Bridge (3 questions)
+// - Internal Conflict Coherence (3 questions)
+//
+// Total: 24 questions, ~5-8 minutes
+// =============================================================================
+
+const M5_VULNERABILITY_QUESTIONS_SHARED = [
+  // Perfectionism (2)
+  {
+    id_suffix: 'V_01',
+    text: 'I would rather not try at all than risk doing something imperfectly.',
+    section: 'vulnerability',
+    armorType: 'perfectionism',
+    likertMin: 1,
+    likertMax: 5
+  },
+  {
+    id_suffix: 'V_02',
+    text: 'I hold myself to standards I would never impose on someone I love.',
+    section: 'vulnerability',
+    armorType: 'perfectionism',
+    likertMin: 1,
+    likertMax: 5
+  },
+  // Numbing (2)
+  {
+    id_suffix: 'V_03',
+    text: "I often don't realize I'm upset until long after the moment has passed.",
+    section: 'vulnerability',
+    armorType: 'numbing',
+    likertMin: 1,
+    likertMax: 5
+  },
+  {
+    id_suffix: 'V_04',
+    text: 'When emotions get intense, I reach for something to take the edge off—phone, drink, food, work.',
+    section: 'vulnerability',
+    armorType: 'numbing',
+    likertMin: 1,
+    likertMax: 5
+  },
+  // Cynicism (2)
+  {
+    id_suffix: 'V_05',
+    text: "I've mostly stopped believing that relationships can actually work long-term for people like me.",
+    section: 'vulnerability',
+    armorType: 'cynicism',
+    likertMin: 1,
+    likertMax: 5
+  },
+  {
+    id_suffix: 'V_06',
+    text: 'When something good happens in a relationship, my first thought is usually about when it will end.',
+    section: 'vulnerability',
+    armorType: 'cynicism',
+    likertMin: 1,
+    likertMax: 5
+  },
+  // Control (2)
+  {
+    id_suffix: 'V_07',
+    text: "If I'm not in charge of the plan, I feel a low-grade anxiety until I am.",
+    section: 'vulnerability',
+    armorType: 'control',
+    likertMin: 1,
+    likertMax: 5
+  },
+  {
+    id_suffix: 'V_08',
+    text: 'I find it genuinely difficult to let someone else handle something important without checking on it.',
+    section: 'vulnerability',
+    armorType: 'control',
+    likertMin: 1,
+    likertMax: 5
+  },
+  // Flooding (2)
+  {
+    id_suffix: 'V_09',
+    text: 'When I feel something, I feel it at full volume—there is no dimmer switch.',
+    section: 'vulnerability',
+    armorType: 'flooding',
+    likertMin: 1,
+    likertMax: 5
+  },
+  {
+    id_suffix: 'V_10',
+    text: 'Partners have told me my emotional reactions are disproportionate to the situation.',
+    section: 'vulnerability',
+    armorType: 'flooding',
+    likertMin: 1,
+    likertMax: 5
+  },
+  // Hypervigilance (2)
+  {
+    id_suffix: 'V_11',
+    text: 'I scan for signs that my partner is pulling away, even when things seem fine.',
+    section: 'vulnerability',
+    armorType: 'hypervigilance',
+    likertMin: 1,
+    likertMax: 5
+  },
+  {
+    id_suffix: 'V_12',
+    text: 'A slight change in tone or a delayed text makes me brace for what is coming.',
+    section: 'vulnerability',
+    armorType: 'hypervigilance',
+    likertMin: 1,
+    likertMax: 5
+  }
+];
+
+const M5_EROTIC_QUESTIONS_SHARED = [
+  {
+    id_suffix: 'ED_01',
+    text: 'You meet someone new and feel an immediate spark. After a few months of dating, you realize the things that drew you in — their boldness, their edge — aren\'t what make you want to stay. You find yourself craving their gentleness instead.',
+    section: 'eroticDimension',
+    signal: 'polarity',
+    likertMin: 1,
+    likertMax: 5
+  },
+  {
+    id_suffix: 'ED_02',
+    text: 'You\'ve been seeing someone for a while and things are going well. But lately, date nights feel predictable — same restaurant, same routine. You notice your interest picking back up when they surprise you with something unexpected.',
+    section: 'eroticDimension',
+    signal: 'novelty',
+    likertMin: 1,
+    likertMax: 5
+  },
+  {
+    id_suffix: 'ED_03',
+    text: 'After a vulnerable conversation where you both shared something deeply personal, you feel closer to your partner than ever. That night, you feel more attracted to them than you have in weeks.',
+    section: 'eroticDimension',
+    signal: 'familiarity',
+    likertMin: 1,
+    likertMax: 5
+  }
+];
+
+const M5_ATTRACTION_ATTACHMENT_QUESTIONS_SHARED = [
+  {
+    id_suffix: 'AA_01',
+    text: 'You\'re dating someone confident and independent — qualities you find incredibly attractive. But when they cancel plans to hang out with friends, you feel a pang of jealousy. The very self-sufficiency that drew you in now makes you uneasy.',
+    section: 'attractionAttachment',
+    signal: 'conflict',
+    likertMin: 1,
+    likertMax: 5
+  },
+  {
+    id_suffix: 'AA_02',
+    text: 'You go on a date with someone who checks every box — stable job, kind, shares your values — but you don\'t feel a strong spark. A friend says "give it time." You decide to keep seeing them because you trust the compatibility over the missing butterflies.',
+    section: 'attractionAttachment',
+    signal: 'alignment',
+    likertMin: 1,
+    likertMax: 5
+  },
+  {
+    id_suffix: 'AA_03',
+    text: 'Looking back at your dating history, you notice a pattern: the relationships that felt most electric at the start were also the ones that left you most anxious. The "chemistry" you felt was actually your nervous system on high alert.',
+    section: 'attractionAttachment',
+    signal: 'historicalPattern',
+    likertMin: 1,
+    likertMax: 5
+  }
+];
+
+const M5_INTIMACY_CONFLICT_BRIDGE_QUESTIONS_SHARED = [
+  {
+    id_suffix: 'ICB_01',
+    text: 'You and your partner had a heated argument this morning about finances. That evening, they reach for your hand on the couch. You pull away — you can\'t imagine being close to them until you\'ve fully resolved what happened.',
+    section: 'intimacyConflictBridge',
+    signal: 'bridgeGap',
+    likertMin: 1,
+    likertMax: 5
+  },
+  {
+    id_suffix: 'ICB_02',
+    text: 'You and your partner disagree sharply about weekend plans and voices get raised. An hour later, you\'re laughing together making dinner. For you, the argument and the closeness don\'t cancel each other out — they coexist naturally.',
+    section: 'intimacyConflictBridge',
+    signal: 'bridgeStrength',
+    likertMin: 1,
+    likertMax: 5
+  },
+  {
+    id_suffix: 'ICB_03',
+    text: 'Your partner snaps at you over something small — leaving dishes in the sink. Instead of addressing the dishes, your mind spirals: "Maybe we\'re not right for each other. Maybe this is a sign." One disagreement makes you question everything.',
+    section: 'intimacyConflictBridge',
+    signal: 'catastrophizing',
+    likertMin: 1,
+    likertMax: 5
+  }
+];
+
+const M5_INTERNAL_CONFLICT_COHERENCE_QUESTIONS_SHARED = [
+  {
+    id_suffix: 'ICC_01',
+    text: 'I sometimes notice myself doing the exact opposite of what I say I want during conflict.',
+    section: 'internalConflictCoherence',
+    signal: 'incoherence',
+    likertMin: 1,
+    likertMax: 5
+  },
+  {
+    id_suffix: 'ICC_02',
+    text: 'My instinct during conflict—whether to engage or step back—feels aligned with what I actually need.',
+    section: 'internalConflictCoherence',
+    signal: 'coherence',
+    likertMin: 1,
+    likertMax: 5
+  },
+  {
+    id_suffix: 'ICC_03',
+    text: "I've been told that my behavior during conflict contradicts what I claim to value.",
+    section: 'internalConflictCoherence',
+    signal: 'externalFeedback',
+    likertMin: 1,
+    likertMax: 5
+  }
+];
+
+/**
+ * Generate gender-prefixed M5 questions from shared templates
+ */
+function buildM5Questions(prefix) {
+  const allShared = [
+    ...M5_VULNERABILITY_QUESTIONS_SHARED,
+    ...M5_EROTIC_QUESTIONS_SHARED,
+    ...M5_ATTRACTION_ATTACHMENT_QUESTIONS_SHARED,
+    ...M5_INTIMACY_CONFLICT_BRIDGE_QUESTIONS_SHARED,
+    ...M5_INTERNAL_CONFLICT_COHERENCE_QUESTIONS_SHARED
+  ];
+
+  const bySection = {
+    vulnerability: [],
+    eroticDimension: [],
+    attractionAttachment: [],
+    intimacyConflictBridge: [],
+    internalConflictCoherence: []
+  };
+
+  for (const q of allShared) {
+    bySection[q.section].push({
+      id: `${prefix}5_${q.id_suffix}`,
+      text: q.text,
+      section: q.section,
+      armorType: q.armorType || undefined,
+      signal: q.signal || undefined,
+      reversed: false
+    });
+  }
+
+  return bySection;
+}
+
+const MEN_M5_QUESTIONS = buildM5Questions('M');
+const WOMEN_M5_QUESTIONS = buildM5Questions('W');
+
+// =============================================================================
+// MODULE 5 SCORING
+// =============================================================================
+
+const M5_SCORING_CONFIG = {
+  likertMin: 1,
+  likertMax: 5,
+  vulnerabilityQuestionsPerType: 2,
+  // Each armor type has 2 questions, score range 2-10
+  // Normalize to 0-100: ((raw - 2) / 8) * 100
+  vulnerabilityNormalize: (raw) => Math.round(((raw - 2) / 8) * 100)
+};
+
+/**
+ * Scores Module 5 responses.
+ * Returns direct armor scores, erotic signals, attraction-attachment signals,
+ * intimacy-conflict bridge signals, and coherence signals.
+ */
+function scoreModule5(gender, responses) {
+  const questions = gender === 'M' ? MEN_M5_QUESTIONS : WOMEN_M5_QUESTIONS;
+
+  // --- Vulnerability: score each armor type ---
+  const armorScores = {};
+  const armorTypes = ['perfectionism', 'numbing', 'cynicism', 'control', 'flooding', 'hypervigilance'];
+
+  for (const armorType of armorTypes) {
+    const qs = questions.vulnerability.filter(q => q.armorType === armorType);
+    let raw = 0;
+    for (const q of qs) {
+      raw += (responses[q.id] || 3);
+    }
+    armorScores[armorType] = M5_SCORING_CONFIG.vulnerabilityNormalize(raw);
+  }
+
+  // Find primary and secondary armor
+  const sorted = Object.entries(armorScores).sort((a, b) => b[1] - a[1]);
+  const primaryArmor = sorted[0][0];
+  const primaryScore = sorted[0][1];
+  const secondaryArmor = sorted[1][0];
+  const secondaryScore = sorted[1][1];
+  // Confidence = gap between #1 and #2 (larger gap = more confident)
+  const armorConfidence = Math.min(95, 50 + (primaryScore - secondaryScore));
+
+  // --- Erotic Dimension signals ---
+  const eroticSignals = {};
+  for (const q of questions.eroticDimension) {
+    eroticSignals[q.signal] = (responses[q.id] || 3);
+  }
+  // Normalize each to 0-100
+  const eroticNormalized = {};
+  for (const [signal, raw] of Object.entries(eroticSignals)) {
+    eroticNormalized[signal] = Math.round(((raw - 1) / 4) * 100);
+  }
+
+  // --- Attraction-Attachment signals ---
+  const aaSignals = {};
+  for (const q of questions.attractionAttachment) {
+    aaSignals[q.signal] = (responses[q.id] || 3);
+  }
+  const aaNormalized = {};
+  for (const [signal, raw] of Object.entries(aaSignals)) {
+    aaNormalized[signal] = Math.round(((raw - 1) / 4) * 100);
+  }
+  // Conflict score: high conflict + high historicalPattern + low alignment = misaligned
+  const aaConflictScore = Math.round(
+    (aaNormalized.conflict * 0.4) + (aaNormalized.historicalPattern * 0.4) + ((100 - aaNormalized.alignment) * 0.2)
+  );
+
+  // --- Intimacy-Conflict Bridge signals ---
+  const icbSignals = {};
+  for (const q of questions.intimacyConflictBridge) {
+    icbSignals[q.signal] = (responses[q.id] || 3);
+  }
+  const icbNormalized = {};
+  for (const [signal, raw] of Object.entries(icbSignals)) {
+    icbNormalized[signal] = Math.round(((raw - 1) / 4) * 100);
+  }
+  // Bridge health: high strength + low gap + low catastrophizing = healthy
+  const bridgeHealthDirect = Math.round(
+    (icbNormalized.bridgeStrength * 0.4) + ((100 - icbNormalized.bridgeGap) * 0.3) + ((100 - icbNormalized.catastrophizing) * 0.3)
+  );
+
+  // --- Internal Conflict Coherence signals ---
+  const iccSignals = {};
+  for (const q of questions.internalConflictCoherence) {
+    iccSignals[q.signal] = (responses[q.id] || 3);
+  }
+  const iccNormalized = {};
+  for (const [signal, raw] of Object.entries(iccSignals)) {
+    iccNormalized[signal] = Math.round(((raw - 1) / 4) * 100);
+  }
+  // Coherence score: high coherence + low incoherence + low externalFeedback = coherent
+  const coherenceScoreDirect = Math.round(
+    (iccNormalized.coherence * 0.4) + ((100 - iccNormalized.incoherence) * 0.3) + ((100 - iccNormalized.externalFeedback) * 0.3)
+  );
+
+  return {
+    vulnerability: {
+      armorScores,
+      primaryArmor,
+      primaryScore,
+      secondaryArmor,
+      secondaryScore,
+      confidence: armorConfidence
+    },
+    eroticDimension: {
+      signals: eroticNormalized,
+      polarityScore: eroticNormalized.polarity || 50,
+      noveltyScore: eroticNormalized.novelty || 50,
+      familiarityScore: eroticNormalized.familiarity || 50
+    },
+    attractionAttachment: {
+      signals: aaNormalized,
+      conflictScore: aaConflictScore,
+      alignmentScore: aaNormalized.alignment || 50
+    },
+    intimacyConflictBridge: {
+      signals: icbNormalized,
+      bridgeHealth: bridgeHealthDirect
+    },
+    internalConflictCoherence: {
+      signals: iccNormalized,
+      coherenceScore: coherenceScoreDirect
+    }
+  };
+}
+
+
+// SECTION 6: UNIFIED EXPORTS
 // =============================================================================
 
 module.exports = {
@@ -12308,6 +12703,17 @@ module.exports = {
   // M4 Validation
   validateM4Responses,
   
+  // =========================================================================
+  // MODULE 5: KNOW YOUR PATTERNS (Tension Stack Direct Assessment)
+  // =========================================================================
+
+  // M5 Question Sets
+  MEN_M5_QUESTIONS,
+  WOMEN_M5_QUESTIONS,
+
+  // M5 Scoring
+  scoreModule5,
+
   // -------------------------------------------------------------------------
   // CHECKPOINT SYSTEM
   // -------------------------------------------------------------------------

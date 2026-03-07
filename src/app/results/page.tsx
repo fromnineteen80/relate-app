@@ -709,10 +709,23 @@ function ResultsDashboard() {
           <section className="card mb-6 text-center py-12">
             <h3 className="font-serif text-lg font-semibold mb-2">Assessment Not Complete</h3>
             <p className="text-sm text-secondary mb-6 max-w-md mx-auto">
-              Complete all four modules of your RELATE assessment to generate your persona, compatibility rankings, dating market analysis, and personalized coaching.
+              Complete all five modules of your RELATE assessment to generate your persona, compatibility rankings, dating market analysis, and personalized coaching.
             </p>
             <Link href="/assessment" className="btn-primary text-sm inline-block">
               Continue Assessment
+            </Link>
+          </section>
+        )}
+
+        {/* ── Module 5 Upgrade Banner (for existing users with results but no M5) ── */}
+        {hasResults && !report?.m5 && (
+          <section className="card border-accent/30 bg-accent/5 mb-4">
+            <p className="font-serif font-semibold mb-1">Enhance Your Tension Stacks</p>
+            <p className="text-sm text-secondary mb-3">
+              Complete Module 5 to unlock more accurate vulnerability, desire, and internal alignment profiles. Takes about 5 minutes.
+            </p>
+            <Link href="/assessment/module-5" className="btn-primary text-sm inline-block">
+              Take Module 5
             </Link>
           </section>
         )}

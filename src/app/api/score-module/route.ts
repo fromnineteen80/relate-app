@@ -87,6 +87,14 @@ export async function POST(request: NextRequest) {
         });
       }
 
+      case 5: {
+        const m5Result = questionsModule.scoreModule5(genderArg, responses);
+        return NextResponse.json({
+          success: true,
+          result: m5Result,
+        });
+      }
+
       default:
         return NextResponse.json({ error: 'Invalid module' }, { status: 400 });
     }

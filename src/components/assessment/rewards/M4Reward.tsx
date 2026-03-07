@@ -222,37 +222,18 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
     );
   }
 
-  // Screen 4: Final Summary
+  // Screen 4: Teaser for Module 5
   return (
     <div className={`max-w-md mx-auto text-center transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-      <div className="mb-8">
-        <span className="font-mono text-xs text-secondary">YOUR ASSESSMENT IS COMPLETE</span>
-      </div>
-
-      <div
-        className="grid grid-cols-2 gap-4 mb-8"
-      >
-        {[
-          { value: `${totalQuestions}+`, label: 'questions answered' },
-          { value: '4', label: 'modules scored' },
-          { value: '1', label: 'persona assigned' },
-          { value: '16', label: 'matches ranked' },
-        ].map((stat, i) => (
-          <div
-            key={stat.label}
-            className="card text-center transition-all duration-500"
-            style={{ transitionDelay: `${i * 150}ms`, opacity: fadeIn ? 1 : 0 }}
-          >
-            <p className="font-mono text-2xl font-semibold">{stat.value}</p>
-            <p className="text-xs text-secondary mt-1">{stat.label}</p>
-          </div>
-        ))}
-      </div>
-
-      <p className="font-serif text-lg mb-8">Your results are ready.</p>
-
-      <button onClick={onContinue} className="btn-primary px-8 py-3 w-full">
-        See Your Results
+      <p className="text-lg font-serif leading-relaxed mb-4">
+        You know what you want, who you are, how you connect, and what happens when it gets hard. One question remains: what patterns are running beneath all of it?
+      </p>
+      <p className="text-sm text-secondary mb-8">
+        Module 5 maps your vulnerability armor, desire patterns, and internal alignment—the invisible forces shaping your relationships.
+      </p>
+      <button onClick={onContinue} className="btn-primary px-8 py-3">
+        Continue to Module 5
+        <span className="text-xs opacity-70 ml-2">~5 min</span>
       </button>
     </div>
   );

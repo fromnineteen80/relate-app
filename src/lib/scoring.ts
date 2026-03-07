@@ -32,6 +32,11 @@ export function getM4Questions(gender: string) {
   return gender === 'M' ? mod.MEN_M4_QUESTIONS : mod.WOMEN_M4_QUESTIONS;
 }
 
+export function getM5Questions(gender: string) {
+  const mod = getModule();
+  return gender === 'M' ? mod.MEN_M5_QUESTIONS : mod.WOMEN_M5_QUESTIONS;
+}
+
 export function scoreModule1(gender: string, responses: Record<string, any>) {
   return getModule().scoreModule1(gender === 'M' ? 'M' : 'W', responses);
 }
@@ -46,6 +51,10 @@ export function scoreModule3(gender: string, responses: Record<string, any>) {
 
 export function scoreModule4(gender: string, responses: Record<string, any>) {
   return getModule().scoreModule4(gender === 'M' ? 'M' : 'W', responses);
+}
+
+export function scoreModule5(gender: string, responses: Record<string, any>) {
+  return getModule().scoreModule5(gender === 'M' ? 'M' : 'W', responses);
 }
 
 export function scoreAttentiveness(

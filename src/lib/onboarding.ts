@@ -30,7 +30,7 @@ export function getOnboardingStep(emailVerified: boolean): OnboardingStep {
   if (!hasDemographics()) return 'demographics';
 
   // Check if assessment is complete
-  const allComplete = [1, 2, 3, 4].every(
+  const allComplete = [1, 2, 3, 4, 5].every(
     m => localStorage.getItem(`relate_m${m}_completed`) === 'true'
   );
   if (allComplete) return 'complete';
