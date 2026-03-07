@@ -81,15 +81,11 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
     <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-sm" style={{ overflow: 'visible' }}>
       <div className="px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/" className="font-serif text-base font-semibold tracking-tight">
-            RELATE
-          </Link>
-          {/* Sidebar toggle icon — visible on all screen sizes when not in auth mode */}
+          {/* Sidebar toggle icon — left of site title */}
           {!isAuth && (
             <button
               onClick={toggleAdvisor}
               aria-label={advisorOpen ? 'Close sidebar' : 'Open sidebar'}
-              title={advisorOpen ? 'Close sidebar' : 'Open sidebar'}
               className="group relative w-7 h-7 flex items-center justify-center text-secondary hover:text-foreground transition-colors"
             >
               <svg
@@ -105,8 +101,15 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
                 <rect x="3" y="3" width="18" height="18" rx="2" />
                 <line x1="9" y1="3" x2="9" y2="21" />
               </svg>
+              {/* Tooltip */}
+              <span className="absolute top-full mt-1 left-0 px-2 py-1 text-xs text-secondary bg-white border border-border rounded shadow-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
+                {advisorOpen ? 'Close sidebar' : 'Open sidebar'}
+              </span>
             </button>
           )}
+          <Link href="/" className="font-serif text-base font-semibold tracking-tight">
+            RELATE
+          </Link>
         </div>
 
         {isAuth ? null : (
