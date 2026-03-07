@@ -1243,7 +1243,7 @@ function ResultsDashboard() {
                   [
                     { items: ic.attachmentTiers.bestMatches, tier: 'Best', color: 'text-success', bg: 'bg-success/10 border-success/30' },
                     { items: ic.attachmentTiers.goodMatches, tier: 'Good', color: 'text-accent', bg: 'bg-accent/10 border-accent/30' },
-                    { items: ic.attachmentTiers.workableMatches, tier: 'Workable', color: 'text-warning', bg: 'bg-warning/10 border-warning/30' },
+                    { items: ic.attachmentTiers.workableMatches, tier: 'Workable', color: 'text-yellow-600', bg: 'bg-yellow-50 border-yellow-300' },
                     { items: ic.attachmentTiers.riskyMatches, tier: 'Risky', color: 'text-danger/70', bg: 'bg-danger/5 border-danger/20' },
                     { items: ic.attachmentTiers.avoidMatches, tier: 'Avoid', color: 'text-danger', bg: 'bg-danger/10 border-danger/30' },
                   ].forEach(group => {
@@ -1273,7 +1273,7 @@ function ResultsDashboard() {
                     [
                       { items: ic.driverTiers.bestMatches, tier: 'Best', color: 'text-success', bg: 'bg-success/10 border-success/30' },
                       { items: ic.driverTiers.goodMatches, tier: 'Good', color: 'text-accent', bg: 'bg-accent/10 border-accent/30' },
-                      { items: ic.driverTiers.workableMatches, tier: 'Workable', color: 'text-warning', bg: 'bg-warning/10 border-warning/30' },
+                      { items: ic.driverTiers.workableMatches, tier: 'Workable', color: 'text-yellow-600', bg: 'bg-yellow-50 border-yellow-300' },
                       { items: ic.driverTiers.avoidMatches, tier: 'Avoid', color: 'text-danger', bg: 'bg-danger/10 border-danger/30' },
                     ].forEach(group => {
                       if (Array.isArray(group.items)) {
@@ -1311,7 +1311,7 @@ function ResultsDashboard() {
                 )}
                 {Array.isArray(ic.horsemenInsights?.avoid) && ic.horsemenInsights.avoid.length > 0 && (
                   <div className="mt-3">
-                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Be cautious of</span>
+                    <span className="text-xs font-mono text-yellow-600 uppercase tracking-wider">Be cautious of</span>
                     <ul className="mt-2 space-y-1.5">
                       {ic.horsemenInsights.avoid.map((item: any, i: number) => (
                         <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary flex-shrink-0">&#8226;</span><span><span className="font-medium text-foreground">{item.partnerTrait}</span>: {item.reason}</span></li>
@@ -1696,9 +1696,9 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
 
   const metroShort = metro.includes(',') ? metro.split(',')[0] : metro;
 
+  const singlesPool = pool?.localSinglePool || 0;
   const milestones = [
-    { label: 'Metro Population', value: metroPop, desc: 'Total population in your metro area' },
-    { label: 'Metro Singles Pool', value: pool?.localSinglePool || 0, desc: 'Unmarried adults of your preferred gender and orientation' },
+    { label: 'Metro Singles Pool', value: singlesPool, desc: 'Unmarried adults of your preferred gender and orientation' },
     { label: 'Identity Pool', value: pool?.identityPool || 0, desc: 'Singles matching your preferred ethnicity' },
     { label: 'Your Realistic Match Pool', value: pool?.realisticPool || 0, desc: 'Singles within your age range and income requirements' },
     { label: 'Your Preferred Pool', value: pool?.preferredPool || 0, desc: 'Singles who additionally meet your lifestyle preferences' },
@@ -1878,29 +1878,27 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
       {pool && (
         <div className="mb-6">
           <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
+          <p className="text-sm text-secondary mt-1 mb-3">The {metroShort} metro population is {metroPop.toLocaleString()}.</p>
           <div className="mt-3 space-y-1">
             {milestones.map((m, i) => {
-              const maxVal = milestones[0].value || 1;
-              const pct = (m.value / maxVal) * 100;
+              const baseVal = singlesPool || 1;
+              const pct = (m.value / baseVal) * 100;
               const isLast = i === milestones.length - 1;
-              const singlesPool = milestones[1].value || 1;
-              let pctOfSingles = '';
-              if (i >= 1) {
-                const raw = (m.value / singlesPool) * 100;
+              let pctLabel = '';
+              if (i > 0) {
                 if (isLast) {
-                  // Use enough decimals to show a non-zero result
                   let decimals = 1;
-                  while (decimals < 10 && Number(raw.toFixed(decimals)) === 0 && raw > 0) decimals++;
-                  pctOfSingles = `${raw.toFixed(decimals)}%`;
+                  while (decimals < 10 && Number(pct.toFixed(decimals)) === 0 && pct > 0) decimals++;
+                  pctLabel = `${pct.toFixed(decimals)}%`;
                 } else {
-                  pctOfSingles = `${raw.toFixed(1)}%`;
+                  pctLabel = `${pct.toFixed(1)}%`;
                 }
               }
               return (
                 <div key={m.label}>
                   <div className="flex items-center justify-between mb-0.5">
                     <span className={`text-xs ${isLast ? 'font-medium' : 'text-secondary'}`}>{m.label}</span>
-                    <span className={`text-xs font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{m.value.toLocaleString()}{pctOfSingles ? ` (${pctOfSingles})` : ''}</span>
+                    <span className={`text-xs font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{m.value.toLocaleString()}{pctLabel ? ` (${pctLabel})` : ''}</span>
                   </div>
                   <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
                     <div className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ${isLast ? 'bg-accent' : 'bg-stone-300'}`} style={{ width: `${Math.max(1, pct)}%` }} />
