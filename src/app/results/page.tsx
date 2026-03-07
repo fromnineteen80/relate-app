@@ -887,30 +887,60 @@ function ResultsDashboard() {
         )}
 
         {/* ── Score Breakdown ── */}
-        {hasDimensions && (
+        {hasDimensions && (() => {
+          const dimOrder = ['physical', 'social', 'lifestyle', 'values'] as const;
+          const isMale = report?.gender === 'M';
+          // Dimensions come from M2/W2 (what you offer)
+          const polePairs: Record<string, { A: string; B: string }> = isMale
+            ? { physical: { A: 'Fitness', B: 'Maturity' }, social: { A: 'Leadership', B: 'Presence' }, lifestyle: { A: 'Adventure', B: 'Stability' }, values: { A: 'Traditional', B: 'Egalitarian' } }
+            : { physical: { A: 'Beauty', B: 'Confidence' }, social: { A: 'Allure', B: 'Charm' }, lifestyle: { A: 'Thrill', B: 'Peace' }, values: { A: 'Traditional', B: 'Egalitarian' } };
+          return (
           <section className="card mb-4 scroll-mt-32">
             <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2"><Icon name="bar_chart" size={20} className="text-accent" />Score Breakdown</h3>
             <div className="space-y-3.5">
-              {Object.entries(dimensions).map(([dim, data]: [string, any]) => {
+              {dimOrder.map((dim) => {
+                const data = (dimensions as any)[dim];
                 if (!data || typeof data !== 'object') return null;
                 const strength = data.strength || Math.max(data.poleAScore || 50, data.poleBScore || 50);
                 const pole = data.poleName || data.assignedPole || '-';
+                const pair = polePairs[dim];
+                const oppositePole = pair ? (pole === pair.A ? pair.B : pair.A) : '-';
+                const balanced = strength < 40;
+                const strong = strength >= 70;
+                const pn = persona?.name || 'your persona';
+                const youLabel = isMale ? 'man' : 'woman';
                 const desc = (() => {
-                  const strong = strength >= 70;
-                  const moderate = strength >= 40 && strength < 70;
-                  const pn = persona?.name || 'your persona';
+                  if (balanced) {
+                    switch (dim) {
+                      case 'physical': return `You score evenly between ${pair.A} and ${pair.B}. As a ${youLabel}, this means your physical presentation doesn't strongly favor either pole — you blend elements of both, which gives your ${pn} profile range rather than a single defining physical signal.`;
+                      case 'social': return `Your social energy sits between ${pair.A} and ${pair.B}. As a ${youLabel}, you're not locked into one mode — you can draw on either depending on the setting, making your ${pn} profile socially versatile.`;
+                      case 'lifestyle': return `You don't lean strongly toward ${pair.A} or ${pair.B}. As a ${youLabel}, your day-to-day rhythm is flexible, and your ${pn} identity is shaped more by other dimensions than by lifestyle polarity.`;
+                      case 'values': return `You sit between ${pair.A} and ${pair.B} on partnership values. As a ${youLabel}, this gives your ${pn} profile flexibility in how you negotiate roles and structure relationships.`;
+                      default: return `Balanced between ${pair.A} and ${pair.B}.`;
+                    }
+                  }
+                  if (strong) {
+                    switch (dim) {
+                      case 'physical': return `You score strongly toward ${pole}, far from ${oppositePole}. As a ${youLabel}, this is a core physical signal — it's central to what makes you ${pn} and how potential partners perceive you at first glance.`;
+                      case 'social': return `Clear ${pole} orientation, well away from ${oppositePole}. As a ${youLabel}, this defines how people experience you socially and is a signature trait of your ${pn} profile.`;
+                      case 'lifestyle': return `Strong ${pole} drive, distinctly away from ${oppositePole}. As a ${youLabel}, this shapes your day-to-day energy and is a defining feature of your ${pn} lifestyle.`;
+                      case 'values': return `Firmly ${pole}, far from ${oppositePole}. As a ${youLabel}, this anchors how your ${pn} profile approaches partnership structure and long-term compatibility.`;
+                      default: return `Strong ${pole} lean, far from ${oppositePole}.`;
+                    }
+                  }
+                  // moderate
                   switch (dim) {
-                    case 'physical': return strong ? `Strong ${pole} signal. This is core to what makes you ${pn}.` : moderate ? `Moderate ${pole} tendency. You show elements of both sides, but your ${pn} identity leans this way.` : `Mild preference. Physical presentation isn't a strong differentiator within your ${pn} profile.`;
-                    case 'social': return strong ? `Clear ${pole} orientation. This is how people experience you as ${pn}.` : moderate ? `Balanced social style with a slight lean toward ${pole}, consistent with ${pn}.` : `Flexible social approach. You adapt across settings, which adds range to your ${pn} profile.`;
-                    case 'lifestyle': return strong ? `Strong ${pole} drive. This defines your day-to-day energy as ${pn}.` : moderate ? `You lean toward ${pole} but can flex when needed, a hallmark of the ${pn} profile.` : `No strong lifestyle preference. Your ${pn} identity is shaped more by other dimensions.`;
-                    case 'values': return strong ? `Firmly ${pole} in your partnership values. This anchors how ${pn} approaches relationships.` : moderate ? `Leaning ${pole}, with some flexibility. Your ${pn} profile allows room to negotiate roles.` : `Balanced values orientation. As ${pn}, you're adaptable in how you structure partnerships.`;
-                    default: return `Your ${dim} dimension leans toward ${pole}, contributing to your ${pn} profile.`;
+                    case 'physical': return `You lean toward ${pole} over ${oppositePole}. As a ${youLabel}, you show elements of both but your ${pn} identity tilts this way — it's a noticeable tendency without being absolute.`;
+                    case 'social': return `Moderate ${pole} lean with some ${oppositePole} flexibility. As a ${youLabel}, your social style is consistent with ${pn} but you can adapt when the setting calls for it.`;
+                    case 'lifestyle': return `You favor ${pole} over ${oppositePole}, though you can flex. As a ${youLabel}, this gives your ${pn} profile a clear lifestyle direction without rigidity.`;
+                    case 'values': return `Leaning ${pole} over ${oppositePole}. As a ${youLabel}, your ${pn} profile has a clear values orientation while leaving room to negotiate with a partner.`;
+                    default: return `Moderate ${pole} lean over ${oppositePole}.`;
                   }
                 })();
                 return (
                   <div key={dim}>
                     <div className="flex items-center gap-3">
-                      <span className="text-xs text-secondary w-20 shrink-0 capitalize">{dim}</span>
+                      <span className="text-xs text-secondary w-20 shrink-0 capitalize">{dim} <span className="normal-case text-secondary/60">({pair.A} / {pair.B})</span></span>
                       <div className="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
                         <div className="h-full bg-accent rounded-full transition-all" style={{ width: `${Math.min(100, strength)}%` }} />
                       </div>
@@ -922,7 +952,8 @@ function ResultsDashboard() {
               })}
             </div>
           </section>
-        )}
+          );
+        })()}
 
         {/* ── Connection Style ── */}
         {m3 && (
