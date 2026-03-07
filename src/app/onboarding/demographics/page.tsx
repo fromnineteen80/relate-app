@@ -323,7 +323,12 @@ export default function DemographicsPage() {
       localStorage.removeItem('relate_market_data');
       router.push('/account');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to save');
+      const message = err instanceof Error
+        ? err.message
+        : typeof err === 'object' && err !== null && 'message' in err
+          ? String((err as any).message)
+          : 'Failed to save. Please check your connection and try again.';
+      setError(message);
       setSaving(false);
     }
   }
