@@ -7,9 +7,17 @@ import AdvisorMessages from './AdvisorMessages';
 import AdvisorToggle from './AdvisorToggle';
 
 export default function AdvisorSidebar() {
-  const { isOpen, close, sendMessage, loading, isLimited } = useAdvisor();
+  const { isOpen, close, sendMessage, loading, isLimited, mode, setMode, hasCouplesData } = useAdvisor();
   const [inputValue, setInputValue] = useState('');
+  const [modeDropdownOpen, setModeDropdownOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const modeRef = useRef<HTMLDivElement>(null);
+
+  const modeLabels = {
+    solo: 'About Me',
+    individual: 'Dating Coach',
+    couples: 'Couples Coaching',
+  } as const;
 
   const handleSubmit = useCallback(() => {
     const trimmed = inputValue.trim();
@@ -27,6 +35,19 @@ export default function AdvisorSidebar() {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
+
+  // Close mode dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: PointerEvent | MouseEvent) {
+      if (modeRef.current && !modeRef.current.contains(e.target as Node)) {
+        setModeDropdownOpen(false);
+      }
+    }
+    if (modeDropdownOpen) {
+      document.addEventListener('pointerdown', handleClickOutside);
+      return () => document.removeEventListener('pointerdown', handleClickOutside);
+    }
+  }, [modeDropdownOpen]);
 
   const handleInputKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -55,10 +76,10 @@ export default function AdvisorSidebar() {
 
       {/* Sidebar — fixed to left edge, full viewport height, independent of main scroll */}
       <div
-        className={`fixed top-0 left-0 h-screen bg-white border-r border-stone-200 flex flex-col transition-all duration-300 ease-out overflow-hidden ${
+        className={`fixed top-0 left-0 h-screen border-r border-stone-200 flex flex-col transition-all duration-300 ease-out overflow-hidden ${
           isOpen
-            ? 'w-screen sm:w-[50vw] xl:w-[33vw] z-[60] sm:z-30'
-            : 'w-0 z-30'
+            ? 'w-screen sm:w-[50vw] xl:w-[33vw] z-[60] sm:z-30 bg-stone-50'
+            : 'w-0 z-30 bg-background'
         }`}
         role="dialog"
         aria-label="Your Advisor"
@@ -82,15 +103,47 @@ export default function AdvisorSidebar() {
                 className="w-full border border-stone-200 bg-white rounded-lg px-3 py-2.5 pr-10 text-xs focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent disabled:opacity-50 disabled:bg-stone-50 resize-none leading-[18px]"
                 style={{ minHeight: '110px' }}
               />
+
+              {/* Mode selector — bottom left inside input area */}
+              <div ref={modeRef} className="absolute bottom-2.5 left-2.5">
+                <button
+                  type="button"
+                  onClick={() => setModeDropdownOpen(!modeDropdownOpen)}
+                  className="flex items-center gap-1 text-[10px] font-sans text-secondary hover:text-foreground transition-colors"
+                >
+                  <span>{modeLabels[mode]}</span>
+                  <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="4,6 8,10 12,6" />
+                  </svg>
+                </button>
+
+                {/* Dropdown — appears above the button */}
+                {modeDropdownOpen && (
+                  <div className="absolute bottom-full left-0 mb-1 bg-white border border-border rounded shadow-sm py-1 min-w-[140px] z-10">
+                    {(['solo', 'individual', ...(hasCouplesData ? ['couples'] : [])] as const).map(m => (
+                      <button
+                        key={m}
+                        onClick={() => { setMode(m as 'solo' | 'individual' | 'couples'); setModeDropdownOpen(false); }}
+                        className={`block w-full text-left px-3 py-1.5 text-[11px] font-sans transition-colors ${
+                          mode === m ? 'text-foreground font-medium' : 'text-secondary hover:text-foreground hover:bg-stone-50'
+                        }`}
+                      >
+                        {modeLabels[m as keyof typeof modeLabels]}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               {/* Send button — inside the input field, bottom right */}
               <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={loading || isLimited || !inputValue.trim()}
                 aria-label="Send message"
-                className="absolute bottom-2.5 right-2.5 bg-accent text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-accent-hover transition-colors disabled:opacity-30"
+                className="absolute bottom-2.5 right-2.5 bg-accent text-white w-7 h-7 rounded-md flex items-center justify-center hover:bg-accent-hover transition-colors disabled:opacity-30"
               >
-                <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="8" y1="14" x2="8" y2="2" />
                   <polyline points="3,7 8,2 13,7" />
                 </svg>
