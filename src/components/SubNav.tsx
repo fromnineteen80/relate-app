@@ -83,8 +83,8 @@ export function SubNav({ items = [] }: SubNavProps) {
               href={link.href}
               className={`text-xs font-semibold px-3 py-2.5 border-b-2 transition-colors whitespace-nowrap ${
                 isActive
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-secondary hover:text-primary hover:border-primary'
+                  ? 'border-accent text-accent'
+                  : 'border-transparent text-foreground hover:text-accent hover:border-accent'
               }`}
             >
               {link.label}
@@ -101,7 +101,7 @@ export function SubNav({ items = [] }: SubNavProps) {
               <a
                 key={link.id}
                 href={link.href}
-                className="text-xs font-medium px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap text-secondary hover:text-primary"
+                className="text-xs font-medium px-3 py-2.5 border-b-2 border-transparent hover:border-accent transition-colors whitespace-nowrap text-secondary hover:text-foreground"
               >
                 {link.label}
               </a>
@@ -114,8 +114,8 @@ export function SubNav({ items = [] }: SubNavProps) {
               href={link.href}
               className={`text-xs font-medium px-3 py-2.5 border-b-2 transition-colors whitespace-nowrap ${
                 isActive
-                  ? 'border-accent text-primary'
-                  : 'border-transparent text-secondary hover:text-primary hover:border-accent'
+                  ? 'border-accent text-foreground'
+                  : 'border-transparent text-secondary hover:text-foreground hover:border-accent'
               }`}
             >
               {link.label}
