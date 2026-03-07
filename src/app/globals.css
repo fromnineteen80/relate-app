@@ -76,10 +76,10 @@ h1, h2, h3, h4, h5, h6 {
 
   /* Bullet list with accent-colored disc markers */
   .bullet-list {
-    @apply list-disc pl-5 space-y-1 text-sm text-secondary marker:text-accent;
+    @apply list-disc pl-5 space-y-1 text-sm text-secondary marker:text-secondary;
   }
   .bullet-list-xs {
-    @apply list-disc pl-4 space-y-1 text-xs text-secondary marker:text-accent;
+    @apply list-disc pl-4 space-y-1 text-xs text-secondary marker:text-secondary;
   }
 }
 
