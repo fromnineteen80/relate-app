@@ -57,7 +57,7 @@ export default function AdvisorSidebar() {
       <div
         className={`fixed top-0 left-0 h-screen bg-white border-r border-stone-200 flex flex-col transition-all duration-300 ease-out overflow-hidden ${
           isOpen
-            ? 'w-screen sm:w-[50vw] xl:w-[33vw] z-[60] sm:z-30'
+            ? 'w-screen sm:w-[280px] z-[60] sm:z-30'
             : 'w-0 z-30'
         }`}
         role="dialog"

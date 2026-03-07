@@ -18,25 +18,14 @@ export default function AdvisorToggle() {
         onClick={open}
         aria-label="Open sidebar"
         title="Open sidebar"
-        className="group w-8 h-full bg-white border-r border-border flex flex-col items-center justify-center hover:bg-stone-50 transition-colors"
+        className="group w-8 h-full bg-white border-r border-border flex flex-col items-center pt-3 hover:bg-stone-50 transition-colors"
       >
-        {/* Sidebar panel icon */}
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="text-secondary group-hover:text-foreground transition-colors"
-        >
-          <rect x="3" y="3" width="18" height="18" rx="2" />
-          <line x1="9" y1="3" x2="9" y2="21" />
+        {/* Sidebar panel icon — positioned at top to align with header */}
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-secondary group-hover:text-foreground transition-colors">
+          <path d="M2 4v16h20V4H2zm2 14V6h5v12H4zm7 0V6h9v12h-9z"/>
         </svg>
         {/* Tooltip */}
-        <span className="absolute left-10 px-2 py-1 text-xs text-secondary bg-white border border-border rounded shadow-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
+        <span className="absolute left-10 top-2 px-2 py-1 text-xs text-secondary bg-white border border-border rounded shadow-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
           Open sidebar
         </span>
       </button>

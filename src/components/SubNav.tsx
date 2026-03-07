@@ -77,7 +77,7 @@ export function SubNav({ items = [] }: SubNavProps) {
   const beforeDividerLinks = [...visibleUniversal, ...visibleResultsSubLinks];
 
   return (
-    <nav className="border-b border-border bg-background sticky top-[65px] z-10">
+    <nav className="border-b border-border bg-background sticky top-[49px] z-10">
       <div className="px-6 flex gap-1 overflow-x-auto">
         {beforeDividerLinks.map(link => {
           const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
