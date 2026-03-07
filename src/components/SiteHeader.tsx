@@ -52,7 +52,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
 
   const profileName = typeof window !== 'undefined' ? localStorage.getItem('relate_profile_name') : null;
   const profilePhoto = typeof window !== 'undefined' ? localStorage.getItem('relate_profile_photo') : null;
-  const hasPartner = typeof window !== 'undefined' ? !!localStorage.getItem('relate_partner_results') : false;
+  const hasPartner = typeof window !== 'undefined' ? !!(localStorage.getItem('relate_partner_email') || localStorage.getItem('relate_partner_results')) : false;
   const hasCouplesAccess = typeof window !== 'undefined'
     ? !!(localStorage.getItem('relate_couples_discount') || localStorage.getItem('relate_payment_tier')?.includes('couples'))
     : false;

@@ -71,7 +71,14 @@ export default function BillingPage() {
       try {
         const partnerRes = await fetch(`/api/partner-lookup?userId=${user.id}`);
         const partnerData = await partnerRes.json();
-        if (partnerData.partner) setPartner(partnerData.partner);
+        if (partnerData.partner) {
+          setPartner(partnerData.partner);
+          localStorage.setItem('relate_partner_email', partnerData.partner.email);
+          if (partnerData.partner.gender) localStorage.setItem('relate_partner_gender', partnerData.partner.gender);
+          if (partnerData.partner.results) {
+            localStorage.setItem('relate_partner_results', JSON.stringify(partnerData.partner.results));
+          }
+        }
       } catch { /* ignore */ }
     } catch {
       // Fall back to simple tier check

@@ -66,7 +66,10 @@ export default function InvitePage() {
         setPartner(data.partner);
         setConnectedAt(data.connectedAt);
         localStorage.setItem('relate_partner_email', data.partner.email);
-        localStorage.setItem('relate_partner_results', 'true');
+        if (data.partner.gender) localStorage.setItem('relate_partner_gender', data.partner.gender);
+        if (data.partner.results) {
+          localStorage.setItem('relate_partner_results', JSON.stringify(data.partner.results));
+        }
       }
     } catch {
       // silent fail
@@ -92,7 +95,6 @@ export default function InvitePage() {
       if (config.useMockAuth) {
         // Mock mode: just store the partner email
         localStorage.setItem('relate_partner_email', email);
-        localStorage.setItem('relate_partner_results', 'true');
         setPartner({ id: 'mock', email, firstName: 'Partner', lastName: null });
         setLoading(false);
         return;
@@ -115,7 +117,19 @@ export default function InvitePage() {
       setPartner(data.partner);
       setConnectedAt(data.alreadyConnected ? null : new Date().toISOString());
       localStorage.setItem('relate_partner_email', data.partner.email);
-      localStorage.setItem('relate_partner_results', 'true');
+
+      // Fetch full partner data (including results) via GET
+      try {
+        const fullRes = await fetch(`/api/partner-lookup?userId=${user.id}`);
+        const fullData = await fullRes.json();
+        if (fullData.partner) {
+          setPartner(fullData.partner);
+          if (fullData.partner.gender) localStorage.setItem('relate_partner_gender', fullData.partner.gender);
+          if (fullData.partner.results) {
+            localStorage.setItem('relate_partner_results', JSON.stringify(fullData.partner.results));
+          }
+        }
+      } catch { /* silent - partner details will hydrate on next page load */ }
     } catch {
       setError('Something went wrong. Please try again.');
     } finally {

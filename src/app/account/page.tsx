@@ -260,8 +260,8 @@ function AccountPage() {
     }
 
     setHasResults(!!localStorage.getItem('relate_results'));
-    setHasPartner(!!localStorage.getItem('relate_partner_results'));
     setPartnerEmail(localStorage.getItem('relate_partner_email'));
+    setHasPartner(!!(localStorage.getItem('relate_partner_email') || localStorage.getItem('relate_partner_results')));
     setProfileData(getProfile());
     setProfilePhoto(localStorage.getItem('relate_profile_photo'));
 
@@ -282,7 +282,10 @@ function AccountPage() {
             if (data.partner.assessmentComplete) setPartnerAssessmentComplete(true);
             if (data.partner.hasResults) setPartnerHasResults(true);
             localStorage.setItem('relate_partner_email', data.partner.email);
-            if (data.partner.hasResults) localStorage.setItem('relate_partner_results', 'true');
+            if (data.partner.gender) localStorage.setItem('relate_partner_gender', data.partner.gender);
+            if (data.partner.results) {
+              localStorage.setItem('relate_partner_results', JSON.stringify(data.partner.results));
+            }
           }
         })
         .catch(() => { /* silent */ });

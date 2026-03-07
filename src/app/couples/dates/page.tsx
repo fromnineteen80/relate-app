@@ -28,7 +28,7 @@ export default function DatesPage() {
     const user1Results = localStorage.getItem('relate_results');
     const user2Results = localStorage.getItem('relate_partner_results');
 
-    if (user1Results && user2Results) {
+    if (user1Results && user2Results && user2Results !== 'true') {
       const personalized = getPersonalizedDates(JSON.parse(user1Results), JSON.parse(user2Results));
       setDates(personalized);
     } else {

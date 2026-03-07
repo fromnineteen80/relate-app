@@ -177,6 +177,7 @@ export async function GET(request: NextRequest) {
         personaCode: partnerPersonaCode,
         assessmentComplete,
         hasResults: partnerHasResults,
+        results: partnerHasResults && partnerProgress?.results ? partnerProgress.results : null,
       } : null,
       partnershipId: partnership.id,
       connectedAt: partnership.accepted_at || partnership.created_at,

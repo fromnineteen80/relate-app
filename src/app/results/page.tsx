@@ -172,7 +172,7 @@ function ResultsDashboard() {
   // Load partner info and user profile
   useEffect(() => {
     if (!user) return;
-    const savedPartner = localStorage.getItem('relate_partner_results');
+    const savedPartner = localStorage.getItem('relate_partner_email') || localStorage.getItem('relate_partner_results');
     if (savedPartner) setHasPartner(true);
     const savedDiscount = localStorage.getItem('relate_couples_discount');
     if (savedDiscount) setHasCouplesAccess(true);
@@ -195,7 +195,10 @@ function ResultsDashboard() {
           if (data.partner.assessmentComplete) setPartnerAssessmentComplete(true);
           if (data.partner.hasResults) setPartnerHasResults(true);
           localStorage.setItem('relate_partner_email', data.partner.email);
-          if (data.partner.hasResults) localStorage.setItem('relate_partner_results', 'true');
+          if (data.partner.gender) localStorage.setItem('relate_partner_gender', data.partner.gender);
+          if (data.partner.results) {
+            localStorage.setItem('relate_partner_results', JSON.stringify(data.partner.results));
+          }
         }
       })
       .catch(() => { });
