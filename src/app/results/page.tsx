@@ -204,8 +204,14 @@ function ResultsDashboard() {
   useEffect(() => {
     if (!user || marketData || marketFetchedRef.current) return;
     const cached = localStorage.getItem('relate_market_data');
-    if (cached) {
+    const demoHash = localStorage.getItem('relate_demographics');
+    const cachedHash = localStorage.getItem('relate_market_data_demo_hash');
+    // Invalidate cache if demographics changed since last calculation
+    if (cached && demoHash === cachedHash) {
       try { setMarketData(JSON.parse(cached)); return; } catch { /* */ }
+    }
+    if (cached && demoHash !== cachedHash) {
+      localStorage.removeItem('relate_market_data');
     }
     const demoStr = localStorage.getItem('relate_demographics');
     const gender = localStorage.getItem('relate_gender');
@@ -251,6 +257,7 @@ function ResultsDashboard() {
           const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount, stateComparison: data.stateComparison, nationalComparison: data.nationalComparison };
           setMarketData(md);
           localStorage.setItem('relate_market_data', JSON.stringify(md));
+          localStorage.setItem('relate_market_data_demo_hash', demoStr);
         }
       })
       .catch(() => { })
@@ -324,6 +331,7 @@ function ResultsDashboard() {
         const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount, stateComparison: data.stateComparison, nationalComparison: data.nationalComparison };
         setMarketData(md);
         localStorage.setItem('relate_market_data', JSON.stringify(md));
+        localStorage.setItem('relate_market_data_demo_hash', localStorage.getItem('relate_demographics') || '');
       }
     } catch { /* */ }
     setMarketLoading(false);
@@ -1162,7 +1170,7 @@ function ResultsDashboard() {
                 </p>
                 {gottman.overallRisk && (
                   <p className="text-xs text-secondary mb-3">
-                    Overall risk: <span className={`font-semibold ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-warning' : 'text-success'}`}>
+                    Overall risk: <span className={`font-semibold ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-yellow-600' : 'text-success'}`}>
                       {gottman.overallRisk}
                     </span>
                   </p>
@@ -1173,8 +1181,8 @@ function ResultsDashboard() {
                     const rawScore = data.score ?? 4;
                     const normalized = Math.round(((rawScore - 4) / 16) * 10);
                     const pct = normalized * 10;
-                    const barColor = pct >= 63 ? 'bg-danger' : pct >= 32 ? 'bg-warning' : 'bg-success';
-                    const riskColor = pct >= 63 ? 'text-danger' : pct >= 32 ? 'text-warning' : 'text-success';
+                    const barColor = pct >= 63 ? 'bg-danger' : pct >= 32 ? 'bg-yellow-400' : 'bg-success';
+                    const riskColor = pct >= 63 ? 'text-danger' : pct >= 32 ? 'text-yellow-600' : 'text-success';
                     const HORSEMAN_DESC: Record<string, string> = {
                       criticism: 'Attacking your partner\'s character instead of addressing a specific behavior.',
                       contempt: 'Expressing superiority or disgust through sarcasm, eye-rolling, or mockery.',

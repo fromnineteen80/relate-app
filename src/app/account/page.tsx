@@ -293,10 +293,15 @@ function AccountPage() {
   useEffect(() => {
     if (!user || marketData || marketFetchedRef.current) return;
 
-    // Check for cached market data first
+    // Check for cached market data — invalidate if demographics changed
     const cached = localStorage.getItem('relate_market_data');
-    if (cached) {
+    const demoRaw = localStorage.getItem('relate_demographics');
+    const cachedDemoHash = localStorage.getItem('relate_market_data_demo_hash');
+    if (cached && demoRaw === cachedDemoHash) {
       try { setMarketData(JSON.parse(cached)); return; } catch { /* fetch fresh */ }
+    }
+    if (cached && demoRaw !== cachedDemoHash) {
+      localStorage.removeItem('relate_market_data');
     }
 
     const demoStr = localStorage.getItem('relate_demographics');
@@ -358,6 +363,7 @@ function AccountPage() {
           };
           setMarketData(md);
           localStorage.setItem('relate_market_data', JSON.stringify(md));
+          localStorage.setItem('relate_market_data_demo_hash', demoStr);
         }
       })
       .catch(() => { /* silent fail, market data is optional */ })
