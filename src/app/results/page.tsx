@@ -889,6 +889,7 @@ function ResultsDashboard() {
         {/* ── Score Breakdown ── */}
         {hasDimensions && (() => {
           const dimOrder = ['physical', 'social', 'lifestyle', 'values'] as const;
+          const dimBarColor: Record<string, string> = { physical: 'bg-accent/45', social: 'bg-accent/35', lifestyle: 'bg-accent/25', values: 'bg-accent/15' };
           const isMale = report?.gender === 'M';
           // Dimensions come from M2/W2 (what you offer)
           const polePairs: Record<string, { A: string; B: string }> = isMale
@@ -942,7 +943,7 @@ function ResultsDashboard() {
                     <div className="flex items-center gap-3">
                       <span className="text-xs text-secondary w-20 shrink-0 capitalize">{dim} <span className="normal-case text-secondary/60">({pair.A} / {pair.B})</span></span>
                       <div className="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-accent rounded-full transition-all" style={{ width: `${Math.min(100, strength)}%` }} />
+                        <div className={`h-full ${dimBarColor[dim]} rounded-full transition-all`} style={{ width: `${Math.min(100, strength)}%` }} />
                       </div>
                       <span className="font-mono text-xs text-secondary w-8 text-right">{Math.round(strength)}</span>
                     </div>

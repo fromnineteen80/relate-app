@@ -108,6 +108,7 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
             // Position: 0 = full A, 100 = full B
             const position = direction === 'A' ? Math.max(5, 50 - strength / 2) : Math.min(95, 50 + strength / 2);
             const desc = getDimDescription(dim, direction, gender);
+            const dimDotColor: Record<string, string> = { physical: 'bg-accent/45', social: 'bg-accent/35', lifestyle: 'bg-accent/25', values: 'bg-accent/15' };
 
             return (
               <div
@@ -121,7 +122,7 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
                 </div>
                 <div className="relative h-2 bg-stone-200 rounded-full mb-2">
                   <div
-                    className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-accent rounded-full border-2 border-white transition-all duration-700"
+                    className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 ${dimDotColor[dim]} rounded-full border-2 border-white transition-all duration-700`}
                     style={{ left: `${position}%`, transitionDelay: `${i * 200 + 400}ms` }}
                   />
                 </div>
