@@ -466,13 +466,20 @@ function ResultsDashboard() {
                  'Your conflict patterns are working against each other'}
               </h4>
             </div>
-            <span className={`text-xs font-mono px-2 py-0.5 rounded shrink-0 ${
-              stack.coherenceScore >= 80 ? 'bg-success/10 text-success' :
-              stack.coherenceScore >= 60 ? 'bg-accent/10 text-accent' :
-              stack.coherenceScore >= 40 ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
-            }`}>
-              {stack.coherenceScore}/100
-            </span>
+            {stack.coherenceScore >= 95 ? (
+              <span className="text-xs px-2 py-0.5 rounded shrink-0 bg-amber-50 text-amber-700 flex items-center gap-1">
+                <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                Fully Aligned
+              </span>
+            ) : (
+              <span className={`text-xs px-2 py-0.5 rounded shrink-0 ${
+                stack.coherenceScore >= 80 ? 'bg-success/10 text-success' :
+                stack.coherenceScore >= 60 ? 'bg-accent/10 text-accent' :
+                stack.coherenceScore >= 40 ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
+              }`}>
+                {stack.coherenceScore}/100
+              </span>
+            )}
           </div>
           {stack.summary && <p className="text-sm text-secondary mb-3">{stack.summary}</p>}
           {Array.isArray(stack.incoherences) && stack.incoherences.length > 0 && (
@@ -1099,48 +1106,93 @@ function ResultsDashboard() {
         {m4Summary && (
           <section className="card mb-4 scroll-mt-32">
             <h3 className="font-serif text-lg font-semibold mb-4">Conflict Profile</h3>
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              {[
-                ['Approach', m4Summary.approach],
-                ['Primary Driver', m4Summary.primaryDriver],
-                ['Repair Speed', m4Summary.repairSpeed],
-                ['Repair Mode', m4Summary.repairMode],
-                ['Capacity', m4Summary.capacity],
-              ].map(([label, val]) => (
-                <div key={label as string} className="flex justify-between py-1 border-b border-border last:border-0">
-                  <span className="text-xs text-secondary">{label}</span>
-                  <span className="text-xs font-mono capitalize">{(val as string) || '-'}</span>
-                </div>
-              ))}
+            <p className="text-sm text-secondary mb-5">How you engage in conflict, what drives your emotional reactions, and how you recover afterward.</p>
+            <div className="space-y-4 mb-4">
+              {(() => {
+                const CONFLICT_DESCRIPTIONS: Record<string, Record<string, string>> = {
+                  approach: {
+                    pursue: 'You move toward conflict. You need resolution, engagement, and verbal confirmation that things are okay before you can rest.',
+                    withdraw: 'You move away from conflict. You need space and time to process internally before you can engage productively.',
+                  },
+                  primaryDriver: {
+                    abandonment: 'Your deepest fear in conflict is being left. Unresolved tension feels like the relationship itself is at risk.',
+                    engulfment: 'Your deepest fear in conflict is losing yourself. You pull back when closeness starts to feel like control.',
+                    inadequacy: 'Your deepest fear in conflict is not being enough. Criticism lands as confirmation of a deeper insecurity.',
+                    injustice: 'Your deepest fear in conflict is unfairness. You track the scorecard and need to know the scales are balanced.',
+                  },
+                  repairSpeed: {
+                    'Quick Repair': 'You need to resolve things immediately. Unresolved conflict creates physical discomfort you can\'t sit with.',
+                    'Slow Repair': 'You need time before reconnecting. Premature repair attempts feel forced and inauthentic.',
+                  },
+                  repairMode: {
+                    'Verbal Repair': 'You repair through conversation. You need to talk through what happened, understand, and be understood.',
+                    'Physical Repair': 'You repair through presence and touch. A hug or sitting close says more than words after a fight.',
+                  },
+                  capacity: {
+                    'High Capacity': 'You can hold significant emotional intensity before flooding. You stay regulated longer under stress than most.',
+                    'Medium Capacity': 'You have average tolerance for emotional intensity. You benefit from breaks but return and re-engage.',
+                    'Low Capacity': 'You flood quickly during conflict. You need structured breaks and a partner who understands that\'s self-regulation, not avoidance.',
+                  },
+                };
+                const items: [string, string, string][] = [
+                  ['Approach', m4Summary.approach, CONFLICT_DESCRIPTIONS.approach[m4Summary.approach] || ''],
+                  ['Primary Driver', m4Summary.primaryDriver, CONFLICT_DESCRIPTIONS.primaryDriver[m4Summary.primaryDriver] || ''],
+                  ['Repair Speed', m4Summary.repairSpeed, CONFLICT_DESCRIPTIONS.repairSpeed[m4Summary.repairSpeed] || ''],
+                  ['Repair Mode', m4Summary.repairMode, CONFLICT_DESCRIPTIONS.repairMode[m4Summary.repairMode] || ''],
+                  ['Capacity', m4Summary.capacity, CONFLICT_DESCRIPTIONS.capacity[m4Summary.capacity] || ''],
+                ];
+                return items.map(([label, val, desc]) => (
+                  <div key={label} className="pb-3 border-b border-border last:border-0 last:pb-0">
+                    <div className="flex items-baseline justify-between gap-4 mb-1">
+                      <span className="text-xs text-secondary shrink-0">{label}</span>
+                      <span className="text-sm font-semibold capitalize text-right">{(val as string) || '-'}</span>
+                    </div>
+                    {desc && <p className="text-xs text-secondary leading-relaxed mt-1">{desc}</p>}
+                  </div>
+                ));
+              })()}
             </div>
 
             {/* Gottman Four Horsemen */}
             {gottman?.horsemen && Object.keys(gottman.horsemen).length > 0 && (
               <div className="pt-4 border-t border-border">
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Gottman Four Horsemen</span>
+                <span className="text-xs text-secondary uppercase tracking-wider font-semibold">Gottman Four Horsemen</span>
+                <p className="text-xs text-secondary mt-1 mb-4">
+                  The four communication patterns researcher John Gottman identified as the strongest predictors of relationship failure. Lower scores are better.
+                </p>
                 {gottman.overallRisk && (
-                  <p className="text-xs text-secondary mt-1 mb-3">
-                    Overall risk: <span className={`font-mono ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-warning' : 'text-success'}`}>
+                  <p className="text-xs text-secondary mb-3">
+                    Overall risk: <span className={`font-semibold ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-warning' : 'text-success'}`}>
                       {gottman.overallRisk}
                     </span>
                   </p>
                 )}
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {Object.entries(gottman.horsemen).map(([name, data]: [string, any]) => {
                     if (!data) return null;
-                    const riskColor = data.riskLevel === 'high' ? 'text-danger' : data.riskLevel === 'medium' ? 'text-warning' : 'text-success';
-                    const barColor = data.riskLevel === 'high' ? 'bg-danger' : data.riskLevel === 'medium' ? 'bg-warning' : 'bg-success';
+                    const rawScore = data.score ?? 4;
+                    const normalized = Math.round(((rawScore - 4) / 16) * 10);
+                    const pct = normalized * 10;
+                    const barColor = pct >= 63 ? 'bg-danger' : pct >= 32 ? 'bg-warning' : 'bg-success';
+                    const riskColor = pct >= 63 ? 'text-danger' : pct >= 32 ? 'text-warning' : 'text-success';
+                    const HORSEMAN_DESC: Record<string, string> = {
+                      criticism: 'Attacking your partner\'s character instead of addressing a specific behavior.',
+                      contempt: 'Expressing superiority or disgust through sarcasm, eye-rolling, or mockery.',
+                      defensiveness: 'Deflecting responsibility by making excuses or counter-attacking.',
+                      stonewalling: 'Shutting down and withdrawing from interaction entirely.',
+                    };
                     return (
                       <div key={name}>
-                        <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-baseline justify-between gap-4 mb-1">
                           <span className="text-sm font-medium capitalize">{name}</span>
-                          <span className={`text-xs font-mono ${riskColor}`}>{data.riskLevel || '-'} ({data.score ?? '-'})</span>
+                          <span className={`text-xs font-semibold ${riskColor}`}>{normalized}/10</span>
                         </div>
-                        <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden mb-1">
-                          <div className={`h-full rounded-full ${barColor}`} style={{ width: `${Math.min(100, (data.score ?? 0) * 10)}%` }} />
+                        <p className="text-xs text-secondary mb-2">{HORSEMAN_DESC[name] || ''}</p>
+                        <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden mb-1.5">
+                          <div className={`h-full rounded-full transition-all ${barColor}`} style={{ width: `${Math.max(2, pct)}%` }} />
                         </div>
                         {data.antidote && (
-                          <p className="text-xs text-secondary">Antidote: {data.antidote}</p>
+                          <p className="text-xs text-secondary"><span className="font-medium">Antidote:</span> {data.antidote}</p>
                         )}
                       </div>
                     );

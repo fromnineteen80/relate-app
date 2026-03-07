@@ -14,6 +14,7 @@ import {
   type GrowthCategory,
   type GrowthProjection,
 } from '@/lib/growth';
+import { getPersonaName } from '@/lib/scoring';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
 import { SiteFooter } from '@/components/SiteFooter';
@@ -193,14 +194,21 @@ export default function GrowthPage() {
               })}
             </div>
 
-            {projection.projectedCode && projection.projectedCode !== projection.originalCode && (
-              <div className="mt-4 pt-3 border-t border-stone-100">
-                <p className="text-xs text-secondary">
-                  <span className="font-medium text-foreground">Growth trajectory: </span>
-                  {projection.originalName} ({projection.originalCode}) → {projection.projectedName || projection.projectedCode}
-                </p>
-              </div>
-            )}
+            {projection.projectedCode && projection.projectedCode !== projection.originalCode && (() => {
+              const gender = userData?.gender || 'M';
+              const projectedLabel = projection.projectedName || getPersonaName(projection.projectedCode, gender);
+              return (
+                <div className="mt-4 pt-3 border-t border-stone-100">
+                  <p className="text-xs text-secondary">
+                    <span className="font-medium text-foreground">Growth trajectory: </span>
+                    {projection.originalName} ({projection.originalCode}) →{' '}
+                    <Link href={`/results/match/${projection.projectedCode}`} className="text-accent hover:underline font-medium">
+                      {projectedLabel} ({projection.projectedCode})
+                    </Link>
+                  </p>
+                </div>
+              );
+            })()}
 
             {projection.matchImpactNote && (
               <p className="text-[11px] text-accent mt-3 leading-snug">{projection.matchImpactNote}</p>
