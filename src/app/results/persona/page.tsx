@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
+import { Icon } from '@/components/Icon';
 
 const CODE_TO_POLE: Record<string, 'A' | 'B'> = {
   A: 'A', B: 'B', C: 'A', D: 'B', E: 'A', F: 'B', G: 'A', H: 'B',
@@ -75,7 +76,7 @@ export default function PersonaPage() {
 
         {persona.datingBehavior?.length > 0 && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-3">Dating Behavior</h3>
+            <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2"><Icon name="touch_app" size={20} className="text-accent" />Dating Behavior</h3>
             <ul className="bullet-list">
               {persona.datingBehavior.map((b: string, i: number) => (
                 <li key={i}>{b}</li>
@@ -86,7 +87,7 @@ export default function PersonaPage() {
 
         {persona.inRelationships?.length > 0 && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-3">In Relationships</h3>
+            <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2"><Icon name="people" size={20} className="text-accent" />In Relationships</h3>
             <ul className="bullet-list">
               {persona.inRelationships.map((b: string, i: number) => (
                 <li key={i}>{b}</li>
@@ -98,7 +99,7 @@ export default function PersonaPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {persona.mostAttractive?.length > 0 && (
             <section className="card">
-              <h3 className="font-serif font-semibold mb-3 text-success">Strengths</h3>
+              <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2 text-success"><Icon name="star" size={20} className="text-accent" />Strengths</h3>
               <ul className="bullet-list">
                 {persona.mostAttractive.map((b: string, i: number) => (
                   <li key={i}>{b}</li>
@@ -109,7 +110,7 @@ export default function PersonaPage() {
 
           {persona.leastAttractive?.length > 0 && (
             <section className="card">
-              <h3 className="font-serif font-semibold mb-3 text-warning">Growth Areas</h3>
+              <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2 text-warning"><Icon name="spa" size={20} className="text-accent" />Growth Areas</h3>
               <ul className="bullet-list">
                 {persona.leastAttractive.map((b: string, i: number) => (
                   <li key={i}>{b}</li>

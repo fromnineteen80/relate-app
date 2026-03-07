@@ -822,7 +822,7 @@ function ResultsDashboard() {
         {matches.length > 0 && (
           <section className="card mb-4 scroll-mt-32">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-serif text-lg font-semibold">Compatibility Rankings</h3>
+              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="leaderboard" size={20} className="text-accent" />Compatibility Rankings</h3>
               {hasPaid && <Link href="/results/matches" className="text-xs text-accent hover:underline">View all</Link>}
             </div>
             <div className="space-y-3">
@@ -889,7 +889,7 @@ function ResultsDashboard() {
         {/* ── Score Breakdown ── */}
         {hasDimensions && (
           <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-3">Score Breakdown</h3>
+            <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2"><Icon name="bar_chart" size={20} className="text-accent" />Score Breakdown</h3>
             <div className="space-y-3.5">
               {Object.entries(dimensions).map(([dim, data]: [string, any]) => {
                 if (!data || typeof data !== 'object') return null;
@@ -927,7 +927,7 @@ function ResultsDashboard() {
         {/* ── Connection Style ── */}
         {m3 && (
           <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-4">Connection Style</h3>
+            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="sync_alt" size={20} className="text-accent" />Connection Style</h3>
             <div className="grid grid-cols-3 gap-6 text-center mb-4">
               <div>
                 <span className="font-mono text-lg font-semibold">{m3.wantScore ?? '-'}</span>
@@ -985,7 +985,7 @@ function ResultsDashboard() {
         {/* ── Intimacy Under Stress ── (moved up from below Attachment) */}
         {ic?.m3States?.states?.normal && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1">Intimacy Under Stress</h3>
+            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="local_fire_department" size={20} className="text-accent" />Intimacy Under Stress</h3>
             <p className="explainer mb-4">How your Want and Offer shift across relationship states</p>
 
             {/* Legend */}
@@ -1070,7 +1070,7 @@ function ResultsDashboard() {
         {/* ── Your Attachment Style ── (moved down) */}
         {ic?.attachment && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1">Your Attachment Style</h3>
+            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="shield" size={20} className="text-accent" />Your Attachment Style</h3>
             <p className="explainer mb-4">How you connect, protect, and respond in close relationships</p>
             <div className="flex items-center gap-3 mb-4">
               <span className="font-mono text-lg font-semibold capitalize">{ic.attachment.style}</span>
@@ -1125,7 +1125,7 @@ function ResultsDashboard() {
         {/* ── Conflict Profile ── */}
         {m4Summary && (
           <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-4">Conflict Profile</h3>
+            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="bolt" size={20} className="text-accent" />Conflict Profile</h3>
             <p className="text-sm text-secondary mb-5">How you engage in conflict, what drives your emotional reactions, and how you recover afterward.</p>
             <div className="space-y-4 mb-4">
               {(() => {
@@ -1179,7 +1179,7 @@ function ResultsDashboard() {
         {/* ── Gottman Four Horsemen ── */}
         {gottman?.horsemen && Object.keys(gottman.horsemen).length > 0 && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1">Gottman Four Horsemen</h3>
+            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="warning" size={20} className="text-accent" />Gottman Four Horsemen</h3>
             <p className="explainer mb-4">
               The four communication patterns researcher John Gottman identified as the strongest predictors of relationship failure. Lower scores are better.
             </p>
@@ -1242,7 +1242,7 @@ function ResultsDashboard() {
         {/* ── Ideal Partner Profile ── */}
         {ic?.attachmentTiers && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1">Ideal Partner Profile</h3>
+            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="person_search" size={20} className="text-accent" />Ideal Partner Profile</h3>
             <p className="explainer mb-4">The attachment styles, emotional drivers, and conflict behaviors that complement yours best</p>
 
             {/* Attachment Style */}
@@ -1349,7 +1349,7 @@ function ResultsDashboard() {
         {/* ── Relationship Capacity / Modifiers ── */}
         {modifiers && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-4">Relationship Capacity</h3>
+            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="speed" size={20} className="text-accent" />Relationship Capacity</h3>
             {modifiers.relationshipCapacity && (
               <div className="mb-4">
                 <div className="flex items-center gap-3 mb-2">
@@ -1431,7 +1431,7 @@ function ResultsDashboard() {
         {/* ── Couples Mode ── */}
         {hasResults && (
           <section className="card mb-4 border-accent">
-            <h3 className="font-serif text-lg font-semibold mb-4">Couples Mode</h3>
+            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="favorite" size={20} className="text-accent" />Couples Mode</h3>
 
             {hasPartner ? (
               <div>
@@ -1675,7 +1675,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
   if (loading) {
     return (
       <section className="card mb-4">
-        <h3 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h3>
+        <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="trending_up" size={20} className="text-accent" />Your Dating Market</h3>
         <p className="explainer mb-4">{relaxing ? 'Recalculating your market...' : 'Analyzing your local market...'}</p>
         <div className="flex items-center justify-center py-8">
           <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
@@ -1841,7 +1841,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
           </div>
         </div>
       )}
-      <h3 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h3>
+      <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="trending_up" size={20} className="text-accent" />Your Dating Market</h3>
       <p className="explainer mb-4">{metro}</p>
 
       <div className="mb-6">
@@ -2224,7 +2224,7 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
 
   return (
     <section className="card mb-4">
-      <h3 className="font-serif text-lg font-semibold mb-1">Market Coaching</h3>
+      <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="tips_and_updates" size={20} className="text-accent" />Market Coaching</h3>
       <p className="explainer mb-4">Actionable insights from your dating market data and assessment results</p>
       <div className="space-y-4">
         {insights.map((insight, i) => (
