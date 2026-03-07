@@ -65,12 +65,12 @@ function scoreContext(key: string, value: number, userName?: string, matchName?:
   const them = matchName || 'this persona';
   switch (key) {
     case 'tier':
-      return high ? `Strong alignment between ${you} and ${them} — your core personalities are naturally compatible.`
-        : mid ? `Moderate alignment between ${you} and ${them} — workable with mutual effort and awareness.`
-        : `Lower alignment between ${you} and ${them} — meaningful differences in how you each approach relationships.`;
+      return high ? `Strong alignment between ${you} and ${them}. Your core personalities are naturally compatible.`
+        : mid ? `Moderate alignment between ${you} and ${them}, workable with mutual effort and awareness.`
+        : `Lower alignment between ${you} and ${them}. Meaningful differences in how you each approach relationships.`;
     case 'preference':
       return high ? `As ${you}, you closely match what ${them} typically looks for in a partner.`
-        : mid ? `You partially match what ${them} looks for — some gaps to be aware of.`
+        : mid ? `You partially match what ${them} looks for, with some gaps to be aware of.`
         : `As ${you}, you fall outside several of ${them}'s typical preferences.`;
     case 'dimension':
       return high ? `${you} and ${them} share closely aligned behavioral patterns and lifestyle values.`
@@ -78,12 +78,12 @@ function scoreContext(key: string, value: number, userName?: string, matchName?:
         : `Significant differences in day-to-day tendencies between ${you} and ${them}.`;
     case 'intimacy':
       return high ? `High alignment in how ${you} and ${them} each express and receive intimacy.`
-        : mid ? `Some differences in intimacy needs between ${you} and ${them} — communication will be important.`
-        : `${you} and ${them} have very different intimacy styles — requires intentional understanding.`;
+        : mid ? `Some differences in intimacy needs between ${you} and ${them}. Communication will be important.`
+        : `${you} and ${them} have very different intimacy styles. Requires intentional understanding.`;
     case 'conflict':
       return high ? `${you} and ${them} handle disagreements in complementary ways, reducing friction.`
         : mid ? `Some differences in conflict style between ${you} and ${them} that may require adjustment.`
-        : `${you} and ${them} have opposing conflict styles — may need clear strategies for disagreements.`;
+        : `${you} and ${them} have opposing conflict styles. May need clear strategies for disagreements.`;
     default:
       return '';
   }
