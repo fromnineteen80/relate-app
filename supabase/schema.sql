@@ -40,6 +40,12 @@ create table if not exists public.users (
   pref_political text[],
   pref_education_min text,
   seeking text,
+  birth_month integer,
+  birth_day integer,
+  birth_year integer,
+  birth_hour integer,
+  birth_minute integer,
+  birth_ampm text check (birth_ampm in ('AM', 'PM')),
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now()
 );
