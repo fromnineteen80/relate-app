@@ -1172,64 +1172,65 @@ function ResultsDashboard() {
                   ['Capacity', m4Summary.capacity, CONFLICT_DESCRIPTIONS.capacity[m4Summary.capacity] || ''],
                 ];
                 return items.map(([label, val, desc]) => (
-                  <div key={label} className="pb-3 border-b border-border last:border-0 last:pb-0">
+                  <div key={label}>
                     <div className="flex items-baseline justify-between gap-4 mb-1">
-                      <span className="text-xs text-secondary shrink-0">{label}</span>
-                      <span className="text-sm font-semibold capitalize text-right">{(val as string) || '-'}</span>
+                      <span className="text-sm font-medium">{label}</span>
+                      <span className="text-xs font-semibold capitalize">{(val as string) || '-'}</span>
                     </div>
-                    {desc && <p className="text-xs text-secondary leading-relaxed mt-1">{desc}</p>}
+                    {desc && <p className="text-xs text-secondary mb-2">{desc}</p>}
                   </div>
                 ));
               })()}
             </div>
 
-            {/* Gottman Four Horsemen */}
-            {gottman?.horsemen && Object.keys(gottman.horsemen).length > 0 && (
-              <div className="pt-4 border-t border-border">
-                <span className="text-xs text-secondary uppercase tracking-wider font-semibold">Gottman Four Horsemen</span>
-                <p className="text-xs text-secondary mt-1 mb-4">
-                  The four communication patterns researcher John Gottman identified as the strongest predictors of relationship failure. Lower scores are better.
-                </p>
-                {gottman.overallRisk && (
-                  <p className="text-xs text-secondary mb-3">
-                    Overall risk: <span className={`font-semibold ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-warning' : 'text-success'}`}>
-                      {gottman.overallRisk}
-                    </span>
-                  </p>
-                )}
-                <div className="space-y-4">
-                  {Object.entries(gottman.horsemen).map(([name, data]: [string, any]) => {
-                    if (!data) return null;
-                    const rawScore = data.score ?? 4;
-                    const normalized = Math.round(((rawScore - 4) / 16) * 10);
-                    const pct = normalized * 10;
-                    const barColor = pct >= 63 ? 'bg-danger' : pct >= 32 ? 'bg-warning' : 'bg-success';
-                    const riskColor = pct >= 63 ? 'text-danger' : pct >= 32 ? 'text-warning' : 'text-success';
-                    const HORSEMAN_DESC: Record<string, string> = {
-                      criticism: 'Attacking your partner\'s character instead of addressing a specific behavior.',
-                      contempt: 'Expressing superiority or disgust through sarcasm, eye-rolling, or mockery.',
-                      defensiveness: 'Deflecting responsibility by making excuses or counter-attacking.',
-                      stonewalling: 'Shutting down and withdrawing from interaction entirely.',
-                    };
-                    return (
-                      <div key={name}>
-                        <div className="flex items-baseline justify-between gap-4 mb-1">
-                          <span className="text-sm font-medium capitalize">{name}</span>
-                          <span className={`text-xs font-semibold ${riskColor}`}>{normalized}/10</span>
-                        </div>
-                        <p className="text-xs text-secondary mb-2">{HORSEMAN_DESC[name] || ''}</p>
-                        <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden mb-1.5">
-                          <div className={`h-full rounded-full transition-all ${barColor}`} style={{ width: `${Math.max(2, pct)}%` }} />
-                        </div>
-                        {data.antidote && (
-                          <p className="text-xs text-secondary"><span className="font-medium">Antidote:</span> {data.antidote}</p>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+          </section>
+        )}
+
+        {/* ── Gottman Four Horsemen ── */}
+        {gottman?.horsemen && Object.keys(gottman.horsemen).length > 0 && (
+          <section className="card mb-4">
+            <h3 className="font-serif text-lg font-semibold mb-1">Gottman Four Horsemen</h3>
+            <p className="explainer mb-4">
+              The four communication patterns researcher John Gottman identified as the strongest predictors of relationship failure. Lower scores are better.
+            </p>
+            {gottman.overallRisk && (
+              <p className="text-xs text-secondary mb-3">
+                Overall risk: <span className={`font-semibold ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-warning' : 'text-success'}`}>
+                  {gottman.overallRisk}
+                </span>
+              </p>
             )}
+            <div className="space-y-4">
+              {Object.entries(gottman.horsemen).map(([name, data]: [string, any]) => {
+                if (!data) return null;
+                const rawScore = data.score ?? 4;
+                const normalized = Math.round(((rawScore - 4) / 16) * 10);
+                const pct = normalized * 10;
+                const barColor = pct >= 63 ? 'bg-danger' : pct >= 32 ? 'bg-warning' : 'bg-success';
+                const riskColor = pct >= 63 ? 'text-danger' : pct >= 32 ? 'text-warning' : 'text-success';
+                const HORSEMAN_DESC: Record<string, string> = {
+                  criticism: 'Attacking your partner\'s character instead of addressing a specific behavior.',
+                  contempt: 'Expressing superiority or disgust through sarcasm, eye-rolling, or mockery.',
+                  defensiveness: 'Deflecting responsibility by making excuses or counter-attacking.',
+                  stonewalling: 'Shutting down and withdrawing from interaction entirely.',
+                };
+                return (
+                  <div key={name}>
+                    <div className="flex items-baseline justify-between gap-4 mb-1">
+                      <span className="text-sm font-medium capitalize">{name}</span>
+                      <span className={`text-xs font-semibold ${riskColor}`}>{normalized}/10</span>
+                    </div>
+                    <p className="text-xs text-secondary mb-2">{HORSEMAN_DESC[name] || ''}</p>
+                    <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden mb-1.5">
+                      <div className={`h-full rounded-full transition-all ${barColor}`} style={{ width: `${Math.max(2, pct)}%` }} />
+                    </div>
+                    {data.antidote && (
+                      <p className="text-xs text-secondary"><span className="font-medium">Antidote:</span> {data.antidote}</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </section>
         )}
 
