@@ -260,8 +260,8 @@ function AccountPage() {
     }
 
     setHasResults(!!localStorage.getItem('relate_results'));
-    setHasPartner(!!localStorage.getItem('relate_partner_results'));
     setPartnerEmail(localStorage.getItem('relate_partner_email'));
+    setHasPartner(!!(localStorage.getItem('relate_partner_email') || localStorage.getItem('relate_partner_results')));
     setProfileData(getProfile());
     setProfilePhoto(localStorage.getItem('relate_profile_photo'));
 
@@ -282,7 +282,10 @@ function AccountPage() {
             if (data.partner.assessmentComplete) setPartnerAssessmentComplete(true);
             if (data.partner.hasResults) setPartnerHasResults(true);
             localStorage.setItem('relate_partner_email', data.partner.email);
-            if (data.partner.hasResults) localStorage.setItem('relate_partner_results', 'true');
+            if (data.partner.gender) localStorage.setItem('relate_partner_gender', data.partner.gender);
+            if (data.partner.results) {
+              localStorage.setItem('relate_partner_results', JSON.stringify(data.partner.results));
+            }
           }
         })
         .catch(() => { /* silent */ });
@@ -972,24 +975,6 @@ function AccountPage() {
           </section>
         )}
 
-
-        {/* ── Quick Links ── */}
-        <section className="card mb-4">
-          <h2 className="font-serif text-lg font-semibold mb-4">Quick Links</h2>
-          <div className="grid grid-cols-2 gap-2">
-            <Link href="/results" className="text-sm text-accent hover:underline">Results Dashboard</Link>
-            <Link href="/results/persona" className="text-sm text-accent hover:underline">Your Persona</Link>
-            <Link href="/results/matches" className="text-sm text-accent hover:underline">All Matches</Link>
-            <Link href="/results/conflict" className="text-sm text-accent hover:underline">Conflict Analysis</Link>
-            <Link href="/personas" className="text-sm text-accent hover:underline">Browse Personas</Link>
-            <Link href="/methodology" className="text-sm text-accent hover:underline">Methodology</Link>
-            <Link href="/settings/profile" className="text-sm text-accent hover:underline">Profile Settings</Link>
-            {(currentTier === 'premium' || currentTier === 'couples') && (
-              <Link href="/advisor" className="text-sm text-accent hover:underline">AI Advisor</Link>
-            )}
-            <Link href="/couples" className="text-sm text-accent hover:underline">Couples Dashboard</Link>
-          </div>
-        </section>
 
         {/* ── Feedback ── */}
         <section className="card mb-4">

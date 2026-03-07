@@ -15,7 +15,7 @@ type SiteHeaderProps = {
 
 export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeaderProps) {
   const { user, signOut } = useAuth();
-  const { isOpen: advisorOpen } = useAdvisor();
+  const { isOpen: advisorOpen, toggle: toggleAdvisor } = useAdvisor();
   const pathname = usePathname();
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -52,7 +52,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
 
   const profileName = typeof window !== 'undefined' ? localStorage.getItem('relate_profile_name') : null;
   const profilePhoto = typeof window !== 'undefined' ? localStorage.getItem('relate_profile_photo') : null;
-  const hasPartner = typeof window !== 'undefined' ? !!localStorage.getItem('relate_partner_results') : false;
+  const hasPartner = typeof window !== 'undefined' ? !!(localStorage.getItem('relate_partner_email') || localStorage.getItem('relate_partner_results')) : false;
   const hasCouplesAccess = typeof window !== 'undefined'
     ? !!(localStorage.getItem('relate_couples_discount') || localStorage.getItem('relate_payment_tier')?.includes('couples'))
     : false;
@@ -80,9 +80,37 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-sm" style={{ overflow: 'visible' }}>
       <div className="px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="font-serif text-xl font-semibold tracking-tight">
-          RELATE
-        </Link>
+        <div className="flex items-center gap-3">
+          {/* Sidebar toggle icon — left of site title */}
+          {!isAuth && (
+            <button
+              onClick={toggleAdvisor}
+              aria-label={advisorOpen ? 'Close sidebar' : 'Open sidebar'}
+              className="group relative w-7 h-7 flex items-center justify-center text-secondary hover:text-foreground transition-colors"
+            >
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <line x1="9" y1="3" x2="9" y2="21" />
+              </svg>
+              {/* Tooltip */}
+              <span className="absolute top-full mt-1 left-0 px-2 py-1 text-xs text-secondary bg-white border border-border rounded shadow-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
+                {advisorOpen ? 'Close sidebar' : 'Open sidebar'}
+              </span>
+            </button>
+          )}
+          <Link href="/" className="font-serif text-base font-semibold tracking-tight">
+            RELATE
+          </Link>
+        </div>
 
         {isAuth ? null : (
           <div className="flex items-center gap-2">
