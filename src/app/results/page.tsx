@@ -202,17 +202,7 @@ function ResultsDashboard() {
 
   // Fetch market data
   useEffect(() => {
-    if (!user || marketData || marketFetchedRef.current) return;
-    const cached = localStorage.getItem('relate_market_data');
-    const demoHash = localStorage.getItem('relate_demographics');
-    const cachedHash = localStorage.getItem('relate_market_data_demo_hash');
-    // Invalidate cache if demographics changed since last calculation
-    if (cached && demoHash === cachedHash) {
-      try { setMarketData(JSON.parse(cached)); return; } catch { /* */ }
-    }
-    if (cached && demoHash !== cachedHash) {
-      localStorage.removeItem('relate_market_data');
-    }
+    if (!user || marketFetchedRef.current) return;
     const demoStr = localStorage.getItem('relate_demographics');
     const gender = localStorage.getItem('relate_gender');
     if (!demoStr) return;
@@ -256,13 +246,11 @@ function ResultsDashboard() {
         if (data.success) {
           const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount, stateComparison: data.stateComparison, nationalComparison: data.nationalComparison };
           setMarketData(md);
-          localStorage.setItem('relate_market_data', JSON.stringify(md));
-          localStorage.setItem('relate_market_data_demo_hash', demoStr);
         }
       })
       .catch(() => { })
       .finally(() => setMarketLoading(false));
-  }, [user, marketData]);
+  }, [user]);
 
   // Recalculate market data after adjusting a preference
   const recalculateMarket = useCallback(async (prefKey: string, value: any) => {
@@ -283,7 +271,6 @@ function ResultsDashboard() {
     const dbKey = dbKeyMap[prefKey] || prefKey;
     demo[dbKey] = value;
     localStorage.setItem('relate_demographics', JSON.stringify(demo));
-    localStorage.removeItem('relate_market_data');
 
     // Update Supabase
     try {
@@ -330,8 +317,6 @@ function ResultsDashboard() {
       if (data.success) {
         const md: MarketData = { location: data.location, relateScore: data.relateScore, matchPool: data.matchPool, matchProbability: data.matchProbability, matchCount: data.matchCount, stateComparison: data.stateComparison, nationalComparison: data.nationalComparison };
         setMarketData(md);
-        localStorage.setItem('relate_market_data', JSON.stringify(md));
-        localStorage.setItem('relate_market_data_demo_hash', localStorage.getItem('relate_demographics') || '');
       }
     } catch { /* */ }
     setMarketLoading(false);
