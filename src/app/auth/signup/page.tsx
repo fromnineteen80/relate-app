@@ -95,16 +95,10 @@ export default function SignUpPage() {
             </p>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-border">
-            <div className="flex items-start gap-3 text-xs text-secondary">
-              <span className="text-accent mt-0.5">&#8226;</span>
-              <span>The assessment takes ~80 minutes across 5 modules. Your progress is saved automatically.</span>
-            </div>
-            <div className="flex items-start gap-3 text-xs text-secondary mt-2">
-              <span className="text-accent mt-0.5">&#8226;</span>
-              <span>Free tier includes your persona code, traits, and top 3 compatibility matches.</span>
-            </div>
-          </div>
+          <ul className="bullet-list-xs mt-8 pt-6 border-t border-border">
+            <li>The assessment takes ~80 minutes across 5 modules. Your progress is saved automatically.</li>
+            <li>Free tier includes your persona code, traits, and top 3 compatibility matches.</li>
+          </ul>
         </div>
       </main>
       <SiteFooter />

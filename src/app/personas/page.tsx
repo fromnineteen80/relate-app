@@ -278,12 +278,9 @@ export default function PersonasPage() {
                       {persona.datingBehavior.length > 0 && (
                         <div>
                           <h4 className="text-xs font-mono text-secondary uppercase tracking-wider mb-2">Dating Behavior</h4>
-                          <ul className="space-y-1.5">
+                          <ul className="bullet-list">
                             {persona.datingBehavior.map((item, i) => (
-                              <li key={i} className="text-sm flex items-start gap-2">
-                                <span className="text-accent mt-0.5 flex-shrink-0">&#8226;</span>
-                                <span>{item}</span>
-                              </li>
+                              <li key={i}>{item}</li>
                             ))}
                           </ul>
                         </div>
@@ -292,12 +289,9 @@ export default function PersonasPage() {
                       {persona.inRelationships.length > 0 && (
                         <div>
                           <h4 className="text-xs font-mono text-secondary uppercase tracking-wider mb-2">In Relationships</h4>
-                          <ul className="space-y-1.5">
+                          <ul className="bullet-list">
                             {persona.inRelationships.map((item, i) => (
-                              <li key={i} className="text-sm flex items-start gap-2">
-                                <span className="text-accent mt-0.5 flex-shrink-0">&#8226;</span>
-                                <span>{item}</span>
-                              </li>
+                              <li key={i}>{item}</li>
                             ))}
                           </ul>
                         </div>
@@ -309,12 +303,9 @@ export default function PersonasPage() {
                       {persona.mostAttractive.length > 0 && (
                         <div>
                           <h4 className="text-xs font-mono text-success uppercase tracking-wider mb-2">Strengths</h4>
-                          <ul className="space-y-1.5">
+                          <ul className="bullet-list">
                             {persona.mostAttractive.map((item, i) => (
-                              <li key={i} className="text-sm flex items-start gap-2">
-                                <span className="text-success mt-0.5 flex-shrink-0">&#8226;</span>
-                                <span>{item}</span>
-                              </li>
+                              <li key={i}>{item}</li>
                             ))}
                           </ul>
                         </div>
@@ -323,12 +314,9 @@ export default function PersonasPage() {
                       {persona.leastAttractive.length > 0 && (
                         <div>
                           <h4 className="text-xs font-mono text-warning uppercase tracking-wider mb-2">Growth Areas</h4>
-                          <ul className="space-y-1.5">
+                          <ul className="bullet-list">
                             {persona.leastAttractive.map((item, i) => (
-                              <li key={i} className="text-sm flex items-start gap-2">
-                                <span className="text-warning mt-0.5 flex-shrink-0">&#8226;</span>
-                                <span>{item}</span>
-                              </li>
+                              <li key={i}>{item}</li>
                             ))}
                           </ul>
                         </div>
@@ -339,12 +327,9 @@ export default function PersonasPage() {
                     {persona.struggles.length > 0 && (
                       <div className="md:w-1/2 md:mx-auto">
                         <h4 className="text-xs font-mono text-secondary uppercase tracking-wider mb-2">Shadow Side</h4>
-                        <ul className="space-y-1.5">
+                        <ul className="bullet-list">
                           {persona.struggles.map((item, i) => (
-                            <li key={i} className="text-sm flex items-start gap-2">
-                              <span className="text-secondary mt-0.5 flex-shrink-0">&#8226;</span>
-                              <span>{item}</span>
-                            </li>
+                            <li key={i}>{item}</li>
                           ))}
                         </ul>
                       </div>

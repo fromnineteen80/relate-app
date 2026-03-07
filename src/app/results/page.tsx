@@ -513,10 +513,9 @@ function ResultsDashboard() {
           {Array.isArray(stack.coherences) && stack.coherences.length > 0 && (
             <div>
               <span className="text-xs font-mono text-success uppercase tracking-wider">Healthy Alignments</span>
-              <ul className="mt-2 space-y-1">
+              <ul className="bullet-list mt-2">
                 {stack.coherences.map((coh: any, i: number) => (
-                  <li key={i} className="text-sm flex gap-2">
-                    <span className="text-secondary">&#8226;</span>
+                  <li key={i}>
                     {coh.note || coh.specific || coh.name || String(coh)}
                   </li>
                 ))}
@@ -550,9 +549,9 @@ function ResultsDashboard() {
           {Array.isArray(stack.customizations) && stack.customizations.length > 0 && (
             <div className="mb-3">
               <span className="text-xs font-mono text-secondary uppercase tracking-wider">Key Patterns</span>
-              <ul className="mt-1.5 space-y-1">
+              <ul className="bullet-list mt-1.5">
                 {stack.customizations.map((c: string, i: number) => (
-                  <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
+                  <li key={i}>{c}</li>
                 ))}
               </ul>
             </div>
@@ -562,9 +561,9 @@ function ResultsDashboard() {
               {Array.isArray(stack.inRelationship.costs) && stack.inRelationship.costs.length > 0 && (
                 <div>
                   <span className="text-xs font-mono text-secondary uppercase tracking-wider">Risks</span>
-                  <ul className="mt-1.5 space-y-1">
+                  <ul className="bullet-list mt-1.5">
                     {stack.inRelationship.costs.map((r: string, i: number) => (
-                      <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{r}</li>
+                      <li key={i}>{r}</li>
                     ))}
                   </ul>
                 </div>
@@ -572,7 +571,7 @@ function ResultsDashboard() {
               {stack.repairPath && (
                 <div>
                   <span className="text-xs font-mono text-secondary uppercase tracking-wider">Growth Path</span>
-                  <p className="text-sm flex gap-2 mt-1.5"><span className="text-secondary">&#8226;</span>{stack.repairPath}</p>
+                  <ul className="bullet-list mt-1.5"><li>{stack.repairPath}</li></ul>
                 </div>
               )}
             </div>
@@ -580,11 +579,11 @@ function ResultsDashboard() {
           {stack.shamePattern && (
             <div className="mt-3 pt-3 border-t border-border">
               <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
-              <ul className="mt-1.5 space-y-1.5">
-                <li className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span><span><span className="font-medium">Trigger:</span> {stack.shamePattern.trigger}</span></li>
-                <li className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span><span><span className="font-medium">Internal message:</span> {stack.shamePattern.shameMessage}</span></li>
-                <li className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span><span><span className="font-medium">Your response:</span> {stack.shamePattern.behavioralResponse}</span></li>
-                <li className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span><span><span className="font-medium">Partner experiences:</span> {stack.shamePattern.partnerExperience}</span></li>
+              <ul className="bullet-list mt-1.5">
+                <li><span className="font-medium">Trigger:</span> {stack.shamePattern.trigger}</li>
+                <li><span className="font-medium">Internal message:</span> {stack.shamePattern.shameMessage}</li>
+                <li><span className="font-medium">Your response:</span> {stack.shamePattern.behavioralResponse}</li>
+                <li><span className="font-medium">Partner experiences:</span> {stack.shamePattern.partnerExperience}</li>
               </ul>
             </div>
           )}
@@ -615,9 +614,9 @@ function ResultsDashboard() {
         {Array.isArray(stack.customizations) && stack.customizations.length > 0 && (
           <div className="mb-3">
             <span className="text-xs font-mono text-secondary uppercase tracking-wider">Key Patterns</span>
-            <ul className="mt-1.5 space-y-1">
+            <ul className="bullet-list mt-1.5">
               {stack.customizations.map((c: string, i: number) => (
-                <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
+                <li key={i}>{c}</li>
               ))}
             </ul>
           </div>
@@ -626,9 +625,9 @@ function ResultsDashboard() {
           {Array.isArray(stack.risks) && stack.risks.length > 0 && (
             <div>
               <span className="text-xs font-mono text-secondary uppercase tracking-wider">Risks</span>
-              <ul className="mt-1.5 space-y-1">
+              <ul className="bullet-list mt-1.5">
                 {stack.risks.map((r: string, i: number) => (
-                  <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{r}</li>
+                  <li key={i}>{r}</li>
                 ))}
               </ul>
             </div>
@@ -637,9 +636,9 @@ function ResultsDashboard() {
             <div>
               <span className="text-xs font-mono text-secondary uppercase tracking-wider">Growth Path</span>
               {Array.isArray(stack.growthPath) ? (
-                <ul className="mt-1.5 space-y-1">
+                <ul className="bullet-list mt-1.5">
                   {stack.growthPath.map((g: string, i: number) => (
-                    <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{g}</li>
+                    <li key={i}>{g}</li>
                   ))}
                 </ul>
               ) : (
@@ -654,32 +653,23 @@ function ResultsDashboard() {
         {stack.signals && typeof stack.signals === 'object' && !Array.isArray(stack.signals) && (
           <div className="mt-3 pt-3 border-t border-border">
             <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
-            <ul className="mt-1.5 space-y-1.5">
+            <ul className="bullet-list mt-1.5">
               {Object.entries(stack.signals).map(([k, v]: [string, any]) => {
                 if (v && typeof v === 'object' && v.interpretation) {
                   const interpValue = typeof v.interpretation === 'object'
                     ? Object.values(v.interpretation).find((x: any) => typeof x === 'string') || JSON.stringify(v.interpretation)
                     : v.interpretation;
                   return (
-                    <li key={k} className="text-sm flex gap-2">
-                      <span className="text-secondary">&#8226;</span>
-                      <span><span className="font-medium capitalize">{v.name || k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}{interpValue as string}</span>
-                    </li>
+                    <li key={k}><span className="font-medium capitalize">{v.name || k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}{interpValue as string}</li>
                   );
                 }
                 if (v && typeof v === 'object') {
                   return (
-                    <li key={k} className="text-sm flex gap-2">
-                      <span className="text-secondary">&#8226;</span>
-                      <span><span className="font-medium capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}{v.value !== undefined ? String(v.value) : JSON.stringify(v)}</span>
-                    </li>
+                    <li key={k}><span className="font-medium capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}{v.value !== undefined ? String(v.value) : JSON.stringify(v)}</li>
                   );
                 }
                 return (
-                  <li key={k} className="text-sm flex gap-2">
-                    <span className="text-secondary">&#8226;</span>
-                    <span><span className="font-medium capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span> {String(v)}</span>
-                  </li>
+                  <li key={k}><span className="font-medium capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span> {String(v)}</li>
                 );
               })}
             </ul>
@@ -688,9 +678,9 @@ function ResultsDashboard() {
         {Array.isArray(stack.signals) && stack.signals.length > 0 && (
           <div className="mt-3 pt-3 border-t border-border">
             <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
-            <ul className="mt-1.5 space-y-1">
+            <ul className="bullet-list mt-1.5">
               {stack.signals.map((s: string, i: number) => (
-                <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{s}</li>
+                <li key={i}>{s}</li>
               ))}
             </ul>
           </div>
@@ -766,9 +756,9 @@ function ResultsDashboard() {
             {persona.datingBehavior?.length > 0 && (
               <div>
                 <span className="text-xs font-mono text-secondary uppercase tracking-wider">Dating Behavior</span>
-                <ul className="mt-2 space-y-1.5">
+                <ul className="bullet-list mt-2">
                   {persona.datingBehavior.map((b: string, i: number) => (
-                    <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{b}</li>
+                    <li key={i}>{b}</li>
                   ))}
                 </ul>
               </div>
@@ -780,9 +770,9 @@ function ResultsDashboard() {
                 {persona.mostAttractive?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-success uppercase tracking-wider">Most Attractive Qualities</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {persona.mostAttractive.map((item: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{item}</li>
+                        <li key={i}>{item}</li>
                       ))}
                     </ul>
                   </div>
@@ -790,9 +780,9 @@ function ResultsDashboard() {
                 {persona.leastAttractive?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-warning uppercase tracking-wider">Growth Areas</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {persona.leastAttractive.map((item: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{item}</li>
+                        <li key={i}>{item}</li>
                       ))}
                     </ul>
                   </div>
@@ -806,9 +796,9 @@ function ResultsDashboard() {
                 {persona.inRelationships?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-secondary uppercase tracking-wider">In Relationships</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {persona.inRelationships.map((b: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{b}</li>
+                        <li key={i}>{b}</li>
                       ))}
                     </ul>
                   </div>
@@ -816,9 +806,9 @@ function ResultsDashboard() {
                 {persona.struggles?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-secondary uppercase tracking-wider">Shadow Side</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {persona.struggles.map((b: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{b}</li>
+                        <li key={i}>{b}</li>
                       ))}
                     </ul>
                   </div>
@@ -832,7 +822,7 @@ function ResultsDashboard() {
         {matches.length > 0 && (
           <section className="card mb-4 scroll-mt-32">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-serif text-lg font-semibold">Compatibility Rankings</h3>
+              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="leaderboard" size={20} className="text-accent" />Compatibility Rankings</h3>
               {hasPaid && <Link href="/results/matches" className="text-xs text-accent hover:underline">View all</Link>}
             </div>
             <div className="space-y-3">
@@ -899,7 +889,7 @@ function ResultsDashboard() {
         {/* ── Score Breakdown ── */}
         {hasDimensions && (
           <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-3">Score Breakdown</h3>
+            <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2"><Icon name="bar_chart" size={20} className="text-accent" />Score Breakdown</h3>
             <div className="space-y-3.5">
               {Object.entries(dimensions).map(([dim, data]: [string, any]) => {
                 if (!data || typeof data !== 'object') return null;
@@ -937,7 +927,7 @@ function ResultsDashboard() {
         {/* ── Connection Style ── */}
         {m3 && (
           <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-4">Connection Style</h3>
+            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="sync_alt" size={20} className="text-accent" />Connection Style</h3>
             <div className="grid grid-cols-3 gap-6 text-center mb-4">
               <div>
                 <span className="font-mono text-lg font-semibold">{m3.wantScore ?? '-'}</span>
@@ -967,9 +957,9 @@ function ResultsDashboard() {
                 {m3.typeDetails.strengths?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {m3.typeDetails.strengths.map((s: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{s}</li>
+                        <li key={i}>{s}</li>
                       ))}
                     </ul>
                   </div>
@@ -977,9 +967,9 @@ function ResultsDashboard() {
                 {m3.typeDetails.challenges?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {m3.typeDetails.challenges.map((c: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
+                        <li key={i}>{c}</li>
                       ))}
                     </ul>
                   </div>
@@ -995,7 +985,7 @@ function ResultsDashboard() {
         {/* ── Intimacy Under Stress ── (moved up from below Attachment) */}
         {ic?.m3States?.states?.normal && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1">Intimacy Under Stress</h3>
+            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="local_fire_department" size={20} className="text-accent" />Intimacy Under Stress</h3>
             <p className="explainer mb-4">How your Want and Offer shift across relationship states</p>
 
             {/* Legend */}
@@ -1080,7 +1070,7 @@ function ResultsDashboard() {
         {/* ── Your Attachment Style ── (moved down) */}
         {ic?.attachment && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1">Your Attachment Style</h3>
+            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="shield" size={20} className="text-accent" />Your Attachment Style</h3>
             <p className="explainer mb-4">How you connect, protect, and respond in close relationships</p>
             <div className="flex items-center gap-3 mb-4">
               <span className="font-mono text-lg font-semibold capitalize">{ic.attachment.style}</span>
@@ -1093,18 +1083,18 @@ function ResultsDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
                 <div>
                   <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
-                  <ul className="mt-2 space-y-1.5">
+                  <ul className="bullet-list mt-2">
                     {ic.attachment.strengths.map((s: string, i: number) => (
-                      <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{s}</li>
+                      <li key={i}>{s}</li>
                     ))}
                   </ul>
                 </div>
                 {ic.attachment.challenges && Array.isArray(ic.attachment.challenges) && ic.attachment.challenges.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {ic.attachment.challenges.map((c: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
+                        <li key={i}>{c}</li>
                       ))}
                     </ul>
                   </div>
@@ -1135,7 +1125,7 @@ function ResultsDashboard() {
         {/* ── Conflict Profile ── */}
         {m4Summary && (
           <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-4">Conflict Profile</h3>
+            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="bolt" size={20} className="text-accent" />Conflict Profile</h3>
             <p className="text-sm text-secondary mb-5">How you engage in conflict, what drives your emotional reactions, and how you recover afterward.</p>
             <div className="space-y-4 mb-4">
               {(() => {
@@ -1189,7 +1179,7 @@ function ResultsDashboard() {
         {/* ── Gottman Four Horsemen ── */}
         {gottman?.horsemen && Object.keys(gottman.horsemen).length > 0 && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1">Gottman Four Horsemen</h3>
+            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="warning" size={20} className="text-accent" />Gottman Four Horsemen</h3>
             <p className="explainer mb-4">
               The four communication patterns researcher John Gottman identified as the strongest predictors of relationship failure. Lower scores are better.
             </p>
@@ -1252,7 +1242,7 @@ function ResultsDashboard() {
         {/* ── Ideal Partner Profile ── */}
         {ic?.attachmentTiers && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1">Ideal Partner Profile</h3>
+            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="person_search" size={20} className="text-accent" />Ideal Partner Profile</h3>
             <p className="explainer mb-4">The attachment styles, emotional drivers, and conflict behaviors that complement yours best</p>
 
             {/* Attachment Style */}
@@ -1323,9 +1313,9 @@ function ResultsDashboard() {
                 {Array.isArray(ic.horsemenInsights?.lookFor) && ic.horsemenInsights.lookFor.length > 0 && (
                   <div className="mt-3">
                     <span className="text-xs font-mono text-success uppercase tracking-wider">Look for in a partner</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {ic.horsemenInsights.lookFor.map((item: any, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary flex-shrink-0">&#8226;</span><span><span className="font-medium text-foreground">{item.partnerTrait}</span>: {item.reason}</span></li>
+                        <li key={i}><span><span className="font-medium text-foreground">{item.partnerTrait}</span>: {item.reason}</span></li>
                       ))}
                     </ul>
                   </div>
@@ -1333,9 +1323,9 @@ function ResultsDashboard() {
                 {Array.isArray(ic.horsemenInsights?.avoid) && ic.horsemenInsights.avoid.length > 0 && (
                   <div className="mt-3">
                     <span className="text-xs font-mono text-warning uppercase tracking-wider">Be cautious of</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {ic.horsemenInsights.avoid.map((item: any, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary flex-shrink-0">&#8226;</span><span><span className="font-medium text-foreground">{item.partnerTrait}</span>: {item.reason}</span></li>
+                        <li key={i}><span><span className="font-medium text-foreground">{item.partnerTrait}</span>: {item.reason}</span></li>
                       ))}
                     </ul>
                   </div>
@@ -1359,7 +1349,7 @@ function ResultsDashboard() {
         {/* ── Relationship Capacity / Modifiers ── */}
         {modifiers && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-4">Relationship Capacity</h3>
+            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="speed" size={20} className="text-accent" />Relationship Capacity</h3>
             {modifiers.relationshipCapacity && (
               <div className="mb-4">
                 <div className="flex items-center gap-3 mb-2">
@@ -1383,9 +1373,9 @@ function ResultsDashboard() {
             {Array.isArray(modifiers.strengths) && modifiers.strengths.length > 0 && (
               <div className="mb-3">
                 <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
-                <ul className="mt-1.5 space-y-1">
+                <ul className="bullet-list mt-1.5">
                   {modifiers.strengths.map((s: string, i: number) => (
-                    <li key={i} className="text-sm text-secondary">{s}</li>
+                    <li key={i}>{s}</li>
                   ))}
                 </ul>
               </div>
@@ -1393,9 +1383,9 @@ function ResultsDashboard() {
             {Array.isArray(modifiers.growthAreas) && modifiers.growthAreas.length > 0 && (
               <div className="mb-3">
                 <span className="text-xs font-mono text-warning uppercase tracking-wider">Growth Areas</span>
-                <ul className="mt-1.5 space-y-1">
+                <ul className="bullet-list mt-1.5">
                   {modifiers.growthAreas.map((g: string, i: number) => (
-                    <li key={i} className="text-sm text-secondary">{g}</li>
+                    <li key={i}>{g}</li>
                   ))}
                 </ul>
               </div>
@@ -1403,9 +1393,9 @@ function ResultsDashboard() {
             {Array.isArray(modifiers.coachingRecommendations) && modifiers.coachingRecommendations.length > 0 && (
               <div className="pt-3 border-t border-border">
                 <span className="text-xs font-mono text-success uppercase tracking-wider">Recommendations</span>
-                <ul className="mt-1.5 space-y-1.5">
+                <ul className="bullet-list mt-1.5">
                   {modifiers.coachingRecommendations.map((rec: any, i: number) => (
-                    <li key={i} className="text-sm">
+                    <li key={i}>
                       {typeof rec === 'string' ? rec : (
                         <div>
                           {rec.title && <span className="font-medium">{rec.title}: </span>}
@@ -1441,7 +1431,7 @@ function ResultsDashboard() {
         {/* ── Couples Mode ── */}
         {hasResults && (
           <section className="card mb-4 border-accent">
-            <h3 className="font-serif text-lg font-semibold mb-4">Couples Mode</h3>
+            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="favorite" size={20} className="text-accent" />Couples Mode</h3>
 
             {hasPartner ? (
               <div>
@@ -1685,7 +1675,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
   if (loading) {
     return (
       <section className="card mb-4">
-        <h3 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h3>
+        <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="trending_up" size={20} className="text-accent" />Your Dating Market</h3>
         <p className="explainer mb-4">{relaxing ? 'Recalculating your market...' : 'Analyzing your local market...'}</p>
         <div className="flex items-center justify-center py-8">
           <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
@@ -1851,7 +1841,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
           </div>
         </div>
       )}
-      <h3 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h3>
+      <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="trending_up" size={20} className="text-accent" />Your Dating Market</h3>
       <p className="explainer mb-4">{metro}</p>
 
       <div className="mb-6">
@@ -2234,7 +2224,7 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
 
   return (
     <section className="card mb-4">
-      <h3 className="font-serif text-lg font-semibold mb-1">Market Coaching</h3>
+      <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="tips_and_updates" size={20} className="text-accent" />Market Coaching</h3>
       <p className="explainer mb-4">Actionable insights from your dating market data and assessment results</p>
       <div className="space-y-4">
         {insights.map((insight, i) => (

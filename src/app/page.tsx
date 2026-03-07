@@ -284,19 +284,16 @@ export default function LandingPage() {
               <span className="font-mono text-xs text-secondary tracking-wider">FREE</span>
               <p className="font-serif text-4xl font-semibold mt-2">$0</p>
               <p className="text-sm text-secondary mt-3 mb-6">Discover your persona.</p>
-              <div className="space-y-2.5 mb-8 flex-1">
+              <ul className="bullet-list mb-8 flex-1">
                 {[
                   '391-question assessment',
                   'Your persona code and traits',
                   'Top 3 match rankings',
                   '3 advisor messages',
                 ].map((item) => (
-                  <div key={item} className="flex items-start gap-2 text-sm">
-                    <span className="text-secondary mt-0.5">&#8226;</span>
-                    <span>{item}</span>
-                  </div>
+                  <li key={item}>{item}</li>
                 ))}
-              </div>
+              </ul>
               <DynamicCTA className="btn-secondary w-full text-center" fallbackLabel="Start Free" />
             </div>
 
@@ -305,7 +302,7 @@ export default function LandingPage() {
               <span className="font-mono text-xs text-secondary tracking-wider">PLUS</span>
               <p className="font-serif text-4xl font-semibold mt-2">$29.99</p>
               <p className="text-sm text-secondary mt-3 mb-6">The complete picture.</p>
-              <div className="space-y-2.5 mb-8 flex-1">
+              <ul className="bullet-list mb-8 flex-1">
                 {[
                   'Everything in Free',
                   'All 16 match rankings + details',
@@ -313,12 +310,9 @@ export default function LandingPage() {
                   'Personalized growth path',
                   'Downloadable PDF report',
                 ].map((item) => (
-                  <div key={item} className="flex items-start gap-2 text-sm">
-                    <span className="text-secondary mt-0.5">&#8226;</span>
-                    <span>{item}</span>
-                  </div>
+                  <li key={item}>{item}</li>
                 ))}
-              </div>
+              </ul>
               <Link href="/settings/billing" className="btn-secondary w-full text-center">Choose</Link>
             </div>
 
@@ -330,19 +324,16 @@ export default function LandingPage() {
               <span className="font-mono text-xs text-accent tracking-wider">PREMIUM</span>
               <p className="font-serif text-4xl font-semibold mt-2">$49.99</p>
               <p className="text-sm text-secondary mt-3 mb-6">Insight + AI coaching.</p>
-              <div className="space-y-2.5 mb-8 flex-1">
+              <ul className="bullet-list mb-8 flex-1">
                 {[
                   'Everything in Plus',
                   'Rate-limited AI advisor',
                   'Retake the assessment',
                   'Downloadable PDF report',
                 ].map((item) => (
-                  <div key={item} className="flex items-start gap-2 text-sm">
-                    <span className="text-accent mt-0.5">&#8226;</span>
-                    <span>{item}</span>
-                  </div>
+                  <li key={item}>{item}</li>
                 ))}
-              </div>
+              </ul>
               <Link href="/settings/billing" className="btn-primary w-full text-center">Choose</Link>
             </div>
 
@@ -351,18 +342,15 @@ export default function LandingPage() {
               <span className="font-mono text-xs text-secondary tracking-wider">PRO</span>
               <p className="font-serif text-4xl font-semibold mt-2">$69.99</p>
               <p className="text-sm text-secondary mt-3 mb-6">Unlimited AI coaching.</p>
-              <div className="space-y-2.5 mb-8 flex-1">
+              <ul className="bullet-list mb-8 flex-1">
                 {[
                   'Everything in Premium',
                   'Unlimited AI advisor',
                   'Priority support',
                 ].map((item) => (
-                  <div key={item} className="flex items-start gap-2 text-sm">
-                    <span className="text-secondary mt-0.5">&#8226;</span>
-                    <span>{item}</span>
-                  </div>
+                  <li key={item}>{item}</li>
                 ))}
-              </div>
+              </ul>
               <Link href="/settings/billing" className="btn-secondary w-full text-center">Choose</Link>
             </div>
 
@@ -371,7 +359,7 @@ export default function LandingPage() {
               <span className="font-mono text-xs text-secondary tracking-wider">COUPLES</span>
               <p className="font-serif text-4xl font-semibold mt-2">$119</p>
               <p className="text-sm text-secondary mt-3 mb-6">Two partners, full compatibility.</p>
-              <div className="space-y-2.5 mb-8 flex-1">
+              <ul className="bullet-list mb-8 flex-1">
                 {[
                   'Everything in Pro (x2)',
                   '7-section compatibility report',
@@ -379,12 +367,9 @@ export default function LandingPage() {
                   'Conversation card decks',
                   'Shared couples advisor',
                 ].map((item) => (
-                  <div key={item} className="flex items-start gap-2 text-sm">
-                    <span className="text-secondary mt-0.5">&#8226;</span>
-                    <span>{item}</span>
-                  </div>
+                  <li key={item}>{item}</li>
                 ))}
-              </div>
+              </ul>
               <Link href="/invite" className="btn-secondary w-full text-center">Get Report</Link>
             </div>
           </div>

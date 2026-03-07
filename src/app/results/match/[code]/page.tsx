@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
+import { Icon } from '@/components/Icon';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -89,17 +90,14 @@ function scoreContext(key: string, value: number, userName?: string, matchName?:
   }
 }
 
-function InsightCard({ title, items, accent }: { title: string; items: string[]; accent?: boolean }) {
+function InsightCard({ title, icon, items, accent }: { title: string; icon: string; items: string[]; accent?: boolean }) {
   if (!items || items.length === 0) return null;
   return (
     <section className={`card mb-4 ${accent ? 'border-accent/30' : ''}`}>
-      <h3 className="font-serif font-semibold mb-3">{title}</h3>
-      <ul className="space-y-2">
+      <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2"><Icon name={icon} size={20} className="text-accent" />{title}</h3>
+      <ul className="bullet-list">
         {items.map((item, i) => (
-          <li key={i} className="text-sm text-secondary flex gap-2">
-            <span className="text-accent mt-0.5 shrink-0">&bull;</span>
-            <span>{item}</span>
-          </li>
+          <li key={i}>{item}</li>
         ))}
       </ul>
     </section>
@@ -227,7 +225,7 @@ export default function MatchDetailPage() {
         {/* Compatibility summary */}
         {match.summary && (
           <section className="card mb-4 border-accent/30">
-            <h3 className="font-serif font-semibold mb-2">Compatibility Summary</h3>
+            <h3 className="font-serif text-lg font-semibold mb-2 flex items-center gap-2"><Icon name="handshake" size={20} className="text-accent" />Compatibility Summary</h3>
             <p className="text-sm text-secondary leading-relaxed">{match.summary.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>
           </section>
         )}
@@ -235,7 +233,7 @@ export default function MatchDetailPage() {
         {/* Score breakdown */}
         {match.subScores && (
           <section className="card mb-4">
-            <h3 className="font-serif font-semibold mb-3">Score Breakdown</h3>
+            <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2"><Icon name="bar_chart" size={20} className="text-accent" />Score Breakdown</h3>
             <div className="space-y-3.5">
               <ScoreBar label="Persona" value={match.subScores.tier} description={scoreContext('tier', match.subScores.tier, userName, matchName)} />
               <ScoreBar label="Preference" value={match.subScores.preference} description={scoreContext('preference', match.subScores.preference, userName, matchName)} />
@@ -248,42 +246,49 @@ export default function MatchDetailPage() {
 
         {/* Persona insight cards */}
         <div className="mt-8 mb-2">
-          <h3 className="font-serif text-xl font-semibold">About {match.name}</h3>
+          <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="person" size={20} className="text-accent" />About {match.name}</h3>
           <p className="text-xs text-secondary mt-1">What to expect from this persona</p>
         </div>
 
         <InsightCard
+          icon="star"
           title={`What draws people to ${matchGenderPronoun}`}
           items={match.mostAttractive}
           accent
         />
 
         <InsightCard
+          icon="touch_app"
           title="How they date"
           items={match.datingBehavior}
         />
 
         <InsightCard
+          icon="people"
           title="In a relationship"
           items={match.inRelationships}
         />
 
         <InsightCard
+          icon="volunteer_activism"
           title={`How partners value ${matchGenderPronoun}`}
           items={match.howValued}
         />
 
         <InsightCard
+          icon="visibility"
           title="Watch out for"
           items={match.leastAttractive}
         />
 
         <InsightCard
+          icon="sentiment_dissatisfied"
           title={`What disappoints ${matchGenderPronoun}`}
           items={match.disappointments}
         />
 
         <InsightCard
+          icon="spa"
           title={`Where ${matchGenderCap.toLowerCase()} struggles`}
           items={match.struggles}
         />
