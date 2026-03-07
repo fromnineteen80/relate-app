@@ -25,7 +25,7 @@ export default function QuestionCard({ question, value, onAnswer }: Props) {
           <button
             onClick={() => onAnswer(question.id, 'A')}
             className={`text-left px-4 py-4 rounded-md border text-sm transition-colors ${
-              value === 'A' ? 'border-accent bg-orange-50 text-accent font-medium' : 'border-border hover:border-accent text-secondary'
+              value === 'A' ? 'border-accent bg-accent/5 text-accent font-medium' : 'border-border hover:border-accent text-secondary'
             }`}
           >
             {question.optionA}
@@ -33,7 +33,7 @@ export default function QuestionCard({ question, value, onAnswer }: Props) {
           <button
             onClick={() => onAnswer(question.id, 'B')}
             className={`text-left px-4 py-4 rounded-md border text-sm transition-colors ${
-              value === 'B' ? 'border-accent bg-orange-50 text-accent font-medium' : 'border-border hover:border-accent text-secondary'
+              value === 'B' ? 'border-accent bg-accent/5 text-accent font-medium' : 'border-border hover:border-accent text-secondary'
             }`}
           >
             {question.optionB}
@@ -53,7 +53,7 @@ export default function QuestionCard({ question, value, onAnswer }: Props) {
             key={v}
             onClick={() => onAnswer(question.id, v)}
             className={`flex-1 flex flex-col items-center gap-1.5 py-3 px-1 rounded-md border text-xs transition-colors ${
-              value === v ? 'border-accent bg-orange-50 text-accent font-medium' : 'border-border hover:border-accent text-secondary'
+              value === v ? 'border-accent bg-accent/5 text-accent font-medium' : 'border-border hover:border-accent text-secondary'
             }`}
           >
             <span className="font-mono text-base">{v}</span>

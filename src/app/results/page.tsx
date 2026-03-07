@@ -477,14 +477,14 @@ function ResultsDashboard() {
               </h4>
             </div>
             {stack.coherenceScore >= 95 ? (
-              <span className="text-xs px-2 py-0.5 rounded shrink-0 bg-amber-50 text-amber-700 flex items-center gap-1">
+              <span className="text-xs px-2 py-0.5 rounded shrink-0 bg-success/10 text-success flex items-center gap-1">
                 <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                 Fully Aligned
               </span>
             ) : (
               <span className={`text-xs px-2 py-0.5 rounded shrink-0 ${
                 stack.coherenceScore >= 80 ? 'bg-success/10 text-success' :
-                stack.coherenceScore >= 60 ? 'bg-accent/10 text-accent' :
+                stack.coherenceScore >= 60 ? 'bg-success/10 text-success' :
                 stack.coherenceScore >= 40 ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
               }`}>
                 {stack.coherenceScore}/100
@@ -1066,7 +1066,7 @@ function ResultsDashboard() {
               <span className="font-mono text-lg font-semibold capitalize">{ic.attachment.style}</span>
               {ic.attachment.subtype && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded capitalize">{ic.attachment.subtype}</span>}
               {ic.attachment.leaningToward && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded">leaning {ic.attachment.leaningToward}</span>}
-              <span className="text-xs font-mono text-accent ml-auto">{Math.round((ic.attachment.confidence ?? 0) * 100)}% confidence</span>
+              <span className="text-xs font-mono text-secondary ml-auto">{Math.round((ic.attachment.confidence ?? 0) * 100)}% confidence</span>
             </div>
             {ic.attachment.description && <p className="text-sm text-secondary mb-4">{ic.attachment.description}</p>}
             {ic.attachment.strengths && Array.isArray(ic.attachment.strengths) && ic.attachment.strengths.length > 0 && (
@@ -1242,7 +1242,7 @@ function ResultsDashboard() {
                   const allMatches: { style: string; score: number; tier: string; color: string; bg: string }[] = [];
                   [
                     { items: ic.attachmentTiers.bestMatches, tier: 'Best', color: 'text-success', bg: 'bg-success/10 border-success/30' },
-                    { items: ic.attachmentTiers.goodMatches, tier: 'Good', color: 'text-accent', bg: 'bg-accent/10 border-accent/30' },
+                    { items: ic.attachmentTiers.goodMatches, tier: 'Good', color: 'text-success', bg: 'bg-success/10 border-success/30' },
                     { items: ic.attachmentTiers.workableMatches, tier: 'Workable', color: 'text-warning', bg: 'bg-warning/10 border-warning/30' },
                     { items: ic.attachmentTiers.riskyMatches, tier: 'Risky', color: 'text-danger/70', bg: 'bg-danger/5 border-danger/20' },
                     { items: ic.attachmentTiers.avoidMatches, tier: 'Avoid', color: 'text-danger', bg: 'bg-danger/10 border-danger/30' },
@@ -1272,7 +1272,7 @@ function ResultsDashboard() {
                     const allDrivers: { driver: string; score: number; tier: string; color: string; bg: string }[] = [];
                     [
                       { items: ic.driverTiers.bestMatches, tier: 'Best', color: 'text-success', bg: 'bg-success/10 border-success/30' },
-                      { items: ic.driverTiers.goodMatches, tier: 'Good', color: 'text-accent', bg: 'bg-accent/10 border-accent/30' },
+                      { items: ic.driverTiers.goodMatches, tier: 'Good', color: 'text-success', bg: 'bg-success/10 border-success/30' },
                       { items: ic.driverTiers.workableMatches, tier: 'Workable', color: 'text-warning', bg: 'bg-warning/10 border-warning/30' },
                       { items: ic.driverTiers.avoidMatches, tier: 'Avoid', color: 'text-danger', bg: 'bg-danger/10 border-danger/30' },
                     ].forEach(group => {
@@ -1381,7 +1381,7 @@ function ResultsDashboard() {
             )}
             {Array.isArray(modifiers.coachingRecommendations) && modifiers.coachingRecommendations.length > 0 && (
               <div className="pt-3 border-t border-border">
-                <span className="text-xs font-mono text-accent uppercase tracking-wider">Recommendations</span>
+                <span className="text-xs font-mono text-success uppercase tracking-wider">Recommendations</span>
                 <ul className="mt-1.5 space-y-1.5">
                   {modifiers.coachingRecommendations.map((rec: any, i: number) => (
                     <li key={i} className="text-sm">
@@ -1878,7 +1878,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
       {pool && (
         <div className="mb-6">
           <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
-          <p className="text-sm text-secondary mt-1 mb-3">The {metroShort} metro population is {metroPop.toLocaleString()}.</p>
+          <p className="text-[11px] text-secondary mt-1 mb-3">The {metroShort} metro population is <span className="font-medium">{metroPop.toLocaleString()}</span>.</p>
           <div className="mt-3 space-y-1">
             {milestones.map((m, i) => {
               const baseVal = singlesPool || 1;

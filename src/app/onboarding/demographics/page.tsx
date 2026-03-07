@@ -639,7 +639,7 @@ export default function DemographicsPage() {
               ].map(opt => (
                 <button key={opt.value} type="button" onClick={() => updateField('seeking', opt.value)}
                   className={`w-full text-left text-sm px-4 py-3 rounded-md border transition-colors ${
-                    form.seeking === opt.value ? 'border-accent bg-orange-50' : 'border-border hover:border-accent'
+                    form.seeking === opt.value ? 'border-accent bg-accent/5' : 'border-border hover:border-accent'
                   }`}>
                   {opt.label}
                 </button>
