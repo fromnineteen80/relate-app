@@ -62,9 +62,12 @@ export function SubNav({ items = [] }: SubNavProps) {
     { id: 'couples', label: 'Couples', href: '/results/compare', show: hasPartner },
   ];
 
+  // On match/matches pages, show match sub-links as page-tab items (after divider)
+  const isMatchPage = pathname.startsWith('/results/match');
+
   // Build results subpage links when hasResults and on a results subpage (but not couples pages)
   const resultsSubLinks: SubNavItem[] = (hasResults && isResultsSubpage && !isCouplesPage) ? [
-    { id: 'persona', label: 'Your Persona', href: '/results/persona', show: true },
+    { id: 'persona', label: 'Your Persona', href: '/results/persona', show: !isMatchPage },
     { id: 'match', label: 'Your #1 Match', href: topMatchCode ? `/results/match/${topMatchCode}` : '/results/matches', show: !!topMatchCode },
     { id: 'matches', label: `All Potential ${seekingLabel}`, href: '/results/matches', show: true },
   ] : [];
@@ -73,8 +76,14 @@ export function SubNav({ items = [] }: SubNavProps) {
   const visibleResultsSubLinks = resultsSubLinks.filter(l => l.show !== false);
   const visiblePageItems = items.filter(l => l.show !== false);
 
-  // All "before divider" links: universal + results sub-links, all styled dark
-  const beforeDividerLinks = [...visibleUniversal, ...visibleResultsSubLinks];
+  // On match pages, results sub-links go after the divider as page-tab items
+  // On other results subpages, they stay as main tabs
+  const beforeDividerLinks = isMatchPage
+    ? [...visibleUniversal]
+    : [...visibleUniversal, ...visibleResultsSubLinks];
+  const afterDividerLinks = isMatchPage
+    ? [...visibleResultsSubLinks, ...visiblePageItems]
+    : visiblePageItems;
 
   return (
     <nav className="border-b border-border bg-background sticky top-[41px] z-10">
@@ -91,10 +100,10 @@ export function SubNav({ items = [] }: SubNavProps) {
             </Link>
           );
         })}
-        {visiblePageItems.length > 0 && (
+        {afterDividerLinks.length > 0 && (
           <span className="self-center mx-1 text-border select-none" aria-hidden="true">|</span>
         )}
-        {visiblePageItems.map(link => {
+        {afterDividerLinks.map(link => {
           const isAnchor = link.href.startsWith('#');
           if (isAnchor) {
             return (

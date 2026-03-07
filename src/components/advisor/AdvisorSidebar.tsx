@@ -105,7 +105,7 @@ export default function AdvisorSidebar() {
               />
 
               {/* Mode selector — bottom left inside input area */}
-              <div ref={modeRef} className="absolute bottom-2.5 left-2.5">
+              <div ref={modeRef} className="absolute bottom-3 left-2.5">
                 <button
                   type="button"
                   onClick={() => setModeDropdownOpen(!modeDropdownOpen)}
@@ -141,7 +141,7 @@ export default function AdvisorSidebar() {
                 onClick={handleSubmit}
                 disabled={loading || isLimited || !inputValue.trim()}
                 aria-label="Send message"
-                className="absolute bottom-2.5 right-2.5 bg-accent text-white w-[27px] h-[27px] rounded-md flex items-center justify-center hover:bg-accent-hover transition-colors"
+                className="absolute bottom-3 right-2.5 bg-accent text-white w-[27px] h-[27px] rounded-md flex items-center justify-center hover:bg-accent-hover transition-colors"
               >
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="8" y1="14" x2="8" y2="2" />

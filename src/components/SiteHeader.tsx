@@ -278,7 +278,7 @@ function ProfileAvatar({
               key={item.href}
               href={item.href}
               onClick={() => setDropdownOpen(false)}
-              className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground cursor-pointer"
+              className="block px-4 py-2 text-[13px] text-secondary text-right hover:bg-stone-50 hover:text-foreground cursor-pointer"
             >
               {item.label}
             </Link>
@@ -293,7 +293,7 @@ function ProfileAvatar({
               key={item.href}
               href={item.href}
               onClick={() => setDropdownOpen(false)}
-              className="block px-4 py-2 text-sm text-secondary hover:bg-stone-50 hover:text-foreground cursor-pointer"
+              className="block px-4 py-2 text-[13px] text-secondary text-right hover:bg-stone-50 hover:text-foreground cursor-pointer"
             >
               {item.label}
             </Link>
@@ -301,7 +301,7 @@ function ProfileAvatar({
           <div className="border-t border-border my-1" />
           <button
             onClick={() => { setDropdownOpen(false); onSignOut(); }}
-            className="block w-full text-left px-4 py-2 text-sm text-secondary hover:bg-stone-50"
+            className="block w-full text-right px-4 py-2 text-[13px] text-secondary hover:bg-stone-50"
           >
             Sign out
           </button>
