@@ -560,18 +560,18 @@ function ResultsDashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {Array.isArray(stack.inRelationship.costs) && stack.inRelationship.costs.length > 0 && (
                 <div>
-                  <span className="text-xs font-mono text-warning uppercase tracking-wider">Risks</span>
+                  <span className="text-xs font-mono text-secondary uppercase tracking-wider">Risks</span>
                   <ul className="mt-1.5 space-y-1">
                     {stack.inRelationship.costs.map((r: string, i: number) => (
-                      <li key={i} className="text-xs text-secondary">{r}</li>
+                      <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{r}</li>
                     ))}
                   </ul>
                 </div>
               )}
               {stack.repairPath && (
                 <div>
-                  <span className="text-xs font-mono text-success uppercase tracking-wider">Growth Path</span>
-                  <p className="text-xs text-secondary mt-1.5">{stack.repairPath}</p>
+                  <span className="text-xs font-mono text-secondary uppercase tracking-wider">Growth Path</span>
+                  <p className="text-sm flex gap-2 mt-1.5"><span className="text-secondary">&#8226;</span>{stack.repairPath}</p>
                 </div>
               )}
             </div>
@@ -624,25 +624,25 @@ function ResultsDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {Array.isArray(stack.risks) && stack.risks.length > 0 && (
             <div>
-              <span className="text-xs font-mono text-warning uppercase tracking-wider">Risks</span>
+              <span className="text-xs font-mono text-secondary uppercase tracking-wider">Risks</span>
               <ul className="mt-1.5 space-y-1">
                 {stack.risks.map((r: string, i: number) => (
-                  <li key={i} className="text-xs text-secondary">{r}</li>
+                  <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{r}</li>
                 ))}
               </ul>
             </div>
           )}
           {stack.growthPath && (
             <div>
-              <span className="text-xs font-mono text-success uppercase tracking-wider">Growth Path</span>
+              <span className="text-xs font-mono text-secondary uppercase tracking-wider">Growth Path</span>
               {Array.isArray(stack.growthPath) ? (
                 <ul className="mt-1.5 space-y-1">
                   {stack.growthPath.map((g: string, i: number) => (
-                    <li key={i} className="text-xs text-secondary">{g}</li>
+                    <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{g}</li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-xs text-secondary mt-1.5">{stack.growthPath}</p>
+                <p className="text-sm text-secondary mt-1.5">{stack.growthPath}</p>
               )}
               <Link href="/growth" className="text-xs text-accent hover:underline mt-2 inline-block">
                 Start your Growth Plan →
