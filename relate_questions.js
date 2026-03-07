@@ -12257,7 +12257,7 @@ const M5_VULNERABILITY_QUESTIONS_SHARED = [
 const M5_EROTIC_QUESTIONS_SHARED = [
   {
     id_suffix: 'ED_01',
-    text: 'What first attracts me to someone is usually very different from what keeps me attracted long-term.',
+    text: 'You meet someone new and feel an immediate spark. After a few months of dating, you realize the things that drew you in — their boldness, their edge — aren\'t what make you want to stay. You find yourself craving their gentleness instead.',
     section: 'eroticDimension',
     signal: 'polarity',
     likertMin: 1,
@@ -12265,7 +12265,7 @@ const M5_EROTIC_QUESTIONS_SHARED = [
   },
   {
     id_suffix: 'ED_02',
-    text: 'I need an element of mystery or unpredictability to sustain desire over time.',
+    text: 'You\'ve been seeing someone for a while and things are going well. But lately, date nights feel predictable — same restaurant, same routine. You notice your interest picking back up when they surprise you with something unexpected.',
     section: 'eroticDimension',
     signal: 'novelty',
     likertMin: 1,
@@ -12273,7 +12273,7 @@ const M5_EROTIC_QUESTIONS_SHARED = [
   },
   {
     id_suffix: 'ED_03',
-    text: 'The more emotionally safe I feel with someone, the more attracted I become to them.',
+    text: 'After a vulnerable conversation where you both shared something deeply personal, you feel closer to your partner than ever. That night, you feel more attracted to them than you have in weeks.',
     section: 'eroticDimension',
     signal: 'familiarity',
     likertMin: 1,
@@ -12284,7 +12284,7 @@ const M5_EROTIC_QUESTIONS_SHARED = [
 const M5_ATTRACTION_ATTACHMENT_QUESTIONS_SHARED = [
   {
     id_suffix: 'AA_01',
-    text: 'The qualities that excite me most in a partner are sometimes the same ones that make me feel insecure.',
+    text: 'You\'re dating someone confident and independent — qualities you find incredibly attractive. But when they cancel plans to hang out with friends, you feel a pang of jealousy. The very self-sufficiency that drew you in now makes you uneasy.',
     section: 'attractionAttachment',
     signal: 'conflict',
     likertMin: 1,
@@ -12292,7 +12292,7 @@ const M5_ATTRACTION_ATTACHMENT_QUESTIONS_SHARED = [
   },
   {
     id_suffix: 'AA_02',
-    text: 'I can tell the difference between attraction and compatibility, and I prioritize compatibility.',
+    text: 'You go on a date with someone who checks every box — stable job, kind, shares your values — but you don\'t feel a strong spark. A friend says "give it time." You decide to keep seeing them because you trust the compatibility over the missing butterflies.',
     section: 'attractionAttachment',
     signal: 'alignment',
     likertMin: 1,
@@ -12300,7 +12300,7 @@ const M5_ATTRACTION_ATTACHMENT_QUESTIONS_SHARED = [
   },
   {
     id_suffix: 'AA_03',
-    text: "I've been drawn to people who triggered my anxiety and mistaken it for chemistry.",
+    text: 'Looking back at your dating history, you notice a pattern: the relationships that felt most electric at the start were also the ones that left you most anxious. The "chemistry" you felt was actually your nervous system on high alert.',
     section: 'attractionAttachment',
     signal: 'historicalPattern',
     likertMin: 1,
@@ -12311,7 +12311,7 @@ const M5_ATTRACTION_ATTACHMENT_QUESTIONS_SHARED = [
 const M5_INTIMACY_CONFLICT_BRIDGE_QUESTIONS_SHARED = [
   {
     id_suffix: 'ICB_01',
-    text: "After a fight, I find it nearly impossible to be physically intimate until we've fully talked it through.",
+    text: 'You and your partner had a heated argument this morning about finances. That evening, they reach for your hand on the couch. You pull away — you can\'t imagine being close to them until you\'ve fully resolved what happened.',
     section: 'intimacyConflictBridge',
     signal: 'bridgeGap',
     likertMin: 1,
@@ -12319,7 +12319,7 @@ const M5_INTIMACY_CONFLICT_BRIDGE_QUESTIONS_SHARED = [
   },
   {
     id_suffix: 'ICB_02',
-    text: 'I can be intensely close with someone and still fight with them the same day without it feeling contradictory.',
+    text: 'You and your partner disagree sharply about weekend plans and voices get raised. An hour later, you\'re laughing together making dinner. For you, the argument and the closeness don\'t cancel each other out — they coexist naturally.',
     section: 'intimacyConflictBridge',
     signal: 'bridgeStrength',
     likertMin: 1,
@@ -12327,7 +12327,7 @@ const M5_INTIMACY_CONFLICT_BRIDGE_QUESTIONS_SHARED = [
   },
   {
     id_suffix: 'ICB_03',
-    text: 'Conflict in my relationship makes me question the entire relationship, not just the issue at hand.',
+    text: 'Your partner snaps at you over something small — leaving dishes in the sink. Instead of addressing the dishes, your mind spirals: "Maybe we\'re not right for each other. Maybe this is a sign." One disagreement makes you question everything.',
     section: 'intimacyConflictBridge',
     signal: 'catastrophizing',
     likertMin: 1,
