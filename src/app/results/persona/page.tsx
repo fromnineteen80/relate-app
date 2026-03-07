@@ -76,9 +76,9 @@ export default function PersonaPage() {
         {persona.datingBehavior?.length > 0 && (
           <section className="card mb-4">
             <h3 className="font-serif text-lg font-semibold mb-3">Dating Behavior</h3>
-            <ul className="space-y-2">
+            <ul className="bullet-list">
               {persona.datingBehavior.map((b: string, i: number) => (
-                <li key={i} className="text-sm flex gap-2"><span className="text-accent">&#8226;</span>{b}</li>
+                <li key={i}>{b}</li>
               ))}
             </ul>
           </section>
@@ -87,9 +87,9 @@ export default function PersonaPage() {
         {persona.inRelationships?.length > 0 && (
           <section className="card mb-4">
             <h3 className="font-serif text-lg font-semibold mb-3">In Relationships</h3>
-            <ul className="space-y-2">
+            <ul className="bullet-list">
               {persona.inRelationships.map((b: string, i: number) => (
-                <li key={i} className="text-sm flex gap-2"><span className="text-accent">&#8226;</span>{b}</li>
+                <li key={i}>{b}</li>
               ))}
             </ul>
           </section>
@@ -99,9 +99,9 @@ export default function PersonaPage() {
           {persona.mostAttractive?.length > 0 && (
             <section className="card">
               <h3 className="font-serif font-semibold mb-3 text-success">Strengths</h3>
-              <ul className="space-y-2">
+              <ul className="bullet-list">
                 {persona.mostAttractive.map((b: string, i: number) => (
-                  <li key={i} className="text-sm">{b}</li>
+                  <li key={i}>{b}</li>
                 ))}
               </ul>
             </section>
@@ -110,9 +110,9 @@ export default function PersonaPage() {
           {persona.leastAttractive?.length > 0 && (
             <section className="card">
               <h3 className="font-serif font-semibold mb-3 text-warning">Growth Areas</h3>
-              <ul className="space-y-2">
+              <ul className="bullet-list">
                 {persona.leastAttractive.map((b: string, i: number) => (
-                  <li key={i} className="text-sm">{b}</li>
+                  <li key={i}>{b}</li>
                 ))}
               </ul>
             </section>

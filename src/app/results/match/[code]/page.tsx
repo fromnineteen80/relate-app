@@ -94,12 +94,9 @@ function InsightCard({ title, items, accent }: { title: string; items: string[];
   return (
     <section className={`card mb-4 ${accent ? 'border-accent/30' : ''}`}>
       <h3 className="font-serif font-semibold mb-3">{title}</h3>
-      <ul className="space-y-2">
+      <ul className="bullet-list">
         {items.map((item, i) => (
-          <li key={i} className="text-sm text-secondary flex gap-2">
-            <span className="text-accent mt-0.5 shrink-0">&bull;</span>
-            <span>{item}</span>
-          </li>
+          <li key={i}>{item}</li>
         ))}
       </ul>
     </section>

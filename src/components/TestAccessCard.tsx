@@ -21,7 +21,7 @@ export function TestAccessCard() {
       <span className="font-mono text-xs text-emerald-600 tracking-wider">TEST ACCESS</span>
       <p className="font-serif text-4xl font-semibold mt-2">$0</p>
       <p className="text-sm text-secondary mt-3 mb-6">All features unlocked for testing.</p>
-      <div className="space-y-2.5 mb-8 flex-1">
+      <ul className="bullet-list mb-8 flex-1">
         {[
           'Full premium access',
           'All 16 match rankings + details',
@@ -29,12 +29,9 @@ export function TestAccessCard() {
           'Downloadable PDF report',
           'No payment required',
         ].map((item) => (
-          <div key={item} className="flex items-start gap-2 text-sm">
-            <span className="text-emerald-500 mt-0.5">&#8226;</span>
-            <span>{item}</span>
-          </div>
+          <li key={item}>{item}</li>
         ))}
-      </div>
+      </ul>
       <button onClick={handleActivate} className="w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium py-2.5 px-4 rounded-md transition-colors">
         Access All Features
       </button>

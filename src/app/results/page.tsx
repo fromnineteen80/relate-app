@@ -513,10 +513,9 @@ function ResultsDashboard() {
           {Array.isArray(stack.coherences) && stack.coherences.length > 0 && (
             <div>
               <span className="text-xs font-mono text-success uppercase tracking-wider">Healthy Alignments</span>
-              <ul className="mt-2 space-y-1">
+              <ul className="bullet-list mt-2">
                 {stack.coherences.map((coh: any, i: number) => (
-                  <li key={i} className="text-sm flex gap-2">
-                    <span className="text-secondary">&#8226;</span>
+                  <li key={i}>
                     {coh.note || coh.specific || coh.name || String(coh)}
                   </li>
                 ))}
@@ -550,9 +549,9 @@ function ResultsDashboard() {
           {Array.isArray(stack.customizations) && stack.customizations.length > 0 && (
             <div className="mb-3">
               <span className="text-xs font-mono text-secondary uppercase tracking-wider">Key Patterns</span>
-              <ul className="mt-1.5 space-y-1">
+              <ul className="bullet-list mt-1.5">
                 {stack.customizations.map((c: string, i: number) => (
-                  <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
+                  <li key={i}>{c}</li>
                 ))}
               </ul>
             </div>
@@ -562,9 +561,9 @@ function ResultsDashboard() {
               {Array.isArray(stack.inRelationship.costs) && stack.inRelationship.costs.length > 0 && (
                 <div>
                   <span className="text-xs font-mono text-secondary uppercase tracking-wider">Risks</span>
-                  <ul className="mt-1.5 space-y-1">
+                  <ul className="bullet-list mt-1.5">
                     {stack.inRelationship.costs.map((r: string, i: number) => (
-                      <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{r}</li>
+                      <li key={i}>{r}</li>
                     ))}
                   </ul>
                 </div>
@@ -572,7 +571,7 @@ function ResultsDashboard() {
               {stack.repairPath && (
                 <div>
                   <span className="text-xs font-mono text-secondary uppercase tracking-wider">Growth Path</span>
-                  <p className="text-sm flex gap-2 mt-1.5"><span className="text-secondary">&#8226;</span>{stack.repairPath}</p>
+                  <ul className="bullet-list mt-1.5"><li>{stack.repairPath}</li></ul>
                 </div>
               )}
             </div>
@@ -580,11 +579,11 @@ function ResultsDashboard() {
           {stack.shamePattern && (
             <div className="mt-3 pt-3 border-t border-border">
               <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
-              <ul className="mt-1.5 space-y-1.5">
-                <li className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span><span><span className="font-medium">Trigger:</span> {stack.shamePattern.trigger}</span></li>
-                <li className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span><span><span className="font-medium">Internal message:</span> {stack.shamePattern.shameMessage}</span></li>
-                <li className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span><span><span className="font-medium">Your response:</span> {stack.shamePattern.behavioralResponse}</span></li>
-                <li className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span><span><span className="font-medium">Partner experiences:</span> {stack.shamePattern.partnerExperience}</span></li>
+              <ul className="bullet-list mt-1.5">
+                <li><span className="font-medium">Trigger:</span> {stack.shamePattern.trigger}</li>
+                <li><span className="font-medium">Internal message:</span> {stack.shamePattern.shameMessage}</li>
+                <li><span className="font-medium">Your response:</span> {stack.shamePattern.behavioralResponse}</li>
+                <li><span className="font-medium">Partner experiences:</span> {stack.shamePattern.partnerExperience}</li>
               </ul>
             </div>
           )}
@@ -615,9 +614,9 @@ function ResultsDashboard() {
         {Array.isArray(stack.customizations) && stack.customizations.length > 0 && (
           <div className="mb-3">
             <span className="text-xs font-mono text-secondary uppercase tracking-wider">Key Patterns</span>
-            <ul className="mt-1.5 space-y-1">
+            <ul className="bullet-list mt-1.5">
               {stack.customizations.map((c: string, i: number) => (
-                <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
+                <li key={i}>{c}</li>
               ))}
             </ul>
           </div>
@@ -626,9 +625,9 @@ function ResultsDashboard() {
           {Array.isArray(stack.risks) && stack.risks.length > 0 && (
             <div>
               <span className="text-xs font-mono text-secondary uppercase tracking-wider">Risks</span>
-              <ul className="mt-1.5 space-y-1">
+              <ul className="bullet-list mt-1.5">
                 {stack.risks.map((r: string, i: number) => (
-                  <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{r}</li>
+                  <li key={i}>{r}</li>
                 ))}
               </ul>
             </div>
@@ -637,9 +636,9 @@ function ResultsDashboard() {
             <div>
               <span className="text-xs font-mono text-secondary uppercase tracking-wider">Growth Path</span>
               {Array.isArray(stack.growthPath) ? (
-                <ul className="mt-1.5 space-y-1">
+                <ul className="bullet-list mt-1.5">
                   {stack.growthPath.map((g: string, i: number) => (
-                    <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{g}</li>
+                    <li key={i}>{g}</li>
                   ))}
                 </ul>
               ) : (
@@ -654,32 +653,23 @@ function ResultsDashboard() {
         {stack.signals && typeof stack.signals === 'object' && !Array.isArray(stack.signals) && (
           <div className="mt-3 pt-3 border-t border-border">
             <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
-            <ul className="mt-1.5 space-y-1.5">
+            <ul className="bullet-list mt-1.5">
               {Object.entries(stack.signals).map(([k, v]: [string, any]) => {
                 if (v && typeof v === 'object' && v.interpretation) {
                   const interpValue = typeof v.interpretation === 'object'
                     ? Object.values(v.interpretation).find((x: any) => typeof x === 'string') || JSON.stringify(v.interpretation)
                     : v.interpretation;
                   return (
-                    <li key={k} className="text-sm flex gap-2">
-                      <span className="text-secondary">&#8226;</span>
-                      <span><span className="font-medium capitalize">{v.name || k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}{interpValue as string}</span>
-                    </li>
+                    <li key={k}><span className="font-medium capitalize">{v.name || k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}{interpValue as string}</li>
                   );
                 }
                 if (v && typeof v === 'object') {
                   return (
-                    <li key={k} className="text-sm flex gap-2">
-                      <span className="text-secondary">&#8226;</span>
-                      <span><span className="font-medium capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}{v.value !== undefined ? String(v.value) : JSON.stringify(v)}</span>
-                    </li>
+                    <li key={k}><span className="font-medium capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span>{' '}{v.value !== undefined ? String(v.value) : JSON.stringify(v)}</li>
                   );
                 }
                 return (
-                  <li key={k} className="text-sm flex gap-2">
-                    <span className="text-secondary">&#8226;</span>
-                    <span><span className="font-medium capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span> {String(v)}</span>
-                  </li>
+                  <li key={k}><span className="font-medium capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</span> {String(v)}</li>
                 );
               })}
             </ul>
@@ -688,9 +678,9 @@ function ResultsDashboard() {
         {Array.isArray(stack.signals) && stack.signals.length > 0 && (
           <div className="mt-3 pt-3 border-t border-border">
             <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
-            <ul className="mt-1.5 space-y-1">
+            <ul className="bullet-list mt-1.5">
               {stack.signals.map((s: string, i: number) => (
-                <li key={i} className="text-sm flex gap-2"><span className="text-secondary">&#8226;</span>{s}</li>
+                <li key={i}>{s}</li>
               ))}
             </ul>
           </div>
@@ -766,9 +756,9 @@ function ResultsDashboard() {
             {persona.datingBehavior?.length > 0 && (
               <div>
                 <span className="text-xs font-mono text-secondary uppercase tracking-wider">Dating Behavior</span>
-                <ul className="mt-2 space-y-1.5">
+                <ul className="bullet-list mt-2">
                   {persona.datingBehavior.map((b: string, i: number) => (
-                    <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{b}</li>
+                    <li key={i}>{b}</li>
                   ))}
                 </ul>
               </div>
@@ -780,9 +770,9 @@ function ResultsDashboard() {
                 {persona.mostAttractive?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-success uppercase tracking-wider">Most Attractive Qualities</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {persona.mostAttractive.map((item: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{item}</li>
+                        <li key={i}>{item}</li>
                       ))}
                     </ul>
                   </div>
@@ -790,9 +780,9 @@ function ResultsDashboard() {
                 {persona.leastAttractive?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-warning uppercase tracking-wider">Growth Areas</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {persona.leastAttractive.map((item: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{item}</li>
+                        <li key={i}>{item}</li>
                       ))}
                     </ul>
                   </div>
@@ -806,9 +796,9 @@ function ResultsDashboard() {
                 {persona.inRelationships?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-secondary uppercase tracking-wider">In Relationships</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {persona.inRelationships.map((b: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{b}</li>
+                        <li key={i}>{b}</li>
                       ))}
                     </ul>
                   </div>
@@ -816,9 +806,9 @@ function ResultsDashboard() {
                 {persona.struggles?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-secondary uppercase tracking-wider">Shadow Side</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {persona.struggles.map((b: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{b}</li>
+                        <li key={i}>{b}</li>
                       ))}
                     </ul>
                   </div>
@@ -967,9 +957,9 @@ function ResultsDashboard() {
                 {m3.typeDetails.strengths?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {m3.typeDetails.strengths.map((s: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{s}</li>
+                        <li key={i}>{s}</li>
                       ))}
                     </ul>
                   </div>
@@ -977,9 +967,9 @@ function ResultsDashboard() {
                 {m3.typeDetails.challenges?.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {m3.typeDetails.challenges.map((c: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
+                        <li key={i}>{c}</li>
                       ))}
                     </ul>
                   </div>
@@ -1093,18 +1083,18 @@ function ResultsDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
                 <div>
                   <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
-                  <ul className="mt-2 space-y-1.5">
+                  <ul className="bullet-list mt-2">
                     {ic.attachment.strengths.map((s: string, i: number) => (
-                      <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{s}</li>
+                      <li key={i}>{s}</li>
                     ))}
                   </ul>
                 </div>
                 {ic.attachment.challenges && Array.isArray(ic.attachment.challenges) && ic.attachment.challenges.length > 0 && (
                   <div>
                     <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {ic.attachment.challenges.map((c: string, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary">&#8226;</span>{c}</li>
+                        <li key={i}>{c}</li>
                       ))}
                     </ul>
                   </div>
@@ -1323,9 +1313,9 @@ function ResultsDashboard() {
                 {Array.isArray(ic.horsemenInsights?.lookFor) && ic.horsemenInsights.lookFor.length > 0 && (
                   <div className="mt-3">
                     <span className="text-xs font-mono text-success uppercase tracking-wider">Look for in a partner</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {ic.horsemenInsights.lookFor.map((item: any, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary flex-shrink-0">&#8226;</span><span><span className="font-medium text-foreground">{item.partnerTrait}</span>: {item.reason}</span></li>
+                        <li key={i}><span><span className="font-medium text-foreground">{item.partnerTrait}</span>: {item.reason}</span></li>
                       ))}
                     </ul>
                   </div>
@@ -1333,9 +1323,9 @@ function ResultsDashboard() {
                 {Array.isArray(ic.horsemenInsights?.avoid) && ic.horsemenInsights.avoid.length > 0 && (
                   <div className="mt-3">
                     <span className="text-xs font-mono text-warning uppercase tracking-wider">Be cautious of</span>
-                    <ul className="mt-2 space-y-1.5">
+                    <ul className="bullet-list mt-2">
                       {ic.horsemenInsights.avoid.map((item: any, i: number) => (
-                        <li key={i} className="text-sm text-secondary flex gap-2"><span className="text-secondary flex-shrink-0">&#8226;</span><span><span className="font-medium text-foreground">{item.partnerTrait}</span>: {item.reason}</span></li>
+                        <li key={i}><span><span className="font-medium text-foreground">{item.partnerTrait}</span>: {item.reason}</span></li>
                       ))}
                     </ul>
                   </div>
@@ -1383,9 +1373,9 @@ function ResultsDashboard() {
             {Array.isArray(modifiers.strengths) && modifiers.strengths.length > 0 && (
               <div className="mb-3">
                 <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
-                <ul className="mt-1.5 space-y-1">
+                <ul className="bullet-list mt-1.5">
                   {modifiers.strengths.map((s: string, i: number) => (
-                    <li key={i} className="text-sm text-secondary">{s}</li>
+                    <li key={i}>{s}</li>
                   ))}
                 </ul>
               </div>
@@ -1393,9 +1383,9 @@ function ResultsDashboard() {
             {Array.isArray(modifiers.growthAreas) && modifiers.growthAreas.length > 0 && (
               <div className="mb-3">
                 <span className="text-xs font-mono text-warning uppercase tracking-wider">Growth Areas</span>
-                <ul className="mt-1.5 space-y-1">
+                <ul className="bullet-list mt-1.5">
                   {modifiers.growthAreas.map((g: string, i: number) => (
-                    <li key={i} className="text-sm text-secondary">{g}</li>
+                    <li key={i}>{g}</li>
                   ))}
                 </ul>
               </div>
@@ -1403,9 +1393,9 @@ function ResultsDashboard() {
             {Array.isArray(modifiers.coachingRecommendations) && modifiers.coachingRecommendations.length > 0 && (
               <div className="pt-3 border-t border-border">
                 <span className="text-xs font-mono text-success uppercase tracking-wider">Recommendations</span>
-                <ul className="mt-1.5 space-y-1.5">
+                <ul className="bullet-list mt-1.5">
                   {modifiers.coachingRecommendations.map((rec: any, i: number) => (
-                    <li key={i} className="text-sm">
+                    <li key={i}>
                       {typeof rec === 'string' ? rec : (
                         <div>
                           {rec.title && <span className="font-medium">{rec.title}: </span>}
