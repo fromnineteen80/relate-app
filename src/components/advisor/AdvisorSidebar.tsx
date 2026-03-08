@@ -76,7 +76,7 @@ export default function AdvisorSidebar() {
 
       {/* Sidebar — fixed to left edge, full viewport height, independent of main scroll */}
       <div
-        className={`fixed top-0 left-0 h-screen border-r border-stone-200 flex flex-col transition-all duration-300 ease-out overflow-hidden ${
+        className={`fixed top-0 left-0 h-dvh border-r border-stone-200 flex flex-col transition-all duration-300 ease-out overflow-hidden ${
           isOpen
             ? 'w-screen sm:w-[50vw] xl:w-[33vw] z-[60] sm:z-30 bg-white'
             : 'w-0 z-30 bg-stone-50'
@@ -89,8 +89,8 @@ export default function AdvisorSidebar() {
           <AdvisorHeader />
           <AdvisorMessages hideStarters={inputValue.length > 0} />
 
-          {/* Input field — fixed at the bottom of the sidebar */}
-          <div className="p-3 flex-shrink-0">
+          {/* Input field — fixed at the bottom of the sidebar, above mobile browser chrome */}
+          <div className="p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex-shrink-0">
             <div className="relative">
               <textarea
                 ref={textareaRef}
