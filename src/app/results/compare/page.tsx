@@ -7,21 +7,41 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 import { Icon } from '@/components/Icon';
+import { useAuth } from '@/lib/auth-context';
+import { saveCouplesReportToDb } from '@/lib/supabase/progress';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export default function ComparePage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeSection, setActiveSection] = useState(0);
 
+  // Enrich report with actual first names from localStorage so all sections show real names
+  function enrichReportNames(rpt: any): any {
+    const profileStr = localStorage.getItem('relate_profile');
+    const profile = profileStr ? JSON.parse(profileStr) : null;
+    const userFirstName = profile?.firstName || null;
+    const partnerFirstName = localStorage.getItem('relate_partner_first_name') || null;
+    if (rpt?.overview) {
+      if (userFirstName && rpt.overview.user1) {
+        rpt.overview.user1.name = userFirstName;
+      }
+      if (partnerFirstName && rpt.overview.user2) {
+        rpt.overview.user2.name = partnerFirstName;
+      }
+    }
+    return rpt;
+  }
+
   useEffect(() => {
     // Check for existing couples report
     const stored = localStorage.getItem('relate_couples_report');
     if (stored) {
-      setReport(JSON.parse(stored));
+      setReport(enrichReportNames(JSON.parse(stored)));
       setLoading(false);
       return;
     }
@@ -51,7 +71,9 @@ export default function ComparePage() {
       .then(data => {
         if (data.success) {
           localStorage.setItem('relate_couples_report', JSON.stringify(data.report));
-          setReport(data.report);
+          setReport(enrichReportNames(data.report));
+          // Persist to Supabase for cross-device sync
+          if (user) saveCouplesReportToDb(user.id, data.report);
         } else {
           setError(data.error || 'Failed to generate report');
         }
@@ -61,7 +83,7 @@ export default function ComparePage() {
         setError('Connection error');
         setLoading(false);
       });
-  }, []);
+  }, [user]);
 
   // Mock data generation for testing
   const generateMockReport = useCallback(() => {
@@ -99,7 +121,7 @@ export default function ComparePage() {
       .then(data => {
         if (data.success) {
           localStorage.setItem('relate_couples_report', JSON.stringify(data.report));
-          setReport(data.report);
+          setReport(enrichReportNames(data.report));
         }
         setLoading(false);
       })
@@ -180,7 +202,7 @@ export default function ComparePage() {
         {activeSection === 1 && <AlignmentSection data={report.alignment} overview={report.overview} />}
         {activeSection === 2 && <ClashSection data={report.clashes} overview={report.overview} />}
         {activeSection === 3 && <ConflictSection data={report.conflictChoreography} overview={report.overview} />}
-        {activeSection === 4 && <RepairSection data={report.repairCompatibility} />}
+        {activeSection === 4 && <RepairSection data={report.repairCompatibility} overview={report.overview} />}
         {activeSection === 5 && <DailyLifeSection data={report.dailyLife} />}
         {activeSection === 6 && <CeilingFloorSection data={report.ceilingFloor} />}
         {activeSection === 7 && report.enhancedCompatibility && (
@@ -314,7 +336,7 @@ function AlignmentSection({ data, overview }: { data: any; overview: any }) {
                   <Icon name="check" size={18} />
                 </div>
                 <div>
-                  <p className="text-sm font-medium capitalize">{p.dimension} -{p.type === 'shared_desire' ? 'Shared Desire' : 'Want-Offer Match'}</p>
+                  <p className="text-sm font-medium capitalize">{p.dimension}, {p.type === 'shared_desire' ? 'Shared Desire' : 'Want-Offer Match'}</p>
                   <p className="text-xs text-secondary mt-1">{p.narrative}</p>
                   <div className="flex items-center gap-2 mt-2">
                     <div className="h-1.5 flex-1 bg-stone-200 rounded-full overflow-hidden">
@@ -504,8 +526,24 @@ function ConflictSection({ data, overview }: { data: any; overview: any }) {
   );
 }
 
-function RepairSection({ data }: { data: any }) {
+function RepairSection({ data, overview }: { data: any; overview: any }) {
   if (!data) return <p className="text-secondary">No repair data available.</p>;
+
+  // Determine user (viewer) vs partner ordering.
+  // The logged-in user is always user1 in the report. We display user first, partner second.
+  // Read the user's first name from localStorage for a personal touch.
+  const userGender = overview?.user1?.gender || localStorage.getItem('relate_gender') || 'M';
+  const partnerGender = overview?.user2?.gender || (userGender === 'M' ? 'W' : 'M');
+
+  // Get first names: user from localStorage, partner from report
+  const profileStr = localStorage.getItem('relate_profile');
+  const profileData = profileStr ? JSON.parse(profileStr) : null;
+  const userName = profileData?.firstName || overview?.user1?.name || 'You';
+  const partnerName = overview?.user2?.name || 'Partner';
+
+  // Gendered bar colors: blue for male, pink for female
+  const userBarColor = (userGender === 'M' || userGender === 'Man') ? 'bg-blue-500' : 'bg-pink-400';
+  const partnerBarColor = (partnerGender === 'M' || partnerGender === 'Man') ? 'bg-blue-500' : 'bg-pink-400';
 
   const horsemenLabels: Record<string, string> = {
     criticism: 'Criticism',
@@ -515,16 +553,16 @@ function RepairSection({ data }: { data: any }) {
   };
 
   const horsemenAntidotes: Record<string, string> = {
-    criticism: 'Gentle startup -begin with "I feel..." instead of "You always..."',
-    contempt: 'Build a culture of appreciation -express gratitude daily',
-    defensiveness: 'Take responsibility -even a small part of the problem',
-    stonewalling: 'Self-soothe -take a break and come back within 20 minutes',
+    criticism: 'Gentle startup. Begin with "I feel..." instead of "You always..."',
+    contempt: 'Build a culture of appreciation. Express gratitude daily.',
+    defensiveness: 'Take responsibility, even a small part of the problem.',
+    stonewalling: 'Self-soothe. Take a break and come back within 20 minutes.',
   };
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-serif text-2xl font-semibold mb-1">Repair Compatibility</h2>
+        <h2 className="font-serif text-2xl font-semibold mb-1">How You Repair As A Couple</h2>
         <p className="explainer">
           Overall risk: <span className={`font-mono ${data.overallRisk === 'high' ? 'text-danger' : data.overallRisk === 'moderate' ? 'text-warning' : 'text-success'}`}>
             {data.overallRisk}
@@ -534,7 +572,7 @@ function RepairSection({ data }: { data: any }) {
 
       {/* Gottman horsemen comparison */}
       <div className="card">
-        <h3 className="font-serif text-sm font-semibold mb-4">Four Horsemen -Combined Risk</h3>
+        <h3 className="font-serif text-sm font-semibold mb-4">Four Horsemen, Combined Risk</h3>
         <div className="space-y-4">
           {data.horsemen?.map((h: any) => (
             <div key={h.horseman}>
@@ -547,15 +585,15 @@ function RepairSection({ data }: { data: any }) {
               <div className="flex gap-1">
                 <div className="flex-1">
                   <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-accent/60 rounded-full" style={{ width: `${(h.user1Score / 20) * 100}%` }} />
+                    <div className={`h-full ${userBarColor} rounded-full`} style={{ width: `${(h.user1Score / 20) * 100}%` }} />
                   </div>
-                  <p className="text-[10px] text-secondary mt-0.5">Partner 1: {h.user1Score}</p>
+                  <p className="text-[10px] text-secondary mt-0.5">{userName}: {h.user1Score}</p>
                 </div>
                 <div className="flex-1">
                   <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-accent rounded-full" style={{ width: `${(h.user2Score / 20) * 100}%` }} />
+                    <div className={`h-full ${partnerBarColor} rounded-full`} style={{ width: `${(h.user2Score / 20) * 100}%` }} />
                   </div>
-                  <p className="text-[10px] text-secondary mt-0.5">Partner 2: {h.user2Score}</p>
+                  <p className="text-[10px] text-secondary mt-0.5">{partnerName}: {h.user2Score}</p>
                 </div>
               </div>
               {h.riskLevel !== 'low' && (
@@ -587,11 +625,13 @@ function RepairSection({ data }: { data: any }) {
         <div className="grid grid-cols-2 gap-4 mb-3">
           <div className="text-center">
             <span className="font-mono text-2xl font-semibold">{data.capacity?.user1Score}</span>
-            <p className="text-xs text-secondary mt-1 capitalize">{data.capacity?.user1Level}</p>
+            <p className="text-xs text-secondary mt-1">{userName}</p>
+            <p className="text-[10px] text-secondary capitalize">{data.capacity?.user1Level}</p>
           </div>
           <div className="text-center">
             <span className="font-mono text-2xl font-semibold">{data.capacity?.user2Score}</span>
-            <p className="text-xs text-secondary mt-1 capitalize">{data.capacity?.user2Level}</p>
+            <p className="text-xs text-secondary mt-1">{partnerName}</p>
+            <p className="text-[10px] text-secondary capitalize">{data.capacity?.user2Level}</p>
           </div>
         </div>
         <p className="text-xs text-secondary">{data.capacity?.narrative}</p>

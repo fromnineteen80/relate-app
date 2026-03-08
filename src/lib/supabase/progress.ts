@@ -110,6 +110,20 @@ export async function loadAndHydrateProgress(userId: string): Promise<any | null
     localStorage.setItem('relate_results', JSON.stringify(data.results));
   }
 
+  // Hydrate growth data if present
+  if (data.growth_data) {
+    const gd = data.growth_data;
+    if (gd.completedExercises) {
+      localStorage.setItem('relate_growth_exercises_completed', JSON.stringify(gd.completedExercises));
+    }
+    if (gd.points != null) {
+      localStorage.setItem('relate_individual_growth_points', String(gd.points));
+    }
+    if (gd.activeExercise) {
+      localStorage.setItem('relate_growth_active_exercise', JSON.stringify(gd.activeExercise));
+    }
+  }
+
   return data;
 }
 
@@ -336,4 +350,182 @@ export async function loadDemographicsFromDb(userId: string): Promise<boolean> {
   // loadProfileFromDb already fetches from users table and hydrates both
   // profile and demographics localStorage keys
   return loadProfileFromDb(userId);
+}
+
+// ── Couples & Growth Sync ──
+
+/**
+ * Save the couples report to the partnerships table (fire-and-forget).
+ */
+export function saveCouplesReportToDb(userId: string, report: any) {
+  if (config.useMockAuth) return;
+  const supabase = getSupabase();
+  if (!supabase) return;
+
+  // Find the active partnership for this user
+  supabase.from('partnerships')
+    .select('id')
+    .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
+    .eq('status', 'active')
+    .single()
+    .then(({ data }) => {
+      if (!data?.id) return;
+      supabase.from('partnerships').update({
+        couples_report: report,
+        updated_at: new Date().toISOString(),
+      }).eq('id', data.id).then(({ error }) => {
+        if (error) console.warn('Failed to save couples report to DB:', error.message);
+      });
+    });
+}
+
+/**
+ * Load the couples report from the partnerships table and hydrate localStorage.
+ */
+export async function loadCouplesDataFromDb(userId: string): Promise<boolean> {
+  if (config.useMockAuth) return false;
+  const supabase = getSupabase();
+  if (!supabase) return false;
+
+  const { data, error } = await supabase.from('partnerships')
+    .select('id, couples_report, invite_email, user1_id, user2_id, status')
+    .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
+    .eq('status', 'active')
+    .single();
+
+  if (error || !data) return false;
+
+  // Hydrate partner email
+  const partnerId = data.user1_id === userId ? data.user2_id : data.user1_id;
+  if (data.invite_email) {
+    localStorage.setItem('relate_partner_email', data.invite_email);
+  }
+
+  // Load partner profile (name, gender)
+  if (partnerId) {
+    const { data: partner } = await supabase.from('users')
+      .select('first_name, gender')
+      .eq('id', partnerId)
+      .single();
+    if (partner) {
+      if (partner.gender) localStorage.setItem('relate_partner_gender', partner.gender);
+      if (partner.first_name) localStorage.setItem('relate_partner_first_name', partner.first_name);
+    }
+
+    // Load partner results
+    const { data: partnerProgress } = await supabase.from('user_progress')
+      .select('results')
+      .eq('user_id', partnerId)
+      .single();
+    if (partnerProgress?.results) {
+      localStorage.setItem('relate_partner_results', JSON.stringify(partnerProgress.results));
+    }
+  }
+
+  // Hydrate couples report
+  if (data.couples_report) {
+    localStorage.setItem('relate_couples_report', JSON.stringify(data.couples_report));
+  }
+
+  return true;
+}
+
+/**
+ * Save individual growth data to user_progress (fire-and-forget).
+ */
+export function saveGrowthDataToDb(userId: string, growthData: any) {
+  if (config.useMockAuth) return;
+  const supabase = getSupabase();
+  if (!supabase) return;
+
+  supabase.from('user_progress').upsert({
+    user_id: userId,
+    growth_data: growthData,
+    updated_at: new Date().toISOString(),
+  }, { onConflict: 'user_id' }).then(({ error }) => {
+    if (error) console.warn('Failed to save growth data to DB:', error.message);
+  });
+}
+
+/**
+ * Comprehensive hydration: loads ALL user data from Supabase into localStorage.
+ * Called on session restore to ensure cross-device sync.
+ */
+export async function fullHydrateFromDb(userId: string): Promise<void> {
+  if (config.useMockAuth) return;
+
+  // Load profile + demographics (includes photo, education, ethnicity, etc.)
+  await loadProfileFromDb(userId);
+
+  // Load assessment progress + results
+  await loadAndHydrateProgress(userId);
+
+  // Load couples data (partner info, couples report)
+  await loadCouplesDataFromDb(userId);
+}
+
+/**
+ * Subscribe to partner profile changes via Supabase Realtime.
+ * Returns an unsubscribe function.
+ */
+export function subscribeToPartnerChanges(
+  userId: string,
+  onPartnerUpdate: (data: any) => void,
+): () => void {
+  if (config.useMockAuth) return () => {};
+  const supabase = getSupabase();
+  if (!supabase) return () => {};
+
+  // First find the partner ID
+  let channelRef: any = null;
+
+  supabase.from('partnerships')
+    .select('user1_id, user2_id')
+    .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
+    .eq('status', 'active')
+    .single()
+    .then(({ data }) => {
+      if (!data) return;
+      const partnerId = data.user1_id === userId ? data.user2_id : data.user1_id;
+      if (!partnerId) return;
+
+      // Subscribe to partner's user row changes
+      const channel = supabase.channel(`partner-${partnerId}`)
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'users',
+          filter: `id=eq.${partnerId}`,
+        }, (payload: any) => {
+          // Update partner data in localStorage
+          const p = payload.new;
+          if (p.gender) localStorage.setItem('relate_partner_gender', p.gender);
+          if (p.first_name) localStorage.setItem('relate_partner_first_name', p.first_name);
+          onPartnerUpdate(p);
+        })
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'user_progress',
+          filter: `user_id=eq.${partnerId}`,
+        }, (payload: any) => {
+          // Partner retook the test or updated results
+          const p = payload.new;
+          if (p.results) {
+            localStorage.setItem('relate_partner_results', JSON.stringify(p.results));
+            // Clear cached couples report so it regenerates with new data
+            localStorage.removeItem('relate_couples_report');
+            onPartnerUpdate({ resultsUpdated: true, results: p.results });
+          }
+        })
+        .subscribe();
+
+      channelRef = channel;
+    });
+
+  return () => {
+    if (channelRef) {
+      supabase.removeChannel(channelRef);
+    }
+  };
 }
