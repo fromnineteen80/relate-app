@@ -154,15 +154,28 @@ export default function ComparePage() {
     ...(report.enhancedCompatibility ? [{ key: 'enhanced', label: 'Deep Analysis' }] : []),
   ];
 
-  const sectionNavItems = sections.map(s => ({
-    id: s.key, label: s.label, href: `#${s.key}`, show: true,
-  }));
-
   return (
     <div className="min-h-screen flex flex-col">
-      <CouplesHeader items={sectionNavItems} />
+      <CouplesHeader />
 
       <main className="max-w-3xl mx-auto px-6 py-8 w-full">
+        {/* Section tabs */}
+        <div className="flex gap-1 overflow-x-auto mb-8 pb-1 -mx-2 px-2">
+          {sections.map((s, i) => (
+            <button
+              key={s.key}
+              onClick={() => setActiveSection(i)}
+              className={`px-3 py-1.5 text-xs font-mono rounded-md whitespace-nowrap transition-colors ${
+                activeSection === i
+                  ? 'bg-accent text-white'
+                  : 'bg-stone-100 text-secondary hover:bg-stone-200'
+              }`}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+
         {activeSection === 0 && <OverviewSection data={report.overview} />}
         {activeSection === 1 && <AlignmentSection data={report.alignment} overview={report.overview} />}
         {activeSection === 2 && <ClashSection data={report.clashes} overview={report.overview} />}
@@ -202,11 +215,11 @@ export default function ComparePage() {
   );
 }
 
-function CouplesHeader({ items }: { items?: { id: string; label: string; href: string; show?: boolean }[] }) {
+function CouplesHeader() {
   return (
     <>
       <SiteHeader />
-      <SubNav items={items} />
+      <SubNav />
     </>
   );
 }
@@ -235,6 +248,14 @@ function OverviewSection({ data }: { data: any }) {
         <p className="font-serif text-xl font-semibold">{data.archetype?.name}</p>
         <p className="explainer mt-1 max-w-lg mx-auto">{data.archetype?.description}</p>
       </div>
+
+      {/* Coaching */}
+      {data.archetype?.coaching && (
+        <div className="card bg-stone-50 border-accent/30">
+          <p className="text-xs text-secondary font-mono mb-1">What this means for you</p>
+          <p className="text-sm leading-relaxed">{data.archetype.coaching}</p>
+        </div>
+      )}
 
       {/* Score breakdown */}
       <div className="grid grid-cols-3 gap-4">
@@ -373,6 +394,12 @@ function ClashSection({ data, overview }: { data: any; overview: any }) {
                 <span>{overview?.user2?.name}: <strong className="text-foreground">{c.user2Pole}</strong> ({c.user2Strength}%)</span>
               </div>
               <p className="text-xs text-secondary">{c.narrative}</p>
+              {c.coaching && (
+                <div className="mt-3 p-3 bg-stone-50 rounded-md">
+                  <p className="text-[10px] text-accent font-mono mb-1">What to try</p>
+                  <p className="text-xs text-secondary">{c.coaching}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -421,6 +448,12 @@ function ConflictSection({ data, overview }: { data: any; overview: any }) {
           </div>
         </div>
         <p className="text-xs text-secondary">{data.dynamic?.description}</p>
+        {data.dynamic?.coaching && (
+          <div className="mt-3 p-3 bg-stone-50 rounded-md">
+            <p className="text-[10px] text-accent font-mono mb-1">Your action plan</p>
+            <p className="text-xs text-secondary">{data.dynamic.coaching}</p>
+          </div>
+        )}
       </div>
 
       {/* Emotional drivers */}
@@ -532,6 +565,21 @@ function RepairSection({ data }: { data: any }) {
           ))}
         </div>
       </div>
+
+      {/* Coaching */}
+      {data.coaching?.length > 0 && (
+        <div className="card bg-stone-50 border-accent/30">
+          <p className="text-xs text-accent font-mono mb-2">What to work on</p>
+          <ul className="space-y-2">
+            {data.coaching.map((tip: string, i: number) => (
+              <li key={i} className="text-xs text-secondary leading-relaxed flex items-start gap-2">
+                <span className="text-accent mt-0.5 flex-shrink-0">{i + 1}.</span>
+                <span>{tip}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Emotional capacity */}
       <div className="card">
@@ -666,6 +714,21 @@ function CeilingFloorSection({ data }: { data: any }) {
           ))}
         </ul>
       </div>
+
+      {/* Growth Roadmap */}
+      {data.growthSteps?.length > 0 && (
+        <div className="card border-accent/30">
+          <h3 className="font-serif text-sm font-semibold mb-3">Your Growth Roadmap</h3>
+          <ul className="space-y-3">
+            {data.growthSteps.map((step: string, i: number) => (
+              <li key={i} className="flex items-start gap-3 text-xs">
+                <span className="w-6 h-6 rounded-full bg-accent/10 text-accent flex items-center justify-center flex-shrink-0 font-mono text-[10px] font-semibold">{i + 1}</span>
+                <span className="text-secondary leading-relaxed">{step}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Narrative */}
       <div className="card bg-stone-50">

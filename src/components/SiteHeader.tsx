@@ -6,6 +6,8 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useAdvisor } from '@/lib/advisor-context';
+import { useIsMobileDevice } from '@/lib/use-mobile-platform';
+import { Icon } from '@/components/Icon';
 
 type SiteHeaderProps = {
   variant?: 'default' | 'landing' | 'auth';
@@ -15,7 +17,8 @@ type SiteHeaderProps = {
 
 export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeaderProps) {
   const { user, signOut } = useAuth();
-  const { isOpen: advisorOpen, toggle: toggleAdvisor } = useAdvisor();
+  const { isOpen: advisorOpen, open: openAdvisor, toggle: toggleAdvisor } = useAdvisor();
+  const isMobileDevice = useIsMobileDevice();
   const pathname = usePathname();
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -81,7 +84,16 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
     <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-sm" style={{ overflow: 'visible' }}>
       <div className="px-6 py-2 flex items-center justify-between">
         <div className="flex items-center gap-3">
-<Link href="/" className="font-serif text-base font-semibold tracking-tight">
+          {isMobileDevice && !advisorOpen && (
+            <button
+              onClick={openAdvisor}
+              aria-label="Open advisor"
+              className="text-secondary hover:text-foreground transition-colors"
+            >
+              <Icon name="thumbnail_bar" size={19} fill={false} weight={300} />
+            </button>
+          )}
+          <Link href="/" className="font-serif text-base font-semibold tracking-tight">
             RELATE
           </Link>
         </div>

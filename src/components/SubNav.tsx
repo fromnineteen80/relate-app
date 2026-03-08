@@ -72,18 +72,31 @@ export function SubNav({ items = [] }: SubNavProps) {
     { id: 'matches', label: `All Potential ${seekingLabel}`, href: '/results/matches', show: true },
   ] : [];
 
+  // Couples sub-links
+  const couplesSubLinks: SubNavItem[] = isCouplesPage ? [
+    { id: 'couples-report', label: 'Report', href: '/results/compare', show: true },
+    { id: 'couples-dashboard', label: 'Dashboard', href: '/couples', show: true },
+    { id: 'couples-cards', label: 'Cards', href: '/couples/cards', show: true },
+    { id: 'couples-dates', label: 'Dates', href: '/couples/dates', show: true },
+    { id: 'couples-checkin', label: 'Check-Ins', href: '/couples/checkin', show: true },
+  ] : [];
+
   const visibleUniversal = universalLinks.filter(l => l.show !== false);
   const visibleResultsSubLinks = resultsSubLinks.filter(l => l.show !== false);
+  const visibleCouplesSubLinks = couplesSubLinks.filter(l => l.show !== false);
   const visiblePageItems = items.filter(l => l.show !== false);
 
   // On match pages, results sub-links go after the divider as page-tab items
+  // On couples pages, show couples sub-links after divider
   // On other results subpages, they stay as main tabs
   const beforeDividerLinks = isMatchPage
     ? [...visibleUniversal]
     : [...visibleUniversal, ...visibleResultsSubLinks];
-  const afterDividerLinks = isMatchPage
-    ? [...visibleResultsSubLinks, ...visiblePageItems]
-    : visiblePageItems;
+  const afterDividerLinks = isCouplesPage
+    ? [...visibleCouplesSubLinks, ...visiblePageItems]
+    : isMatchPage
+      ? [...visibleResultsSubLinks, ...visiblePageItems]
+      : visiblePageItems;
 
   return (
     <nav className="border-b border-border bg-background sticky top-[41px] z-10">
