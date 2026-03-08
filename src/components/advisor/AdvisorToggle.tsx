@@ -1,17 +1,22 @@
 'use client';
 
 import { useAdvisor } from '@/lib/advisor-context';
+import { useIsMobileDevice } from '@/lib/use-mobile-platform';
 import { Icon } from '@/components/Icon';
 
 /**
- * Collapsed sidebar indicator — a thin vertical bar on the left edge (hidden on mobile/small screens).
- * On mobile, the toggle is handled by the SiteHeader icon instead.
+ * Collapsed sidebar indicator — a thin vertical bar on the left edge.
+ * Hidden on iOS/Android (rule 2: collapsed sidebar not visible on mobile devices).
  */
 export default function AdvisorToggle() {
   const { isOpen, open } = useAdvisor();
+  const isMobileDevice = useIsMobileDevice();
 
   // Don't show the bar when sidebar is open
   if (isOpen) return null;
+
+  // Rule 2: collapsed sidebar is not visible on iOS/Android
+  if (isMobileDevice) return null;
 
   return (
     <div className="hidden md:block fixed top-0 left-0 h-screen z-30">
