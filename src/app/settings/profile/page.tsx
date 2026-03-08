@@ -36,10 +36,12 @@ export default function ProfileSettings() {
   const [saved, setSaved] = useState(false);
   const [profile, setProfile] = useState<any>(null);
   const [demographics, setDemographics] = useState<any>(null);
+  const [astrologyEnabled, setAstrologyEnabled] = useState(false);
 
   useEffect(() => {
     setName(localStorage.getItem('relate_profile_name') || '');
     setPhotoUrl(localStorage.getItem('relate_profile_photo') || null);
+    setAstrologyEnabled(localStorage.getItem('relate_astrology_enabled') !== 'false');
 
     const storedProfile = localStorage.getItem('relate_profile');
     if (storedProfile) {
@@ -248,23 +250,43 @@ export default function ProfileSettings() {
             <div className="card mb-4">
               <div className="flex items-center justify-between gap-6 flex-wrap mb-2">
                 <p className="text-sm font-medium">Sun, Moon &amp; Rise</p>
-                <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">
-                  {hasBirthData ? 'Edit' : 'Add birth data'}
-                </Link>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => {
+                      const next = !astrologyEnabled;
+                      setAstrologyEnabled(next);
+                      localStorage.setItem('relate_astrology_enabled', String(next));
+                    }}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${astrologyEnabled ? 'bg-accent' : 'bg-stone-300'}`}
+                    role="switch"
+                    aria-checked={astrologyEnabled}
+                  >
+                    <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white transition-transform ${astrologyEnabled ? 'translate-x-[18px]' : 'translate-x-[3px]'}`} />
+                  </button>
+                  <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">
+                    {hasBirthData ? 'Edit' : 'Add birth data'}
+                  </Link>
+                </div>
               </div>
-              {hasBirthData ? (
-                <>
-                  <InfoRow label="Birthday" value={`${demographics.birth_month}/${demographics.birth_day}/${demographics.birth_year}`} />
-                  {hasTime && <InfoRow label="Birth Time" value={`${demographics.birth_hour}:${String(demographics.birth_minute).padStart(2, '0')} ${demographics.birth_ampm}`} />}
-                  <div className="mt-2">
-                    <Link href="/results/astrology" className="text-xs text-accent hover:underline">
-                      View your astrology profile
-                    </Link>
-                  </div>
-                </>
+              {astrologyEnabled ? (
+                hasBirthData ? (
+                  <>
+                    <InfoRow label="Birthday" value={`${demographics.birth_month}/${demographics.birth_day}/${demographics.birth_year}`} />
+                    {hasTime && <InfoRow label="Birth Time" value={`${demographics.birth_hour}:${String(demographics.birth_minute).padStart(2, '0')} ${demographics.birth_ampm}`} />}
+                    <div className="mt-2">
+                      <Link href="/results/astrology" className="text-xs text-accent hover:underline">
+                        View your astrology profile
+                      </Link>
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-xs text-secondary">
+                    Add your birthday and birth time to unlock your Sun, Moon &amp; Rising astrology profile.
+                  </p>
+                )
               ) : (
                 <p className="text-xs text-secondary">
-                  Add your birthday and birth time to unlock your Sun, Moon &amp; Rising astrology profile.
+                  Enable to access your Sun, Moon &amp; Rising astrology profile.
                 </p>
               )}
             </div>

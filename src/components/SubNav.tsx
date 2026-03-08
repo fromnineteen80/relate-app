@@ -22,7 +22,7 @@ export function SubNav({ items = [] }: SubNavProps) {
   const [hasPartner, setHasPartner] = useState(false);
   const [topMatchCode, setTopMatchCode] = useState<string | null>(null);
   const [seekingLabel, setSeekingLabel] = useState<string>('Matches');
-
+  const [astrologyEnabled, setAstrologyEnabled] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem('relate_results');
@@ -50,6 +50,9 @@ export function SubNav({ items = [] }: SubNavProps) {
       setSeekingLabel('Male Matches');
     }
 
+    // Astrology toggle
+    setAstrologyEnabled(localStorage.getItem('relate_astrology_enabled') !== 'false');
+
   }, []);
 
   // Show results sublinks on results subpages (persona, match, matches, etc.) but NOT the root /results page
@@ -64,7 +67,7 @@ export function SubNav({ items = [] }: SubNavProps) {
     { id: 'results', label: 'Results', href: '/results', show: hasResults },
     { id: 'growth', label: 'Growth Plan', href: '/growth', show: hasResults },
     { id: 'couples', label: 'Couples', href: '/results/compare', show: hasPartner },
-    { id: 'astrology', label: 'Astrology', href: '/results/astrology', show: hasResults },
+    { id: 'astrology', label: 'Astrology', href: '/results/astrology', show: hasResults && astrologyEnabled },
   ];
 
   // On match/matches pages, show match sub-links as page-tab items (after divider)
