@@ -35,24 +35,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [emailVerified, setEmailVerified] = useState(false);
-  const hydratedRef = useRef(false);
+  const partnerSubbedRef = useRef(false);
   const partnerUnsubRef = useRef<(() => void) | null>(null);
 
-  // Hydrate localStorage from Supabase when a session exists but local data is missing.
-  // This ensures profile image, demographics, results, couples data all sync across devices.
-  const hydrateFromDb = useCallback(async (userId: string) => {
-    if (hydratedRef.current) return;
-    hydratedRef.current = true;
+  // Stale-while-revalidate: UI renders instantly from localStorage, then we
+  // pull fresh data from Supabase in the background on every page load/refresh.
+  // On a new device (empty localStorage) this is the initial hydration.
+  // On the same device (refresh) this catches any changes made elsewhere.
+  const syncFromDb = useCallback(async (userId: string) => {
+    // Background sync: always fetch latest from Supabase
+    fullHydrateFromDb(userId);
 
-    // Full hydration: profile, demographics, assessment, couples data
-    await fullHydrateFromDb(userId);
-
-    // Subscribe to partner changes (profile updates, retakes, etc.)
-    if (partnerUnsubRef.current) partnerUnsubRef.current();
-    partnerUnsubRef.current = subscribeToPartnerChanges(userId, () => {
-      // Partner data changed; trigger a re-render by dispatching a storage event
-      window.dispatchEvent(new Event('relate-partner-updated'));
-    });
+    // Set up realtime partner subscription (only once per session)
+    if (!partnerSubbedRef.current) {
+      partnerSubbedRef.current = true;
+      if (partnerUnsubRef.current) partnerUnsubRef.current();
+      partnerUnsubRef.current = subscribeToPartnerChanges(userId, () => {
+        // Partner data changed; trigger a re-render
+        window.dispatchEvent(new Event('relate-partner-updated'));
+      });
+    }
   }, []);
 
   // Email verification is temporarily bypassed. When re-enabling, restore
@@ -71,7 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const u = { id: session.user.id, email: session.user.email! };
         setUser(u);
         setEmailVerified(true);
-        hydrateFromDb(u.id);
+        syncFromDb(u.id);
       } else {
         setUser(null);
         setEmailVerified(false);
@@ -84,16 +86,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const u = { id: session.user.id, email: session.user.email! };
         setUser(u);
         setEmailVerified(true);
-        hydrateFromDb(u.id);
+        syncFromDb(u.id);
       } else {
         setUser(null);
         setEmailVerified(false);
-        hydratedRef.current = false;
+        partnerSubbedRef.current = false;
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [hydrateFromDb]);
+  }, [syncFromDb]);
 
   const refreshVerification = useCallback(async () => {
     // Email verification is temporarily bypassed
@@ -157,7 +159,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       partnerUnsubRef.current();
       partnerUnsubRef.current = null;
     }
-    hydratedRef.current = false;
+    partnerSubbedRef.current = false;
 
     // Clear all RELATE localStorage data to prevent privacy leaks on shared devices
     const relateKeys = Object.keys(localStorage).filter(k => k.startsWith('relate_'));
