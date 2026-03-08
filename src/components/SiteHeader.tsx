@@ -82,7 +82,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-sm" style={{ overflow: 'visible' }}>
-      <div className="px-6 py-2 flex items-center justify-between">
+      <div className="px-6 flex items-center justify-between h-11">
         <div className="flex items-center gap-2">
           {isMobileDevice && !advisorOpen && (
             <button
