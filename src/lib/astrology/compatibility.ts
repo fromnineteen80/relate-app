@@ -8,7 +8,9 @@
  */
 
 import type { ZodiacSign, BirthChartResult } from './engine';
-import { SIGN_DATA } from './signs';
+import { SIGN_DATA, type SignData } from './signs';
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 // ─── Element Compatibility Matrix ───
 
@@ -207,4 +209,216 @@ function buildTipRead(
     return `Pay attention to how he handles your emotions, not just your ideas. Your ${herMoon.element} Moon needs to feel safe, and that is non negotiable.`;
   }
   return `Watch how he shows up consistently, not just how he shows up on the first date. Your Moon in ${herChart.moon.sign} needs proof over time, not promises.`;
+}
+
+// ─── Persona × Sign Read Generator ───
+// Generates a read for each male Sun sign that incorporates the user's
+// actual behavioral data from their persona assessment, not just pole labels.
+
+type PersonaSignRead = {
+  alignment: string;   // Where her persona connects with this sign
+  tension: string;     // Where it doesn't — framed as growth, not dealbreaker
+};
+
+// Pole element/modality affinities for matching
+const POLE_AFFINITIES: Record<string, { dimension: string; elements: Element[]; modalities: Modality[] }> = {
+  A: { dimension: 'Physical', elements: ['Fire', 'Earth'], modalities: ['Cardinal', 'Fixed'] },
+  B: { dimension: 'Physical', elements: ['Water', 'Earth'], modalities: ['Fixed', 'Mutable'] },
+  C: { dimension: 'Social', elements: ['Fire', 'Air'], modalities: ['Cardinal'] },
+  D: { dimension: 'Social', elements: ['Water', 'Earth'], modalities: ['Fixed'] },
+  E: { dimension: 'Lifestyle', elements: ['Fire', 'Air'], modalities: ['Cardinal', 'Mutable'] },
+  F: { dimension: 'Lifestyle', elements: ['Earth', 'Water'], modalities: ['Fixed'] },
+  G: { dimension: 'Values', elements: ['Earth', 'Water'], modalities: ['Fixed', 'Cardinal'] },
+  H: { dimension: 'Values', elements: ['Air', 'Fire'], modalities: ['Mutable', 'Cardinal'] },
+};
+
+// How each sign's element shows up in relationships — used to describe HIM specifically
+const SIGN_ELEMENT_BEHAVIOR: Record<Element, Record<string, string>> = {
+  Fire: {
+    dating: 'pursues with intensity and expects decisive energy back',
+    relationship: 'keeps things dynamic but can burn through patience',
+    conflict: 'confronts directly and moves fast',
+    strength: 'brings passion and momentum',
+  },
+  Earth: {
+    dating: 'moves slowly, proves himself through consistency and action',
+    relationship: 'builds stability and shows love through what he does, not what he says',
+    conflict: 'digs in and waits you out',
+    strength: 'provides structure and reliability',
+  },
+  Air: {
+    dating: 'connects through conversation and ideas first',
+    relationship: 'keeps things intellectually stimulating but can live in his head',
+    conflict: 'rationalizes and detaches from the emotional layer',
+    strength: 'brings perspective and mental flexibility',
+  },
+  Water: {
+    dating: 'reads you before you speak and bonds through emotional depth',
+    relationship: 'loves deeply but processes everything internally first',
+    conflict: 'withdraws to process and may not surface for days',
+    strength: 'brings emotional intelligence and loyalty',
+  },
+};
+
+/**
+ * Pick a relevant behavioral trait from a persona array that connects
+ * to a specific sign element. Uses dimension context to select the most
+ * relevant trait.
+ */
+function pickRelevantTrait(traits: string[] | undefined, dimension: string, element: Element, index: number): string | null {
+  if (!traits || traits.length === 0) return null;
+  // Pick different traits for different dimensions/signs to avoid repetition
+  const offset = dimension === 'Physical' ? 0 : dimension === 'Social' ? 1 : dimension === 'Lifestyle' ? 2 : 3;
+  const idx = (offset + index) % traits.length;
+  return traits[idx];
+}
+
+/**
+ * Generate a persona-informed read for a specific male Sun sign.
+ * Uses the user's actual behavioral data (datingBehavior, inRelationships,
+ * struggles, mostAttractive) to describe how SHE specifically would
+ * interact with this sign type.
+ */
+export function generatePersonaSignRead(
+  personaCode: string,
+  personaName: string,
+  hisSunSign: ZodiacSign,
+  demographics?: any,
+  persona?: any,
+): PersonaSignRead {
+  const his = SIGN_DATA[hisSunSign];
+  const hisElement = his.element;
+  const hisBehavior = SIGN_ELEMENT_BEHAVIOR[hisElement];
+  const signIndex = (['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'] as string[]).indexOf(hisSunSign);
+
+  const aligning: string[] = [];
+  const tensioning: string[] = [];
+
+  for (let i = 0; i < personaCode.length && i < 4; i++) {
+    const letter = personaCode[i];
+    const aff = POLE_AFFINITIES[letter];
+    if (!aff) continue;
+
+    const elMatch = aff.elements.includes(hisElement);
+    const modMatch = aff.modalities.includes(his.modality);
+
+    if (elMatch) {
+      aligning.push(buildBehavioralAlignment(aff.dimension, his, hisSunSign, hisBehavior, persona, signIndex, elMatch && modMatch));
+    } else {
+      tensioning.push(buildBehavioralTension(aff.dimension, his, hisSunSign, hisBehavior, persona, signIndex));
+    }
+  }
+
+  // Add selective demographic color if available
+  if (demographics) {
+    const demoNote = buildDemoSignNote(demographics, his, hisSunSign);
+    if (demoNote) {
+      if (aligning.length >= tensioning.length) {
+        aligning.push(demoNote);
+      } else {
+        tensioning.push(demoNote);
+      }
+    }
+  }
+
+  // Build final reads — pick the best 1-2 from each bucket
+  const alignment = aligning.length > 0
+    ? aligning.slice(0, 2).join(' ')
+    : `A ${hisSunSign} man does not naturally mirror your ${personaName} patterns. That is not a red flag — it means the connection, if it works, will teach you something your comfort zone never could.`;
+
+  const tension = tensioning.length > 0
+    ? tensioning.slice(0, 2).join(' ')
+    : `There is little natural friction between your ${personaName} wiring and ${hisSunSign} energy. The risk is not conflict — it is complacency. Make sure ease does not become autopilot.`;
+
+  return { alignment, tension };
+}
+
+function buildBehavioralAlignment(
+  dimension: string,
+  his: SignData,
+  hisSign: ZodiacSign,
+  hisBehavior: Record<string, string>,
+  persona: any,
+  signIndex: number,
+  isStrong: boolean,
+): string {
+  // Pull actual behavioral data from the persona
+  const datingTrait = pickRelevantTrait(persona?.datingBehavior, dimension, his.element, signIndex);
+  const relationshipTrait = pickRelevantTrait(persona?.inRelationships, dimension, his.element, signIndex);
+  const attractiveTrait = pickRelevantTrait(persona?.mostAttractive, dimension, his.element, signIndex);
+
+  // Build reads that reference HER actual behavior and HIS sign traits
+  if (isStrong && datingTrait) {
+    return `You ${datingTrait.charAt(0).toLowerCase() + datingTrait.slice(1).replace(/\.$/, '')}. A ${hisSign} man ${hisBehavior.dating}. ${dimension === 'Physical' || dimension === 'Social' ? 'That is the same language — you will recognize each other immediately.' : 'These instincts run on the same frequency, so the early connection should feel natural.'}`;
+  }
+
+  if (relationshipTrait) {
+    return `In relationships, you ${relationshipTrait.charAt(0).toLowerCase() + relationshipTrait.slice(1).replace(/\.$/, '')}. A ${hisSign} man ${hisBehavior.relationship}. ${isStrong ? 'This is a strong match — he delivers what you are wired to need.' : 'The overlap is there, but it will take time to fully sync.'}`;
+  }
+
+  if (attractiveTrait) {
+    return `What draws people to you: ${attractiveTrait.charAt(0).toLowerCase() + attractiveTrait.slice(1).replace(/\.$/, '')}. A ${hisSign} man ${hisBehavior.strength}, which means he can actually meet that energy instead of being overwhelmed by it.`;
+  }
+
+  // Fallback without persona data
+  return `A ${hisSign} man's ${his.element} energy ${isStrong ? 'directly supports' : 'shares ground with'} how you show up in the ${dimension.toLowerCase()} dimension of your life. The connection is intuitive, not forced.`;
+}
+
+function buildBehavioralTension(
+  dimension: string,
+  his: SignData,
+  hisSign: ZodiacSign,
+  hisBehavior: Record<string, string>,
+  persona: any,
+  signIndex: number,
+): string {
+  // Pull actual behavioral data — struggles and least attractive show friction points
+  const struggle = pickRelevantTrait(persona?.struggles, dimension, his.element, signIndex);
+  const leastAttractive = pickRelevantTrait(persona?.leastAttractive, dimension, his.element, signIndex);
+  const datingTrait = pickRelevantTrait(persona?.datingBehavior, dimension, his.element, signIndex);
+
+  if (struggle && datingTrait) {
+    return `You ${datingTrait.charAt(0).toLowerCase() + datingTrait.slice(1).replace(/\.$/, '')}, but a ${hisSign} man ${hisBehavior.conflict}. Your own pattern of ${struggle.charAt(0).toLowerCase() + struggle.slice(1).replace(/\.$/, '')} could amplify under that pressure. Watch for it early.`;
+  }
+
+  if (leastAttractive) {
+    return `A ${hisSign} man ${hisBehavior.conflict}. That can trigger the part of you that ${leastAttractive.charAt(0).toLowerCase() + leastAttractive.slice(1).replace(/\.$/, '')}. This is not a dealbreaker — but it is the exact friction point you need to be honest about.`;
+  }
+
+  if (struggle) {
+    return `One of your growth edges is that you ${struggle.charAt(0).toLowerCase() + struggle.slice(1).replace(/\.$/, '')}. A ${hisSign} man ${hisBehavior.relationship}, which may make that pattern more visible, not less.`;
+  }
+
+  // Fallback without persona data
+  return `A ${hisSign} man's ${his.element} energy operates differently from how you approach the ${dimension.toLowerCase()} dimension. He ${hisBehavior.conflict} — and you will need to decide if that pattern challenges you in a productive way or an exhausting one.`;
+}
+
+function buildDemoSignNote(demo: any, his: SignData, hisSign: ZodiacSign): string | null {
+  // Fitness preferences × his element
+  const prefFitness = demo.pref_fitness_levels;
+  if (Array.isArray(prefFitness) && !prefFitness.includes('No preference') && prefFitness.length <= 2) {
+    const wantsHighFitness = prefFitness.some((f: string) => f === '4 to 6 days a week' || f === 'Every day');
+    if (wantsHighFitness && (his.element === 'Fire' || his.element === 'Earth')) {
+      return `You set a high physical bar, and ${hisSign} men (${his.element}) tend to deliver — ${his.element === 'Fire' ? 'they channel energy into action and physicality' : 'they treat discipline as a lifestyle, not a phase'}.`;
+    }
+  }
+
+  // Political alignment
+  const political = demo.political;
+  if (political === 'Conservative' && (his.element === 'Earth' || his.element === 'Water')) {
+    return `Your conservative values and ${hisSign}'s ${his.element} nature share common ground — he is more likely to value tradition, structure, and loyalty.`;
+  }
+  if (political === 'Liberal' && (his.element === 'Air' || his.element === 'Fire')) {
+    return `Your progressive values and ${hisSign}'s ${his.element} nature align — he is more likely to question defaults and build something new with you.`;
+  }
+
+  // Want kids × nurturing signs
+  if (demo.want_kids === 'Yes' && (hisSign === 'Cancer' || hisSign === 'Taurus' || hisSign === 'Capricorn')) {
+    return `You want children, and ${hisSign} men are builders by nature — ${hisSign === 'Cancer' ? 'family is his core drive' : hisSign === 'Taurus' ? 'he builds homes, not just houses' : 'he plans for generations, not just weekends'}.`;
+  }
+  if (demo.want_kids === 'No' && (his.element === 'Fire' || hisSign === 'Aquarius')) {
+    return `You do not want children, and ${hisSign} men often share that independence — ${his.element === 'Fire' ? 'he is oriented toward experience, not domesticity' : 'he values freedom and unconventional paths'}.`;
+  }
+
+  return null;
 }

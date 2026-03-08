@@ -9,6 +9,12 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "RELATE | Relationship Intelligence",
   description: "A 391-question relationship assessment. Discover your persona, compatibility rankings, and personalized coaching.",
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+  },
 };
 
 export default function RootLayout({
