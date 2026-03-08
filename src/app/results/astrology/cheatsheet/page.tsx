@@ -9,15 +9,21 @@ import { SubNav } from '@/components/SubNav';
 import { useAuth } from '@/lib/auth-context';
 import { loadChartResult, type BirthChartResult } from '@/lib/astrology/engine';
 import { ALL_SIGNS, SIGN_DATA, ELEMENT_COLORS } from '@/lib/astrology/signs';
-import { generateCompatibilityRead, type CompatibilityRead } from '@/lib/astrology/compatibility';
+import { generateCompatibilityRead, generatePersonaSignRead, type CompatibilityRead } from '@/lib/astrology/compatibility';
 import type { ZodiacSign } from '@/lib/astrology/engine';
 import { Icon } from '@/components/Icon';
+
+type PersonaSignRead = { alignment: string; tension: string };
 
 export default function CheatSheetPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [chart, setChart] = useState<BirthChartResult | null>(null);
   const [expandedSign, setExpandedSign] = useState<ZodiacSign | null>(null);
+  const [personaCode, setPersonaCode] = useState<string | null>(null);
+  const [personaName, setPersonaName] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [demographics, setDemographics] = useState<any>(null);
 
   useEffect(() => {
     if (!loading && !user) { router.push('/auth/login'); return; }
@@ -26,6 +32,18 @@ export default function CheatSheetPage() {
       setChart(existing);
       setExpandedSign(existing.sun.sign);
     }
+    try {
+      const resultsStr = localStorage.getItem('relate_results');
+      if (resultsStr) {
+        const results = JSON.parse(resultsStr);
+        if (results.persona?.code) setPersonaCode(results.persona.code);
+        if (results.persona?.name) setPersonaName(results.persona.name);
+      }
+    } catch { /* */ }
+    try {
+      const demoStr = localStorage.getItem('relate_demographics');
+      if (demoStr) setDemographics(JSON.parse(demoStr));
+    } catch { /* */ }
   }, [user, loading, router]);
 
   // Generate compatibility reads for all 12 signs based on her chart
@@ -37,6 +55,16 @@ export default function CheatSheetPage() {
     }
     return reads;
   }, [chart]);
+
+  // Generate persona-informed reads for each sign (if persona data exists)
+  const personaReads = useMemo(() => {
+    if (!personaCode || !personaName) return null;
+    const reads: Record<string, PersonaSignRead> = {};
+    for (const sign of ALL_SIGNS) {
+      reads[sign] = generatePersonaSignRead(personaCode, personaName, sign, demographics);
+    }
+    return reads;
+  }, [personaCode, personaName, demographics]);
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
 
@@ -103,6 +131,16 @@ export default function CheatSheetPage() {
                     <CheatRow label="Superpower" content={read.strength} icon={<Icon name="star" size={16} className="text-success" />} />
                     <CheatRow label="Watch Out For" content={read.challenge} icon={<Icon name="bolt" size={16} className="text-warning" />} />
                     <CheatRow label="Tip for You" content={read.tip} icon={<Icon name="favorite" size={16} className="text-accent" />} />
+                    {personaReads?.[signName] && (
+                      <>
+                        <div className="border-t border-accent/20 pt-3 mt-1" />
+                        <div>
+                          <span className="font-mono text-[10px] text-accent uppercase tracking-wider">Personal Affirmation</span>
+                        </div>
+                        <CheatRow label="Where You Connect" content={personaReads[signName].alignment} icon={<Icon name="link" size={16} className="text-accent" />} />
+                        <CheatRow label="Where You Stretch" content={personaReads[signName].tension} icon={<Icon name="spa" size={16} className="text-secondary" />} />
+                      </>
+                    )}
                   </div>
                 )}
               </div>
