@@ -283,6 +283,7 @@ export default function ProfileSettings() {
                   <>
                     <InfoRow label="Birthday" value={`${demographics.birth_month}/${demographics.birth_day}/${demographics.birth_year}`} />
                     {hasTime && <InfoRow label="Birth Time" value={`${demographics.birth_hour}:${String(demographics.birth_minute).padStart(2, '0')} ${demographics.birth_ampm}`} />}
+                    {demographics.birth_city && <InfoRow label="Birth City" value={demographics.birth_city} />}
                     <div className="mt-2">
                       <Link href="/results/astrology" className="text-xs text-accent hover:underline">
                         View your astrology profile
