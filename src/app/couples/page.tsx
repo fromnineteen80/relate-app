@@ -162,6 +162,9 @@ export default function CouplesDashboard() {
           </div>
         )}
 
+        {/* Coaching Insights — tailored to this couple's data */}
+        <CoachingInsights report={report} />
+
         {/* Recommended Challenges */}
         {!activeChallenge && (
           <div>
@@ -251,6 +254,82 @@ export default function CouplesDashboard() {
       {showCheckin && (
         <CheckinModal onSubmit={submitCheckin} onClose={() => setShowCheckin(false)} />
       )}
+    </div>
+  );
+}
+
+function CoachingInsights({ report }: { report: any }) {
+  const insights: { title: string; body: string; type: 'strength' | 'growth' | 'action' }[] = [];
+
+  // Archetype coaching
+  const archetype = report?.overview?.archetype;
+  if (archetype?.coaching) {
+    insights.push({ title: archetype.name, body: archetype.coaching, type: 'strength' });
+  }
+
+  // Conflict coaching
+  const conflictCoaching = report?.conflictChoreography?.dynamic?.coaching;
+  if (conflictCoaching) {
+    insights.push({
+      title: `${report.conflictChoreography.dynamic.label} Pattern`,
+      body: conflictCoaching,
+      type: 'action',
+    });
+  }
+
+  // Top clash coaching
+  const clashes = report?.clashes?.clashes || [];
+  const topClash = clashes.find((c: any) => c.severity === 'high') || clashes[0];
+  if (topClash?.coaching) {
+    insights.push({
+      title: `${topClash.dimension.charAt(0).toUpperCase() + topClash.dimension.slice(1)} Clash`,
+      body: topClash.coaching,
+      type: 'growth',
+    });
+  }
+
+  // Repair coaching
+  const repairCoaching = report?.repairCompatibility?.coaching;
+  if (repairCoaching?.length > 0) {
+    insights.push({
+      title: 'Repair Priority',
+      body: repairCoaching[0],
+      type: 'action',
+    });
+  }
+
+  // Growth steps
+  const growthSteps = report?.ceilingFloor?.growthSteps;
+  if (growthSteps?.length > 0) {
+    insights.push({
+      title: 'Next Step',
+      body: growthSteps[0],
+      type: 'growth',
+    });
+  }
+
+  if (insights.length === 0) return null;
+
+  const typeStyles = {
+    strength: 'border-l-success',
+    growth: 'border-l-accent',
+    action: 'border-l-warning',
+  };
+
+  return (
+    <div>
+      <h3 className="font-serif text-lg font-semibold mb-3">Your Coaching Insights</h3>
+      <div className="space-y-3">
+        {insights.slice(0, 3).map((insight, i) => (
+          <div key={i} className={`card border-l-4 ${typeStyles[insight.type]}`}>
+            <p className="text-xs font-mono text-secondary mb-1">{insight.title}</p>
+            <p className="text-sm leading-relaxed">{insight.body}</p>
+          </div>
+        ))}
+      </div>
+      <Link href="/results/compare" className="text-xs text-accent hover:underline mt-3 inline-block">
+        View full report with all insights →
+      </Link>
     </div>
   );
 }

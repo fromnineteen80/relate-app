@@ -58,12 +58,32 @@ function generatePairingOverview(user1: any, user2: any): any {
   };
 }
 
-function determinePairingArchetype(alignment: number, m3: number, m4: number): { name: string; description: string; emoji: string } {
+function determinePairingArchetype(alignment: number, m3: number, m4: number): { name: string; description: string; emoji: string; coaching: string } {
   const avg = (alignment + m3 + m4) / 3;
-  if (avg >= 75) return { name: 'Natural Partners', description: 'Strong instinctive alignment across values, connection style, and conflict approach. Your relationship has a high natural baseline.', emoji: 'diamond' as const };
-  if (avg >= 60) return { name: 'Complementary Pair', description: 'Your differences create strength. Where one leads, the other supports. The key is recognizing and valuing what each brings.', emoji: 'diamond-outline' as const };
-  if (avg >= 45) return { name: 'Growth Partners', description: 'Your relationship will push both of you to grow. The areas of friction are also your greatest opportunities for development.', emoji: 'circle' as const };
-  return { name: 'Challenge Pair', description: 'Significant differences require conscious effort and strong communication. Success depends on both partners\' commitment to understanding each other.', emoji: 'triangle' as const };
+  if (avg >= 75) return {
+    name: 'Natural Partners',
+    description: 'Strong instinctive alignment across values, connection style, and conflict approach. Your relationship has a high natural baseline.',
+    emoji: 'diamond' as const,
+    coaching: 'Your natural alignment is a gift, but don\'t coast on it. High-baseline couples often skip hard conversations because things feel "fine." Schedule regular check-ins to stay intentional about growth.',
+  };
+  if (avg >= 60) return {
+    name: 'Complementary Pair',
+    description: 'Your differences create strength. Where one leads, the other supports. The key is recognizing and valuing what each brings.',
+    emoji: 'diamond-outline' as const,
+    coaching: 'Your different strengths are an asset when appreciated, a liability when misread. Practice narrating your reasoning out loud — "I\'m doing X because I think Y" — so your partner sees intention, not just action.',
+  };
+  if (avg >= 45) return {
+    name: 'Growth Partners',
+    description: 'Your relationship will push both of you to grow. The areas of friction are also your greatest opportunities for development.',
+    emoji: 'circle' as const,
+    coaching: 'Growth partnerships succeed when both people treat friction as information rather than threat. When you clash, ask: "What is this tension trying to teach us?" The couples who grow the most start here.',
+  };
+  return {
+    name: 'Challenge Pair',
+    description: 'Significant differences require conscious effort and strong communication. Success depends on both partners\' commitment to understanding each other.',
+    emoji: 'triangle' as const,
+    coaching: 'Challenge pairings can absolutely work — but they require explicit systems. Agree on a weekly 30-minute relationship check-in, establish a repair signal for heated moments, and consider working with a couples therapist proactively, not reactively.',
+  };
 }
 
 // ── Section 2: Where You Align ──
@@ -126,6 +146,7 @@ function generateClashSection(user1: any, user2: any): any {
 
     if (u1Dim.assignedPole && u2Dim.assignedPole && u1Dim.assignedPole !== u2Dim.assignedPole) {
       const bothStrong = (u1Dim.strength || 0) > 60 && (u2Dim.strength || 0) > 60;
+      const coaching = getClashCoaching(dim, bothStrong, u1Dim.assignedPole, u2Dim.assignedPole);
       clashes.push({
         dimension: dim,
         user1Pole: u1Dim.assignedPole,
@@ -136,6 +157,7 @@ function generateClashSection(user1: any, user2: any): any {
         narrative: bothStrong
           ? `Both of you feel strongly about opposite directions in ${dim}. This requires deliberate negotiation.`
           : `You differ in ${dim}, but at least one of you holds this lightly, making compromise easier.`,
+        coaching,
       });
     }
   }
@@ -157,6 +179,24 @@ function generateClashSection(user1: any, user2: any): any {
   return { clashes, connectionTension, totalClashes: clashes.length };
 }
 
+function getClashCoaching(dim: string, bothStrong: boolean, pole1: string, pole2: string): string {
+  const coachingMap: Record<string, string> = {
+    physical: bothStrong
+      ? 'Try alternating weeks: one partner\'s preferred activity level, then the other\'s. Build a shared "adventure list" that pushes both of you slightly outside your comfort zone.'
+      : 'The partner who holds this less strongly can experiment with the other\'s preference. Start small — a 20-minute walk together, or a quiet evening in.',
+    social: bothStrong
+      ? 'Create a social calendar with explicit "together time" and "solo/friend time" blocks. Neither preference is wrong — the goal is predictability so neither partner feels blindsided.'
+      : 'The more flexible partner can stretch in either direction. Agree on a minimum: at least one social outing and one quiet night per week together.',
+    lifestyle: bothStrong
+      ? 'Map out your non-negotiables versus nice-to-haves separately, then compare notes. You\'ll likely find the overlap is larger than the conflict. Focus agreements on the non-negotiables first.'
+      : 'This difference is manageable. Check in monthly about whether either partner feels they\'re always the one compromising — resentment builds silently.',
+    values: bothStrong
+      ? 'Values clashes are the hardest to bridge because they feel identity-level. Instead of debating who\'s right, explore the life experiences that shaped each value. Understanding "why" builds empathy even when you disagree.'
+      : 'One of you holds this more loosely, which creates space. The key: the flexible partner should voice their perspective too, not just defer. Silent capitulation breeds resentment.',
+  };
+  return coachingMap[dim] || 'Discuss this difference openly. Name what you each need, and look for creative solutions that honor both perspectives.';
+}
+
 // ── Section 4: Conflict Choreography ──
 function generateConflictChoreography(user1: any, user2: any): any {
   const u1M4 = user1.m4 || {};
@@ -171,15 +211,19 @@ function generateConflictChoreography(user1: any, user2: any): any {
 
   let dynamicLabel = 'Mixed';
   let dynamicDescription = '';
+  let dynamicCoaching = '';
   if (pursueWithdraw) {
     dynamicLabel = 'Pursue-Withdraw';
     dynamicDescription = 'One of you moves toward conflict while the other pulls away. The pursuer needs to give space; the withdrawer needs to signal they\'ll return.';
+    dynamicCoaching = 'Create a "pause protocol": the withdrawer says "I need 20 minutes" (not silence), and the pursuer agrees to wait. After 20 minutes, the withdrawer initiates return. Practice this when stakes are low so it\'s automatic when they\'re high.';
   } else if (bothPursue) {
     dynamicLabel = 'Dual Pursuit';
     dynamicDescription = 'Both of you move toward conflict. Arguments can escalate quickly. The advantage: nothing goes unaddressed. The risk: burnout from constant engagement.';
+    dynamicCoaching = 'Set a "volume dial" rule: if either partner feels the conversation exceeding a 6/10 intensity, call a 10-minute break. You both want to resolve things — that\'s a strength. Channel it by taking turns speaking for 3 uninterrupted minutes each.';
   } else if (bothWithdraw) {
     dynamicLabel = 'Dual Withdrawal';
     dynamicDescription = 'Both of you pull away during conflict. Issues may go unresolved. Building explicit check-in rituals prevents resentment from accumulating.';
+    dynamicCoaching = 'Schedule a weekly "clearing" conversation (Sunday evening works well). Use the format: "Something I appreciated this week / Something I need." This makes raising issues a system, not a confrontation, which works with your natural style.';
   }
 
   // Emotional drivers
@@ -206,7 +250,7 @@ function generateConflictChoreography(user1: any, user2: any): any {
   const modeMatch = u1Mode === u2Mode;
 
   return {
-    dynamic: { label: dynamicLabel, description: dynamicDescription },
+    dynamic: { label: dynamicLabel, description: dynamicDescription, coaching: dynamicCoaching },
     user1Approach: u1Approach,
     user2Approach: u2Approach,
     driverAnalysis,
@@ -251,10 +295,28 @@ function generateRepairCompatibility(user1: any, user2: any): any {
   const u2Capacity = u2M4.emotionalCapacity?.score || 50;
   const capacityGap = Math.abs(u1Capacity - u2Capacity);
 
+  // Generate repair coaching
+  const repairCoaching: string[] = [];
+  for (const h of horsemen) {
+    if (h.riskLevel === 'high') {
+      const coachingMap: Record<string, string> = {
+        criticism: 'Replace "You always/never..." with "I feel ___ when ___. What I need is ___." Practice this reframe daily, even for small things.',
+        contempt: 'Start a daily appreciation practice: tell your partner one specific thing they did that you valued. Contempt dissolves when admiration is actively cultivated.',
+        defensiveness: 'When your partner raises an issue, respond with "Tell me more" before explaining your side. Taking responsibility for even 2% of the problem unlocks the conversation.',
+        stonewalling: 'Learn your flooding signals (racing heart, tight chest). When you notice them, say "I\'m flooding and need 20 minutes." Then return and re-engage — that\'s the critical part.',
+      };
+      repairCoaching.push(coachingMap[h.horseman] || '');
+    }
+  }
+  if (repairCoaching.length === 0) {
+    repairCoaching.push('Your Gottman risk profile is healthy. Maintain it by continuing to express appreciation, take responsibility, and stay emotionally present during disagreements.');
+  }
+
   return {
     horsemen,
     highRiskHorsemen: highRiskHorsemen.map(h => h.horseman),
     overallRisk,
+    coaching: repairCoaching.filter(Boolean),
     capacity: {
       user1Score: u1Capacity,
       user1Level: u1M4.emotionalCapacity?.level || 'medium',
@@ -363,6 +425,21 @@ function generateCeilingFloor(user1: any, user2: any, overview: any): any {
   const growthPotential = ceiling - overallScore;
   const riskExposure = overallScore - floor;
 
+  // Generate growth roadmap — specific next steps
+  const growthSteps: string[] = [];
+  if (floorFactors.some(f => f.includes('contempt') || f.includes('criticism'))) {
+    growthSteps.push('Priority 1: Address your Gottman risk areas. Consider reading "The Seven Principles for Making Marriage Work" together and practicing one exercise per week.');
+  }
+  if (overview.m3Compat < 40) {
+    growthSteps.push('Schedule a conversation about connection needs. Use the prompt: "When do you feel most connected to me? When do you feel most disconnected?" Listen without defending.');
+  }
+  if (overview.alignmentPercent < 25) {
+    growthSteps.push('Your values differ significantly. This isn\'t fatal, but it requires explicit agreements. Discuss your top 3 life priorities separately, then share and find overlap.');
+  }
+  if (growthSteps.length === 0) {
+    growthSteps.push('Your foundation is solid. Focus on deepening: try one new experience together monthly, and have a quarterly "state of the relationship" conversation to stay intentional.');
+  }
+
   return {
     ceiling: Math.round(ceiling),
     floor: Math.round(floor),
@@ -371,6 +448,7 @@ function generateCeilingFloor(user1: any, user2: any, overview: any): any {
     riskExposure: Math.round(riskExposure),
     ceilingFactors: ceilingFactors.length > 0 ? ceilingFactors : ['Relationship potential exists in all pairings with mutual commitment'],
     floorFactors: floorFactors.length > 0 ? floorFactors : ['No significant risk factors identified'],
+    growthSteps,
     narrative: growthPotential > riskExposure
       ? 'Your upside potential exceeds your downside risk. With intentional effort, this relationship can significantly outperform its baseline.'
       : 'Your risk exposure is notable. Focus on the floor factors first: shoring up vulnerabilities protects the relationship\'s foundation before building higher.',
