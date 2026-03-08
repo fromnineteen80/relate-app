@@ -53,9 +53,6 @@ export default function AstrologyPage() {
   const [calculating, setCalculating] = useState(false);
   const [error, setError] = useState('');
 
-  // ─── Gender gate ───
-  const [isWoman, setIsWoman] = useState<boolean | null>(null);
-
   // ─── Persona alignment ───
   const [alignment, setAlignment] = useState<PersonaAlignmentResult | null>(null);
   const [personaName, setPersonaName] = useState<string | null>(null);
@@ -65,20 +62,6 @@ export default function AstrologyPage() {
       router.push('/auth/login');
       return;
     }
-    // Check gender
-    const gender = localStorage.getItem('relate_gender');
-    const demoStr = localStorage.getItem('relate_demographics');
-    if (gender === 'W' || gender === 'Woman') {
-      setIsWoman(true);
-    } else if (demoStr) {
-      try {
-        const d = JSON.parse(demoStr);
-        setIsWoman(d.gender === 'W' || d.gender === 'Woman');
-      } catch { setIsWoman(false); }
-    } else {
-      setIsWoman(false);
-    }
-
     // Load existing data
     const existingChart = loadChartResult();
     if (existingChart) setChart(existingChart);
@@ -184,24 +167,6 @@ export default function AstrologyPage() {
   }
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
-
-  // Women-only gate
-  if (isWoman === false) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <SiteHeader />
-        <SubNav />
-        <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full text-center">
-          <h1 className="font-serif text-2xl font-semibold mb-4">Sun, Moon &amp; Rise</h1>
-          <p className="explainer mb-6">
-            This module is currently available for women only. Check back soon for expanded access.
-          </p>
-          <Link href="/results" className="btn-secondary text-sm">Back to Results</Link>
-        </main>
-        <SiteFooter />
-      </div>
-    );
-  }
 
   // ─── Profile view (chart already calculated) ───
   if (chart) {

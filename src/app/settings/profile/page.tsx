@@ -240,10 +240,8 @@ export default function ProfileSettings() {
           </div>
         )}
 
-        {/* Astrology — women only */}
+        {/* Astrology */}
         {(() => {
-          const isWoman = demographics?.gender === 'W' || demographics?.gender === 'Woman';
-          if (!isWoman) return null;
           const hasBirthData = !!(demographics?.birth_month != null && demographics?.birth_day && demographics?.birth_year);
           const hasTime = !!(demographics?.birth_hour != null && demographics?.birth_minute != null && demographics?.birth_ampm);
           return (

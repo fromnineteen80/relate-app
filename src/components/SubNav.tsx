@@ -23,7 +23,6 @@ export function SubNav({ items = [] }: SubNavProps) {
   const [topMatchCode, setTopMatchCode] = useState<string | null>(null);
   const [seekingLabel, setSeekingLabel] = useState<string>('Matches');
 
-  const [isWoman, setIsWoman] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem('relate_results');
@@ -49,12 +48,6 @@ export function SubNav({ items = [] }: SubNavProps) {
       setSeekingLabel('Female Matches');
     } else if (gender === 'W' || gender === 'Woman') {
       setSeekingLabel('Male Matches');
-      setIsWoman(true);
-    } else if (demoStr) {
-      try {
-        const d = JSON.parse(demoStr);
-        if (d.gender === 'W' || d.gender === 'Woman') setIsWoman(true);
-      } catch { /* */ }
     }
 
   }, []);
@@ -71,7 +64,7 @@ export function SubNav({ items = [] }: SubNavProps) {
     { id: 'results', label: 'Results', href: '/results', show: hasResults },
     { id: 'growth', label: 'Growth Plan', href: '/growth', show: hasResults },
     { id: 'couples', label: 'Couples', href: '/results/compare', show: hasPartner },
-    { id: 'astrology', label: 'Astrology', href: '/results/astrology', show: isWoman && hasResults },
+    { id: 'astrology', label: 'Astrology', href: '/results/astrology', show: hasResults },
   ];
 
   // On match/matches pages, show match sub-links as page-tab items (after divider)
