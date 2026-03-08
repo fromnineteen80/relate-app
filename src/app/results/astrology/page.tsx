@@ -228,7 +228,7 @@ export default function AstrologyPage() {
           </div>
 
           {/* ── Persona–Astrology Alignment Card ── */}
-          {alignment && alignment.alignments.length > 0 && (
+          {alignment && (
             <div className="card border border-accent/30 bg-accent/5 mb-6">
               <div className="flex items-start gap-3 mb-3">
                 <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent text-lg shrink-0">
@@ -242,17 +242,19 @@ export default function AstrologyPage() {
                 </div>
               </div>
               <p className="text-sm text-secondary mb-4">{alignment.summary}</p>
-              <div className="space-y-2">
-                {alignment.alignments.map((a, i) => (
-                  <div key={i} className="flex items-start gap-2 text-sm">
-                    <span className={`shrink-0 mt-0.5 w-2 h-2 rounded-full ${a.strength === 'strong' ? 'bg-accent' : 'bg-accent/40'}`} />
-                    <div>
-                      <span className="font-medium text-foreground">{a.placement} · {a.dimension}</span>
-                      <span className="text-secondary"> — {a.explanation}</span>
+              {alignment.alignments.length > 0 && (
+                <div className="space-y-2">
+                  {alignment.alignments.map((a, i) => (
+                    <div key={i} className="flex items-start gap-2 text-sm">
+                      <span className={`shrink-0 mt-0.5 w-2 h-2 rounded-full ${a.strength === 'strong' ? 'bg-accent' : 'bg-accent/40'}`} />
+                      <div>
+                        <span className="font-medium text-foreground">{a.placement} · {a.dimension}</span>
+                        <span className="text-secondary"> — {a.explanation}</span>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
