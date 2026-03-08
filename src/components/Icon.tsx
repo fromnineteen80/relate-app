@@ -42,6 +42,8 @@ export function Icon({ name, className = '', size = 20, fill = true, weight = 40
       className={`material-symbols-rounded inline-flex items-center justify-center leading-none flex-shrink-0 ${className}`}
       style={{
         fontSize: size,
+        width: size,
+        height: size,
         fontVariationSettings: `'FILL' ${fill ? 1 : 0}, 'wght' ${weight}, 'GRAD' 0, 'opsz' ${size}`,
       }}
       aria-hidden="true"

@@ -75,9 +75,9 @@ export default function ProfileSetupPage() {
     localStorage.setItem('relate_profile', JSON.stringify(profile));
     localStorage.setItem('relate_profile_name', `${firstName} ${lastName}`.trim());
     if (photoUrl) localStorage.setItem('relate_profile_photo', photoUrl);
-    // Persist to Supabase in background
+    // Persist to Supabase in background (includes photo)
     if (user) {
-      saveProfileToDb(user.id, user.email, { firstName, lastName, zipCode, city, state, county });
+      saveProfileToDb(user.id, user.email, { firstName, lastName, zipCode, city, state, county, photoUrl });
     }
     setSavedToast(true);
     setTimeout(() => setSavedToast(false), 1500);
