@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent FOUT: clip overflow so icon name text is never visible while font loads */
+.material-symbols-rounded {
+  font-family: 'Material Symbols Rounded';
+  overflow: hidden;
+}
+
 :root {
   --background: #fafaf9;
   --foreground: #292524;
