@@ -41,7 +41,14 @@ export default function ProfileSettings() {
   useEffect(() => {
     setName(localStorage.getItem('relate_profile_name') || '');
     setPhotoUrl(localStorage.getItem('relate_profile_photo') || null);
-    setAstrologyEnabled(localStorage.getItem('relate_astrology_enabled') !== 'false');
+    const astroStored = localStorage.getItem('relate_astrology_enabled');
+    if (astroStored !== null) {
+      setAstrologyEnabled(astroStored === 'true');
+    } else {
+      // Default: on for women, off for men
+      const g = localStorage.getItem('relate_gender');
+      setAstrologyEnabled(g === 'W' || g === 'Woman');
+    }
 
     const storedProfile = localStorage.getItem('relate_profile');
     if (storedProfile) {

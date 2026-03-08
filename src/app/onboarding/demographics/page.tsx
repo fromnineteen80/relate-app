@@ -80,6 +80,18 @@ export default function DemographicsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [savedToast, setSavedToast] = useState(false);
+  const [astrologyEnabled, setAstrologyEnabled] = useState(false);
+
+  // Check astrology toggle on mount
+  useEffect(() => {
+    const astroStored = localStorage.getItem('relate_astrology_enabled');
+    if (astroStored !== null) {
+      setAstrologyEnabled(astroStored === 'true');
+    } else {
+      const g = localStorage.getItem('relate_gender');
+      setAstrologyEnabled(g === 'W' || g === 'Woman');
+    }
+  }, []);
 
   const [form, setForm] = useState<FormData>({
     gender: '', age: '', birthMonth: '', birthDay: '', birthYear: '', birthHour: '', birthMinute: '', birthAmPm: '',
@@ -292,8 +304,8 @@ export default function DemographicsPage() {
       birth_ampm: form.birthAmPm || null,
     };
 
-    // If woman with birth data, pre-populate astrology birth data
-    if (form.gender === 'Woman' && form.birthMonth && form.birthDay && form.birthYear) {
+    // Pre-populate astrology birth data if birth fields are filled
+    if (form.birthMonth && form.birthDay && form.birthYear) {
       const h12 = parseInt(form.birthHour || '12');
       const ap = form.birthAmPm || 'PM';
       const h24 = ap === 'PM' ? (h12 === 12 ? 12 : h12 + 12) : (h12 === 12 ? 0 : h12);
@@ -356,7 +368,7 @@ export default function DemographicsPage() {
             <input type="number" value={form.age} onChange={e => updateField('age', e.target.value)}
               className="input" min={18} max={100} placeholder="25" />
           </div>
-          {form.gender === 'Woman' && (
+          {(form.gender === 'Woman' || (form.gender === 'Man' && astrologyEnabled)) && (
             <>
               <div>
                 <label className="label">Birthday <span className="text-secondary font-normal">(optional)</span></label>

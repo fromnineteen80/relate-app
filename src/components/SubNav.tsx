@@ -50,8 +50,13 @@ export function SubNav({ items = [] }: SubNavProps) {
       setSeekingLabel('Male Matches');
     }
 
-    // Astrology toggle
-    setAstrologyEnabled(localStorage.getItem('relate_astrology_enabled') !== 'false');
+    // Astrology toggle: explicit setting or default by gender (women on, men off)
+    const astroStored = localStorage.getItem('relate_astrology_enabled');
+    if (astroStored !== null) {
+      setAstrologyEnabled(astroStored === 'true');
+    } else {
+      setAstrologyEnabled(gender === 'W' || gender === 'Woman');
+    }
 
   }, []);
 
