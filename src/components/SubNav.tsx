@@ -23,6 +23,8 @@ export function SubNav({ items = [] }: SubNavProps) {
   const [topMatchCode, setTopMatchCode] = useState<string | null>(null);
   const [seekingLabel, setSeekingLabel] = useState<string>('Matches');
 
+  const [isWoman, setIsWoman] = useState(false);
+
   useEffect(() => {
     const stored = localStorage.getItem('relate_results');
     if (stored) {
@@ -42,11 +44,19 @@ export function SubNav({ items = [] }: SubNavProps) {
 
     // Determine seeking label from gender (user's gender → they're seeking the opposite)
     const gender = localStorage.getItem('relate_gender');
+    const demoStr = localStorage.getItem('relate_demographics');
     if (gender === 'M' || gender === 'Man') {
       setSeekingLabel('Female Matches');
     } else if (gender === 'W' || gender === 'Woman') {
       setSeekingLabel('Male Matches');
+      setIsWoman(true);
+    } else if (demoStr) {
+      try {
+        const d = JSON.parse(demoStr);
+        if (d.gender === 'W' || d.gender === 'Woman') setIsWoman(true);
+      } catch { /* */ }
     }
+
   }, []);
 
   // Show results sublinks on results subpages (persona, match, matches, etc.) but NOT the root /results page
@@ -54,19 +64,21 @@ export function SubNav({ items = [] }: SubNavProps) {
 
   // On couples pages, show couples section links instead of individual results sublinks
   const isCouplesPage = pathname.startsWith('/results/compare') || pathname.startsWith('/couples');
+  const isAstrologyPage = pathname.startsWith('/results/astrology');
 
   const universalLinks: SubNavItem[] = [
     { id: 'account', label: 'Account', href: '/account', show: true },
     { id: 'results', label: 'Results', href: '/results', show: hasResults },
     { id: 'growth', label: 'Growth Plan', href: '/growth', show: hasResults },
     { id: 'couples', label: 'Couples', href: '/results/compare', show: hasPartner },
+    { id: 'astrology', label: 'Astrology', href: '/results/astrology', show: isWoman && hasResults },
   ];
 
   // On match/matches pages, show match sub-links as page-tab items (after divider)
   const isMatchPage = pathname.startsWith('/results/match');
 
   // Build results subpage links when hasResults and on a results subpage (but not couples pages)
-  const resultsSubLinks: SubNavItem[] = (hasResults && isResultsSubpage && !isCouplesPage) ? [
+  const resultsSubLinks: SubNavItem[] = (hasResults && isResultsSubpage && !isCouplesPage && !isAstrologyPage) ? [
     { id: 'persona', label: 'Your Persona', href: '/results/persona', show: !isMatchPage },
     { id: 'match', label: 'Your #1 Match', href: topMatchCode ? `/results/match/${topMatchCode}` : '/results/matches', show: !!topMatchCode },
     { id: 'matches', label: `All Potential ${seekingLabel}`, href: '/results/matches', show: true },

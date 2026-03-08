@@ -18,6 +18,7 @@ import {
 } from '@/lib/astrology/engine';
 import { getSignData, ELEMENT_COLORS } from '@/lib/astrology/signs';
 import { generateProfileReads } from '@/lib/astrology/compatibility';
+import { analyzePersonaAlignment, type PersonaAlignmentResult } from '@/lib/astrology/persona-alignment';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -55,6 +56,10 @@ export default function AstrologyPage() {
   // ─── Gender gate ───
   const [isWoman, setIsWoman] = useState<boolean | null>(null);
 
+  // ─── Persona alignment ───
+  const [alignment, setAlignment] = useState<PersonaAlignmentResult | null>(null);
+  const [personaName, setPersonaName] = useState<string | null>(null);
+
   useEffect(() => {
     if (!loading && !user) {
       router.push('/auth/login');
@@ -77,6 +82,18 @@ export default function AstrologyPage() {
     // Load existing data
     const existingChart = loadChartResult();
     if (existingChart) setChart(existingChart);
+
+    // Load persona results and compute alignment if chart exists
+    try {
+      const resultsStr = localStorage.getItem('relate_results');
+      if (resultsStr && existingChart) {
+        const results = JSON.parse(resultsStr);
+        if (results.persona?.code && results.persona?.name) {
+          setPersonaName(results.persona.name);
+          setAlignment(analyzePersonaAlignment(results.persona.code, results.persona.name, existingChart));
+        }
+      }
+    } catch { /* */ }
 
     const existingBirth = loadBirthData();
     if (existingBirth) {
@@ -143,6 +160,18 @@ export default function AstrologyPage() {
       saveBirthData(birthData);
       saveChartResult(result);
       setChart(result);
+
+      // Compute alignment with persona if available
+      try {
+        const resultsStr = localStorage.getItem('relate_results');
+        if (resultsStr) {
+          const results = JSON.parse(resultsStr);
+          if (results.persona?.code && results.persona?.name) {
+            setPersonaName(results.persona.name);
+            setAlignment(analyzePersonaAlignment(results.persona.code, results.persona.name, result));
+          }
+        }
+      } catch { /* */ }
     } catch (err: any) {
       setError(err?.message || 'Calculation failed. Please check your inputs.');
     } finally {
@@ -197,6 +226,35 @@ export default function AstrologyPage() {
               Cheat Sheet
             </Link>
           </div>
+
+          {/* ── Persona–Astrology Alignment Card ── */}
+          {alignment && alignment.alignments.length > 0 && (
+            <div className="card border border-accent/30 bg-accent/5 mb-6">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent text-lg shrink-0">
+                  ✦
+                </div>
+                <div>
+                  <span className="font-mono text-xs text-accent uppercase tracking-wider">
+                    {personaName} + Your Stars
+                  </span>
+                  <h3 className="font-serif text-lg font-semibold mt-0.5">Persona Alignment</h3>
+                </div>
+              </div>
+              <p className="text-sm text-secondary mb-4">{alignment.summary}</p>
+              <div className="space-y-2">
+                {alignment.alignments.map((a, i) => (
+                  <div key={i} className="flex items-start gap-2 text-sm">
+                    <span className={`shrink-0 mt-0.5 w-2 h-2 rounded-full ${a.strength === 'strong' ? 'bg-accent' : 'bg-accent/40'}`} />
+                    <div>
+                      <span className="font-medium text-foreground">{a.placement} · {a.dimension}</span>
+                      <span className="text-secondary"> — {a.explanation}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* ── Big Three Cards ── */}
           <div className="space-y-4 mb-8">
