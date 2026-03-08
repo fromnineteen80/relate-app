@@ -280,8 +280,8 @@ function generateRepairCompatibility(user1: any, user2: any): any {
   const u2Gottman = u2M4.gottmanScreener?.horsemen || {};
 
   const horsemen = ['criticism', 'contempt', 'defensiveness', 'stonewalling'].map(h => {
-    const u1Score = u1Gottman[h] || 0;
-    const u2Score = u2Gottman[h] || 0;
+    const u1Score = u1Gottman[h]?.score || 0;
+    const u2Score = u2Gottman[h]?.score || 0;
     const combined = Math.round((u1Score + u2Score) / 2);
     const riskLevel = combined > 14 ? 'high' : combined > 10 ? 'moderate' : 'low';
     return { horseman: h, user1Score: u1Score, user2Score: u2Score, combined, riskLevel };
@@ -410,7 +410,7 @@ function generateCeilingFloor(user1: any, user2: any, overview: any): any {
   const u1Gottman = user1.m4?.gottmanScreener?.horsemen || {};
   const u2Gottman = user2.m4?.gottmanScreener?.horsemen || {};
   for (const h of ['criticism', 'contempt', 'defensiveness', 'stonewalling']) {
-    if ((u1Gottman[h] || 0) > 14 || (u2Gottman[h] || 0) > 14) {
+    if ((u1Gottman[h]?.score || 0) > 14 || (u2Gottman[h]?.score || 0) > 14) {
       floorFactors.push(`High ${h} risk requires active management`);
     }
   }
