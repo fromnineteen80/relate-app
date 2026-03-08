@@ -143,21 +143,31 @@ export type AlignmentPoint = {
   strength: 'strong' | 'moderate';
 };
 
+export type DemographicInsight = {
+  label: string;
+  text: string;
+};
+
 export type PersonaAlignmentResult = {
   alignments: AlignmentPoint[];
+  demographicInsights: DemographicInsight[];
   summary: string;
   overallStrength: 'high' | 'medium' | 'low';
 };
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /**
  * Analyze how a persona code aligns with a birth chart.
  * Looks at each persona dimension pole against each Big Three placement
- * to find element and modality resonances.
+ * to find element and modality resonances. Optionally incorporates
+ * demographics and partner preferences for deeper context.
  */
 export function analyzePersonaAlignment(
   personaCode: string,
   personaName: string,
   chart: BirthChartResult,
+  demographics?: any,
 ): PersonaAlignmentResult {
   const placements = [
     { key: 'Sun' as const, data: chart.sun },
@@ -224,9 +234,13 @@ export function analyzePersonaAlignment(
   const overallStrength: 'high' | 'medium' | 'low' =
     strongCount >= 2 ? 'high' : top.length >= 2 ? 'medium' : 'low';
 
+  const demographicInsights = demographics
+    ? buildDemographicInsights(chart, demographics)
+    : [];
+
   const summary = buildSummary(personaName, top, overallStrength);
 
-  return { alignments: top, summary, overallStrength };
+  return { alignments: top, demographicInsights, summary, overallStrength };
 }
 
 function buildExplanation(
@@ -269,4 +283,109 @@ function buildSummary(
     return `There is a meaningful thread between your ${personaName} persona and your chart, particularly around ${dimList}. Your stars confirm some of what the assessment revealed, while adding cosmic nuance the questions could not capture.`;
   }
   return `Your ${personaName} persona and your birth chart share a subtle connection around ${dimList}. The overlap is not loud, but it is there — a quiet confirmation that your cosmic wiring and your relational instincts are not as separate as they might seem.`;
+}
+
+// ─── Demographic Insights ───
+// Selectively generates 1-2 observations from demographics/preferences
+// that connect meaningfully to the chart. Only fires when there's a real
+// story to tell — not every demographic field gets used.
+
+function buildDemographicInsights(chart: BirthChartResult, demo: any): DemographicInsight[] {
+  const insights: DemographicInsight[] = [];
+  const sunEl = SIGN_DATA[chart.sun.sign]?.element;
+  const moonEl = SIGN_DATA[chart.moon.sign]?.element;
+  const moonSign = chart.moon.sign;
+  const sunMod = SIGN_DATA[chart.sun.sign]?.modality;
+
+  // ── Fitness level × chart ──
+  const fitness = demo.fitness_level;
+  if (fitness === '4 to 6 days a week' || fitness === 'Every day') {
+    if (sunEl === 'Fire' || sunEl === 'Earth') {
+      insights.push({
+        label: 'Fitness',
+        text: `You work out ${fitness.toLowerCase()}. Your ${chart.sun.sign} Sun (${sunEl}) backs that up — ${sunEl === 'Fire' ? 'Fire signs channel emotion into physical action' : 'Earth signs treat the body as a long-term investment'}. The discipline is not separate from who you are. It is who you are.`,
+      });
+    } else if (moonEl === 'Fire' || moonEl === 'Earth') {
+      insights.push({
+        label: 'Fitness',
+        text: `You work out ${fitness.toLowerCase()}, and your ${moonSign} Moon might explain why — ${moonEl === 'Fire' ? 'Fire Moons need to burn through emotion physically' : 'Earth Moons find emotional regulation through routine and the body'}. It is not just health. It is how you stay grounded.`,
+      });
+    }
+  }
+
+  // ── Political views × values pole × chart ──
+  const political = demo.political;
+  if (political && political !== 'Apolitical') {
+    const isConservative = political === 'Conservative';
+    const isLiberal = political === 'Liberal';
+    if (isConservative && (sunEl === 'Earth' || sunEl === 'Water')) {
+      insights.push({
+        label: 'Values',
+        text: `Your conservative orientation and your ${chart.sun.sign} Sun speak the same language — ${sunEl === 'Earth' ? 'Earth signs trust what has been tested and build on proven ground' : 'Water signs honor loyalty and the bonds that endure'}. You are not rigid. You are rooted.`,
+      });
+    } else if (isLiberal && (sunEl === 'Air' || sunEl === 'Fire')) {
+      insights.push({
+        label: 'Values',
+        text: `Your liberal orientation and your ${chart.sun.sign} Sun share a wavelength — ${sunEl === 'Air' ? 'Air signs question defaults and build new frameworks' : 'Fire signs refuse to follow a path that does not feel right'}. Questioning the status quo is not rebellion. It is how you are wired.`,
+      });
+    } else if (isConservative && (sunEl === 'Air' || sunEl === 'Fire')) {
+      insights.push({
+        label: 'Values',
+        text: `Here is an interesting tension: your conservative values anchor you, but your ${chart.sun.sign} Sun (${sunEl}) has an independent streak that does not follow convention blindly. You likely hold traditional values because you chose them, not because you inherited them without question.`,
+      });
+    } else if (isLiberal && (sunEl === 'Earth' || sunEl === 'Water')) {
+      insights.push({
+        label: 'Values',
+        text: `An interesting tension: your liberal orientation pushes forward, but your ${chart.sun.sign} Sun (${sunEl}) is wired for stability and loyalty. You are progressive, but not reckless with what matters. You build the new without burning down the old.`,
+      });
+    }
+  }
+
+  // ── Want kids × Moon sign ──
+  const wantKids = demo.want_kids;
+  if (wantKids === 'Yes' && (moonEl === 'Water' || moonSign === 'Cancer' || moonSign === 'Taurus')) {
+    insights.push({
+      label: 'Family',
+      text: `You want children, and your ${moonSign} Moon ${moonSign === 'Cancer' ? 'is literally the sign of motherhood and home' : moonEl === 'Water' ? 'runs on emotional depth and nurturing' : 'is wired for building something lasting and safe'}. That desire is not just a life plan — it is an emotional need your chart has been carrying all along.`,
+    });
+  } else if (wantKids === 'No' && (moonEl === 'Fire' || moonEl === 'Air')) {
+    insights.push({
+      label: 'Family',
+      text: `You do not want children, and your ${moonSign} Moon (${moonEl}) sheds light on why — ${moonEl === 'Fire' ? 'Fire Moons need freedom and forward motion' : 'Air Moons need intellectual space and resist being locked into one role'}. That choice is not a deficiency. It is self-knowledge backed by your emotional wiring.`,
+    });
+  }
+
+  // ── Seeking (why they're here) × modality ──
+  const seeking = demo.seeking;
+  if (seeking === 'partner' && sunMod === 'Cardinal') {
+    insights.push({
+      label: 'Intent',
+      text: `You came here to find a partner, and your ${chart.sun.sign} Sun is Cardinal — the initiator. You do not wait for things to happen. You go looking. That is not impatience. That is your Sun doing exactly what it was built to do.`,
+    });
+  } else if (seeking === 'self-knowledge' && sunMod === 'Mutable') {
+    insights.push({
+      label: 'Intent',
+      text: `You came here for self-knowledge, and your ${chart.sun.sign} Sun is Mutable — the sign that learns by adapting and absorbing. You are not here to be told who you are. You are here to have a mirror held up so you can decide for yourself.`,
+    });
+  } else if (seeking === 'relationship-improvement' && sunMod === 'Fixed') {
+    insights.push({
+      label: 'Intent',
+      text: `You came here to improve your relationship, and your ${chart.sun.sign} Sun is Fixed — the sign that commits and stays. You do not leave when things get hard. You dig in. That loyalty is the reason you are here instead of somewhere else.`,
+    });
+  }
+
+  // ── Partner fitness preferences × chart (only if she's selective) ──
+  const prefFitness = demo.pref_fitness_levels;
+  if (Array.isArray(prefFitness) && !prefFitness.includes('No preference') && prefFitness.length <= 2) {
+    const wantsHighFitness = prefFitness.some((f: string) => f === '4 to 6 days a week' || f === 'Every day');
+    if (wantsHighFitness && (sunEl === 'Fire' || sunEl === 'Earth')) {
+      insights.push({
+        label: 'What You Want',
+        text: `You set a high physical bar for a partner, and your ${chart.sun.sign} Sun (${sunEl}) explains why — ${sunEl === 'Fire' ? 'Fire signs are drawn to vitality and refuse to settle for low energy' : 'Earth signs read physical discipline as proof that someone can commit to something long-term'}. It is not shallow. It is a signal you are reading correctly.`,
+      });
+    }
+  }
+
+  // Cap at 2 — only the most interesting
+  return insights.slice(0, 2);
 }

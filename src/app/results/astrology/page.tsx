@@ -86,11 +86,13 @@ export default function AstrologyPage() {
     // Load persona results and compute alignment if chart exists
     try {
       const resultsStr = localStorage.getItem('relate_results');
+      const demoStr = localStorage.getItem('relate_demographics');
+      const demo = demoStr ? JSON.parse(demoStr) : undefined;
       if (resultsStr && existingChart) {
         const results = JSON.parse(resultsStr);
         if (results.persona?.code && results.persona?.name) {
           setPersonaName(results.persona.name);
-          setAlignment(analyzePersonaAlignment(results.persona.code, results.persona.name, existingChart));
+          setAlignment(analyzePersonaAlignment(results.persona.code, results.persona.name, existingChart, demo));
         }
       }
     } catch { /* */ }
@@ -164,11 +166,13 @@ export default function AstrologyPage() {
       // Compute alignment with persona if available
       try {
         const resultsStr = localStorage.getItem('relate_results');
+        const demoStr = localStorage.getItem('relate_demographics');
+        const demo = demoStr ? JSON.parse(demoStr) : undefined;
         if (resultsStr) {
           const results = JSON.parse(resultsStr);
           if (results.persona?.code && results.persona?.name) {
             setPersonaName(results.persona.name);
-            setAlignment(analyzePersonaAlignment(results.persona.code, results.persona.name, result));
+            setAlignment(analyzePersonaAlignment(results.persona.code, results.persona.name, result, demo));
           }
         }
       } catch { /* */ }
@@ -250,6 +254,19 @@ export default function AstrologyPage() {
                       <div>
                         <span className="font-medium text-foreground">{a.placement} · {a.themeLabel}</span>
                         <span className="text-secondary"> — {a.explanation}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {alignment.demographicInsights.length > 0 && (
+                <div className={`space-y-2 ${alignment.alignments.length > 0 ? 'mt-4 pt-4 border-t border-accent/15' : ''}`}>
+                  {alignment.demographicInsights.map((d, i) => (
+                    <div key={i} className="flex items-start gap-2 text-sm">
+                      <span className="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-secondary/40" />
+                      <div>
+                        <span className="font-medium text-foreground">{d.label}</span>
+                        <span className="text-secondary"> — {d.text}</span>
                       </div>
                     </div>
                   ))}
