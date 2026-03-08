@@ -117,7 +117,7 @@ export default function LandingPage() {
       <section className="border-y border-border bg-white px-6 py-6">
         <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8 text-center">
           <div>
-            <p className="font-serif text-2xl font-semibold">391</p>
+            <p className="font-serif text-2xl font-semibold">386</p>
             <p className="text-xs text-secondary">Assessment Questions</p>
           </div>
           <div className="w-px h-8 bg-border hidden sm:block" />
@@ -296,7 +296,7 @@ export default function LandingPage() {
               <p className="text-sm text-secondary mt-3 mb-6">Discover your persona.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
-                  '391-question assessment',
+                  '386-question assessment',
                   'Your persona code and traits',
                   'Top 3 match rankings',
                   '3 advisor messages',

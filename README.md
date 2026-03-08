@@ -106,7 +106,7 @@ NEXT_PUBLIC_MOCK_ADVISOR=false
 
 ## What You're Building
 
-RELATE is a relationship intelligence platform. Users complete a ~367-question assessment across 4 modules. The system assigns them one of 32 personas, ranks their compatibility with 16 opposite-gender personas, and generates detailed reports with coaching.
+RELATE is a relationship intelligence platform. Users complete a 386-question assessment across 5 modules. The system assigns them one of 32 personas, ranks their compatibility with 16 opposite-gender personas, and generates detailed reports with coaching.
 
 This is a production app with authentication, payments, partner comparison, an embedded AI advisor, and referral monetization.
 
