@@ -70,7 +70,7 @@ function determinePairingArchetype(alignment: number, m3: number, m4: number): {
     name: 'Complementary Pair',
     description: 'Your differences create strength. Where one leads, the other supports. The key is recognizing and valuing what each brings.',
     emoji: 'diamond-outline' as const,
-    coaching: 'Your different strengths are an asset when appreciated, a liability when misread. Practice narrating your reasoning out loud — "I\'m doing X because I think Y" — so your partner sees intention, not just action.',
+    coaching: 'Your different strengths are an asset when appreciated, a liability when misread. Practice narrating your reasoning out loud: "I\'m doing X because I think Y." This helps your partner see intention, not just action.',
   };
   if (avg >= 45) return {
     name: 'Growth Partners',
@@ -82,7 +82,7 @@ function determinePairingArchetype(alignment: number, m3: number, m4: number): {
     name: 'Challenge Pair',
     description: 'Significant differences require conscious effort and strong communication. Success depends on both partners\' commitment to understanding each other.',
     emoji: 'triangle' as const,
-    coaching: 'Challenge pairings can absolutely work — but they require explicit systems. Agree on a weekly 30-minute relationship check-in, establish a repair signal for heated moments, and consider working with a couples therapist proactively, not reactively.',
+    coaching: 'Challenge pairings can absolutely work, but they require explicit systems. Agree on a weekly 30-minute relationship check-in, establish a repair signal for heated moments, and consider working with a couples therapist proactively, not reactively.',
   };
 }
 
@@ -183,13 +183,13 @@ function getClashCoaching(dim: string, bothStrong: boolean, pole1: string, pole2
   const coachingMap: Record<string, string> = {
     physical: bothStrong
       ? 'Try alternating weeks: one partner\'s preferred activity level, then the other\'s. Build a shared "adventure list" that pushes both of you slightly outside your comfort zone.'
-      : 'The partner who holds this less strongly can experiment with the other\'s preference. Start small — a 20-minute walk together, or a quiet evening in.',
+      : 'The partner who holds this less strongly can experiment with the other\'s preference. Start small: a 20-minute walk together, or a quiet evening in.',
     social: bothStrong
-      ? 'Create a social calendar with explicit "together time" and "solo/friend time" blocks. Neither preference is wrong — the goal is predictability so neither partner feels blindsided.'
+      ? 'Create a social calendar with explicit "together time" and "solo/friend time" blocks. Neither preference is wrong. The goal is predictability so neither partner feels blindsided.'
       : 'The more flexible partner can stretch in either direction. Agree on a minimum: at least one social outing and one quiet night per week together.',
     lifestyle: bothStrong
       ? 'Map out your non-negotiables versus nice-to-haves separately, then compare notes. You\'ll likely find the overlap is larger than the conflict. Focus agreements on the non-negotiables first.'
-      : 'This difference is manageable. Check in monthly about whether either partner feels they\'re always the one compromising — resentment builds silently.',
+      : 'This difference is manageable. Check in monthly about whether either partner feels they\'re always the one compromising. Resentment builds silently.',
     values: bothStrong
       ? 'Values clashes are the hardest to bridge because they feel identity-level. Instead of debating who\'s right, explore the life experiences that shaped each value. Understanding "why" builds empathy even when you disagree.'
       : 'One of you holds this more loosely, which creates space. The key: the flexible partner should voice their perspective too, not just defer. Silent capitulation breeds resentment.',
@@ -219,7 +219,7 @@ function generateConflictChoreography(user1: any, user2: any): any {
   } else if (bothPursue) {
     dynamicLabel = 'Dual Pursuit';
     dynamicDescription = 'Both of you move toward conflict. Arguments can escalate quickly. The advantage: nothing goes unaddressed. The risk: burnout from constant engagement.';
-    dynamicCoaching = 'Set a "volume dial" rule: if either partner feels the conversation exceeding a 6/10 intensity, call a 10-minute break. You both want to resolve things — that\'s a strength. Channel it by taking turns speaking for 3 uninterrupted minutes each.';
+    dynamicCoaching = 'Set a "volume dial" rule: if either partner feels the conversation exceeding a 6/10 intensity, call a 10-minute break. You both want to resolve things, and that\'s a strength. Channel it by taking turns speaking for 3 uninterrupted minutes each.';
   } else if (bothWithdraw) {
     dynamicLabel = 'Dual Withdrawal';
     dynamicDescription = 'Both of you pull away during conflict. Issues may go unresolved. Building explicit check-in rituals prevents resentment from accumulating.';
@@ -303,7 +303,7 @@ function generateRepairCompatibility(user1: any, user2: any): any {
         criticism: 'Replace "You always/never..." with "I feel ___ when ___. What I need is ___." Practice this reframe daily, even for small things.',
         contempt: 'Start a daily appreciation practice: tell your partner one specific thing they did that you valued. Contempt dissolves when admiration is actively cultivated.',
         defensiveness: 'When your partner raises an issue, respond with "Tell me more" before explaining your side. Taking responsibility for even 2% of the problem unlocks the conversation.',
-        stonewalling: 'Learn your flooding signals (racing heart, tight chest). When you notice them, say "I\'m flooding and need 20 minutes." Then return and re-engage — that\'s the critical part.',
+        stonewalling: 'Learn your flooding signals (racing heart, tight chest). When you notice them, say "I\'m flooding and need 20 minutes." Then return and re-engage. That\'s the critical part.',
       };
       repairCoaching.push(coachingMap[h.horseman] || '');
     }
@@ -425,7 +425,7 @@ function generateCeilingFloor(user1: any, user2: any, overview: any): any {
   const growthPotential = ceiling - overallScore;
   const riskExposure = overallScore - floor;
 
-  // Generate growth roadmap — specific next steps
+  // Generate growth roadmap: specific next steps
   const growthSteps: string[] = [];
   if (floorFactors.some(f => f.includes('contempt') || f.includes('criticism'))) {
     growthSteps.push('Priority 1: Address your Gottman risk areas. Consider reading "The Seven Principles for Making Marriage Work" together and practicing one exercise per week.');

@@ -1,9 +1,10 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback, useRef, ReactNode } from 'react';
 import { config } from '@/lib/config';
 import { getMockUser, mockSignIn, mockSignUp, mockSignOut, isMockEmailVerified } from '@/lib/mock/auth';
 import { supabase } from '@/lib/supabase/client';
+import { fullHydrateFromDb, subscribeToPartnerChanges } from '@/lib/supabase/progress';
 
 type User = {
   id: string;
@@ -34,6 +35,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [emailVerified, setEmailVerified] = useState(false);
+  const partnerSubbedRef = useRef(false);
+  const partnerUnsubRef = useRef<(() => void) | null>(null);
+
+  // Stale-while-revalidate: UI renders instantly from localStorage, then we
+  // pull fresh data from Supabase in the background on every page load/refresh.
+  // On a new device (empty localStorage) this is the initial hydration.
+  // On the same device (refresh) this catches any changes made elsewhere.
+  const syncFromDb = useCallback(async (userId: string) => {
+    // Background sync: always fetch latest from Supabase
+    fullHydrateFromDb(userId);
+
+    // Set up realtime partner subscription (only once per session)
+    if (!partnerSubbedRef.current) {
+      partnerSubbedRef.current = true;
+      if (partnerUnsubRef.current) partnerUnsubRef.current();
+      partnerUnsubRef.current = subscribeToPartnerChanges(userId, () => {
+        // Partner data changed; trigger a re-render
+        window.dispatchEvent(new Event('relate-partner-updated'));
+      });
+    }
+  }, []);
 
   // Email verification is temporarily bypassed. When re-enabling, restore
   // the isMockEmailVerified() / email_confirmed_at checks below.
@@ -48,8 +70,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        setUser({ id: session.user.id, email: session.user.email! });
+        const u = { id: session.user.id, email: session.user.email! };
+        setUser(u);
         setEmailVerified(true);
+        syncFromDb(u.id);
       } else {
         setUser(null);
         setEmailVerified(false);
@@ -59,16 +83,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        setUser({ id: session.user.id, email: session.user.email! });
+        const u = { id: session.user.id, email: session.user.email! };
+        setUser(u);
         setEmailVerified(true);
+        syncFromDb(u.id);
       } else {
         setUser(null);
         setEmailVerified(false);
+        partnerSubbedRef.current = false;
       }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [syncFromDb]);
 
   const refreshVerification = useCallback(async () => {
     // Email verification is temporarily bypassed
@@ -127,6 +154,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signOut() {
+    // Unsubscribe from partner realtime channel
+    if (partnerUnsubRef.current) {
+      partnerUnsubRef.current();
+      partnerUnsubRef.current = null;
+    }
+    partnerSubbedRef.current = false;
+
     // Clear all RELATE localStorage data to prevent privacy leaks on shared devices
     const relateKeys = Object.keys(localStorage).filter(k => k.startsWith('relate_'));
     relateKeys.forEach(k => localStorage.removeItem(k));

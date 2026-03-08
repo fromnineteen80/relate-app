@@ -3,6 +3,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/lib/auth-context';
+import { saveGrowthDataToDb } from '@/lib/supabase/progress';
 import {
   GROWTH_EXERCISES,
   GROWTH_CATEGORIES,
@@ -24,6 +26,7 @@ import { SiteFooter } from '@/components/SiteFooter';
 
 export default function GrowthPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [userData, setUserData] = useState<any>(null);
   const [completedExercises, setCompletedExercises] = useState<any[]>([]);
   const [activeExercise, setActiveExercise] = useState<any>(null);
@@ -102,7 +105,16 @@ export default function GrowthPage() {
     localStorage.setItem('relate_growth_exercises_completed', JSON.stringify(newCompleted));
     localStorage.setItem('relate_individual_growth_points', String(newPoints));
     localStorage.removeItem('relate_growth_active_exercise');
-  }, [activeExercise, completedExercises, points, reflectionText]);
+
+    // Persist to Supabase for cross-device sync
+    if (user) {
+      saveGrowthDataToDb(user.id, {
+        completedExercises: newCompleted,
+        points: newPoints,
+        activeExercise: null,
+      });
+    }
+  }, [activeExercise, completedExercises, points, reflectionText, user]);
 
   const cancelExercise = useCallback(() => {
     setActiveExercise(null);
