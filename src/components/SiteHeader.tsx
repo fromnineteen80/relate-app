@@ -16,6 +16,7 @@ type SiteHeaderProps = {
 };
 
 export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeaderProps) {
+  const headerRef = useRef<HTMLElement>(null);
   const { user, signOut } = useAuth();
   const { isOpen: advisorOpen, open: openAdvisor, toggle: toggleAdvisor } = useAdvisor();
   const isMobileDevice = useIsMobileDevice();
@@ -29,6 +30,17 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
 
   // When advisor is open, collapse desktop nav to hamburger format
   const collapseNav = advisorOpen;
+
+  // Publish header height as CSS variable so SubNav can stick below it
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const update = () => document.documentElement.style.setProperty('--header-height', `${el.offsetHeight}px`);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   // Close dropdown when clicking/tapping outside (pointerdown works across mouse, touch, pen)
   useEffect(() => {
@@ -81,7 +93,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-sm" style={{ overflow: 'visible' }}>
+    <header ref={headerRef} className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-sm" style={{ overflow: 'visible' }}>
       <div className="px-6 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           {isMobileDevice && !advisorOpen && (

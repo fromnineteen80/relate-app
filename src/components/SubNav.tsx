@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -22,21 +22,8 @@ export function SubNav({ items = [] }: SubNavProps) {
   const [hasPartner, setHasPartner] = useState(false);
   const [topMatchCode, setTopMatchCode] = useState<string | null>(null);
   const [seekingLabel, setSeekingLabel] = useState<string>('Matches');
-  const [headerHeight, setHeaderHeight] = useState(0);
-  const navRef = useRef<HTMLElement>(null);
 
   const [isWoman, setIsWoman] = useState(false);
-
-  // Measure header height dynamically so SubNav sticks right below it
-  useEffect(() => {
-    const header = document.querySelector('header');
-    if (!header) return;
-    const update = () => setHeaderHeight(header.offsetHeight);
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(header);
-    return () => ro.disconnect();
-  }, []);
 
   useEffect(() => {
     const stored = localStorage.getItem('relate_results');
@@ -124,7 +111,7 @@ export function SubNav({ items = [] }: SubNavProps) {
       : visiblePageItems;
 
   return (
-    <nav ref={navRef} className="border-b border-border bg-background sticky z-40" style={{ top: headerHeight }}>
+    <nav className="border-b border-border bg-background sticky z-40" style={{ top: 'var(--header-height)' }}>
       <div className="pl-3 pr-6 flex gap-1 overflow-x-auto">
         {beforeDividerLinks.map(link => {
           const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
