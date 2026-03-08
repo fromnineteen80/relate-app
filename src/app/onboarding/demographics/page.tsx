@@ -8,7 +8,7 @@ import { useAuth } from '@/lib/auth-context';
 import { config } from '@/lib/config';
 import { getSupabase } from '@/lib/supabase/client';
 import { isProfileComplete, getProfile } from '@/lib/onboarding';
-import { loadDemographicsFromDb, saveDemographicsToDb } from '@/lib/supabase/progress';
+import { loadDemographicsFromDb, saveDemographicsToDb, saveUserField } from '@/lib/supabase/progress';
 
 const BIRTH_MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -34,6 +34,9 @@ type FormData = {
   birthHour: string;
   birthMinute: string;
   birthAmPm: 'AM' | 'PM' | '';
+  birthCity: string;
+  birthLatitude: string;
+  birthLongitude: string;
   ethnicity: string;
   orientation: string;
   income: number;
@@ -81,6 +84,8 @@ export default function DemographicsPage() {
   const [error, setError] = useState('');
   const [savedToast, setSavedToast] = useState(false);
   const [astrologyEnabled, setAstrologyEnabled] = useState(false);
+  const [cityLookupDone, setCityLookupDone] = useState(false);
+  const [cityLookupError, setCityLookupError] = useState('');
 
   // Check astrology toggle on mount
   useEffect(() => {
@@ -93,8 +98,33 @@ export default function DemographicsPage() {
     }
   }, []);
 
+  async function lookupBirthCity() {
+    if (!form.birthCity.trim()) return;
+    setCityLookupError('');
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(form.birthCity.trim())}&format=json&limit=1`, {
+        headers: { 'Accept': 'application/json' },
+      });
+      const data = await res.json();
+      if (data && data.length > 0) {
+        const displayName = data[0].display_name?.split(',').slice(0, 2).join(',').trim() || form.birthCity;
+        setForm(prev => {
+          const updated = { ...prev, birthCity: displayName, birthLatitude: data[0].lat, birthLongitude: data[0].lon };
+          persistForm(updated);
+          return updated;
+        });
+        setCityLookupDone(true);
+      } else {
+        setCityLookupError('City not found. Try a larger nearby city.');
+      }
+    } catch {
+      setCityLookupError('Location lookup failed. Please try again.');
+    }
+  }
+
   const [form, setForm] = useState<FormData>({
     gender: '', age: '', birthMonth: '', birthDay: '', birthYear: '', birthHour: '', birthMinute: '', birthAmPm: '',
+    birthCity: '', birthLatitude: '', birthLongitude: '',
     ethnicity: '', orientation: 'Straight',
     income: 50000, education: '', height: '', bodyType: '', fitness: '',
     political: '', smoking: '', hasKids: '', wantKids: '', relationshipStatus: '',
@@ -131,6 +161,9 @@ export default function DemographicsPage() {
             birthHour: d.birth_hour?.toString() ?? '',
             birthMinute: d.birth_minute?.toString() ?? '',
             birthAmPm: d.birth_ampm || '',
+            birthCity: d.birth_city || '',
+            birthLatitude: d.birth_latitude?.toString() ?? '',
+            birthLongitude: d.birth_longitude?.toString() ?? '',
             ethnicity: d.ethnicity || '',
             orientation: d.orientation || 'Straight',
             income: d.income ?? 50000,
@@ -302,6 +335,9 @@ export default function DemographicsPage() {
       birth_hour: form.birthHour ? parseInt(form.birthHour) : null,
       birth_minute: form.birthMinute ? parseInt(form.birthMinute) : null,
       birth_ampm: form.birthAmPm || null,
+      birth_city: form.birthCity || null,
+      birth_latitude: form.birthLatitude ? parseFloat(form.birthLatitude) : null,
+      birth_longitude: form.birthLongitude ? parseFloat(form.birthLongitude) : null,
       astrology_enabled: astrologyEnabled || form.gender === 'Woman',
     };
 
@@ -310,14 +346,17 @@ export default function DemographicsPage() {
       const h12 = parseInt(form.birthHour || '12');
       const ap = form.birthAmPm || 'PM';
       const h24 = ap === 'PM' ? (h12 === 12 ? 12 : h12 + 12) : (h12 === 12 ? 0 : h12);
+      const lat = form.birthLatitude ? parseFloat(form.birthLatitude) : 0;
+      const lng = form.birthLongitude ? parseFloat(form.birthLongitude) : 0;
       const astroBirth = {
         year: parseInt(form.birthYear),
         month: parseInt(form.birthMonth),
         day: parseInt(form.birthDay),
         hour: h24,
         minute: parseInt(form.birthMinute || '0'),
-        latitude: 0,
-        longitude: 0,
+        latitude: lat,
+        longitude: lng,
+        locationName: form.birthCity || undefined,
       };
       localStorage.setItem('relate_astrology_birth_data', JSON.stringify(astroBirth));
     }
@@ -369,11 +408,35 @@ export default function DemographicsPage() {
             <input type="number" value={form.age} onChange={e => updateField('age', e.target.value)}
               className="input" min={18} max={100} placeholder="25" />
           </div>
+          {/* Astrology toggle for men */}
+          {form.gender === 'Man' && (
+            <div className="flex items-center justify-between gap-4 py-2">
+              <div>
+                <label className="label mb-0">Sun, Moon &amp; Rise</label>
+                <p className="text-xs text-secondary">Enable your astrology profile (optional).</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const next = !astrologyEnabled;
+                  setAstrologyEnabled(next);
+                  localStorage.setItem('relate_astrology_enabled', String(next));
+                  if (user) saveUserField(user.id, 'astrology_enabled', next);
+                }}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors shrink-0 ${astrologyEnabled ? 'bg-accent' : 'bg-stone-300'}`}
+                role="switch"
+                aria-checked={astrologyEnabled}
+              >
+                <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white transition-transform ${astrologyEnabled ? 'translate-x-[18px]' : 'translate-x-[3px]'}`} />
+              </button>
+            </div>
+          )}
+          {/* Birth fields: always shown for women, shown for men when astrology enabled */}
           {(form.gender === 'Woman' || (form.gender === 'Man' && astrologyEnabled)) && (
             <>
               <div>
-                <label className="label">Birthday <span className="text-secondary font-normal">(optional)</span></label>
-                <p className="text-xs text-secondary mb-1">For your Sun, Moon &amp; Rise astrology profile. You can add this later in Settings.</p>
+                <label className="label">Birthday <span className="text-secondary font-normal">(optional{form.gender === 'Man' ? ' for astrology' : ''})</span></label>
+                <p className="text-xs text-secondary mb-1">For your Sun, Moon &amp; Rise astrology profile.</p>
                 <div className="grid grid-cols-3 gap-2">
                   <select value={form.birthMonth} onChange={e => updateField('birthMonth', e.target.value)} className="input">
                     <option value="">Month</option>
@@ -411,6 +474,27 @@ export default function DemographicsPage() {
                     <option value="PM">PM</option>
                   </select>
                 </div>
+              </div>
+              <div>
+                <label className="label">Birth City <span className="text-secondary font-normal">(optional)</span></label>
+                <p className="text-xs text-secondary mb-1">Needed for accurate Rising sign calculation.</p>
+                <div className="flex gap-2">
+                  <input
+                    type="text" value={form.birthCity}
+                    onChange={e => { updateField('birthCity', e.target.value); setCityLookupDone(false); }}
+                    onBlur={lookupBirthCity}
+                    className="input flex-1" placeholder="e.g. Los Angeles, CA"
+                  />
+                  <button onClick={lookupBirthCity} type="button" className="btn-secondary text-xs px-3 whitespace-nowrap">
+                    Look Up
+                  </button>
+                </div>
+                {cityLookupDone && form.birthLatitude && (
+                  <p className="text-xs text-success mt-1">
+                    Location resolved: {parseFloat(form.birthLatitude).toFixed(2)}&deg;, {parseFloat(form.birthLongitude).toFixed(2)}&deg;
+                  </p>
+                )}
+                {cityLookupError && <p className="text-xs text-danger mt-1">{cityLookupError}</p>}
               </div>
             </>
           )}

@@ -218,7 +218,7 @@ export default function AstrologyPage() {
                       <span className={`shrink-0 mt-0.5 w-2 h-2 rounded-full ${a.strength === 'strong' ? 'bg-accent' : 'bg-accent/40'}`} />
                       <div>
                         <span className="font-medium text-foreground">{a.placement} · {a.themeLabel}</span>
-                        <span className="text-secondary"> — {a.explanation}</span>
+                        <span className="text-secondary">. {a.explanation}</span>
                       </div>
                     </div>
                   ))}
@@ -231,7 +231,7 @@ export default function AstrologyPage() {
                       <span className="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-secondary/40" />
                       <div>
                         <span className="font-medium text-foreground">{d.label}</span>
-                        <span className="text-secondary"> — {d.text}</span>
+                        <span className="text-secondary">. {d.text}</span>
                       </div>
                     </div>
                   ))}

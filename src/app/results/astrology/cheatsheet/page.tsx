@@ -8,8 +8,9 @@ import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 import { useAuth } from '@/lib/auth-context';
 import { loadChartResult, type BirthChartResult } from '@/lib/astrology/engine';
-import { ALL_SIGNS, SIGN_DATA, ELEMENT_COLORS } from '@/lib/astrology/signs';
+import { ALL_SIGNS, SIGN_DATA } from '@/lib/astrology/signs';
 import { generateCompatibilityRead, generatePersonaSignRead, type CompatibilityRead } from '@/lib/astrology/compatibility';
+import { getAstroGenderContextFromStorage, type AstroGenderContext } from '@/lib/astrology/gender-context';
 import type { ZodiacSign } from '@/lib/astrology/engine';
 import { Icon } from '@/components/Icon';
 
@@ -26,9 +27,11 @@ export default function CheatSheetPage() {
   const [persona, setPersona] = useState<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [demographics, setDemographics] = useState<any>(null);
+  const [genderCtx, setGenderCtx] = useState<AstroGenderContext | null>(null);
 
   useEffect(() => {
     if (!loading && !user) { router.push('/auth/login'); return; }
+    setGenderCtx(getAstroGenderContextFromStorage());
     const existing = loadChartResult();
     if (existing) {
       setChart(existing);
@@ -49,25 +52,25 @@ export default function CheatSheetPage() {
     } catch { /* */ }
   }, [user, loading, router]);
 
-  // Generate compatibility reads for all 12 signs based on her chart
+  // Generate compatibility reads for all 12 signs based on user's chart
   const compatReads = useMemo(() => {
-    if (!chart) return null;
+    if (!chart || !genderCtx) return null;
     const reads: Record<string, CompatibilityRead> = {};
     for (const sign of ALL_SIGNS) {
-      reads[sign] = generateCompatibilityRead(chart, sign);
+      reads[sign] = generateCompatibilityRead(chart, sign, genderCtx);
     }
     return reads;
-  }, [chart]);
+  }, [chart, genderCtx]);
 
   // Generate persona-informed reads for each sign (if persona data exists)
   const personaReads = useMemo(() => {
-    if (!personaCode || !personaName) return null;
+    if (!personaCode || !personaName || !genderCtx) return null;
     const reads: Record<string, PersonaSignRead> = {};
     for (const sign of ALL_SIGNS) {
-      reads[sign] = generatePersonaSignRead(personaCode, personaName, sign, demographics, persona);
+      reads[sign] = generatePersonaSignRead(personaCode, personaName, sign, genderCtx, demographics, persona);
     }
     return reads;
-  }, [personaCode, personaName, demographics, persona]);
+  }, [personaCode, personaName, demographics, persona, genderCtx]);
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
 
@@ -88,7 +91,9 @@ export default function CheatSheetPage() {
     );
   }
 
-  const herSunSign = chart.sun.sign;
+  const userSunSign = chart.sun.sign;
+  const partnerLabel = genderCtx?.partnerLabel || 'Man';
+  const partnerLabelLower = genderCtx?.partnerLabelLower || 'man';
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -98,20 +103,19 @@ export default function CheatSheetPage() {
         <span className="font-mono text-xs text-secondary uppercase tracking-wider block">Sun, Moon &amp; Rise</span>
         <h1 className="font-serif text-2xl font-semibold mt-1 mb-2">Your 12 Sign Cheat Sheet</h1>
         <p className="explainer mb-6">
-          These reads are personalized to your <span className="font-medium text-foreground">{herSunSign} Sun</span>, <span className="font-medium text-foreground">{chart.moon.sign} Moon</span>, and <span className="font-medium text-foreground">{chart.rising.sign} Rising</span>. Tap any sign to see how that type of man connects with your specific chart.
+          These reads are personalized to your <span className="font-medium text-foreground">{userSunSign} Sun</span>, <span className="font-medium text-foreground">{chart.moon.sign} Moon</span>, and <span className="font-medium text-foreground">{chart.rising.sign} Rising</span>. Tap any sign to see how that type of {partnerLabelLower} connects with your specific chart.
         </p>
 
         {/* Sign grid */}
         <div className="space-y-3">
           {ALL_SIGNS.map(signName => {
             const sign = SIGN_DATA[signName];
-            const colors = ELEMENT_COLORS[sign.element];
-            const isSameSun = signName === herSunSign;
+            const isSameSun = signName === userSunSign;
             const isExpanded = expandedSign === signName;
             const read = compatReads?.[signName];
 
             return (
-              <div key={signName} className={`border rounded-md overflow-hidden transition-colors ${isSameSun ? colors.border + ' ' + colors.bg : 'border-border'}`}>
+              <div key={signName} className={`border rounded-md overflow-hidden transition-colors ${isSameSun ? 'border-accent' : 'border-border'}`}>
                 <button
                   onClick={() => setExpandedSign(isExpanded ? null : signName)}
                   className="w-full flex items-center justify-between px-4 py-3 text-left"
@@ -119,7 +123,7 @@ export default function CheatSheetPage() {
                   <div className="flex items-center gap-3">
                     <span className="text-xl">{sign.symbol}</span>
                     <div>
-                      <span className="font-serif font-semibold text-sm">{sign.name} Man</span>
+                      <span className="font-serif font-semibold text-sm">{sign.name} {partnerLabel}</span>
                       {isSameSun && <span className="ml-2 text-xs font-mono text-accent">Same Sun</span>}
                       <span className="block text-xs text-secondary">{sign.dateRange} · {sign.element} · {sign.rulingPlanet}</span>
                     </div>

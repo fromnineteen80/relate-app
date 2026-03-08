@@ -44,55 +44,55 @@ type PlacementKey = 'Sun' | 'Moon' | 'Rising';
 const STRONG_READS: Record<string, Record<PlacementKey, (sign: string) => string>> = {
   // Physical poles
   A: {
-    Sun: (s) => `Your ${s} Sun is built for action and discipline — the same drive that showed up in your assessment as valuing fitness and physical presence. Your identity and your body speak the same language.`,
+    Sun: (s) => `Your ${s} Sun is built for action and discipline. That same drive showed up in your assessment as valuing fitness and physical presence. Your identity and your body speak the same language.`,
     Moon: (s) => `Your ${s} Moon processes emotion through movement and physicality. That lines up with your assessment: you value fitness not as vanity but as an expression of who you are at a gut level.`,
-    Rising: (s) => `People read your ${s} Rising as physically confident before you say a word. Your assessment confirmed it — you lead with presence and your body backs it up.`,
+    Rising: (s) => `People read your ${s} Rising as physically confident before you say a word. Your assessment confirmed it. You lead with presence and your body backs it up.`,
   },
   B: {
     Sun: (s) => `Your ${s} Sun carries the weight of someone who has been through things and come out grounded. Your assessment flagged the same pattern: you value maturity and depth over surface-level attraction.`,
-    Moon: (s) => `Your ${s} Moon needs emotional substance, not sparkle. That is exactly what your assessment revealed — you are drawn to wisdom and lived experience because your emotional core demands it.`,
+    Moon: (s) => `Your ${s} Moon needs emotional substance, not sparkle. That is exactly what your assessment revealed. You are drawn to wisdom and lived experience because your emotional core demands it.`,
     Rising: (s) => `Your ${s} Rising gives off groundedness that people trust immediately. Your assessment said the same thing from a different angle: maturity is not just what you seek, it is what you project.`,
   },
   // Social poles
   C: {
-    Sun: (s) => `Your ${s} Sun is wired to lead and command attention. Your assessment confirmed this is core to your identity — you do not follow, you set the direction.`,
+    Sun: (s) => `Your ${s} Sun is wired to lead and command attention. Your assessment confirmed this is core to your identity. You do not follow. You set the direction.`,
     Moon: (s) => `Your ${s} Moon needs to feel in charge of the emotional room. Your assessment showed the same thing: leadership is not just social for you, it is how you process safety.`,
-    Rising: (s) => `Your ${s} Rising walks into a room and people look. Your assessment called it leadership or allure — your stars call it ${s} energy. Same thing, different language.`,
+    Rising: (s) => `Your ${s} Rising walks into a room and people look. Your assessment called it leadership or allure. Your stars call it ${s} energy. Same thing, different language.`,
   },
   D: {
-    Sun: (s) => `Your ${s} Sun is built for one-on-one depth, not working the room. Your assessment showed the same thing: you value presence — being truly seen and seeing others — over commanding attention.`,
-    Moon: (s) => `Your ${s} Moon needs to feel emotionally held, not entertained. Your assessment flagged presence as your social orientation, and your Moon confirms it — connection means depth, not breadth.`,
-    Rising: (s) => `People sense something perceptive about your ${s} Rising before you speak. Your assessment identified this as presence — the ability to make someone feel like the only person in the room.`,
+    Sun: (s) => `Your ${s} Sun is built for one-on-one depth, not working the room. Your assessment showed the same thing. You value presence, being truly seen and seeing others, over commanding attention.`,
+    Moon: (s) => `Your ${s} Moon needs to feel emotionally held, not entertained. Your assessment flagged presence as your social orientation, and your Moon confirms it. Connection means depth, not breadth.`,
+    Rising: (s) => `People sense something perceptive about your ${s} Rising before you speak. Your assessment identified this as presence, the ability to make someone feel like the only person in the room.`,
   },
   // Lifestyle poles
   E: {
-    Sun: (s) => `Your ${s} Sun runs on novelty and momentum. Your assessment called it adventure — you need a life that moves, explores, and refuses to get stale.`,
+    Sun: (s) => `Your ${s} Sun runs on novelty and momentum. Your assessment called it adventure. You need a life that moves, explores, and refuses to get stale.`,
     Moon: (s) => `Your ${s} Moon gets restless when life gets predictable. That matches your assessment exactly: emotionally, you need new experiences to feel alive, not just comfortable.`,
-    Rising: (s) => `Your ${s} Rising broadcasts energy and spontaneity. People expect adventure from you — and your assessment says that is exactly what you are built to deliver.`,
+    Rising: (s) => `Your ${s} Rising broadcasts energy and spontaneity. People expect adventure from you, and your assessment says that is exactly what you are built to deliver.`,
   },
   F: {
-    Sun: (s) => `Your ${s} Sun is wired to build something lasting, not chase the next thrill. Your assessment identified this as stability — you want a foundation, a home base, a life that holds together.`,
+    Sun: (s) => `Your ${s} Sun is wired to build something lasting, not chase the next thrill. Your assessment identified this as stability. You want a foundation, a home base, a life that holds together.`,
     Moon: (s) => `Your ${s} Moon needs to feel safe before it can feel anything else. Your assessment said the same thing: stability is not boring to you, it is the prerequisite for everything that matters.`,
-    Rising: (s) => `Your ${s} Rising reads as steady and reliable to everyone around you. Your assessment confirmed it — stability is not just what you want, it is what you radiate.`,
+    Rising: (s) => `Your ${s} Rising reads as steady and reliable to everyone around you. Your assessment confirmed it. Stability is not just what you want, it is what you radiate.`,
   },
   // Values poles
   G: {
-    Sun: (s) => `Your ${s} Sun trusts what has been tested over time. Your assessment identified traditional values — loyalty, commitment, and honoring what works — and your stars say the same thing at an identity level.`,
+    Sun: (s) => `Your ${s} Sun trusts what has been tested over time. Your assessment identified traditional values. Loyalty, commitment, and honoring what works. Your stars say the same thing at an identity level.`,
     Moon: (s) => `Your ${s} Moon holds onto what matters. Your assessment flagged traditional values, and your Moon confirms it: emotionally, you need structure and loyalty, not reinvention.`,
-    Rising: (s) => `Your ${s} Rising projects someone who honors their word. Your assessment called it traditional — your stars call it ${s}. Both mean: you do not bend on what is right.`,
+    Rising: (s) => `Your ${s} Rising projects someone who honors their word. Your assessment called it traditional. Your stars call it ${s}. Both mean you do not bend on what is right.`,
   },
   H: {
     Sun: (s) => `Your ${s} Sun questions defaults and builds its own rules. Your assessment identified egalitarian values, and your Sun confirms it: equality and co-creation are not preferences, they are your identity.`,
-    Moon: (s) => `Your ${s} Moon needs fairness to feel safe. Your assessment called it egalitarian — your Moon says the same: if the power is not shared, the emotional foundation cracks.`,
-    Rising: (s) => `Your ${s} Rising signals independence and openness. People sense you are not following a script — your assessment confirmed it: your values are self-authored, not inherited.`,
+    Moon: (s) => `Your ${s} Moon needs fairness to feel safe. Your assessment called it egalitarian. Your Moon says the same. If the power is not shared, the emotional foundation cracks.`,
+    Rising: (s) => `Your ${s} Rising signals independence and openness. People sense you are not following a script. Your assessment confirmed it. Your values are self-authored, not inherited.`,
   },
 };
 
 const MODERATE_READS: Record<string, Record<PlacementKey, (sign: string) => string>> = {
   A: {
-    Sun: (s) => `Your ${s} Sun shares the elemental energy behind your fitness orientation, even though the rhythm differs. The drive is there — it just expresses differently than your assessment might suggest.`,
-    Moon: (s) => `Your ${s} Moon carries some of the same elemental weight as your physical drive. The connection is quieter than a full match but it is real — your body and your emotions are not as separate as they seem.`,
-    Rising: (s) => `Your ${s} Rising hints at the physical confidence your assessment identified. The element is shared — the approach just takes a different shape.`,
+    Sun: (s) => `Your ${s} Sun shares the elemental energy behind your fitness orientation, even though the rhythm differs. The drive is there. It just expresses differently than your assessment might suggest.`,
+    Moon: (s) => `Your ${s} Moon carries some of the same elemental weight as your physical drive. The connection is quieter than a full match, but it is real. Your body and your emotions are not as separate as they seem.`,
+    Rising: (s) => `Your ${s} Rising hints at the physical confidence your assessment identified. The element is shared, but the approach takes a different shape.`,
   },
   B: {
     Sun: (s) => `Your ${s} Sun shares elemental ground with your value of maturity. The depth your assessment revealed has cosmic roots, even if they express through a different rhythm.`,
@@ -101,7 +101,7 @@ const MODERATE_READS: Record<string, Record<PlacementKey, (sign: string) => stri
   },
   C: {
     Sun: (s) => `Your ${s} Sun shares the elemental fire behind your leadership nature. The command your assessment identified has cosmic backing, even if the tempo differs.`,
-    Moon: (s) => `Your ${s} Moon carries elemental energy that connects to your leadership instinct. The need to steer is not just social — it is wired into how you feel.`,
+    Moon: (s) => `Your ${s} Moon carries elemental energy that connects to your leadership instinct. The need to steer is not just social. It is wired into how you feel.`,
     Rising: (s) => `Your ${s} Rising shares the element behind your leadership pole. People catch a glimpse of it before you even engage.`,
   },
   D: {
@@ -110,7 +110,7 @@ const MODERATE_READS: Record<string, Record<PlacementKey, (sign: string) => stri
     Rising: (s) => `Your ${s} Rising carries a trace of the attunement your assessment called presence. It is not the loudest signal, but perceptive people pick up on it.`,
   },
   E: {
-    Sun: (s) => `Your ${s} Sun shares the element behind your adventurous streak. The restlessness your assessment identified has cosmic roots — it just moves at a different pace.`,
+    Sun: (s) => `Your ${s} Sun shares the element behind your adventurous streak. The restlessness your assessment identified has cosmic roots. It just moves at a different pace.`,
     Moon: (s) => `Your ${s} Moon carries elemental energy that connects to your need for adventure. The craving for novelty is emotional, not just logistical.`,
     Rising: (s) => `Your ${s} Rising shares the element behind your adventure orientation. People sense the explorer in you, even in quieter moments.`,
   },
@@ -121,12 +121,12 @@ const MODERATE_READS: Record<string, Record<PlacementKey, (sign: string) => stri
   },
   G: {
     Sun: (s) => `Your ${s} Sun shares the element behind your traditional values. The loyalty and commitment your assessment flagged have a cosmic thread running through your identity.`,
-    Moon: (s) => `Your ${s} Moon carries elemental energy that connects to your traditional values. The need for structure and trust is not just philosophical — it is emotional.`,
+    Moon: (s) => `Your ${s} Moon carries elemental energy that connects to your traditional values. The need for structure and trust is not just philosophical. It is emotional.`,
     Rising: (s) => `Your ${s} Rising shares the element behind your traditional values. People sense your reliability before they know the details.`,
   },
   H: {
     Sun: (s) => `Your ${s} Sun shares the element behind your egalitarian values. The drive toward fairness and co-creation your assessment found has a cosmic echo in your identity.`,
-    Moon: (s) => `Your ${s} Moon carries elemental energy that connects to your egalitarian instinct. The need for equal partnership is not just an idea — it is something you feel.`,
+    Moon: (s) => `Your ${s} Moon carries elemental energy that connects to your egalitarian instinct. The need for equal partnership is not just an idea. It is something you feel.`,
     Rising: (s) => `Your ${s} Rising shares the element behind your egalitarian values. People sense your openness before you even state your position.`,
   },
 };
@@ -268,7 +268,7 @@ function buildSummary(
   strength: 'high' | 'medium' | 'low',
 ): string {
   if (alignments.length === 0) {
-    return `Your ${personaName} persona and your cosmic blueprint operate on different wavelengths. This is not a contradiction — it means your chart reveals dimensions of you that the assessment does not capture. The tension between the two is where your complexity lives.`;
+    return `Your ${personaName} persona and your cosmic blueprint operate on different wavelengths. This is not a contradiction. It means your chart reveals dimensions of you that the assessment does not capture. The tension between the two is where your complexity lives.`;
   }
 
   const dims = alignments.map(a => a.dimension.toLowerCase());
@@ -277,12 +277,12 @@ function buildSummary(
     : dims.slice(0, -1).join(', ') + ' and ' + dims[dims.length - 1];
 
   if (strength === 'high') {
-    return `Your ${personaName} persona and your stars are deeply aligned. The patterns that showed up in your assessment — especially around ${dimList} — are echoed in your birth chart. Who you are on paper and who you are in the cosmos tell the same story.`;
+    return `Your ${personaName} persona and your stars are deeply aligned. The patterns that showed up in your assessment, especially around ${dimList}, are echoed in your birth chart. Who you are on paper and who you are in the cosmos tell the same story.`;
   }
   if (strength === 'medium') {
     return `There is a meaningful thread between your ${personaName} persona and your chart, particularly around ${dimList}. Your stars confirm some of what the assessment revealed, while adding cosmic nuance the questions could not capture.`;
   }
-  return `Your ${personaName} persona and your birth chart share a subtle connection around ${dimList}. The overlap is not loud, but it is there — a quiet confirmation that your cosmic wiring and your relational instincts are not as separate as they might seem.`;
+  return `Your ${personaName} persona and your birth chart share a subtle connection around ${dimList}. The overlap is not loud, but it is there. A quiet confirmation that your cosmic wiring and your relational instincts are not as separate as they might seem.`;
 }
 
 // ─── Demographic Insights ───
@@ -303,12 +303,12 @@ function buildDemographicInsights(chart: BirthChartResult, demo: any): Demograph
     if (sunEl === 'Fire' || sunEl === 'Earth') {
       insights.push({
         label: 'Fitness',
-        text: `You work out ${fitness.toLowerCase()}. Your ${chart.sun.sign} Sun (${sunEl}) backs that up — ${sunEl === 'Fire' ? 'Fire signs channel emotion into physical action' : 'Earth signs treat the body as a long-term investment'}. The discipline is not separate from who you are. It is who you are.`,
+        text: `You work out ${fitness.toLowerCase()}. Your ${chart.sun.sign} Sun (${sunEl}) backs that up. ${sunEl === 'Fire' ? 'Fire signs channel emotion into physical action' : 'Earth signs treat the body as a long-term investment'}. The discipline is not separate from who you are. It is who you are.`,
       });
     } else if (moonEl === 'Fire' || moonEl === 'Earth') {
       insights.push({
         label: 'Fitness',
-        text: `You work out ${fitness.toLowerCase()}, and your ${moonSign} Moon might explain why — ${moonEl === 'Fire' ? 'Fire Moons need to burn through emotion physically' : 'Earth Moons find emotional regulation through routine and the body'}. It is not just health. It is how you stay grounded.`,
+        text: `You work out ${fitness.toLowerCase()}, and your ${moonSign} Moon might explain why. ${moonEl === 'Fire' ? 'Fire Moons need to burn through emotion physically' : 'Earth Moons find emotional regulation through routine and the body'}. It is not just health. It is how you stay grounded.`,
       });
     }
   }
@@ -321,12 +321,12 @@ function buildDemographicInsights(chart: BirthChartResult, demo: any): Demograph
     if (isConservative && (sunEl === 'Earth' || sunEl === 'Water')) {
       insights.push({
         label: 'Values',
-        text: `Your conservative orientation and your ${chart.sun.sign} Sun speak the same language — ${sunEl === 'Earth' ? 'Earth signs trust what has been tested and build on proven ground' : 'Water signs honor loyalty and the bonds that endure'}. You are not rigid. You are rooted.`,
+        text: `Your conservative orientation and your ${chart.sun.sign} Sun speak the same language. ${sunEl === 'Earth' ? 'Earth signs trust what has been tested and build on proven ground' : 'Water signs honor loyalty and the bonds that endure'}. You are not rigid. You are rooted.`,
       });
     } else if (isLiberal && (sunEl === 'Air' || sunEl === 'Fire')) {
       insights.push({
         label: 'Values',
-        text: `Your liberal orientation and your ${chart.sun.sign} Sun share a wavelength — ${sunEl === 'Air' ? 'Air signs question defaults and build new frameworks' : 'Fire signs refuse to follow a path that does not feel right'}. Questioning the status quo is not rebellion. It is how you are wired.`,
+        text: `Your liberal orientation and your ${chart.sun.sign} Sun share a wavelength. ${sunEl === 'Air' ? 'Air signs question defaults and build new frameworks' : 'Fire signs refuse to follow a path that does not feel right'}. Questioning the status quo is not rebellion. It is how you are wired.`,
       });
     } else if (isConservative && (sunEl === 'Air' || sunEl === 'Fire')) {
       insights.push({
@@ -346,12 +346,12 @@ function buildDemographicInsights(chart: BirthChartResult, demo: any): Demograph
   if (wantKids === 'Yes' && (moonEl === 'Water' || moonSign === 'Cancer' || moonSign === 'Taurus')) {
     insights.push({
       label: 'Family',
-      text: `You want children, and your ${moonSign} Moon ${moonSign === 'Cancer' ? 'is literally the sign of motherhood and home' : moonEl === 'Water' ? 'runs on emotional depth and nurturing' : 'is wired for building something lasting and safe'}. That desire is not just a life plan — it is an emotional need your chart has been carrying all along.`,
+      text: `You want children, and your ${moonSign} Moon ${moonSign === 'Cancer' ? 'is literally the sign of nurturing and home' : moonEl === 'Water' ? 'runs on emotional depth and nurturing' : 'is wired for building something lasting and safe'}. That desire is not just a life plan. It is an emotional need your chart has been carrying all along.`,
     });
   } else if (wantKids === 'No' && (moonEl === 'Fire' || moonEl === 'Air')) {
     insights.push({
       label: 'Family',
-      text: `You do not want children, and your ${moonSign} Moon (${moonEl}) sheds light on why — ${moonEl === 'Fire' ? 'Fire Moons need freedom and forward motion' : 'Air Moons need intellectual space and resist being locked into one role'}. That choice is not a deficiency. It is self-knowledge backed by your emotional wiring.`,
+      text: `You do not want children, and your ${moonSign} Moon (${moonEl}) sheds light on why. ${moonEl === 'Fire' ? 'Fire Moons need freedom and forward motion' : 'Air Moons need intellectual space and resist being locked into one role'}. That choice is not a deficiency. It is self-knowledge backed by your emotional wiring.`,
     });
   }
 
@@ -360,17 +360,17 @@ function buildDemographicInsights(chart: BirthChartResult, demo: any): Demograph
   if (seeking === 'partner' && sunMod === 'Cardinal') {
     insights.push({
       label: 'Intent',
-      text: `You came here to find a partner, and your ${chart.sun.sign} Sun is Cardinal — the initiator. You do not wait for things to happen. You go looking. That is not impatience. That is your Sun doing exactly what it was built to do.`,
+      text: `You came here to find a partner, and your ${chart.sun.sign} Sun is Cardinal, the initiator. You do not wait for things to happen. You go looking. That is not impatience. That is your Sun doing exactly what it was built to do.`,
     });
   } else if (seeking === 'self-knowledge' && sunMod === 'Mutable') {
     insights.push({
       label: 'Intent',
-      text: `You came here for self-knowledge, and your ${chart.sun.sign} Sun is Mutable — the sign that learns by adapting and absorbing. You are not here to be told who you are. You are here to have a mirror held up so you can decide for yourself.`,
+      text: `You came here for self-knowledge, and your ${chart.sun.sign} Sun is Mutable, the sign that learns by adapting and absorbing. You are not here to be told who you are. You are here to have a mirror held up so you can decide for yourself.`,
     });
   } else if (seeking === 'relationship-improvement' && sunMod === 'Fixed') {
     insights.push({
       label: 'Intent',
-      text: `You came here to improve your relationship, and your ${chart.sun.sign} Sun is Fixed — the sign that commits and stays. You do not leave when things get hard. You dig in. That loyalty is the reason you are here instead of somewhere else.`,
+      text: `You came here to improve your relationship, and your ${chart.sun.sign} Sun is Fixed, the sign that commits and stays. You do not leave when things get hard. You dig in. That loyalty is the reason you are here instead of somewhere else.`,
     });
   }
 
@@ -381,7 +381,7 @@ function buildDemographicInsights(chart: BirthChartResult, demo: any): Demograph
     if (wantsHighFitness && (sunEl === 'Fire' || sunEl === 'Earth')) {
       insights.push({
         label: 'What You Want',
-        text: `You set a high physical bar for a partner, and your ${chart.sun.sign} Sun (${sunEl}) explains why — ${sunEl === 'Fire' ? 'Fire signs are drawn to vitality and refuse to settle for low energy' : 'Earth signs read physical discipline as proof that someone can commit to something long-term'}. It is not shallow. It is a signal you are reading correctly.`,
+        text: `You set a high physical bar for a partner, and your ${chart.sun.sign} Sun (${sunEl}) explains why. ${sunEl === 'Fire' ? 'Fire signs are drawn to vitality and refuse to settle for low energy' : 'Earth signs read physical discipline as proof that someone can commit to something long-term'}. It is not shallow. It is a signal you are reading correctly.`,
       });
     }
   }
