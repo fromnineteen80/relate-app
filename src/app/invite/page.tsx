@@ -25,6 +25,13 @@ export default function InvitePage() {
   const [partnerLoading, setPartnerLoading] = useState(true);
   const [connectedAt, setConnectedAt] = useState<string | null>(null);
 
+  // Invite flow state (when partner has no account)
+  const [showInvite, setShowInvite] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteSending, setInviteSending] = useState(false);
+  const [inviteSent, setInviteSent] = useState(false);
+  const [inviteError, setInviteError] = useState('');
+
   // Discount code state
   const [discountCode, setDiscountCode] = useState('');
   const [discountApplied, setDiscountApplied] = useState(false);
@@ -109,10 +116,21 @@ export default function InvitePage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Failed to find partner');
+        if (res.status === 404) {
+          // Partner not found — offer to send an invite
+          setInviteEmail(email.trim());
+          setShowInvite(true);
+          setError('');
+        } else {
+          setError(data.error || 'Failed to find partner');
+        }
         setLoading(false);
         return;
       }
+
+      // Reset invite state on successful lookup
+      setShowInvite(false);
+      setInviteSent(false);
 
       setPartner(data.partner);
       setConnectedAt(data.alreadyConnected ? null : new Date().toISOString());
@@ -173,6 +191,32 @@ export default function InvitePage() {
       setDiscountError('Failed to apply discount code. Please try again.');
     } finally {
       setDiscountSubmitting(false);
+    }
+  }
+
+  async function handleSendInvite() {
+    if (!inviteEmail.trim() || inviteSending || !user) return;
+    setInviteSending(true);
+    setInviteError('');
+
+    try {
+      const res = await fetch('/api/invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: inviteEmail.trim(), userId: user.id }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setInviteSent(true);
+      } else {
+        setInviteError(data.error || 'Failed to send invitation');
+      }
+    } catch {
+      setInviteError('Something went wrong. Please try again.');
+    } finally {
+      setInviteSending(false);
     }
   }
 
@@ -330,13 +374,13 @@ export default function InvitePage() {
             <form onSubmit={handleLookup} className="card">
               <h3 className="font-serif text-sm font-semibold mb-3">Find Your Partner</h3>
               <p className="text-xs text-secondary mb-4">
-                Enter your partner&apos;s email address. They must already have a RELATE account.
+                Enter your partner&apos;s email address to connect your accounts.
               </p>
               <div className="space-y-3">
                 <input
                   type="email"
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  onChange={e => { setEmail(e.target.value); setShowInvite(false); setInviteSent(false); }}
                   className="input"
                   placeholder="partner@email.com"
                   required
@@ -348,14 +392,49 @@ export default function InvitePage() {
               </div>
             </form>
 
+            {/* ── Invite Flow (partner not found) ── */}
+            {showInvite && !inviteSent && (
+              <div className="card">
+                <h3 className="font-serif text-sm font-semibold mb-2">No Account Found</h3>
+                <p className="text-xs text-secondary mb-4">
+                  <span className="font-medium text-primary">{inviteEmail}</span> doesn&apos;t have a RELATE account yet.
+                  Send them an invitation to sign up and take the assessment.
+                </p>
+                {inviteError && <p className="text-xs text-danger mb-3">{inviteError}</p>}
+                <button
+                  onClick={handleSendInvite}
+                  disabled={inviteSending}
+                  className="btn-primary w-full"
+                >
+                  {inviteSending ? 'Sending...' : 'Send Invitation'}
+                </button>
+              </div>
+            )}
+
+            {/* ── Invite Sent Confirmation ── */}
+            {inviteSent && (
+              <div className="card border-success">
+                <div className="flex items-start gap-3">
+                  <span className="w-6 h-6 rounded-full bg-success/10 text-success text-xs flex items-center justify-center flex-shrink-0 mt-0.5">&#10003;</span>
+                  <div>
+                    <h3 className="font-serif text-sm font-semibold mb-1">Invitation Sent</h3>
+                    <p className="text-xs text-secondary">
+                      We sent an invitation to <span className="font-medium text-primary">{inviteEmail}</span>.
+                      Once they create an account and complete the assessment, come back here to connect.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* How it works */}
             <div className="space-y-3">
               <h3 className="font-serif text-sm font-semibold">How It Works</h3>
               {[
                 { step: '1', text: 'Enter your partner\'s email to connect your accounts' },
-                { step: '2', text: 'Both partners need to have completed the RELATE assessment' },
-                { step: '3', text: 'Use a discount code or pay $119 for Couples access' },
-                { step: '4', text: 'Unlock compatibility analysis, growth plan, shared advisor, and more' },
+                { step: '2', text: 'If they don\'t have an account, send them an invitation' },
+                { step: '3', text: 'Both partners complete the RELATE assessment' },
+                { step: '4', text: 'Use a discount code or pay $119 for Couples access' },
               ].map(s => (
                 <div key={s.step} className="flex items-start gap-3">
                   <span className="w-6 h-6 rounded-full bg-accent/10 text-accent text-xs flex items-center justify-center flex-shrink-0 font-mono">{s.step}</span>
