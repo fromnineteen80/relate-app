@@ -23,6 +23,8 @@ export default function CheatSheetPage() {
   const [personaCode, setPersonaCode] = useState<string | null>(null);
   const [personaName, setPersonaName] = useState<string | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [persona, setPersona] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [demographics, setDemographics] = useState<any>(null);
 
   useEffect(() => {
@@ -38,6 +40,7 @@ export default function CheatSheetPage() {
         const results = JSON.parse(resultsStr);
         if (results.persona?.code) setPersonaCode(results.persona.code);
         if (results.persona?.name) setPersonaName(results.persona.name);
+        if (results.persona) setPersona(results.persona);
       }
     } catch { /* */ }
     try {
@@ -61,10 +64,10 @@ export default function CheatSheetPage() {
     if (!personaCode || !personaName) return null;
     const reads: Record<string, PersonaSignRead> = {};
     for (const sign of ALL_SIGNS) {
-      reads[sign] = generatePersonaSignRead(personaCode, personaName, sign, demographics);
+      reads[sign] = generatePersonaSignRead(personaCode, personaName, sign, demographics, persona);
     }
     return reads;
-  }, [personaCode, personaName, demographics]);
+  }, [personaCode, personaName, demographics, persona]);
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
 
@@ -135,10 +138,10 @@ export default function CheatSheetPage() {
                       <>
                         <div className="border-t border-accent/20 pt-3 mt-1" />
                         <div>
-                          <span className="font-mono text-[10px] text-accent uppercase tracking-wider">Personal Affirmation</span>
+                          <span className="font-mono text-[10px] text-accent uppercase tracking-wider">Alignment</span>
                         </div>
                         <CheatRow label="Where You Connect" content={personaReads[signName].alignment} icon={<Icon name="link" size={16} className="text-accent" />} />
-                        <CheatRow label="Where You Stretch" content={personaReads[signName].tension} icon={<Icon name="spa" size={16} className="text-secondary" />} />
+                        <CheatRow label="Where You Differ" content={personaReads[signName].tension} icon={<Icon name="spa" size={16} className="text-secondary" />} />
                       </>
                     )}
                   </div>
