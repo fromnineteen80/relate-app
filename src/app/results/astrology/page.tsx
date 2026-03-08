@@ -187,14 +187,14 @@ export default function AstrologyPage() {
         <SiteHeader />
         <SubNav />
         <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
-          <div className="flex items-center justify-between gap-4 flex-wrap mb-6">
-            <div className="min-w-0">
-              <span className="font-mono text-xs text-secondary uppercase tracking-wider">Sun, Moon &amp; Rise</span>
-              <h1 className="font-serif text-2xl font-semibold mt-1">Your Cosmic Blueprint</h1>
+          <div className="mb-6">
+            <span className="font-mono text-xs text-secondary uppercase tracking-wider">Sun, Moon &amp; Rise</span>
+            <div className="flex items-baseline justify-between gap-4 mt-1">
+              <h1 className="font-serif text-2xl font-semibold">Your Cosmic Blueprint</h1>
+              <Link href="/results/astrology/cheatsheet" className="text-sm text-accent hover:underline shrink-0">
+                View Dating Cheat Sheet
+              </Link>
             </div>
-            <Link href="/results/astrology/cheatsheet" className="btn-secondary text-sm shrink-0">
-              Cheat Sheet
-            </Link>
           </div>
 
           {/* ── Persona–Astrology Alignment Card ── */}
@@ -216,7 +216,7 @@ export default function AstrologyPage() {
                 <div className="space-y-2">
                   {alignment.alignments.map((a, i) => (
                     <div key={i} className="flex items-start gap-2 text-sm">
-                      <span className={`shrink-0 mt-0.5 w-2 h-2 rounded-full ${a.strength === 'strong' ? 'bg-accent' : 'bg-accent/40'}`} />
+                      <span className={`shrink-0 mt-[5px] w-2 h-2 rounded-full ${a.strength === 'strong' ? 'bg-accent' : 'bg-accent/40'}`} />
                       <div>
                         <span className="font-medium text-foreground">{a.placement} · {a.themeLabel}</span>
                         <span className="text-secondary">. {a.explanation}</span>
@@ -229,7 +229,7 @@ export default function AstrologyPage() {
                 <div className={`space-y-2 ${alignment.alignments.length > 0 ? 'mt-4 pt-4 border-t border-accent/15' : ''}`}>
                   {alignment.demographicInsights.map((d, i) => (
                     <div key={i} className="flex items-start gap-2 text-sm">
-                      <span className="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-secondary/40" />
+                      <span className="shrink-0 mt-[5px] w-2 h-2 rounded-full bg-secondary/40" />
                       <div>
                         <span className="font-medium text-foreground">{d.label}</span>
                         <span className="text-secondary">. {d.text}</span>
@@ -348,14 +348,9 @@ export default function AstrologyPage() {
             );
           })()}
 
-          <div className="flex gap-3">
-            <button onClick={() => { setChart(null); }} className="btn-secondary text-sm flex-1">
-              Edit Birth Data
-            </button>
-            <Link href="/results/astrology/cheatsheet" className="btn-primary text-sm flex-1 text-center">
-              View Cheat Sheet
-            </Link>
-          </div>
+          <button onClick={() => { setChart(null); }} className="btn-secondary text-sm w-full">
+            Edit Birth Data
+          </button>
         </main>
         <SiteFooter />
       </div>

@@ -175,13 +175,13 @@ export async function clearAllProgress(userId: string) {
 export function saveProfileToDb(
   userId: string,
   email: string,
-  profile: { firstName: string; lastName: string; zipCode: string; city: string; state: string; county: string },
+  profile: { firstName: string; lastName: string; zipCode: string; city: string; state: string; county: string; photoUrl?: string | null },
 ) {
   if (config.useMockAuth) return;
   const supabase = getSupabase();
   if (!supabase) return;
 
-  supabase.from('users').upsert({
+  const row: any = {
     id: userId,
     email,
     first_name: profile.firstName,
@@ -190,7 +190,12 @@ export function saveProfileToDb(
     city: profile.city,
     state: profile.state,
     county: profile.county,
-  }).then(({ error }) => {
+  };
+  if (profile.photoUrl !== undefined) {
+    row.photo_url = profile.photoUrl;
+  }
+
+  supabase.from('users').upsert(row).then(({ error }) => {
     if (error) console.warn('Failed to save profile to DB:', error.message);
   });
 }
@@ -270,6 +275,9 @@ export async function loadProfileFromDb(userId: string): Promise<boolean> {
       birth_hour: data.birth_hour,
       birth_minute: data.birth_minute,
       birth_ampm: data.birth_ampm,
+      birth_city: data.birth_city,
+      birth_latitude: data.birth_latitude,
+      birth_longitude: data.birth_longitude,
     };
     localStorage.setItem('relate_demographics', JSON.stringify(demographics));
     localStorage.setItem('relate_gender', data.gender);
@@ -324,6 +332,16 @@ export function saveDemographicsToDb(
     pref_has_kids: form.prefHasKids || null,
     pref_want_kids: form.prefWantKids || null,
     seeking: form.seeking || null,
+    birth_month: form.birthMonth ? parseInt(form.birthMonth) : null,
+    birth_day: form.birthDay ? parseInt(form.birthDay) : null,
+    birth_year: form.birthYear ? parseInt(form.birthYear) : null,
+    birth_hour: form.birthHour ? parseInt(form.birthHour) : null,
+    birth_minute: form.birthMinute ? parseInt(form.birthMinute) : null,
+    birth_ampm: form.birthAmPm || null,
+    birth_city: form.birthCity || null,
+    birth_latitude: form.birthLatitude ? parseFloat(form.birthLatitude) : null,
+    birth_longitude: form.birthLongitude ? parseFloat(form.birthLongitude) : null,
+    astrology_enabled: form.astrologyEnabled ?? null,
   }).then(({ error }) => {
     if (error) console.warn('Failed to save demographics to DB:', error.message);
   });
