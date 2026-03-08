@@ -14,7 +14,7 @@ export default function Module5Page() {
   const [questions, setQuestions] = useState<FlatQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [gender, setGender] = useState<string>('M');
-  const [totalQuestions, setTotalQuestions] = useState(391);
+  const [totalQuestions, setTotalQuestions] = useState(386);
 
   useEffect(() => {
     const g = localStorage.getItem('relate_gender');

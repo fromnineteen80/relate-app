@@ -302,6 +302,7 @@ export default function DemographicsPage() {
       birth_hour: form.birthHour ? parseInt(form.birthHour) : null,
       birth_minute: form.birthMinute ? parseInt(form.birthMinute) : null,
       birth_ampm: form.birthAmPm || null,
+      astrology_enabled: astrologyEnabled || form.gender === 'Woman',
     };
 
     // Pre-populate astrology birth data if birth fields are filled

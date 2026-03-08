@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
 import { SiteFooter } from '@/components/SiteFooter';
-import { saveProfileToDb } from '@/lib/supabase/progress';
+import { saveProfileToDb, saveUserField } from '@/lib/supabase/progress';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -97,6 +97,7 @@ export default function ProfileSettings() {
       const dataUrl = reader.result as string;
       localStorage.setItem('relate_profile_photo', dataUrl);
       setPhotoUrl(dataUrl);
+      if (user) saveUserField(user.id, 'photo_url', dataUrl);
     };
     reader.readAsDataURL(file);
   }
@@ -105,6 +106,7 @@ export default function ProfileSettings() {
     localStorage.removeItem('relate_profile_photo');
     setPhotoUrl(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
+    if (user) saveUserField(user.id, 'photo_url', null);
   }
 
   async function handleSignOut() {
@@ -263,6 +265,7 @@ export default function ProfileSettings() {
                       const next = !astrologyEnabled;
                       setAstrologyEnabled(next);
                       localStorage.setItem('relate_astrology_enabled', String(next));
+                      if (user) saveUserField(user.id, 'astrology_enabled', next);
                     }}
                     className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${astrologyEnabled ? 'bg-accent' : 'bg-stone-300'}`}
                     role="switch"

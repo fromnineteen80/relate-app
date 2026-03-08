@@ -206,9 +206,12 @@ export async function loadProfileFromDb(userId: string): Promise<boolean> {
       city: data.city || '',
       state: data.state || '',
       county: data.county || '',
-      photoUrl: null,
+      photoUrl: data.photo_url || null,
     };
     localStorage.setItem('relate_profile', JSON.stringify(profile));
+    if (data.photo_url) {
+      localStorage.setItem('relate_profile_photo', data.photo_url);
+    }
     const name = `${profile.firstName} ${profile.lastName}`.trim();
     if (name) localStorage.setItem('relate_profile_name', name);
   }
@@ -244,10 +247,21 @@ export async function loadProfileFromDb(userId: string): Promise<boolean> {
       pref_smoking: data.pref_smoking,
       pref_has_kids: data.pref_has_kids,
       pref_want_kids: data.pref_want_kids,
+      pref_ethnicities: data.pref_ethnicities,
+      pref_education_levels: data.pref_education_levels,
       seeking: data.seeking,
+      birth_month: data.birth_month,
+      birth_day: data.birth_day,
+      birth_year: data.birth_year,
+      birth_hour: data.birth_hour,
+      birth_minute: data.birth_minute,
+      birth_ampm: data.birth_ampm,
     };
     localStorage.setItem('relate_demographics', JSON.stringify(demographics));
     localStorage.setItem('relate_gender', data.gender);
+    if (data.astrology_enabled != null) {
+      localStorage.setItem('relate_astrology_enabled', String(data.astrology_enabled));
+    }
   }
 
   return true;
@@ -290,6 +304,8 @@ export function saveDemographicsToDb(
     pref_body_types: form.prefBodyTypes?.length > 0 ? form.prefBodyTypes : null,
     pref_fitness_levels: form.prefFitnessLevels?.length > 0 ? form.prefFitnessLevels : null,
     pref_political: form.prefPolitical?.length > 0 ? form.prefPolitical : null,
+    pref_ethnicities: form.prefEthnicities?.length > 0 ? form.prefEthnicities : null,
+    pref_education_levels: form.prefEducation?.length > 0 ? form.prefEducation : null,
     pref_smoking: form.prefSmoking || null,
     pref_has_kids: form.prefHasKids || null,
     pref_want_kids: form.prefWantKids || null,
@@ -297,6 +313,19 @@ export function saveDemographicsToDb(
   }).then(({ error }) => {
     if (error) console.warn('Failed to save demographics to DB:', error.message);
   });
+}
+
+/**
+ * Save a single field to the users table (fire-and-forget).
+ */
+export function saveUserField(userId: string, field: string, value: any) {
+  if (config.useMockAuth) return;
+  const supabase = getSupabase();
+  if (!supabase) return;
+  supabase.from('users').update({ [field]: value }).eq('id', userId)
+    .then(({ error }) => {
+      if (error) console.warn(`Failed to save ${field} to DB:`, error.message);
+    });
 }
 
 /**

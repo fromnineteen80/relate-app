@@ -46,6 +46,8 @@ create table if not exists public.users (
   birth_hour integer,
   birth_minute integer,
   birth_ampm text check (birth_ampm in ('AM', 'PM')),
+  astrology_enabled boolean,
+  photo_url text,
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now()
 );
