@@ -25,6 +25,10 @@ const ELEMENT_COMPAT: Record<Element, Record<Element, 'natural' | 'complementary
   Water: { Fire: 'challenging', Earth: 'complementary', Air: 'neutral', Water: 'natural' },
 };
 
+export function getElementCompat(userElement: Element, partnerElement: Element): 'natural' | 'complementary' | 'challenging' | 'neutral' {
+  return ELEMENT_COMPAT[userElement][partnerElement];
+}
+
 // ─── Modality Dynamics ───
 
 type Modality = 'Cardinal' | 'Fixed' | 'Mutable';

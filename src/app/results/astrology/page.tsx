@@ -273,11 +273,11 @@ export default function AstrologyPage() {
 
           {/* ── Element Balance ── */}
           {(() => {
-            const ELEMENT_INFO: Record<string, { symbol: string; keywords: string; description: string }> = {
-              Fire:  { symbol: '🔥', keywords: 'Passion · Drive · Confidence', description: 'Fire placements bring initiative, honesty, and intensity. You lead with energy and expect directness in return.' },
-              Earth: { symbol: '🌿', keywords: 'Stability · Loyalty · Patience', description: 'Earth placements bring consistency and practicality. You build trust through actions, not words.' },
-              Air:   { symbol: '💨', keywords: 'Intellect · Communication · Curiosity', description: 'Air placements bring mental agility and social fluency. You connect through ideas and conversation first.' },
-              Water: { symbol: '🌊', keywords: 'Intuition · Depth · Empathy', description: 'Water placements bring emotional intelligence and sensitivity. You read people before they speak.' },
+            const ELEMENT_INFO: Record<string, { icon: string; keywords: string; description: string }> = {
+              Fire:  { icon: 'local_fire_department', keywords: 'Passion · Drive · Confidence', description: 'Fire placements bring initiative, honesty, and intensity. You lead with energy and expect directness in return.' },
+              Earth: { icon: 'park', keywords: 'Stability · Loyalty · Patience', description: 'Earth placements bring consistency and practicality. You build trust through actions, not words.' },
+              Air:   { icon: 'air', keywords: 'Intellect · Communication · Curiosity', description: 'Air placements bring mental agility and social fluency. You connect through ideas and conversation first.' },
+              Water: { icon: 'water_drop', keywords: 'Intuition · Depth · Empathy', description: 'Water placements bring emotional intelligence and sensitivity. You read people before they speak.' },
             };
             const elementCounts = (['Fire', 'Earth', 'Air', 'Water'] as const).map(el => ({
               element: el,
@@ -310,7 +310,7 @@ export default function AstrologyPage() {
                     return (
                       <div key={el} className={`rounded-lg p-3 ${isActive ? `${colors.bg} border ${colors.border}` : 'bg-background border border-border opacity-50'}`}>
                         <div className="flex items-center gap-3">
-                          <span className="text-xl">{info.symbol}</span>
+                          <Icon name={info.icon} size={24} fill={true} className={isActive ? colors.text : 'text-secondary'} />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <span className={`font-semibold text-sm ${isActive ? colors.text : 'text-secondary'}`}>

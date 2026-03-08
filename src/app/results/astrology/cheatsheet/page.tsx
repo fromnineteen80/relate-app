@@ -8,8 +8,8 @@ import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 import { useAuth } from '@/lib/auth-context';
 import { loadChartResult, type BirthChartResult } from '@/lib/astrology/engine';
-import { ALL_SIGNS, SIGN_DATA } from '@/lib/astrology/signs';
-import { generateCompatibilityRead, generatePersonaSignRead, type CompatibilityRead } from '@/lib/astrology/compatibility';
+import { ALL_SIGNS, SIGN_DATA, ELEMENT_COLORS } from '@/lib/astrology/signs';
+import { generateCompatibilityRead, generatePersonaSignRead, getElementCompat, type CompatibilityRead } from '@/lib/astrology/compatibility';
 import { getAstroGenderContextFromStorage, type AstroGenderContext } from '@/lib/astrology/gender-context';
 import type { ZodiacSign } from '@/lib/astrology/engine';
 import { Icon } from '@/components/Icon';
@@ -113,6 +113,12 @@ export default function CheatSheetPage() {
             const isSameSun = signName === userSunSign;
             const isExpanded = expandedSign === signName;
             const read = compatReads?.[signName];
+            const userSunElement = SIGN_DATA[userSunSign].element;
+            const compat = getElementCompat(userSunElement, sign.element);
+            const matchLevel = compat === 'natural' ? { label: 'Best Match', color: 'text-emerald-600' }
+              : compat === 'complementary' ? { label: 'Good Match', color: 'text-yellow-600' }
+              : compat === 'neutral' ? { label: 'Neutral', color: 'text-yellow-600' }
+              : { label: 'Challenging', color: 'text-red-500' };
 
             return (
               <div key={signName} className={`border rounded-md overflow-hidden transition-colors ${isSameSun ? 'border-accent' : 'border-border'}`}>
@@ -120,7 +126,7 @@ export default function CheatSheetPage() {
                   onClick={() => setExpandedSign(isExpanded ? null : signName)}
                   className="w-full flex items-center justify-between px-4 py-3 text-left"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     <span className="text-xl">{sign.symbol}</span>
                     <div>
                       <span className="font-serif font-semibold text-sm">{sign.name} {partnerLabel}</span>
@@ -128,7 +134,10 @@ export default function CheatSheetPage() {
                       <span className="block text-xs text-secondary">{sign.dateRange} · {sign.element} · {sign.rulingPlanet}</span>
                     </div>
                   </div>
-                  <Icon name={isExpanded ? 'expand_less' : 'expand_more'} size={16} className="text-secondary" />
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className={`text-xs font-semibold ${matchLevel.color}`}>{matchLevel.label}</span>
+                    <Icon name={isExpanded ? 'expand_less' : 'expand_more'} size={16} className="text-secondary" />
+                  </div>
                 </button>
 
                 {isExpanded && read && (
