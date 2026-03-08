@@ -248,7 +248,7 @@ export default function AstrologyPage() {
                     <div key={i} className="flex items-start gap-2 text-sm">
                       <span className={`shrink-0 mt-0.5 w-2 h-2 rounded-full ${a.strength === 'strong' ? 'bg-accent' : 'bg-accent/40'}`} />
                       <div>
-                        <span className="font-medium text-foreground">{a.placement} · {a.dimension}</span>
+                        <span className="font-medium text-foreground">{a.placement} · {a.themeLabel}</span>
                         <span className="text-secondary"> — {a.explanation}</span>
                       </div>
                     </div>
