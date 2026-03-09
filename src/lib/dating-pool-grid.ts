@@ -212,14 +212,40 @@ export function renderDatingPoolGrid(
   // ── Header ──
   const header = el('div', { marginBottom: '18px' });
 
-  const metroShort = metro.includes(',') ? metro.split(',')[0] : metro;
+  // Title row with icon
+  const titleRow = el('div', {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    margin: '0 0 4px 0',
+  });
 
-  header.appendChild(text('h3', `Dating Pool — ${metroShort}`, {
+  // Trending up icon (same as Dating Market card)
+  const iconSpan = el('span', {
+    fontSize: '20px',
+    fontFamily: "'Material Symbols Rounded', sans-serif",
+    color: '#c2410c', // accent
+    lineHeight: '1',
+  });
+  iconSpan.textContent = 'trending_up';
+  iconSpan.classList.add('material-symbols-rounded');
+  titleRow.appendChild(iconSpan);
+
+  titleRow.appendChild(text('h3', 'Your Dating Pool', {
     fontSize: '18px',
     fontWeight: '600',
     fontFamily: "'Noto Serif', 'Lora', Georgia, serif",
     color: COLORS.textPrimary,
+    margin: '0',
+  }));
+  header.appendChild(titleRow);
+
+  // Metro location subtitle (matches Dating Market card style)
+  header.appendChild(text('p', metro, {
+    fontSize: '12px',
+    color: COLORS.textSecondary,
     margin: '0 0 4px 0',
+    lineHeight: '1.5',
   }));
 
   const subtitle = text('p', '', {

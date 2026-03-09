@@ -1864,7 +1864,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
       <div className="mb-6">
         <div className="flex items-end justify-between mb-2">
           <div>
-            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Relate Score</span>
+            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Local Competition</span>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="font-mono text-3xl font-semibold">{score.toFixed(0)}</span>
               <span className={`text-sm font-medium ${tier.color}`}>{tier.label}</span>
@@ -1881,7 +1881,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
 
       {Object.keys(components).length > 0 && (
         <div className="mb-6">
-          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Score Breakdown</span>
+          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Your Stats</span>
           <div className="space-y-2 mt-2">
             {compOrder.map(key => {
               const comp = components[key];
