@@ -736,16 +736,11 @@ function ResultsDashboard() {
         {/* ── Persona ── */}
         {persona && (
           <section className="card mb-4 scroll-mt-32">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Your Persona</span>
-                <h3 className="font-serif text-lg font-semibold mt-1">{persona.name}</h3>
-                {persona.code && <span className="font-mono text-xs text-accent">{persona.code}</span>}
-              </div>
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="font-serif text-lg font-semibold flex items-center gap-2">{persona.code && <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-accent text-white text-[9px] font-mono font-bold leading-none shrink-0">{persona.code}</span>}{persona.name}</h3>
               <Link href="/results/persona" className="btn-secondary text-xs">Details</Link>
             </div>
             {persona.traits && <p className="explainer mb-4">{persona.traits}</p>}
-
             {/* Dating Behavior */}
             {persona.datingBehavior?.length > 0 && (
               <div>
@@ -1680,7 +1675,7 @@ function DatingPoolGridCard({ data, demographics }: { data: MarketData | null; d
     const singlesPool = pool.localSinglePool || 0;
 
     // Derive targetGender from user's gender (seeking opposite)
-    const userGender = demographics.gender;
+    const userGender = demographics.gender || localStorage.getItem('relate_gender');
     let targetGender: TargetGender = 'women';
     if (userGender === 'Woman' || userGender === 'woman' || userGender === 'F' || userGender === 'female') {
       targetGender = 'men';
@@ -1706,7 +1701,7 @@ function DatingPoolGridCard({ data, demographics }: { data: MarketData | null; d
         metro:     { label: 'Metro Singles Pool',        count: singlesPool },
         identity:  { label: 'Identity Pool',             count: pool.identityPool || 0 },
         realistic: { label: 'Your Realistic Match Pool', count: pool.realisticPool || 0 },
-        preferred: { label: 'Your Preferred Pool',       count: pool.preferredPool || 0 },
+        preferred: { label: 'Your Preferred Lifestyle Pool', count: pool.preferredPool || 0 },
         ideal:     { label: 'Your Ideal Match Pool',     count: pool.idealPool || 0 },
       },
     };
@@ -2074,7 +2069,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
     { label: 'Metro Singles Pool', value: singlesPool, desc: 'Unmarried adults of your preferred gender and orientation' },
     { label: 'Identity Pool', value: pool?.identityPool || 0, desc: `${datingGenderCap} matching your preferred ethnicity` },
     { label: 'Your Realistic Match Pool', value: pool?.realisticPool || 0, desc: `${datingGenderCap} within your age range and income requirements` },
-    { label: 'Your Preferred Pool', value: pool?.preferredPool || 0, desc: `${datingGenderCap} who additionally meet your lifestyle preferences` },
+    { label: 'Your Preferred Lifestyle Pool', value: pool?.preferredPool || 0, desc: `${datingGenderCap} who match your aesthetic and fitness choices` },
     { label: 'Your Ideal Match Pool', value: pool?.idealPool || 0, desc: `${datingGenderCap} who meet every preference you set` },
   ];
 
@@ -2218,7 +2213,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
           </div>
           <span className="text-xs text-secondary font-mono">/100</span>
         </div>
-        <div className="relative h-3 bg-stone-200 rounded-full overflow-hidden">
+        <div className="relative h-5 bg-stone-200 rounded-full overflow-hidden">
           <div className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out" style={{ width: `${score}%`, background: score >= 65 ? 'var(--color-success)' : score >= 50 ? 'var(--color-accent)' : score >= 35 ? 'var(--color-warning)' : 'var(--color-danger)' }} />
           {[25, 50, 75].map(tick => <div key={tick} className="absolute top-0 bottom-0 w-px bg-white/50" style={{ left: `${tick}%` }} />)}
         </div>

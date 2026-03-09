@@ -8,7 +8,7 @@ const SAMPLE = {
     metro:     { label: "Metro Singles Pool",       count: 107_941 },
     identity:  { label: "Identity Pool",            count:  83_222 },
     realistic: { label: "Your Realistic Match Pool", count:  21_971 },
-    preferred: { label: "Your Preferred Pool",      count:   2_177 },
+    preferred: { label: "Your Preferred Lifestyle Pool", count:   2_177 },
     ideal:     { label: "Your Ideal Match Pool",    count:      53 },
   },
 };
@@ -101,7 +101,7 @@ const LEGEND = [
   { key: "metro",     label: "Metro Singles Pool" },
   { key: "identity",  label: "Identity Pool" },
   { key: "realistic", label: "Realistic Match Pool" },
-  { key: "preferred", label: "Preferred Pool" },
+  { key: "preferred", label: "Preferred Lifestyle Pool" },
   { key: "ideal",     label: "Ideal Match Pool" },
 ];
 

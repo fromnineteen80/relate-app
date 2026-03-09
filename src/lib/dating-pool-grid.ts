@@ -63,7 +63,7 @@ const LEGEND: { key: keyof DatingPoolData['pools']; label: string }[] = [
   { key: 'metro',     label: 'Metro Singles Pool' },
   { key: 'identity',  label: 'Identity Pool' },
   { key: 'realistic', label: 'Realistic Match Pool' },
-  { key: 'preferred', label: 'Preferred Pool' },
+  { key: 'preferred', label: 'Preferred Lifestyle Pool' },
   { key: 'ideal',     label: 'Ideal Match Pool' },
 ];
 
