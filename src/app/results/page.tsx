@@ -1476,7 +1476,7 @@ function ResultsDashboard() {
         {/* ── Dating Market ── */}
         {hasMarket && (
           <div className="scroll-mt-32 flex flex-col md:flex-row gap-4 items-stretch mb-4">
-            <div className="w-full md:w-1/2 min-w-0">
+            <div className="w-full md:w-1/2 min-w-0 flex flex-col gap-4">
               <DatingMarketViz data={marketData} loading={marketLoading} onRelaxPreference={recalculateMarket} demographics={demographics} />
             </div>
             {!marketLoading && marketData && (
@@ -1803,7 +1803,8 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
   };
 
   return (
-    <section className="card mb-4 h-full">
+    <>
+    <section className="card">
       {idealPool === 0 && relaxableFilters.length > 0 && (
         <div className="mb-6 border-2 border-dashed border-red-400/50 bg-red-50 rounded-lg p-4">
           <span className="font-mono text-xs text-red-600 tracking-wider uppercase">Zero Matches</span>
@@ -1917,7 +1918,11 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
           <p className="text-[11px] text-secondary mt-2">Each bar shows your local percentile (0 = bottom, 100 = top).</p>
         </div>
       )}
+    </section>
 
+    <section className="card">
+      <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="filter_alt" size={20} className="text-accent" />Match Pool Funnel</h3>
+      <p className="explainer mb-4">{metro}</p>
       {pool && (
         <div className="mb-6">
           <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
@@ -2002,6 +2007,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
         );
       })()}
     </section>
+    </>
   );
 }
 
