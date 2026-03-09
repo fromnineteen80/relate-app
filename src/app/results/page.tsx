@@ -1904,7 +1904,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
       </div>
 
       {Object.keys(components).length > 0 && (
-        <div className="mb-6">
+        <div className="mt-4 pt-4 border-t border-border">
           <span className="text-xs font-mono text-secondary uppercase tracking-wider">Your Stats</span>
           <div className="space-y-2 mt-2">
             {compOrder.map(key => {
@@ -1923,7 +1923,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
               );
             })}
           </div>
-          <p className="text-[11px] text-secondary mt-2">Each bar shows your local percentile (0 = bottom, 100 = top).</p>
+          <p className="text-[10px] text-gray-400 mt-2">Each bar shows your local percentile (0 = bottom, 100 = top).</p>
         </div>
       )}
     </section>
