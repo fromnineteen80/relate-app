@@ -1319,8 +1319,73 @@ function ResultsDashboard() {
           </section>
         )}
 
-        {/* ── Intimacy Conflict Bridge ── */}
-        {tensionStacks?.intimacyConflictBridge && renderTensionStack('intimacyConflictBridge', tensionStacks.intimacyConflictBridge)}
+        {/* ── Conflict Patterns ── */}
+        {tensionStacks?.intimacyConflictBridge && (() => {
+          const bridge = tensionStacks.intimacyConflictBridge;
+          const riskLevel = bridge.riskLevel || bridge.tensionLevel;
+          return (
+            <section className="card mb-4">
+              <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2">
+                <Icon name="sports_mma" size={20} className="text-accent" />Conflict Patterns
+              </h3>
+              <div className="flex items-center gap-3 mb-4">
+                {bridge.patternName && <span className="text-sm text-secondary">{bridge.patternName}</span>}
+                {riskLevel && (
+                  <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+                    riskLevel === 'high' ? 'bg-danger/10 text-danger' :
+                    riskLevel === 'medium' || riskLevel === 'medium-high' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
+                  }`}>{riskLevel} risk</span>
+                )}
+              </div>
+
+              {bridge.patternDescription && <p className="text-sm text-secondary mb-3">{bridge.patternDescription}</p>}
+              {bridge.starterNarrative && <p className="text-sm mb-4">{bridge.starterNarrative}</p>}
+
+              {Array.isArray(bridge.customizations) && bridge.customizations.length > 0 && (
+                <div className="mb-4">
+                  <ul className="bullet-list">
+                    {bridge.customizations.map((c: string, i: number) => (
+                      <li key={i}>{c}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {(bridge.withSameType || bridge.withOpposite) && (
+                <div className="mt-3 pt-3 border-t border-border space-y-3">
+                  <span className="text-xs font-mono text-secondary uppercase tracking-wider">With Partners</span>
+                  {bridge.withSameType && (
+                    <div>
+                      <p className="text-xs font-medium mb-1">With a similar pattern</p>
+                      <p className="text-sm text-secondary">{bridge.withSameType}</p>
+                    </div>
+                  )}
+                  {bridge.withOpposite && (
+                    <div>
+                      <p className="text-xs font-medium mb-1">With an opposite pattern</p>
+                      <p className="text-sm text-secondary">{bridge.withOpposite}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {bridge.growthPath && (
+                <div className="mt-3 pt-3 border-t border-border">
+                  <span className="text-xs font-mono text-secondary uppercase tracking-wider">Growth Path</span>
+                  {Array.isArray(bridge.growthPath) ? (
+                    <ul className="bullet-list mt-1.5">
+                      {bridge.growthPath.map((g: string, i: number) => (
+                        <li key={i}>{g}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-secondary mt-1.5">{bridge.growthPath}</p>
+                  )}
+                </div>
+              )}
+            </section>
+          );
+        })()}
 
         {/* ── Couples Mode ── */}
         {hasResults && (
