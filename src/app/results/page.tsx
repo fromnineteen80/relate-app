@@ -1724,13 +1724,28 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
 
   const metroShort = metro.includes(',') ? metro.split(',')[0] : metro;
 
+  // Determine the gendered label for who the user is dating
+  const datingGender = (() => {
+    const g = demographics?.gender;
+    const seeking = demographics?.seeking;
+    if (seeking) {
+      const s = String(seeking).toLowerCase();
+      if (s.includes('women') || s.includes('woman') || s.includes('female')) return 'women';
+      if (s.includes('men') || s.includes('man') || s.includes('male')) return 'men';
+    }
+    if (g === 'Man' || g === 'man' || g === 'M' || g === 'male') return 'women';
+    if (g === 'Woman' || g === 'woman' || g === 'F' || g === 'female') return 'men';
+    return 'singles';
+  })();
+  const datingGenderCap = datingGender.charAt(0).toUpperCase() + datingGender.slice(1);
+
   const singlesPool = pool?.localSinglePool || 0;
   const milestones = [
     { label: 'Metro Singles Pool', value: singlesPool, desc: 'Unmarried adults of your preferred gender and orientation' },
-    { label: 'Identity Pool', value: pool?.identityPool || 0, desc: 'Singles matching your preferred ethnicity' },
-    { label: 'Your Realistic Match Pool', value: pool?.realisticPool || 0, desc: 'Singles within your age range and income requirements' },
-    { label: 'Your Preferred Pool', value: pool?.preferredPool || 0, desc: 'Singles who additionally meet your lifestyle preferences' },
-    { label: 'Your Ideal Match Pool', value: pool?.idealPool || 0, desc: 'Singles who meet every preference you set' },
+    { label: 'Identity Pool', value: pool?.identityPool || 0, desc: `${datingGenderCap} matching your preferred ethnicity` },
+    { label: 'Your Realistic Match Pool', value: pool?.realisticPool || 0, desc: `${datingGenderCap} within your age range and income requirements` },
+    { label: 'Your Preferred Pool', value: pool?.preferredPool || 0, desc: `${datingGenderCap} who additionally meet your lifestyle preferences` },
+    { label: 'Your Ideal Match Pool', value: pool?.idealPool || 0, desc: `${datingGenderCap} who meet every preference you set` },
   ];
 
   // Identify relaxable filters when ideal pool is zero
@@ -1876,7 +1891,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
           <div className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out" style={{ width: `${score}%`, background: score >= 65 ? 'var(--color-success)' : score >= 50 ? 'var(--color-accent)' : score >= 35 ? 'var(--color-warning)' : 'var(--color-danger)' }} />
           {[25, 50, 75].map(tick => <div key={tick} className="absolute top-0 bottom-0 w-px bg-white/50" style={{ left: `${tick}%` }} />)}
         </div>
-        <p className="text-xs text-secondary mt-2">How competitive you are in the {metro} dating market based on income, education, age, and demographics.</p>
+        <p className="text-xs text-secondary mt-2">How competitive you are in the local dating market based on income, education, age, and other demographic data points.</p>
       </div>
 
       {Object.keys(components).length > 0 && (
@@ -1906,7 +1921,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
       {pool && (
         <div className="mb-6">
           <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
-          <p className="text-[12px] text-foreground font-serif mt-1 mb-3">The {metroShort} metro population is <span className="font-medium">{metroPop.toLocaleString()}</span>.</p>
+          <p className="text-[11px] text-secondary mt-1 mb-3">The {metroShort} metro population is <span className="font-medium">{metroPop.toLocaleString()}</span>.</p>
           <div className="mt-3 space-y-1">
             {milestones.map((m, i) => {
               const baseVal = singlesPool || 1;
@@ -1971,7 +1986,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
               <p className="text-[11px] text-secondary">Estimated Matches</p>
               <p className="text-[11px] text-secondary">Ideal Match Pool</p>
             </div>
-            <p className="text-xs text-secondary mt-2">Number of singles from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats</p>
+            <p className="text-xs text-secondary mt-2">Number of {datingGender} from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats. That is {singlesPool > 0 ? ((matchCount / singlesPool) * 100).toFixed(2) : '0'}% of the Metro Singles Pool &mdash; {singlesPool > 0 ? ((matchCount / singlesPool) * 1000).toFixed(1) : '0'} out of 1,000 local single {datingGender}.</p>
           </div>
         );
       })()}
