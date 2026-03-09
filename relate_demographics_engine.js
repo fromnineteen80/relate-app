@@ -1652,6 +1652,7 @@ async function findTopMetros(userProfile, preferences, homeScore) {
       relateScore: relateScore.score,
       components: relateScore.components,
       idealPool: matchPool.idealPool,
+      localSinglePool: matchPool.localSinglePool,
       matchProbability,
       matchCount,
       incomeEduRank,
@@ -1667,6 +1668,52 @@ async function findTopMetros(userProfile, preferences, homeScore) {
   });
 
   return results.slice(0, 20);
+}
+
+/**
+ * Find the 10 worst large metro areas for this user.
+ * Only considers metros with population > 1,500,000.
+ * Sorted ascending by idealPool (worst first = #1).
+ */
+async function findWorstMetros(userProfile, preferences) {
+  const cbsas = await loadCBSAData();
+  const largeCBSAs = Object.values(cbsas).filter(c => c.cbsa_population >= 1500000);
+  const results = [];
+
+  for (const cbsa of largeCBSAs) {
+    const relateScore = calculateRelateScore(userProfile, cbsa);
+    const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
+    const matchProbability = getMatchProbability(relateScore.score);
+    const matchCount = Math.round(matchPool.idealPool * matchProbability);
+
+    const incomeLocal = relateScore.components.income.local;
+    const eduLocal = relateScore.components.education.local;
+    const incomeEduRank = (incomeLocal + eduLocal) / 2;
+
+    results.push({
+      cbsa: cbsa.cbsa,
+      cbsaName: cbsa.cbsa_name || cbsa.cbsa_label,
+      cbsaLabel: cbsa.cbsa_label,
+      population: cbsa.cbsa_population,
+      relateScore: relateScore.score,
+      components: relateScore.components,
+      idealPool: matchPool.idealPool,
+      localSinglePool: matchPool.localSinglePool,
+      matchProbability,
+      matchCount,
+      incomeEduRank,
+      rpp: cbsa.rpp,
+    });
+  }
+
+  // Sort ascending: worst idealPool first, then lowest matchProbability, then lowest incomeEduRank
+  results.sort((a, b) => {
+    if (a.idealPool !== b.idealPool) return a.idealPool - b.idealPool;
+    if (a.matchProbability !== b.matchProbability) return a.matchProbability - b.matchProbability;
+    return a.incomeEduRank - b.incomeEduRank;
+  });
+
+  return results.slice(0, 10);
 }
 
 // ============================================================================
@@ -1731,6 +1778,7 @@ module.exports = {
   processDemographics,
   compareMetros,
   findTopMetros,
+  findWorstMetros,
   
   // Utilities
   heightToInches,

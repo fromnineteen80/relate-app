@@ -133,6 +133,8 @@ function ResultsDashboard() {
   const marketFetchedRef = useRef(false);
   const [topMetros, setTopMetros] = useState<any[] | null>(null);
   const topMetrosFetchedRef = useRef(false);
+  const [worstMetros, setWorstMetros] = useState<any[] | null>(null);
+  const worstMetrosFetchedRef = useRef(false);
 
   // Load everything from localStorage / Supabase
   useEffect(() => {
@@ -257,6 +259,22 @@ function ResultsDashboard() {
     })
       .then(r => r.json())
       .then(data => { if (data.success) setTopMetros(data.topMetros); })
+      .catch(() => { });
+  }, [marketData, user]);
+
+  // Fetch worst metros data once market data is loaded
+  useEffect(() => {
+    if (!marketData || worstMetrosFetchedRef.current) return;
+    const req = buildMarketRequestBody(user?.id || '');
+    if (!req) return;
+    worstMetrosFetchedRef.current = true;
+    fetch('/api/worst-metros', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body),
+    })
+      .then(r => r.json())
+      .then(data => { if (data.success) setWorstMetros(data.worstMetros); })
       .catch(() => { });
   }, [marketData, user]);
 
@@ -1510,7 +1528,7 @@ function ResultsDashboard() {
 
         {/* ── Top Metros Scatter Plot ── */}
         {topMetros && topMetros.length > 0 && (
-          <TopMetrosScatterPlot metros={topMetros} demographics={demographics} />
+          <TopMetrosScatterPlot metros={topMetros} worstMetros={worstMetros} demographics={demographics} />
         )}
 
         {/* ── Market Coaching ── */}
@@ -1709,15 +1727,15 @@ const HEIGHTS = [
 
 // ── Top Metros Scatter Plot ──
 
-function nextFactorOf10(n: number) {
+function nextMultipleOf10(n: number) {
   if (n <= 0) return 10;
-  const mag = Math.pow(10, Math.floor(Math.log10(n)));
-  return Math.ceil(n / mag) * mag;
+  return Math.ceil(n / 10) * 10;
 }
 
-function TopMetrosScatterPlot({ metros, demographics }: { metros: any[]; demographics?: any }) {
+function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: any[]; worstMetros?: any[] | null; demographics?: any }) {
   const [tooltip, setTooltip] = useState<{ metro: any; x: number; y: number } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const datingGender = (() => {
     const g = demographics?.gender;
@@ -1738,8 +1756,8 @@ function TopMetrosScatterPlot({ metros, demographics }: { metros: any[]; demogra
   const plotW = W - pad.left - pad.right;
   const plotH = H - pad.top - pad.bottom;
 
-  const maxIdeal = nextFactorOf10(Math.max(...metros.map(m => m.idealPool)));
-  const maxMatch = nextFactorOf10(Math.max(...metros.map(m => m.matchCount)));
+  const maxIdeal = nextMultipleOf10(Math.max(...metros.map(m => m.idealPool)));
+  const maxMatch = nextMultipleOf10(Math.max(...metros.map(m => m.matchCount)));
 
   const scaleX = (v: number) => pad.left + (v / maxIdeal) * plotW;
   const scaleY = (v: number) => pad.top + plotH - (v / maxMatch) * plotH;
@@ -1764,9 +1782,9 @@ function TopMetrosScatterPlot({ metros, demographics }: { metros: any[]; demogra
   }
 
   const handleMouseEnter = (metro: any, e: React.MouseEvent) => {
-    const svg = svgRef.current;
-    if (!svg) return;
-    const rect = svg.getBoundingClientRect();
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+    const rect = wrapper.getBoundingClientRect();
     setTooltip({ metro, x: e.clientX - rect.left, y: e.clientY - rect.top });
   };
 
@@ -1783,7 +1801,7 @@ function TopMetrosScatterPlot({ metros, demographics }: { metros: any[]; demogra
       </h3>
       <p className="explainer mb-4">Top 20 metro areas where you have the best chance of finding a match.</p>
 
-      <div className="relative w-full overflow-x-auto">
+      <div ref={wrapperRef} className="relative w-full overflow-x-auto">
         <svg
           ref={svgRef}
           viewBox={`0 0 ${W} ${H}`}
@@ -1816,10 +1834,10 @@ function TopMetrosScatterPlot({ metros, demographics }: { metros: any[]; demogra
           ))}
 
           {/* Axis labels */}
-          <text x={pad.left + plotW / 2} y={H - 6} textAnchor="middle" fontSize="11" fill="#57534e" fontFamily="sans-serif">
+          <text x={pad.left + plotW / 2} y={H - 6} textAnchor="middle" fontSize="11" fill="#78716c" fontFamily="sans-serif">
             Ideal Match Pool
           </text>
-          <text x={14} y={pad.top + plotH / 2} textAnchor="middle" fontSize="11" fill="#57534e" fontFamily="sans-serif" transform={`rotate(-90, 14, ${pad.top + plotH / 2})`}>
+          <text x={14} y={pad.top + plotH / 2} textAnchor="middle" fontSize="11" fill="#78716c" fontFamily="sans-serif" transform={`rotate(-90, 14, ${pad.top + plotH / 2})`}>
             Estimated Matches
           </text>
 
@@ -1847,14 +1865,23 @@ function TopMetrosScatterPlot({ metros, demographics }: { metros: any[]; demogra
           const m = tooltip.metro;
           const tier = scoreTier(m.relateScore);
           const components = m.components || {};
-          // Position tooltip — flip if near right edge
+          const wrapRect = wrapperRef.current?.getBoundingClientRect();
+          const containerW = wrapRect?.width || W;
+          const containerH = wrapRect?.height || H;
           const ttW = 240;
-          const ttLeft = tooltip.x + ttW + 20 > W ? tooltip.x - ttW - 10 : tooltip.x + 12;
-          const ttTop = Math.max(4, Math.min(tooltip.y - 40, H - 220));
+          const ttH = 260;
+          // Horizontal: prefer right of cursor, flip left if clipped
+          let ttLeft = tooltip.x + 12;
+          if (ttLeft + ttW > containerW) ttLeft = tooltip.x - ttW - 10;
+          ttLeft = Math.max(4, Math.min(ttLeft, containerW - ttW - 4));
+          // Vertical: prefer above cursor center, clamp to container bounds
+          let ttTop = tooltip.y - 40;
+          if (ttTop + ttH > containerH) ttTop = containerH - ttH - 4;
+          if (ttTop < 4) ttTop = 4;
           return (
             <div
               className="absolute pointer-events-none z-10"
-              style={{ left: `${(ttLeft / W) * 100}%`, top: `${(ttTop / H) * 100}%`, width: `${(ttW / W) * 100}%` }}
+              style={{ left: ttLeft, top: ttTop, width: ttW }}
             >
               <div className="bg-black text-white rounded-lg shadow-xl p-3" style={{ fontSize: '11px' }}>
                 <div className="font-semibold text-sm mb-0.5">{m.cbsaLabel || m.cbsaName}</div>
@@ -1911,6 +1938,53 @@ function TopMetrosScatterPlot({ metros, demographics }: { metros: any[]; demogra
           );
         })()}
       </div>
+
+      {/* ── Worst Metros ── */}
+      {worstMetros && worstMetros.length > 0 && (
+        <>
+          <div className="border-t border-[#f0efed] my-4" />
+          <h4 className="font-serif text-base font-semibold mb-1 flex items-center gap-2">
+            <Icon name="trending_down" size={18} className="text-accent" />
+            Your Worst Large Metro Areas
+          </h4>
+          <p className="explainer mb-3">Bottom 10 metros (pop. 1.5M+) ranked by smallest ideal match pool.</p>
+          <div className="space-y-0">
+            {worstMetros.map((m, i) => {
+              const per10k = m.localSinglePool > 0
+                ? Math.round((m.idealPool / m.localSinglePool) * 10000)
+                : 0;
+              return (
+                <div
+                  key={m.cbsa || i}
+                  className="flex items-center gap-2.5 py-1.5 px-1.5"
+                  style={{ borderBottom: i < worstMetros.length - 1 ? '1px solid #f0efed' : 'none' }}
+                >
+                  <span style={{ fontSize: '12px', color: '#78716c', fontFamily: 'monospace', width: '24px', textAlign: 'right', flexShrink: 0 }}>
+                    #{i + 1}
+                  </span>
+                  <span style={{ fontSize: '12px', color: '#141413', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {m.cbsaLabel || m.cbsaName}
+                  </span>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#141413', fontFamily: 'monospace', width: '32px', textAlign: 'right', flexShrink: 0 }} title="Competition Score">
+                    {Math.round(m.relateScore)}
+                  </span>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#141413', fontFamily: 'monospace', width: '48px', textAlign: 'right', flexShrink: 0 }} title="Estimated Matches">
+                    {m.matchCount.toLocaleString()}
+                  </span>
+                  <span style={{ fontSize: '11px', color: '#78716c', fontFamily: 'monospace', width: '80px', textAlign: 'right', flexShrink: 0 }} title={`Per 10,000 local single ${datingGender}`}>
+                    {per10k.toLocaleString()} / 10k
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-[10px] text-secondary mt-2 flex gap-4">
+            <span>Score = competition score</span>
+            <span>Matches = est. matches</span>
+            <span>/ 10k = ideal per 10,000 local single {datingGender}</span>
+          </p>
+        </>
+      )}
     </section>
   );
 }
