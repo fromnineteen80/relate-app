@@ -1943,57 +1943,33 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
         </div>
       )}
 
-      {/* ── Estimated Matches — person icon bar ── */}
+      {/* ── Estimated Matches — filled rectangle bar ── */}
       {(() => {
-        const ICON_COUNT = 20;
         const idealCount = pool?.idealPool || 0;
         const matchPct = idealCount > 0 ? Math.min(1, matchCount / idealCount) : 0;
-        const filledExact = matchPct * ICON_COUNT; // e.g. 3.6
-        const fullIcons = Math.floor(filledExact);
-        const halfFraction = filledExact - fullIcons; // 0..1 — used for partial clip
         // Color of gender being dated: Man (M) dates women → pink, Woman (W) dates men → blue
         const datingWomen = demographics?.gender === 'M' || demographics?.gender === 'Man';
         const matchColor = datingWomen ? '#fb7185' : '#3b82f6'; // rose-400 / blue-500
-        const grayColor = '#e7e5e4'; // stone-200
-        // Each icon is 1/ICON_COUNT of the row — flex fills the width
-        const iconStyle: React.CSSProperties = { fontSize: '1.4em', fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24", lineHeight: 1 };
+        const bgColor = '#e7e5e4'; // stone-200
 
         return (
-          <div className="pt-4 border-t border-border">
-            <div className="flex w-full" style={{ gap: 0 }}>
-              {Array.from({ length: ICON_COUNT }).map((_, i) => {
-                const isFullColor = i < fullIcons;
-                const isPartial = i === fullIcons && halfFraction > 0.05;
-
-                if (isFullColor) {
-                  return (
-                    <span key={i} className="material-symbols-rounded flex-1 text-center" style={{ ...iconStyle, color: matchColor }} aria-hidden="true">person_heart</span>
-                  );
-                }
-                if (isPartial) {
-                  // Half-fill: overlay a clipped colored icon on top of gray base
-                  const clipRight = ((1 - halfFraction) * 100).toFixed(0);
-                  return (
-                    <span key={i} className="flex-1 text-center" style={{ position: 'relative', lineHeight: 1 }}>
-                      <span className="material-symbols-rounded" style={{ ...iconStyle, color: grayColor }} aria-hidden="true">person</span>
-                      <span className="material-symbols-rounded" style={{ ...iconStyle, color: matchColor, position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', clipPath: `inset(0 ${clipRight}% 0 0)` }} aria-hidden="true">person_heart</span>
-                    </span>
-                  );
-                }
-                return (
-                  <span key={i} className="material-symbols-rounded flex-1 text-center" style={{ ...iconStyle, color: grayColor }} aria-hidden="true">person</span>
-                );
-              })}
+          <div className="pt-4">
+            {/* Rectangle bar — match color fills left-to-right, rest is gray */}
+            <div className="relative w-full rounded overflow-hidden" style={{ height: '48px', backgroundColor: bgColor }}>
+              {/* Filled portion */}
+              <div className="absolute inset-y-0 left-0" style={{ width: `${Math.max(1, matchPct * 100)}%`, backgroundColor: matchColor }} />
+              {/* Estimated Matches — left-justified, white text */}
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-xl font-semibold text-white drop-shadow-sm" style={{ zIndex: 1 }}>
+                {matchCount.toLocaleString()}
+              </span>
+              {/* Ideal Match Pool — right-justified, black text */}
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-xl font-semibold text-foreground" style={{ zIndex: 1 }}>
+                {idealCount.toLocaleString()}
+              </span>
             </div>
-            <div className="flex items-start justify-between mt-2">
-              <div>
-                <p className="font-mono text-xl font-semibold">{matchCount.toLocaleString()}</p>
-                <p className="text-[11px] text-secondary">Estimated Matches</p>
-              </div>
-              <div className="text-right">
-                <p className="font-mono text-xl font-semibold">{(pool?.idealPool || 0).toLocaleString()}</p>
-                <p className="text-[11px] text-secondary">Ideal Match Pool</p>
-              </div>
+            <div className="flex items-start justify-between mt-1">
+              <p className="text-[11px] text-secondary">Estimated Matches</p>
+              <p className="text-[11px] text-secondary">Ideal Match Pool</p>
             </div>
             <p className="text-xs text-secondary mt-2">Number of singles from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats</p>
           </div>
