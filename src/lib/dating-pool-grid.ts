@@ -45,7 +45,7 @@ const COLOR_GREEN         = '#047857';  // brand green — realistic/preferred b
 const COLOR_CARD           = '#FFFFFF';
 const COLOR_BORDER         = '#E5E7EB';
 const COLOR_TEXT_PRIMARY   = '#141413';
-const COLOR_TEXT_SECONDARY = '#73726C';
+const COLOR_TEXT_SECONDARY = '#78716c';
 const COLOR_TEXT_MUTED     = '#9CA3AF';
 const COLOR_ROW_HOVER_BG  = '#F5F4F0';
 
@@ -255,14 +255,14 @@ export function renderDatingPoolGrid(
   }));
 
   const subtitle = text('p', '', {
-    fontSize: '12px',
+    fontSize: '11px',
     color: COLORS.textSecondary,
     margin: '0',
     lineHeight: '1.5',
   });
   function updateSubtitle() {
     const genderLabel = targetGender === 'women' ? 'women' : targetGender === 'men' ? 'men' : 'singles';
-    subtitle.textContent = `${fmt(pools.metro.count)} ${genderLabel} in your dating pool.`;
+    subtitle.textContent = `${fmt(pools.metro.count)} ${genderLabel} in your local dating pool.`;
   }
   updateSubtitle();
   header.appendChild(subtitle);

@@ -1739,6 +1739,14 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
   })();
   const datingGenderCap = datingGender.charAt(0).toUpperCase() + datingGender.slice(1);
 
+  // The user's own gender (plural) for "How competitive you are with other men/women"
+  const ownGender = (() => {
+    const g = demographics?.gender;
+    if (g === 'Man' || g === 'man' || g === 'M' || g === 'male') return 'men';
+    if (g === 'Woman' || g === 'woman' || g === 'F' || g === 'female') return 'women';
+    return 'singles';
+  })();
+
   const singlesPool = pool?.localSinglePool || 0;
   const milestones = [
     { label: 'Metro Singles Pool', value: singlesPool, desc: 'Unmarried adults of your preferred gender and orientation' },
@@ -1892,7 +1900,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
           <div className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out" style={{ width: `${score}%`, background: score >= 65 ? 'var(--color-success)' : score >= 50 ? 'var(--color-accent)' : score >= 35 ? 'var(--color-warning)' : 'var(--color-danger)' }} />
           {[25, 50, 75].map(tick => <div key={tick} className="absolute top-0 bottom-0 w-px bg-white/50" style={{ left: `${tick}%` }} />)}
         </div>
-        <p className="text-xs text-secondary mt-2">How competitive you are in the local dating market based on income, education, age, and other demographic data points.</p>
+        <p className="text-[11px] text-secondary mt-2">How competitive you are with other {ownGender} in the local dating market based on income, education, age, and other demographic data points.</p>
       </div>
 
       {Object.keys(components).length > 0 && (
@@ -1992,7 +2000,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
               <p className="text-[11px] text-secondary">Estimated Matches</p>
               <p className="text-[11px] text-secondary">Ideal Match Pool</p>
             </div>
-            <p className="text-[11px] text-secondary mt-2 mb-0">Number of {datingGender} from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats. That is {singlesPool > 0 ? ((matchCount / singlesPool) * 100).toFixed(2) : '0'}% of the Metro Singles Pool. {(() => {
+            <p className="text-[11px] text-secondary mt-2 mb-0">Number of {datingGender} from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats. That is {singlesPool > 0 ? ((matchCount / singlesPool) * 100).toFixed(2) : '0'}% of the Metro Singles Pool, or {(() => {
               if (singlesPool <= 0) return '0 out of 1,000';
               // Scale denominator up until we get at least 1 whole person
               let denom = 1000;
