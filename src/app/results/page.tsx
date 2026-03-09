@@ -1783,6 +1783,20 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
     setTooltip({ metro, x: e.clientX - rect.left, y: e.clientY - rect.top });
   };
 
+  const handleListHover = (metro: any) => {
+    const wrapper = wrapperRef.current;
+    const svg = svgRef.current;
+    if (!wrapper || !svg) return;
+    // Convert SVG coords to pixel coords within the wrapper
+    const svgRect = svg.getBoundingClientRect();
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const ratioX = svgRect.width / W;
+    const ratioY = svgRect.height / H;
+    const px = (scaleX(metro.idealPool) * ratioX) + svgRect.left - wrapperRect.left;
+    const py = (scaleY(metro.matchCount) * ratioY) + svgRect.top - wrapperRect.top;
+    setTooltip({ metro, x: px, y: py });
+  };
+
   const handleMouseLeave = () => setTooltip(null);
 
   // Dot color based on gender being pursued
@@ -1796,7 +1810,8 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
       </h3>
       <p className="explainer mb-4">Top 20 metro areas where you have the best chance of finding a match.</p>
 
-      <div ref={wrapperRef} className="relative w-full" style={{ overflow: 'visible' }}>
+      <div className="flex gap-4">
+      <div ref={wrapperRef} className="relative flex-1 min-w-0" style={{ overflow: 'visible' }}>
         <svg
           ref={svgRef}
           viewBox={`0 0 ${W} ${H}`}
@@ -1829,29 +1844,44 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
           ))}
 
           {/* Axis labels */}
-          <text x={pad.left + plotW / 2} y={H - 6} textAnchor="middle" fontSize="11" fill="#78716c" fontFamily="sans-serif">
-            Ideal Match Pool
+          <text x={pad.left + plotW / 2} y={H - 6} textAnchor="middle" fontSize="12" fill="var(--color-secondary)" fontFamily="var(--font-mono, ui-monospace, monospace)" textDecoration="none" letterSpacing="0.05em">
+            IDEAL MATCH POOL
           </text>
-          <text x={14} y={pad.top + plotH / 2} textAnchor="middle" fontSize="11" fill="#78716c" fontFamily="sans-serif" transform={`rotate(-90, 14, ${pad.top + plotH / 2})`}>
-            Estimated Matches
+          <text x={14} y={pad.top + plotH / 2} textAnchor="middle" fontSize="12" fill="var(--color-secondary)" fontFamily="var(--font-mono, ui-monospace, monospace)" letterSpacing="0.05em" transform={`rotate(-90, 14, ${pad.top + plotH / 2})`}>
+            ESTIMATED MATCHES
           </text>
 
           {/* Data points */}
           {metros.map((m, i) => (
-            <circle
+            <g
               key={m.cbsa || i}
-              cx={scaleX(m.idealPool)}
-              cy={scaleY(m.matchCount)}
-              r={6}
-              fill={dotColor}
-              fillOpacity={0.75}
-              stroke="#fff"
-              strokeWidth={1.5}
-              className="cursor-pointer transition-all duration-150 hover:opacity-100"
-              style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.15))' }}
+              className="cursor-pointer"
               onMouseEnter={(e) => handleMouseEnter(m, e)}
               onMouseLeave={handleMouseLeave}
-            />
+            >
+              <circle
+                cx={scaleX(m.idealPool)}
+                cy={scaleY(m.matchCount)}
+                r={8}
+                fill={dotColor}
+                fillOpacity={0.85}
+                stroke="#fff"
+                strokeWidth={1.5}
+                style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.15))' }}
+              />
+              <text
+                x={scaleX(m.idealPool)}
+                y={scaleY(m.matchCount) + 3.5}
+                textAnchor="middle"
+                fontSize="8"
+                fontWeight="700"
+                fontFamily="monospace"
+                fill="#fff"
+                style={{ pointerEvents: 'none' }}
+              >
+                {i + 1}
+              </text>
+            </g>
           ))}
         </svg>
 
@@ -1932,6 +1962,39 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
             </div>
           );
         })()}
+      </div>
+
+      {/* Metro legend */}
+      <div className="hidden md:block w-48 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '360px' }}>
+        <div className="space-y-0">
+          {/* Column header */}
+          <div className="flex items-end gap-2.5 py-1 px-1.5 border-b border-[#e7e5e4]">
+            <span style={{ fontSize: '10px', color: '#78716c', fontFamily: 'monospace', width: '24px', textAlign: 'right', flexShrink: 0 }}>&nbsp;</span>
+            <span style={{ fontSize: '10px', color: '#78716c', fontWeight: 600, flex: 1, minWidth: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Metro Area
+            </span>
+          </div>
+          {metros.map((m, i) => {
+            const shortName = (m.cbsaLabel || m.cbsaName || '').split(/[,\-]/)[0].trim();
+            return (
+              <div
+                key={m.cbsa || i}
+                className="flex items-center gap-1.5 py-1.5 px-1.5 cursor-pointer hover:bg-stone-50 transition-colors"
+                style={{ borderBottom: i < metros.length - 1 ? '1px solid #f0efed' : 'none' }}
+                onMouseEnter={() => handleListHover(m)}
+                onMouseLeave={handleMouseLeave}
+              >
+                <span style={{ fontSize: '11px', color: '#78716c', fontFamily: 'monospace', width: '24px', textAlign: 'right', flexShrink: 0 }}>
+                  #{i + 1}
+                </span>
+                <span style={{ fontSize: '11px', color: '#141413', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {shortName}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
       </div>
 
       {/* ── Worst Metros ── */}
@@ -2217,7 +2280,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
           <div className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out" style={{ width: `${score}%`, background: score >= 65 ? 'var(--color-success)' : score >= 50 ? 'var(--color-accent)' : score >= 35 ? 'var(--color-warning)' : 'var(--color-danger)' }} />
           {[25, 50, 75].map(tick => <div key={tick} className="absolute top-0 bottom-0 w-px bg-white/50" style={{ left: `${tick}%` }} />)}
         </div>
-        <p className="text-[11px] text-secondary mt-2">How competitive you are with other {ownGender} in the local dating market based on income, education, age, and other demographic data points.</p>
+        <p className="text-[11px] text-secondary mt-2">How competitive you are with other {ownGender} in the local dating market based on age, income, education, fitness, height, and other demographic data points.</p>
       </div>
 
       {Object.keys(components).length > 0 && (
