@@ -34,19 +34,10 @@ export type TargetGender = 'women' | 'men' | 'all';
 // ─── DESIGN TOKENS ──────────────────────────────────────────────────────────
 
 const COLOR_BLIP_EMPTY    = '#e7e5e4';  // stone-200 — progress bar background
-const COLOR_ACTION        = '#C96442';  // orange accent for ideal tier
-
-const COLOR_GENDER: Record<TargetGender, string> = {
-  women: '#fb7185',   // rose-400 — seeking women
-  men:   '#3b82f6',   // blue-500 — seeking men
-  all:   '#c2410c',   // accent   — seeking all
-};
-
-const GENDER_OPACITY: Record<string, number> = {
-  identity:  1.00,  // full gender color
-  realistic: 0.75,  // 25% transparent
-  preferred: 0.50,  // 50% transparent
-};
+const COLOR_IDEAL         = '#F9A825';  // brand yellow — ideal tier
+const COLOR_IDEAL_BLINK   = '#78716c';  // brand gray — ideal blink target
+const COLOR_IDENTITY      = '#292524';  // brand black — identity pool
+const COLOR_GREEN         = '#047857';  // brand green — realistic/preferred base
 
 const COLOR_CARD           = '#FFFFFF';
 const COLOR_BORDER         = '#E5E7EB';
@@ -94,14 +85,13 @@ function fmt(n: number): string {
   return n.toLocaleString();
 }
 
-function buildColors(targetGender: TargetGender) {
-  const genderHex = COLOR_GENDER[targetGender] ?? COLOR_GENDER.all;
+function buildColors(_targetGender: TargetGender) {
   return {
     metro:     COLOR_BLIP_EMPTY,
-    identity:  hexToRgba(genderHex, GENDER_OPACITY.identity),
-    realistic: hexToRgba(genderHex, GENDER_OPACITY.realistic),
-    preferred: hexToRgba(genderHex, GENDER_OPACITY.preferred),
-    ideal:     COLOR_ACTION,
+    identity:  COLOR_IDENTITY,
+    realistic: hexToRgba(COLOR_GREEN, 0.80),
+    preferred: hexToRgba(COLOR_GREEN, 0.40),
+    ideal:     COLOR_IDEAL,
     empty:     COLOR_BLIP_EMPTY,
     card:      COLOR_CARD,
     border:    COLOR_BORDER,
@@ -193,8 +183,8 @@ export function renderDatingPoolGrid(
     style.id = styleId;
     style.textContent = `
       @keyframes dpg-blink {
-        0%, 100% { background-color: ${COLOR_ACTION}; }
-        50%      { background-color: ${COLOR_BLIP_EMPTY}; }
+        0%, 100% { background-color: ${COLOR_IDEAL}; }
+        50%      { background-color: ${COLOR_IDEAL_BLINK}; }
       }
     `;
     document.head.appendChild(style);
