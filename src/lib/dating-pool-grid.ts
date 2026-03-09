@@ -48,7 +48,7 @@ const COLOR_ROW_HOVER_BG  = '#F5F4F0';
 
 // ─── CONFIG ─────────────────────────────────────────────────────────────────
 
-const TOTAL_BLIPS   = 4000;
+const TOTAL_BLIPS   = 3000;
 const BLIPS_PER_ROW = 50;
 
 const POOL_KEYS: (keyof DatingPoolData['pools'])[] = [
@@ -116,9 +116,11 @@ function buildBlipColors(
 
   const counts: Record<string, number> = {};
   POOL_KEYS.forEach(k => {
+    const raw = (pools[k].count / base) * TOTAL_BLIPS;
+    // Round down ideal if less than half a blip
     counts[k] = Math.min(
       TOTAL_BLIPS,
-      Math.round((pools[k].count / base) * TOTAL_BLIPS),
+      k === 'ideal' ? Math.floor(raw) : Math.round(raw),
     );
   });
 
