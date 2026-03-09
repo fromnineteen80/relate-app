@@ -34,8 +34,7 @@ export type TargetGender = 'women' | 'men' | 'all';
 // ─── DESIGN TOKENS ──────────────────────────────────────────────────────────
 
 const COLOR_BLIP_EMPTY    = '#e7e5e4';  // stone-200 — progress bar background
-const COLOR_BLACK         = '#292524';  // foreground — design system black
-const COLOR_ACTION        = '#C96442';
+const COLOR_ACTION        = '#C96442';  // orange accent for ideal tier
 
 const COLOR_GENDER: Record<TargetGender, string> = {
   women: '#fb7185',   // rose-400 — seeking women
@@ -44,8 +43,9 @@ const COLOR_GENDER: Record<TargetGender, string> = {
 };
 
 const GENDER_OPACITY: Record<string, number> = {
-  realistic: 0.80,
-  preferred: 0.60,
+  identity:  1.00,  // full gender color
+  realistic: 0.75,  // 25% transparent
+  preferred: 0.50,  // 50% transparent
 };
 
 const COLOR_CARD           = '#FFFFFF';
@@ -59,8 +59,6 @@ const COLOR_ROW_HOVER_BG  = '#F5F4F0';
 
 const TOTAL_BLIPS   = 4000;
 const BLIPS_PER_ROW = 50;
-const BLIP_SIZE     = 9;   // px
-const BLIP_GAP      = 3;   // px
 
 const POOL_KEYS: (keyof DatingPoolData['pools'])[] = [
   'metro', 'identity', 'realistic', 'preferred', 'ideal',
@@ -100,7 +98,7 @@ function buildColors(targetGender: TargetGender) {
   const genderHex = COLOR_GENDER[targetGender] ?? COLOR_GENDER.all;
   return {
     metro:     COLOR_BLIP_EMPTY,
-    identity:  COLOR_BLACK,
+    identity:  hexToRgba(genderHex, GENDER_OPACITY.identity),
     realistic: hexToRgba(genderHex, GENDER_OPACITY.realistic),
     preferred: hexToRgba(genderHex, GENDER_OPACITY.preferred),
     ideal:     COLOR_ACTION,
@@ -115,9 +113,10 @@ function buildColors(targetGender: TargetGender) {
 }
 
 /**
- * Build per-blip color array. Pools paint from largest → smallest so smaller
- * pools overwrite larger ones. The array is then reversed so colored blips
- * sit at the bottom of the grid and empty blips at the top.
+ * Build per-blip color array and a parallel "tier key" array.
+ * Pools paint from largest → smallest so smaller pools overwrite larger ones.
+ * The arrays are then reversed so colored blips sit at the bottom of the grid
+ * and empty blips at the top.
  */
 function buildBlipColors(
   pools: DatingPoolData['pools'],
@@ -135,17 +134,20 @@ function buildBlipColors(
 
   // Paint from largest → smallest (smaller pools overwrite)
   const blips = new Array<string>(TOTAL_BLIPS).fill(colors.empty);
+  const tiers = new Array<string>(TOTAL_BLIPS).fill('empty');
   POOL_KEYS.forEach(k => {
     const n = counts[k];
     for (let i = 0; i < n; i++) {
       blips[i] = colors[k as keyof typeof colors] as string;
+      tiers[i] = k;
     }
   });
 
   // Reverse so filled blips are at the bottom of the grid
   blips.reverse();
+  tiers.reverse();
 
-  return { blips, counts };
+  return { blips, tiers, counts };
 }
 
 // ─── ELEMENT HELPERS ────────────────────────────────────────────────────────
@@ -178,13 +180,25 @@ export function renderDatingPoolGrid(
   container.innerHTML = '';
 
   const COLORS = buildColors(targetGender);
-  const { pools, metro, metroPopulation } = data;
-  const { blips, counts } = buildBlipColors(pools, COLORS);
-
-  const gridWidth = BLIPS_PER_ROW * BLIP_SIZE + (BLIPS_PER_ROW - 1) * BLIP_GAP;
+  const { pools, metro } = data;
+  const { blips, tiers, counts } = buildBlipColors(pools, COLORS);
 
   // State
   let hovered: string | null = null;
+
+  // Inject keyframes for the ideal-blip blink animation
+  const styleId = 'dpg-blink-style';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      @keyframes dpg-blink {
+        0%, 100% { background-color: ${COLOR_ACTION}; }
+        50%      { background-color: ${COLOR_BLIP_EMPTY}; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
 
   // ── Card wrapper ──
   const card = el('div', {
@@ -192,7 +206,8 @@ export function renderDatingPoolGrid(
     borderRadius: '6px',
     border: `1px solid ${COLORS.border}`,
     padding: '20px',
-    maxWidth: `${gridWidth + 40}px`,
+    width: '100%',
+    boxSizing: 'border-box',
     fontFamily: "'DM Sans', system-ui, sans-serif",
   });
 
@@ -208,7 +223,7 @@ export function renderDatingPoolGrid(
     margin: '0 0 4px 0',
   }));
 
-  header.appendChild(text('p', `Each blip represents ${fmt(Math.round(pools.metro.count / TOTAL_BLIPS))} people. Total metro population ${fmt(metroPopulation)}.`, {
+  header.appendChild(text('p', `${fmt(pools.metro.count)} singles in your dating pool. Each blip ≈ ${fmt(Math.max(1, Math.round(pools.metro.count / TOTAL_BLIPS)))} people.`, {
     fontSize: '12px',
     color: COLORS.textSecondary,
     margin: '0',
@@ -217,54 +232,64 @@ export function renderDatingPoolGrid(
 
   card.appendChild(header);
 
-  // ── Blip grid ──
-  const grid = el('div', {
-    display: 'grid',
-    gridTemplateColumns: `repeat(${BLIPS_PER_ROW}, ${BLIP_SIZE}px)`,
-    gap: `${BLIP_GAP}px`,
-    width: `${gridWidth}px`,
-  });
+  // ── Blip grid (flex-compression pill effect) ──
+  // Each row is a flex container with BLIPS_PER_ROW items. Items are 8×8
+  // with 2px margin and rounded-sm, but WITHOUT flex-shrink: 0 — so flexbox
+  // compresses them horizontally into organic pill shapes that adapt to the
+  // card width.
+  const grid = el('div', { width: '100%' });
 
   const blipEls: HTMLDivElement[] = [];
-  for (let i = 0; i < TOTAL_BLIPS; i++) {
-    const dot = el('div', {
-      width: `${BLIP_SIZE}px`,
-      height: `${BLIP_SIZE}px`,
-      borderRadius: '2px',
-      backgroundColor: blips[i],
-      transition: 'background-color 0.15s ease',
+  const totalRows = Math.ceil(TOTAL_BLIPS / BLIPS_PER_ROW);
+
+  for (let row = 0; row < totalRows; row++) {
+    const rowEl = el('div', {
+      display: 'flex',
     });
-    blipEls.push(dot);
-    grid.appendChild(dot);
+
+    for (let col = 0; col < BLIPS_PER_ROW; col++) {
+      const i = row * BLIPS_PER_ROW + col;
+      if (i >= TOTAL_BLIPS) break;
+
+      const dot = el('div', {
+        width: '8px',
+        height: '8px',
+        margin: '2px',
+        borderRadius: '2px',
+        backgroundColor: blips[i],
+        transition: 'background-color 0.15s ease',
+        // No flex-shrink: 0 — items compress horizontally into pills
+      });
+
+      // Ideal-tier blips get the blink animation
+      if (tiers[i] === 'ideal') {
+        dot.style.animation = 'dpg-blink 2s ease-in-out infinite';
+      }
+
+      blipEls.push(dot);
+      rowEl.appendChild(dot);
+    }
+
+    grid.appendChild(rowEl);
   }
 
   card.appendChild(grid);
 
   // ── Blip color on hover ──
-  // Because the blip array is reversed (bottom-up), blip index 0 is top-left
-  // (empty) and the last index is bottom-right (smallest pool). To figure out
-  // which pool a blip belongs to we map from its "logical" position in the
-  // original (unreversed) order.
   function blipColor(idx: number): string {
-    // Reverse the index: logical position in the original top-down array
-    const origIdx = TOTAL_BLIPS - 1 - idx;
-
     if (!hovered) return blips[idx];
-
-    let assignedKey: string | null = null;
-    for (let ki = POOL_KEYS.length - 1; ki >= 0; ki--) {
-      if (origIdx < counts[POOL_KEYS[ki]]) {
-        assignedKey = POOL_KEYS[ki];
-        break;
-      }
-    }
-    if (!assignedKey) return COLORS.empty;
-    return assignedKey === hovered ? blips[idx] : COLORS.empty;
+    return tiers[idx] === hovered ? blips[idx] : COLORS.empty;
   }
 
   function repaintBlips() {
     for (let i = 0; i < TOTAL_BLIPS; i++) {
       blipEls[i].style.backgroundColor = blipColor(i);
+      // Pause/resume blink animation based on hover isolation
+      if (tiers[i] === 'ideal') {
+        const show = !hovered || hovered === 'ideal';
+        blipEls[i].style.animation = show ? 'dpg-blink 2s ease-in-out infinite' : 'none';
+        if (!show) blipEls[i].style.backgroundColor = COLORS.empty;
+      }
     }
   }
 
@@ -290,14 +315,18 @@ export function renderDatingPoolGrid(
       borderRadius: '4px',
     });
 
-    // Swatch
-    row.appendChild(el('div', {
+    // Swatch — ideal tier gets a subtle blink too
+    const swatch = el('div', {
       width: '14px',
       height: '14px',
       borderRadius: '3px',
       backgroundColor: COLORS[key as keyof typeof COLORS] as string,
       flexShrink: '0',
-    }));
+    });
+    if (key === 'ideal') {
+      swatch.style.animation = 'dpg-blink 2s ease-in-out infinite';
+    }
+    row.appendChild(swatch);
 
     // Label
     row.appendChild(text('span', label, {
@@ -360,7 +389,7 @@ export function renderDatingPoolGrid(
   card.appendChild(legend);
 
   // ── Footer ──
-  card.appendChild(text('p', 'Hover a row to isolate that pool in the grid. Each color layer overwrites the prior, so smaller pools are always visible despite representing fewer blips.', {
+  card.appendChild(text('p', 'Hover a row to isolate that pool in the grid.', {
     fontSize: '10px',
     color: COLORS.textMuted,
     margin: '14px 0 0 0',
