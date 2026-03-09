@@ -48,7 +48,8 @@ const COLOR_ROW_HOVER_BG  = '#F5F4F0';
 
 // ─── CONFIG ─────────────────────────────────────────────────────────────────
 
-const TOTAL_BLIPS   = 3000;
+const MIN_BLIPS     = 3000;
+const MAX_BLIPS     = 4000;
 const BLIPS_PER_ROW = 50;
 
 const POOL_KEYS: (keyof DatingPoolData['pools'])[] = [
@@ -111,22 +112,23 @@ function buildColors(_targetGender: TargetGender) {
 function buildBlipColors(
   pools: DatingPoolData['pools'],
   colors: ReturnType<typeof buildColors>,
+  totalBlips: number,
 ) {
   const base = pools.metro.count;
 
   const counts: Record<string, number> = {};
   POOL_KEYS.forEach(k => {
-    const raw = (pools[k].count / base) * TOTAL_BLIPS;
+    const raw = (pools[k].count / base) * totalBlips;
     // Round down ideal if less than half a blip
     counts[k] = Math.min(
-      TOTAL_BLIPS,
+      totalBlips,
       k === 'ideal' ? Math.floor(raw) : Math.round(raw),
     );
   });
 
   // Paint from largest → smallest (smaller pools overwrite)
-  const blips = new Array<string>(TOTAL_BLIPS).fill(colors.empty);
-  const tiers = new Array<string>(TOTAL_BLIPS).fill('empty');
+  const blips = new Array<string>(totalBlips).fill(colors.empty);
+  const tiers = new Array<string>(totalBlips).fill('empty');
   POOL_KEYS.forEach(k => {
     const n = counts[k];
     for (let i = 0; i < n; i++) {
@@ -173,7 +175,8 @@ export function renderDatingPoolGrid(
 
   const COLORS = buildColors(targetGender);
   const { pools, metro } = data;
-  const { blips, tiers, counts } = buildBlipColors(pools, COLORS);
+  let totalBlips = MIN_BLIPS;
+  let { blips, tiers, counts } = buildBlipColors(pools, COLORS, totalBlips);
 
   // State
   let hovered: string | null = null;
@@ -218,19 +221,25 @@ export function renderDatingPoolGrid(
     margin: '0 0 4px 0',
   }));
 
-  header.appendChild(text('p', `${fmt(pools.metro.count)} singles in your dating pool. Each blip ≈ ${fmt(Math.max(1, Math.round(pools.metro.count / TOTAL_BLIPS)))} people.`, {
+  const subtitle = text('p', '', {
     fontSize: '12px',
     color: COLORS.textSecondary,
     margin: '0',
     lineHeight: '1.5',
-  }));
+  });
+  function updateSubtitle() {
+    const genderLabel = targetGender === 'women' ? 'women' : targetGender === 'men' ? 'men' : 'singles';
+    subtitle.textContent = `${fmt(pools.metro.count)} singles in your dating pool. Each blip ≈ ${fmt(Math.max(1, Math.round(pools.metro.count / totalBlips)))} ${genderLabel}.`;
+  }
+  updateSubtitle();
+  header.appendChild(subtitle);
 
   card.appendChild(header);
 
   // ── Blip grid (flex-compression pill effect) ──
-  // The grid grows to fill available card height. After mount we measure
-  // the space, compute how many rows fit, derive blipsPerRow = 3000/rows,
-  // and rebuild. Items lack flex-shrink:0 so they compress into pills.
+  // The grid grows to fill available card height. After mount we pick
+  // a totalBlips between 3000–4000 (snapped to multiples of 50) that
+  // best fills the space — adjusting people-per-blip, not columns.
   const grid = el('div', {
     width: '100%',
     flex: '1',
@@ -242,19 +251,17 @@ export function renderDatingPoolGrid(
   // Blip height (8px) + margin top+bottom (2px+2px) = 12px per row
   const BLIP_ROW_H = 12;
 
-  function buildGrid(blipsPerRow: number) {
+  function buildGrid() {
     grid.innerHTML = '';
     blipEls.length = 0;
-    const totalRows = Math.ceil(TOTAL_BLIPS / blipsPerRow);
+    const totalRows = Math.ceil(totalBlips / BLIPS_PER_ROW);
 
     for (let row = 0; row < totalRows; row++) {
-      const rowEl = el('div', {
-        display: 'flex',
-      });
+      const rowEl = el('div', { display: 'flex' });
 
-      for (let col = 0; col < blipsPerRow; col++) {
-        const i = row * blipsPerRow + col;
-        if (i >= TOTAL_BLIPS) break;
+      for (let col = 0; col < BLIPS_PER_ROW; col++) {
+        const i = row * BLIPS_PER_ROW + col;
+        if (i >= totalBlips) break;
 
         const dot = el('div', {
           width: '8px',
@@ -277,18 +284,23 @@ export function renderDatingPoolGrid(
     }
   }
 
-  // Initial render with default column count
-  buildGrid(BLIPS_PER_ROW);
+  // Initial render
+  buildGrid();
   card.appendChild(grid);
 
-  // After mount, measure available height and adapt columns
+  // After mount, pick the best total blip count to fill the height
   requestAnimationFrame(() => {
     const availH = grid.clientHeight;
     if (availH > 0) {
       const rowsThatFit = Math.max(1, Math.floor(availH / BLIP_ROW_H));
-      const newPerRow = Math.ceil(TOTAL_BLIPS / rowsThatFit);
-      if (newPerRow !== BLIPS_PER_ROW) {
-        buildGrid(newPerRow);
+      const ideal = rowsThatFit * BLIPS_PER_ROW;
+      const newTotal = Math.max(MIN_BLIPS, Math.min(MAX_BLIPS, ideal));
+      // Snap to multiple of BLIPS_PER_ROW for clean rows
+      totalBlips = Math.round(newTotal / BLIPS_PER_ROW) * BLIPS_PER_ROW;
+      if (totalBlips !== MIN_BLIPS) {
+        ({ blips, tiers, counts } = buildBlipColors(pools, COLORS, totalBlips));
+        updateSubtitle();
+        buildGrid();
       }
     }
   });
@@ -300,7 +312,7 @@ export function renderDatingPoolGrid(
   }
 
   function repaintBlips() {
-    for (let i = 0; i < TOTAL_BLIPS; i++) {
+    for (let i = 0; i < blipEls.length; i++) {
       blipEls[i].style.backgroundColor = blipColor(i);
       // Pause/resume blink animation based on hover isolation
       if (tiers[i] === 'ideal') {
