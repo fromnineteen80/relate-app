@@ -133,6 +133,8 @@ function ResultsDashboard() {
   const marketFetchedRef = useRef(false);
   const [topMetros, setTopMetros] = useState<any[] | null>(null);
   const topMetrosFetchedRef = useRef(false);
+  const [worstMetros, setWorstMetros] = useState<any[] | null>(null);
+  const worstMetrosFetchedRef = useRef(false);
 
   // Load everything from localStorage / Supabase
   useEffect(() => {
@@ -257,6 +259,22 @@ function ResultsDashboard() {
     })
       .then(r => r.json())
       .then(data => { if (data.success) setTopMetros(data.topMetros); })
+      .catch(() => { });
+  }, [marketData, user]);
+
+  // Fetch worst metros data once market data is loaded
+  useEffect(() => {
+    if (!marketData || worstMetrosFetchedRef.current) return;
+    const req = buildMarketRequestBody(user?.id || '');
+    if (!req) return;
+    worstMetrosFetchedRef.current = true;
+    fetch('/api/worst-metros', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body),
+    })
+      .then(r => r.json())
+      .then(data => { if (data.success) setWorstMetros(data.worstMetros); })
       .catch(() => { });
   }, [marketData, user]);
 
@@ -1510,7 +1528,7 @@ function ResultsDashboard() {
 
         {/* ── Top Metros Scatter Plot ── */}
         {topMetros && topMetros.length > 0 && (
-          <TopMetrosScatterPlot metros={topMetros} demographics={demographics} />
+          <TopMetrosScatterPlot metros={topMetros} worstMetros={worstMetros} demographics={demographics} />
         )}
 
         {/* ── Market Coaching ── */}
@@ -1715,7 +1733,7 @@ function nextFactorOf10(n: number) {
   return Math.ceil(n / mag) * mag;
 }
 
-function TopMetrosScatterPlot({ metros, demographics }: { metros: any[]; demographics?: any }) {
+function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: any[]; worstMetros?: any[] | null; demographics?: any }) {
   const [tooltip, setTooltip] = useState<{ metro: any; x: number; y: number } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -1911,6 +1929,53 @@ function TopMetrosScatterPlot({ metros, demographics }: { metros: any[]; demogra
           );
         })()}
       </div>
+
+      {/* ── Worst Metros ── */}
+      {worstMetros && worstMetros.length > 0 && (
+        <>
+          <div className="border-t border-[#f0efed] my-4" />
+          <h4 className="font-serif text-base font-semibold mb-1 flex items-center gap-2">
+            <Icon name="trending_down" size={18} className="text-accent" />
+            Your Worst Large Metro Areas
+          </h4>
+          <p className="explainer mb-3">Bottom 10 metros (pop. 1.5M+) ranked by smallest ideal match pool.</p>
+          <div className="space-y-0">
+            {worstMetros.map((m, i) => {
+              const per10k = m.localSinglePool > 0
+                ? Math.round((m.idealPool / m.localSinglePool) * 10000)
+                : 0;
+              return (
+                <div
+                  key={m.cbsa || i}
+                  className="flex items-center gap-2.5 py-1.5 px-1.5"
+                  style={{ borderBottom: i < worstMetros.length - 1 ? '1px solid #f0efed' : 'none' }}
+                >
+                  <span style={{ fontSize: '12px', color: '#78716c', fontFamily: 'monospace', width: '24px', textAlign: 'right', flexShrink: 0 }}>
+                    #{i + 1}
+                  </span>
+                  <span style={{ fontSize: '12px', color: '#141413', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {m.cbsaLabel || m.cbsaName}
+                  </span>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#141413', fontFamily: 'monospace', width: '32px', textAlign: 'right', flexShrink: 0 }} title="Competition Score">
+                    {Math.round(m.relateScore)}
+                  </span>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#141413', fontFamily: 'monospace', width: '48px', textAlign: 'right', flexShrink: 0 }} title="Estimated Matches">
+                    {m.matchCount.toLocaleString()}
+                  </span>
+                  <span style={{ fontSize: '11px', color: '#78716c', fontFamily: 'monospace', width: '80px', textAlign: 'right', flexShrink: 0 }} title={`Per 10,000 local single ${datingGender}`}>
+                    {per10k.toLocaleString()} / 10k
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-[10px] text-secondary mt-2 flex gap-4">
+            <span>Score = competition score</span>
+            <span>Matches = est. matches</span>
+            <span>/ 10k = ideal per 10,000 local single {datingGender}</span>
+          </p>
+        </>
+      )}
     </section>
   );
 }
