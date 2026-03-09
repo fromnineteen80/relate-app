@@ -249,9 +249,8 @@ export function renderDatingPoolGrid(
 
   const blipEls: HTMLDivElement[] = [];
 
-  // Row height is dynamic: blip width = containerWidth / BLIPS_PER_ROW, aspect-ratio 1:1, + 1px margin
-  // We compute after mount, but use a fallback for initial render
-  let BLIP_ROW_H = 9; // fallback
+  // Row height: 8px blip + 4px margin = 12px per row
+  let BLIP_ROW_H = 12; // fallback
 
   function buildGrid() {
     grid.innerHTML = '';
@@ -266,10 +265,10 @@ export function renderDatingPoolGrid(
         if (i >= totalBlips) break;
 
         const dot = el('div', {
-          flex: '1',
-          aspectRatio: '1',
-          margin: '0.5px',
-          borderRadius: '1px',
+          width: '8px',
+          height: '8px',
+          margin: '2px',
+          borderRadius: '2px',
           backgroundColor: blips[i],
           transition: 'background-color 0.15s ease',
         });
@@ -290,21 +289,20 @@ export function renderDatingPoolGrid(
   buildGrid();
   card.appendChild(grid);
 
-  // After mount, compute actual row height and pick the best total blip count
+  // After mount, pick the best total blip count to fill available height.
+  // The grid has flex:1 so it fills remaining card space. We measure that
+  // height, compute how many 12px rows fit, and rebuild if needed.
   requestAnimationFrame(() => {
-    const gridW = grid.clientWidth;
-    if (gridW > 0) {
-      // Each blip is flex:1 with 0.5px margin on each side = 1px total per blip
-      const blipSize = (gridW - BLIPS_PER_ROW * 1) / BLIPS_PER_ROW;
-      BLIP_ROW_H = blipSize + 1; // blip height + vertical margin
-    }
+    BLIP_ROW_H = 12; // 8px blip + 4px margin (top+bottom)
     const availH = grid.clientHeight;
-    if (availH > 0 && BLIP_ROW_H > 0) {
+    if (availH > 0) {
       const rowsThatFit = Math.max(1, Math.floor(availH / BLIP_ROW_H));
       const ideal = rowsThatFit * BLIPS_PER_ROW;
-      const newTotal = Math.max(MIN_BLIPS, Math.min(MAX_BLIPS, ideal));
-      totalBlips = Math.round(newTotal / BLIPS_PER_ROW) * BLIPS_PER_ROW;
-      if (totalBlips !== MIN_BLIPS) {
+      const snapped = Math.round(
+        Math.max(MIN_BLIPS, Math.min(MAX_BLIPS, ideal)) / BLIPS_PER_ROW,
+      ) * BLIPS_PER_ROW;
+      if (snapped !== totalBlips) {
+        totalBlips = snapped;
         ({ blips, tiers, counts } = buildBlipColors(pools, COLORS, totalBlips));
         updateSubtitle();
         buildGrid();
