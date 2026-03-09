@@ -22,9 +22,9 @@ export default function AdvisorHeader() {
   }, []);
 
   return (
-    <div className="border-b border-border bg-white px-4 pt-[10px] pb-[6px] flex-shrink-0">
+    <div className="border-b border-border bg-white px-6 py-2 flex-shrink-0">
       <div className="flex items-center justify-between">
-        <h2 className="font-serif text-base font-semibold text-secondary">Your Advisor</h2>
+        <h2 className="font-serif text-base font-semibold tracking-tight">Your Advisor</h2>
         <div className="flex items-center gap-2">
           <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold overflow-hidden border-2 border-transparent`}>
             {photoUrl ? (
