@@ -249,8 +249,9 @@ export function renderDatingPoolGrid(
 
   const blipEls: HTMLDivElement[] = [];
 
-  // Blip height (8px) + margin top+bottom (2px+2px) = 12px per row
-  const BLIP_ROW_H = 12;
+  // Row height is dynamic: blip width = containerWidth / BLIPS_PER_ROW, aspect-ratio 1:1, + 1px margin
+  // We compute after mount, but use a fallback for initial render
+  let BLIP_ROW_H = 9; // fallback
 
   function buildGrid() {
     grid.innerHTML = '';
@@ -265,10 +266,10 @@ export function renderDatingPoolGrid(
         if (i >= totalBlips) break;
 
         const dot = el('div', {
-          width: '8px',
-          height: '8px',
-          margin: '2px',
-          borderRadius: '2px',
+          flex: '1',
+          aspectRatio: '1',
+          margin: '0.5px',
+          borderRadius: '1px',
           backgroundColor: blips[i],
           transition: 'background-color 0.15s ease',
         });
@@ -289,14 +290,19 @@ export function renderDatingPoolGrid(
   buildGrid();
   card.appendChild(grid);
 
-  // After mount, pick the best total blip count to fill the height
+  // After mount, compute actual row height and pick the best total blip count
   requestAnimationFrame(() => {
+    const gridW = grid.clientWidth;
+    if (gridW > 0) {
+      // Each blip is flex:1 with 0.5px margin on each side = 1px total per blip
+      const blipSize = (gridW - BLIPS_PER_ROW * 1) / BLIPS_PER_ROW;
+      BLIP_ROW_H = blipSize + 1; // blip height + vertical margin
+    }
     const availH = grid.clientHeight;
-    if (availH > 0) {
+    if (availH > 0 && BLIP_ROW_H > 0) {
       const rowsThatFit = Math.max(1, Math.floor(availH / BLIP_ROW_H));
       const ideal = rowsThatFit * BLIPS_PER_ROW;
       const newTotal = Math.max(MIN_BLIPS, Math.min(MAX_BLIPS, ideal));
-      // Snap to multiple of BLIPS_PER_ROW for clean rows
       totalBlips = Math.round(newTotal / BLIPS_PER_ROW) * BLIPS_PER_ROW;
       if (totalBlips !== MIN_BLIPS) {
         ({ blips, tiers, counts } = buildBlipColors(pools, COLORS, totalBlips));
@@ -307,9 +313,24 @@ export function renderDatingPoolGrid(
   });
 
   // ── Blip color on hover ──
+  // Pools are nested: metro ⊃ identity ⊃ realistic ⊃ preferred ⊃ ideal
+  // A blip tagged "realistic" also belongs to identity and metro.
+  const poolDepth: Record<string, number> = { metro: 0, identity: 1, realistic: 2, preferred: 3, ideal: 4, empty: -1 };
+
+  function blipBelongsToPool(blipTier: string, hoveredPool: string): boolean {
+    const blipD = poolDepth[blipTier] ?? -1;
+    const hovD = poolDepth[hoveredPool] ?? -1;
+    // A blip belongs to a pool if it's at the same depth or deeper (more filtered)
+    return blipD >= hovD && blipD >= 0;
+  }
+
   function blipColor(idx: number): string {
     if (!hovered) return blips[idx];
-    return tiers[idx] === hovered ? blips[idx] : COLORS.empty;
+    if (blipBelongsToPool(tiers[idx], hovered)) {
+      // Show all matching blips in the hovered pool's color
+      return COLORS[hovered as keyof typeof COLORS] as string;
+    }
+    return COLORS.empty;
   }
 
   function repaintBlips() {
@@ -319,7 +340,7 @@ export function renderDatingPoolGrid(
       if (tiers[i] === 'ideal') {
         const show = !hovered || hovered === 'ideal';
         blipEls[i].style.animation = show ? 'dpg-blink 2s ease-in-out infinite' : 'none';
-        if (!show) blipEls[i].style.backgroundColor = COLORS.empty;
+        if (!show) blipEls[i].style.backgroundColor = blipColor(i);
       }
     }
   }
@@ -329,10 +350,10 @@ export function renderDatingPoolGrid(
     marginTop: '20px',
     display: 'flex',
     flexDirection: 'column',
-    gap: '8px',
+    gap: '0',
   });
 
-  LEGEND.forEach(({ key, label }) => {
+  LEGEND.forEach(({ key, label }, idx) => {
     const count = pools[key].count;
     const base  = pools.metro.count;
 
@@ -341,9 +362,10 @@ export function renderDatingPoolGrid(
       alignItems: 'center',
       gap: '10px',
       cursor: 'pointer',
-      transition: 'opacity 0.15s ease',
-      padding: '4px 6px',
-      borderRadius: '4px',
+      transition: 'opacity 0.15s ease, background-color 0.15s ease',
+      padding: '6px 6px',
+      borderRadius: '0',
+      borderBottom: idx < LEGEND.length - 1 ? '1px solid #f0efed' : 'none',
     });
 
     // Swatch — ideal tier gets a subtle blink too
