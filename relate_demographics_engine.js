@@ -1615,6 +1615,60 @@ function findQuestionByKey(key) {
   return null;
 }
 
+/**
+ * Find top 20 metro areas for this user, ranked by:
+ * 1. Largest ideal match pool
+ * 2. Highest match likelihood (tie-breaker)
+ * 3. Income + education percentile (tie-breaker)
+ */
+async function findTopMetros(userProfile, preferences, homeScore) {
+  const cbsas = await loadCBSAData();
+  const allCBSAs = Object.values(cbsas).filter(c => c.cbsa_population > 0);
+  const results = [];
+
+  // Minimum competition score: no more than 5 below the user's home metro score
+  const minScore = (homeScore || 0) - 5;
+
+  for (const cbsa of allCBSAs) {
+    const relateScore = calculateRelateScore(userProfile, cbsa);
+
+    // Skip metros where user's competition score drops more than 5 below home
+    if (relateScore.score < minScore) continue;
+
+    const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
+    const matchProbability = getMatchProbability(relateScore.score);
+    const matchCount = Math.round(matchPool.idealPool * matchProbability);
+
+    // Income + education composite for tie-breaking
+    const incomeLocal = relateScore.components.income.local;
+    const eduLocal = relateScore.components.education.local;
+    const incomeEduRank = (incomeLocal + eduLocal) / 2;
+
+    results.push({
+      cbsa: cbsa.cbsa,
+      cbsaName: cbsa.cbsa_name || cbsa.cbsa_label,
+      cbsaLabel: cbsa.cbsa_label,
+      population: cbsa.cbsa_population,
+      relateScore: relateScore.score,
+      components: relateScore.components,
+      idealPool: matchPool.idealPool,
+      matchProbability,
+      matchCount,
+      incomeEduRank,
+      rpp: cbsa.rpp,
+    });
+  }
+
+  // Sort: 1) idealPool desc, 2) matchProbability desc, 3) incomeEduRank desc
+  results.sort((a, b) => {
+    if (b.idealPool !== a.idealPool) return b.idealPool - a.idealPool;
+    if (b.matchProbability !== a.matchProbability) return b.matchProbability - a.matchProbability;
+    return b.incomeEduRank - a.incomeEduRank;
+  });
+
+  return results.slice(0, 20);
+}
+
 // ============================================================================
 // EXPORTS
 // ============================================================================
@@ -1676,6 +1730,7 @@ module.exports = {
   // Main processing
   processDemographics,
   compareMetros,
+  findTopMetros,
   
   // Utilities
   heightToInches,
