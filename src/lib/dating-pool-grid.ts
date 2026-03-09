@@ -34,7 +34,10 @@ export type TargetGender = 'women' | 'men' | 'all';
 // ─── DESIGN TOKENS ──────────────────────────────────────────────────────────
 
 const COLOR_BLIP_EMPTY    = '#e7e5e4';  // stone-200 — progress bar background
-const COLOR_IDEAL         = '#F9A825';  // brand yellow — ideal tier
+const COLOR_YELLOW        = '#F9A825';  // brand yellow — realistic tier
+const COLOR_IDEAL_WOMEN   = '#fb7185';  // rose-400 — ideal when dating women
+const COLOR_IDEAL_MEN     = '#3b82f6';  // blue-500 — ideal when dating men
+const COLOR_IDEAL_ALL     = '#a78bfa';  // violet-400 — ideal fallback
 const COLOR_IDEAL_BLINK   = '#e7e5e4';  // stone-200 — ideal blinks to empty gray
 const COLOR_IDENTITY      = '#292524';  // brand black — identity pool
 const COLOR_GREEN         = '#047857';  // brand green — realistic/preferred base
@@ -86,13 +89,16 @@ function fmt(n: number): string {
   return n.toLocaleString();
 }
 
-function buildColors(_targetGender: TargetGender) {
+function buildColors(targetGender: TargetGender) {
+  const idealColor = targetGender === 'women' ? COLOR_IDEAL_WOMEN
+    : targetGender === 'men' ? COLOR_IDEAL_MEN
+    : COLOR_IDEAL_ALL;
   return {
     metro:     COLOR_BLIP_EMPTY,
     identity:  COLOR_IDENTITY,
-    realistic: hexToRgba(COLOR_GREEN, 0.80),
+    realistic: hexToRgba(COLOR_YELLOW, 0.80),
     preferred: hexToRgba(COLOR_GREEN, 0.40),
-    ideal:     COLOR_IDEAL,
+    ideal:     idealColor,
     empty:     COLOR_BLIP_EMPTY,
     card:      COLOR_CARD,
     border:    COLOR_BORDER,
@@ -181,19 +187,19 @@ export function renderDatingPoolGrid(
   // State
   let hovered: string | null = null;
 
-  // Inject keyframes for the ideal-blip blink animation
+  // Inject keyframes for the ideal-blip blink animation (gender-specific color)
   const styleId = 'dpg-blink-style';
-  if (!document.getElementById(styleId)) {
-    const style = document.createElement('style');
-    style.id = styleId;
-    style.textContent = `
-      @keyframes dpg-blink {
-        0%, 100% { background-color: ${COLOR_IDEAL}; }
-        50%      { background-color: ${COLOR_IDEAL_BLINK}; }
-      }
-    `;
-    document.head.appendChild(style);
-  }
+  const existingStyle = document.getElementById(styleId);
+  if (existingStyle) existingStyle.remove();
+  const style = document.createElement('style');
+  style.id = styleId;
+  style.textContent = `
+    @keyframes dpg-blink {
+      0%, 100% { background-color: ${COLORS.ideal}; }
+      50%      { background-color: ${COLOR_IDEAL_BLINK}; }
+    }
+  `;
+  document.head.appendChild(style);
 
   // ── Card wrapper ──
   const card = el('div', {
