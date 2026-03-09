@@ -1390,13 +1390,18 @@ function ResultsDashboard() {
         {/* ── Couples Mode ── */}
         {hasResults && (
           <section className="card mb-4 border-accent">
-            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="favorite" size={20} className="text-accent" />Couples Mode</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="favorite" size={20} className="text-accent" />Couples Mode</h3>
+              {hasPartner && hasResults && partnerHasResults && hasCouplesAccess && (
+                <Link href="/results/compare" className="text-xs text-accent hover:underline font-medium whitespace-nowrap">View Your Couples Results</Link>
+              )}
+            </div>
 
             {hasPartner ? (
               <div>
-                {/* User / Connected / Partner row */}
-                <div className="flex items-center justify-between gap-3">
-                  {/* Left: current user */}
+                {/* User / Connected / Partner — horizontal on desktop, vertical on mobile */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+                  {/* User */}
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="w-10 h-10 rounded-full flex-shrink-0 overflow-hidden border-2 border-border">
                       {userProfilePhoto ? (
@@ -1417,17 +1422,17 @@ function ResultsDashboard() {
                     </div>
                   </div>
 
-                  {/* Center: connected pill */}
+                  {/* Connected pill */}
                   <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
 
-                  {/* Right: partner */}
-                  <div className="flex items-center gap-3 min-w-0 flex-row-reverse">
+                  {/* Partner */}
+                  <div className="flex items-center gap-3 min-w-0 sm:flex-row-reverse">
                     <div className="w-10 h-10 rounded-full flex-shrink-0 overflow-hidden border-2 border-border">
                       <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-sm font-medium">
                         {partnerName ? partnerName.charAt(0).toUpperCase() : '?'}
                       </span>
                     </div>
-                    <div className="min-w-0 text-right">
+                    <div className="min-w-0 sm:text-right">
                       <p className="text-sm font-medium truncate">{partnerName || 'Partner'}</p>
                       {partnerPersonaName ? (
                         <span className="text-xs text-secondary truncate block">{partnerPersonaName}</span>
@@ -1440,10 +1445,8 @@ function ResultsDashboard() {
                   </div>
                 </div>
 
-                {/* Action button */}
-                {hasResults && partnerHasResults && hasCouplesAccess ? (
-                  <Link href="/results/compare" className="btn-secondary text-xs w-full text-center block mt-4">View Couples Results</Link>
-                ) : hasResults && partnerHasResults ? (
+                {/* Activate prompt (only when not yet unlocked) */}
+                {hasResults && partnerHasResults && !hasCouplesAccess ? (
                   <div className="mt-4">
                     <p className="text-xs text-secondary mb-2">Both assessments complete. Activate Couples access to unlock your compatibility report.</p>
                     <Link href="/invite" className="btn-secondary text-xs w-full text-center block">Activate Couples</Link>
