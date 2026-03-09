@@ -1861,19 +1861,24 @@ function TopMetrosScatterPlot({ metros, demographics }: { metros: any[]; demogra
                 <div className="text-gray-400 text-[10px] mb-2">Pop. {(m.population || 0).toLocaleString()}</div>
 
                 {/* Local Competition Score */}
+                <div className="flex items-baseline gap-1.5 mb-1">
+                  <span className="text-[10px] text-gray-400 uppercase tracking-wider font-mono">Local Competition</span>
+                </div>
                 <div className="flex items-baseline gap-1.5 mb-1.5">
-                  <span className="text-xs text-gray-400 uppercase tracking-wider">Competition</span>
-                  <span className="font-mono text-base font-semibold">{m.relateScore.toFixed(0)}</span>
+                  <span className="font-mono text-lg font-semibold">{m.relateScore.toFixed(0)}</span>
                   <span style={{ color: tier.color }} className="text-[10px] font-medium">{tier.label}</span>
+                  <span className="text-gray-500 text-[10px] font-mono ml-auto">/100</span>
                 </div>
 
                 {/* Score progress bar */}
-                <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden mb-2">
+                <div className="relative h-1.5 bg-gray-700 rounded-full overflow-hidden mb-2">
                   <div className="h-full rounded-full" style={{ width: `${m.relateScore}%`, backgroundColor: tier.color }} />
+                  {[25, 50, 75].map(tick => <div key={tick} className="absolute top-0 bottom-0 w-px bg-white/20" style={{ left: `${tick}%` }} />)}
                 </div>
 
                 {/* Stats bars */}
-                <div className="space-y-1">
+                <span className="text-[10px] text-gray-400 uppercase tracking-wider font-mono">Your Stats</span>
+                <div className="space-y-1 mt-1">
                   {compOrder.map(key => {
                     const comp = components[key];
                     if (!comp) return null;
