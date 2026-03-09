@@ -1410,7 +1410,7 @@ function ResultsDashboard() {
 
         {/* ── Dating Market ── */}
         {hasMarket && (
-          <div className="scroll-mt-32 flex flex-col lg:flex-row gap-4 items-start mb-4">
+          <div className="scroll-mt-32 flex flex-col lg:flex-row gap-4 items-stretch mb-4">
             <div className="flex-1 min-w-0">
               <DatingMarketViz data={marketData} loading={marketLoading} onRelaxPreference={recalculateMarket} demographics={demographics} />
             </div>

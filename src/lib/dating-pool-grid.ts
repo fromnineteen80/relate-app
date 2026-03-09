@@ -201,6 +201,9 @@ export function renderDatingPoolGrid(
     width: '100%',
     boxSizing: 'border-box',
     fontFamily: "'DM Sans', system-ui, sans-serif",
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
   });
 
   // ── Header ──
@@ -225,47 +228,70 @@ export function renderDatingPoolGrid(
   card.appendChild(header);
 
   // ── Blip grid (flex-compression pill effect) ──
-  // Each row is a flex container with BLIPS_PER_ROW items. Items are 8×8
-  // with 2px margin and rounded-sm, but WITHOUT flex-shrink: 0 — so flexbox
-  // compresses them horizontally into organic pill shapes that adapt to the
-  // card width.
-  const grid = el('div', { width: '100%' });
+  // The grid grows to fill available card height. After mount we measure
+  // the space, compute how many rows fit, derive blipsPerRow = 3000/rows,
+  // and rebuild. Items lack flex-shrink:0 so they compress into pills.
+  const grid = el('div', {
+    width: '100%',
+    flex: '1',
+    overflow: 'hidden',
+  });
 
   const blipEls: HTMLDivElement[] = [];
-  const totalRows = Math.ceil(TOTAL_BLIPS / BLIPS_PER_ROW);
 
-  for (let row = 0; row < totalRows; row++) {
-    const rowEl = el('div', {
-      display: 'flex',
-    });
+  // Blip height (8px) + margin top+bottom (2px+2px) = 12px per row
+  const BLIP_ROW_H = 12;
 
-    for (let col = 0; col < BLIPS_PER_ROW; col++) {
-      const i = row * BLIPS_PER_ROW + col;
-      if (i >= TOTAL_BLIPS) break;
+  function buildGrid(blipsPerRow: number) {
+    grid.innerHTML = '';
+    blipEls.length = 0;
+    const totalRows = Math.ceil(TOTAL_BLIPS / blipsPerRow);
 
-      const dot = el('div', {
-        width: '8px',
-        height: '8px',
-        margin: '2px',
-        borderRadius: '2px',
-        backgroundColor: blips[i],
-        transition: 'background-color 0.15s ease',
-        // No flex-shrink: 0 — items compress horizontally into pills
+    for (let row = 0; row < totalRows; row++) {
+      const rowEl = el('div', {
+        display: 'flex',
       });
 
-      // Ideal-tier blips get the blink animation
-      if (tiers[i] === 'ideal') {
-        dot.style.animation = 'dpg-blink 2s ease-in-out infinite';
+      for (let col = 0; col < blipsPerRow; col++) {
+        const i = row * blipsPerRow + col;
+        if (i >= TOTAL_BLIPS) break;
+
+        const dot = el('div', {
+          width: '8px',
+          height: '8px',
+          margin: '2px',
+          borderRadius: '2px',
+          backgroundColor: blips[i],
+          transition: 'background-color 0.15s ease',
+        });
+
+        if (tiers[i] === 'ideal') {
+          dot.style.animation = 'dpg-blink 2s ease-in-out infinite';
+        }
+
+        blipEls.push(dot);
+        rowEl.appendChild(dot);
       }
 
-      blipEls.push(dot);
-      rowEl.appendChild(dot);
+      grid.appendChild(rowEl);
     }
-
-    grid.appendChild(rowEl);
   }
 
+  // Initial render with default column count
+  buildGrid(BLIPS_PER_ROW);
   card.appendChild(grid);
+
+  // After mount, measure available height and adapt columns
+  requestAnimationFrame(() => {
+    const availH = grid.clientHeight;
+    if (availH > 0) {
+      const rowsThatFit = Math.max(1, Math.floor(availH / BLIP_ROW_H));
+      const newPerRow = Math.ceil(TOTAL_BLIPS / rowsThatFit);
+      if (newPerRow !== BLIPS_PER_ROW) {
+        buildGrid(newPerRow);
+      }
+    }
+  });
 
   // ── Blip color on hover ──
   function blipColor(idx: number): string {
