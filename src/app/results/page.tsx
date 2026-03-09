@@ -1680,7 +1680,7 @@ function DatingPoolGridCard({ data, demographics }: { data: MarketData | null; d
     const singlesPool = pool.localSinglePool || 0;
 
     // Derive targetGender from user's gender (seeking opposite)
-    const userGender = demographics.gender;
+    const userGender = demographics.gender || localStorage.getItem('relate_gender');
     let targetGender: TargetGender = 'women';
     if (userGender === 'Woman' || userGender === 'woman' || userGender === 'F' || userGender === 'female') {
       targetGender = 'men';
