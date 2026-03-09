@@ -1476,11 +1476,11 @@ function ResultsDashboard() {
         {/* ── Dating Market ── */}
         {hasMarket && (
           <div className="scroll-mt-32 flex flex-col md:flex-row gap-4 items-stretch mb-4">
-            <div className="flex-1 min-w-0">
+            <div className="w-full md:w-1/2 min-w-0">
               <DatingMarketViz data={marketData} loading={marketLoading} onRelaxPreference={recalculateMarket} demographics={demographics} />
             </div>
             {!marketLoading && marketData && (
-              <div className="w-full md:w-[420px] shrink-0">
+              <div className="w-full md:w-1/2 min-w-0">
                 <DatingPoolGridCard data={marketData} demographics={demographics} />
               </div>
             )}
