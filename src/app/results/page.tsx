@@ -131,6 +131,8 @@ function ResultsDashboard() {
   const [userProfilePhoto, setUserProfilePhoto] = useState<string | null>(null);
   const [userFullName, setUserFullName] = useState<string | null>(null);
   const marketFetchedRef = useRef(false);
+  const [topMetros, setTopMetros] = useState<any[] | null>(null);
+  const topMetrosFetchedRef = useRef(false);
 
   // Load everything from localStorage / Supabase
   useEffect(() => {
@@ -241,6 +243,22 @@ function ResultsDashboard() {
       .catch(() => { })
       .finally(() => setMarketLoading(false));
   }, [user]);
+
+  // Fetch top metros scatter plot data once market data is loaded
+  useEffect(() => {
+    if (!marketData || topMetrosFetchedRef.current) return;
+    const req = buildMarketRequestBody(user?.id || '');
+    if (!req) return;
+    topMetrosFetchedRef.current = true;
+    fetch('/api/top-metros', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body),
+    })
+      .then(r => r.json())
+      .then(data => { if (data.success) setTopMetros(data.topMetros); })
+      .catch(() => { });
+  }, [marketData, user]);
 
   // Recalculate market data after adjusting a preference
   const recalculateMarket = useCallback(async (prefKey: string, value: any) => {
@@ -1490,6 +1508,11 @@ function ResultsDashboard() {
           </div>
         )}
 
+        {/* ── Top Metros Scatter Plot ── */}
+        {topMetros && topMetros.length > 0 && (
+          <TopMetrosScatterPlot metros={topMetros} demographics={demographics} />
+        )}
+
         {/* ── Market Coaching ── */}
         {marketData && (
           <MarketCoaching
@@ -1683,6 +1706,209 @@ const HEIGHTS = [
   '4\'10"','4\'11"','5\'0"','5\'1"','5\'2"','5\'3"','5\'4"','5\'5"','5\'6"','5\'7"',
   '5\'8"','5\'9"','5\'10"','5\'11"','6\'0"','6\'1"','6\'2"','6\'3"','6\'4"','6\'5"','6\'6"','6\'7"','6\'8"',
 ];
+
+// ── Top Metros Scatter Plot ──
+
+function nextFactorOf10(n: number) {
+  if (n <= 0) return 10;
+  const mag = Math.pow(10, Math.floor(Math.log10(n)));
+  return Math.ceil(n / mag) * mag;
+}
+
+function TopMetrosScatterPlot({ metros, demographics }: { metros: any[]; demographics?: any }) {
+  const [tooltip, setTooltip] = useState<{ metro: any; x: number; y: number } | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  const datingGender = (() => {
+    const g = demographics?.gender;
+    const seeking = demographics?.seeking;
+    if (seeking) {
+      const s = String(seeking).toLowerCase();
+      if (s.includes('women') || s.includes('woman') || s.includes('female')) return 'women';
+      if (s.includes('men') || s.includes('man') || s.includes('male')) return 'men';
+    }
+    if (g === 'Man' || g === 'man' || g === 'M' || g === 'male') return 'women';
+    if (g === 'Woman' || g === 'woman' || g === 'F' || g === 'female') return 'men';
+    return 'singles';
+  })();
+
+  // Chart dimensions
+  const W = 560, H = 360;
+  const pad = { top: 20, right: 30, bottom: 50, left: 60 };
+  const plotW = W - pad.left - pad.right;
+  const plotH = H - pad.top - pad.bottom;
+
+  const maxIdeal = nextFactorOf10(Math.max(...metros.map(m => m.idealPool)));
+  const maxMatch = nextFactorOf10(Math.max(...metros.map(m => m.matchCount)));
+
+  const scaleX = (v: number) => pad.left + (v / maxIdeal) * plotW;
+  const scaleY = (v: number) => pad.top + plotH - (v / maxMatch) * plotH;
+
+  // Generate tick marks
+  const xTicks: number[] = [];
+  const xStep = maxIdeal / 5;
+  for (let i = 0; i <= 5; i++) xTicks.push(Math.round(xStep * i));
+  const yTicks: number[] = [];
+  const yStep = maxMatch / 5;
+  for (let i = 0; i <= 5; i++) yTicks.push(Math.round(yStep * i));
+
+  const compOrder = ['income', 'education', 'age', 'ethnicity', 'children'];
+  const compLabels: Record<string, string> = { income: 'Income', education: 'Education', age: 'Age', ethnicity: 'Ethnicity', children: 'Children' };
+
+  function scoreTier(s: number) {
+    if (s >= 80) return { label: 'Exceptional', color: '#16a34a' };
+    if (s >= 65) return { label: 'Strong', color: '#16a34a' };
+    if (s >= 50) return { label: 'Above Average', color: '#c2854a' };
+    if (s >= 35) return { label: 'Average', color: '#ca8a04' };
+    return { label: 'Below Average', color: '#dc2626' };
+  }
+
+  const handleMouseEnter = (metro: any, e: React.MouseEvent) => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const rect = svg.getBoundingClientRect();
+    setTooltip({ metro, x: e.clientX - rect.left, y: e.clientY - rect.top });
+  };
+
+  const handleMouseLeave = () => setTooltip(null);
+
+  // Dot color based on gender being pursued
+  const dotColor = datingGender === 'women' ? '#fb7185' : datingGender === 'men' ? '#3b82f6' : '#c2854a';
+
+  return (
+    <section className="card mb-4">
+      <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2">
+        <Icon name="scatter_plot" size={20} className="text-accent" />
+        Your Best Metro Areas
+      </h3>
+      <p className="explainer mb-4">Top 20 metro areas where you have the best chance of finding a match.</p>
+
+      <div className="relative w-full overflow-x-auto">
+        <svg
+          ref={svgRef}
+          viewBox={`0 0 ${W} ${H}`}
+          className="w-full h-auto"
+          style={{ minWidth: '400px' }}
+        >
+          {/* Grid lines */}
+          {xTicks.map(t => (
+            <line key={`xg-${t}`} x1={scaleX(t)} y1={pad.top} x2={scaleX(t)} y2={pad.top + plotH} stroke="#e7e5e4" strokeWidth={1} />
+          ))}
+          {yTicks.map(t => (
+            <line key={`yg-${t}`} x1={pad.left} y1={scaleY(t)} x2={pad.left + plotW} y2={scaleY(t)} stroke="#e7e5e4" strokeWidth={1} />
+          ))}
+
+          {/* Axes */}
+          <line x1={pad.left} y1={pad.top + plotH} x2={pad.left + plotW} y2={pad.top + plotH} stroke="#78716c" strokeWidth={1} />
+          <line x1={pad.left} y1={pad.top} x2={pad.left} y2={pad.top + plotH} stroke="#78716c" strokeWidth={1} />
+
+          {/* X tick labels */}
+          {xTicks.map(t => (
+            <text key={`xl-${t}`} x={scaleX(t)} y={pad.top + plotH + 16} textAnchor="middle" fontSize="9" fill="#78716c" fontFamily="monospace">
+              {t >= 1000 ? `${(t / 1000).toFixed(t % 1000 === 0 ? 0 : 1)}k` : t}
+            </text>
+          ))}
+          {/* Y tick labels */}
+          {yTicks.map(t => (
+            <text key={`yl-${t}`} x={pad.left - 8} y={scaleY(t) + 3} textAnchor="end" fontSize="9" fill="#78716c" fontFamily="monospace">
+              {t >= 1000 ? `${(t / 1000).toFixed(t % 1000 === 0 ? 0 : 1)}k` : t}
+            </text>
+          ))}
+
+          {/* Axis labels */}
+          <text x={pad.left + plotW / 2} y={H - 6} textAnchor="middle" fontSize="11" fill="#57534e" fontFamily="sans-serif">
+            Ideal Match Pool
+          </text>
+          <text x={14} y={pad.top + plotH / 2} textAnchor="middle" fontSize="11" fill="#57534e" fontFamily="sans-serif" transform={`rotate(-90, 14, ${pad.top + plotH / 2})`}>
+            Estimated Matches
+          </text>
+
+          {/* Data points */}
+          {metros.map((m, i) => (
+            <circle
+              key={m.cbsa || i}
+              cx={scaleX(m.idealPool)}
+              cy={scaleY(m.matchCount)}
+              r={6}
+              fill={dotColor}
+              fillOpacity={0.75}
+              stroke="#fff"
+              strokeWidth={1.5}
+              className="cursor-pointer transition-all duration-150 hover:opacity-100"
+              style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.15))' }}
+              onMouseEnter={(e) => handleMouseEnter(m, e)}
+              onMouseLeave={handleMouseLeave}
+            />
+          ))}
+        </svg>
+
+        {/* Tooltip */}
+        {tooltip && (() => {
+          const m = tooltip.metro;
+          const tier = scoreTier(m.relateScore);
+          const components = m.components || {};
+          // Position tooltip — flip if near right edge
+          const ttW = 240;
+          const ttLeft = tooltip.x + ttW + 20 > W ? tooltip.x - ttW - 10 : tooltip.x + 12;
+          const ttTop = Math.max(4, Math.min(tooltip.y - 40, H - 220));
+          return (
+            <div
+              className="absolute pointer-events-none z-10"
+              style={{ left: `${(ttLeft / W) * 100}%`, top: `${(ttTop / H) * 100}%`, width: `${(ttW / W) * 100}%` }}
+            >
+              <div className="bg-black text-white rounded-lg shadow-xl p-3" style={{ fontSize: '11px' }}>
+                <div className="font-semibold text-sm mb-0.5">{m.cbsaLabel || m.cbsaName}</div>
+                <div className="text-gray-400 text-[10px] mb-2">Pop. {(m.population || 0).toLocaleString()}</div>
+
+                {/* Local Competition Score */}
+                <div className="flex items-baseline gap-1.5 mb-1.5">
+                  <span className="text-xs text-gray-400 uppercase tracking-wider">Competition</span>
+                  <span className="font-mono text-base font-semibold">{m.relateScore.toFixed(0)}</span>
+                  <span style={{ color: tier.color }} className="text-[10px] font-medium">{tier.label}</span>
+                </div>
+
+                {/* Score progress bar */}
+                <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden mb-2">
+                  <div className="h-full rounded-full" style={{ width: `${m.relateScore}%`, backgroundColor: tier.color }} />
+                </div>
+
+                {/* Stats bars */}
+                <div className="space-y-1">
+                  {compOrder.map(key => {
+                    const comp = components[key];
+                    if (!comp) return null;
+                    const val = comp.local ?? comp.score ?? comp.national ?? 50;
+                    return (
+                      <div key={key} className="flex items-center gap-2">
+                        <span className="text-gray-400 w-14 text-[10px]">{compLabels[key]}</span>
+                        <div className="flex-1 h-1 bg-gray-700 rounded-full overflow-hidden">
+                          <div className="h-full bg-white/70 rounded-full" style={{ width: `${Math.min(100, Math.max(0, val))}%` }} />
+                        </div>
+                        <span className="font-mono text-[10px] w-6 text-right">{Math.round(val)}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Key numbers */}
+                <div className="mt-2 pt-2 border-t border-gray-700 grid grid-cols-2 gap-x-3">
+                  <div>
+                    <div className="text-gray-400 text-[9px] uppercase">Ideal Pool</div>
+                    <div className="font-mono text-xs font-medium">{m.idealPool.toLocaleString()}</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-400 text-[9px] uppercase">Est. Matches</div>
+                    <div className="font-mono text-xs font-medium">{m.matchCount.toLocaleString()}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+      </div>
+    </section>
+  );
+}
 
 function formatCurrencyShort(val: number) {
   if (val >= 1000000) return '$1M+';
