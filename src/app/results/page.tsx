@@ -1411,14 +1411,14 @@ function ResultsDashboard() {
         {/* ── Dating Market ── */}
         {hasMarket && (
           <div className="scroll-mt-32 flex flex-col lg:flex-row gap-4 items-start">
-            {!marketLoading && marketData && (
-              <div className="shrink-0">
-                <DatingPoolGridCard data={marketData} demographics={demographics} />
-              </div>
-            )}
             <div className="flex-1 min-w-0">
               <DatingMarketViz data={marketData} loading={marketLoading} onRelaxPreference={recalculateMarket} demographics={demographics} />
             </div>
+            {!marketLoading && marketData && (
+              <div className="w-full lg:w-[420px] shrink-0">
+                <DatingPoolGridCard data={marketData} demographics={demographics} />
+              </div>
+            )}
           </div>
         )}
 
