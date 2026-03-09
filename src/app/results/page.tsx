@@ -1727,15 +1727,15 @@ const HEIGHTS = [
 
 // ── Top Metros Scatter Plot ──
 
-function nextFactorOf10(n: number) {
+function nextMultipleOf10(n: number) {
   if (n <= 0) return 10;
-  const mag = Math.pow(10, Math.floor(Math.log10(n)));
-  return Math.ceil(n / mag) * mag;
+  return Math.ceil(n / 10) * 10;
 }
 
 function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: any[]; worstMetros?: any[] | null; demographics?: any }) {
   const [tooltip, setTooltip] = useState<{ metro: any; x: number; y: number } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const datingGender = (() => {
     const g = demographics?.gender;
@@ -1756,8 +1756,8 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
   const plotW = W - pad.left - pad.right;
   const plotH = H - pad.top - pad.bottom;
 
-  const maxIdeal = nextFactorOf10(Math.max(...metros.map(m => m.idealPool)));
-  const maxMatch = nextFactorOf10(Math.max(...metros.map(m => m.matchCount)));
+  const maxIdeal = nextMultipleOf10(Math.max(...metros.map(m => m.idealPool)));
+  const maxMatch = nextMultipleOf10(Math.max(...metros.map(m => m.matchCount)));
 
   const scaleX = (v: number) => pad.left + (v / maxIdeal) * plotW;
   const scaleY = (v: number) => pad.top + plotH - (v / maxMatch) * plotH;
@@ -1782,9 +1782,9 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
   }
 
   const handleMouseEnter = (metro: any, e: React.MouseEvent) => {
-    const svg = svgRef.current;
-    if (!svg) return;
-    const rect = svg.getBoundingClientRect();
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+    const rect = wrapper.getBoundingClientRect();
     setTooltip({ metro, x: e.clientX - rect.left, y: e.clientY - rect.top });
   };
 
@@ -1801,7 +1801,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
       </h3>
       <p className="explainer mb-4">Top 20 metro areas where you have the best chance of finding a match.</p>
 
-      <div className="relative w-full overflow-x-auto">
+      <div ref={wrapperRef} className="relative w-full overflow-x-auto">
         <svg
           ref={svgRef}
           viewBox={`0 0 ${W} ${H}`}
@@ -1834,10 +1834,10 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
           ))}
 
           {/* Axis labels */}
-          <text x={pad.left + plotW / 2} y={H - 6} textAnchor="middle" fontSize="11" fill="#57534e" fontFamily="sans-serif">
+          <text x={pad.left + plotW / 2} y={H - 6} textAnchor="middle" fontSize="11" fill="#78716c" fontFamily="sans-serif">
             Ideal Match Pool
           </text>
-          <text x={14} y={pad.top + plotH / 2} textAnchor="middle" fontSize="11" fill="#57534e" fontFamily="sans-serif" transform={`rotate(-90, 14, ${pad.top + plotH / 2})`}>
+          <text x={14} y={pad.top + plotH / 2} textAnchor="middle" fontSize="11" fill="#78716c" fontFamily="sans-serif" transform={`rotate(-90, 14, ${pad.top + plotH / 2})`}>
             Estimated Matches
           </text>
 
@@ -1865,14 +1865,23 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
           const m = tooltip.metro;
           const tier = scoreTier(m.relateScore);
           const components = m.components || {};
-          // Position tooltip — flip if near right edge
+          const wrapRect = wrapperRef.current?.getBoundingClientRect();
+          const containerW = wrapRect?.width || W;
+          const containerH = wrapRect?.height || H;
           const ttW = 240;
-          const ttLeft = tooltip.x + ttW + 20 > W ? tooltip.x - ttW - 10 : tooltip.x + 12;
-          const ttTop = Math.max(4, Math.min(tooltip.y - 40, H - 220));
+          const ttH = 260;
+          // Horizontal: prefer right of cursor, flip left if clipped
+          let ttLeft = tooltip.x + 12;
+          if (ttLeft + ttW > containerW) ttLeft = tooltip.x - ttW - 10;
+          ttLeft = Math.max(4, Math.min(ttLeft, containerW - ttW - 4));
+          // Vertical: prefer above cursor center, clamp to container bounds
+          let ttTop = tooltip.y - 40;
+          if (ttTop + ttH > containerH) ttTop = containerH - ttH - 4;
+          if (ttTop < 4) ttTop = 4;
           return (
             <div
               className="absolute pointer-events-none z-10"
-              style={{ left: `${(ttLeft / W) * 100}%`, top: `${(ttTop / H) * 100}%`, width: `${(ttW / W) * 100}%` }}
+              style={{ left: ttLeft, top: ttTop, width: ttW }}
             >
               <div className="bg-black text-white rounded-lg shadow-xl p-3" style={{ fontSize: '11px' }}>
                 <div className="font-semibold text-sm mb-0.5">{m.cbsaLabel || m.cbsaName}</div>
