@@ -737,10 +737,9 @@ function ResultsDashboard() {
         {persona && (
           <section className="card mb-4 scroll-mt-32">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="person" size={20} className="text-accent" />{persona.name}</h3>
+              <h3 className="font-serif text-lg font-semibold flex items-center gap-2">{persona.code && <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-accent text-white text-[9px] font-mono font-bold leading-none shrink-0">{persona.code}</span>}{persona.name}</h3>
               <Link href="/results/persona" className="btn-secondary text-xs">Details</Link>
             </div>
-            {persona.code && <span className="font-mono text-xs text-accent mb-2 block">{persona.code}</span>}
             {persona.traits && <p className="explainer mb-4">{persona.traits}</p>}
 
             {/* Dating Behavior */}
