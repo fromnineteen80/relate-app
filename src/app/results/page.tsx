@@ -1921,6 +1921,8 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
     </section>
 
     <section className="card">
+      <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="filter_alt" size={20} className="text-accent" />Match Pool Funnel</h3>
+      <p className="explainer mb-4">{metro}</p>
       {pool && (
         <div className="mb-6">
           <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
