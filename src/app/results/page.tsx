@@ -1853,20 +1853,35 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
 
           {/* Data points */}
           {metros.map((m, i) => (
-            <circle
+            <g
               key={m.cbsa || i}
-              cx={scaleX(m.idealPool)}
-              cy={scaleY(m.matchCount)}
-              r={6}
-              fill={dotColor}
-              fillOpacity={0.75}
-              stroke="#fff"
-              strokeWidth={1.5}
-              className="cursor-pointer transition-all duration-150 hover:opacity-100"
-              style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.15))' }}
+              className="cursor-pointer"
               onMouseEnter={(e) => handleMouseEnter(m, e)}
               onMouseLeave={handleMouseLeave}
-            />
+            >
+              <circle
+                cx={scaleX(m.idealPool)}
+                cy={scaleY(m.matchCount)}
+                r={8}
+                fill={dotColor}
+                fillOpacity={0.85}
+                stroke="#fff"
+                strokeWidth={1.5}
+                style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.15))' }}
+              />
+              <text
+                x={scaleX(m.idealPool)}
+                y={scaleY(m.matchCount) + 3.5}
+                textAnchor="middle"
+                fontSize="8"
+                fontWeight="700"
+                fontFamily="monospace"
+                fill="#fff"
+                style={{ pointerEvents: 'none' }}
+              >
+                {i + 1}
+              </text>
+            </g>
           ))}
         </svg>
 
