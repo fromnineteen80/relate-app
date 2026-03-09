@@ -15,6 +15,7 @@ import { loadAndHydrateProgress } from '@/lib/supabase/progress';
 import { getProfile } from '@/lib/onboarding';
 import { getSupabase } from '@/lib/supabase/client';
 import { buildMarketRequestBody } from '@/lib/market-request';
+import { renderDatingPoolGrid, type DatingPoolData, type TargetGender } from '@/lib/dating-pool-grid';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -1409,8 +1410,15 @@ function ResultsDashboard() {
 
         {/* ── Dating Market ── */}
         {hasMarket && (
-          <div className="scroll-mt-32">
-            <DatingMarketViz data={marketData} loading={marketLoading} onRelaxPreference={recalculateMarket} demographics={demographics} />
+          <div className="scroll-mt-32 flex flex-col lg:flex-row gap-4 items-start">
+            {!marketLoading && marketData && (
+              <div className="shrink-0">
+                <DatingPoolGridCard data={marketData} demographics={demographics} />
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <DatingMarketViz data={marketData} loading={marketLoading} onRelaxPreference={recalculateMarket} demographics={demographics} />
+            </div>
           </div>
         )}
 
@@ -1548,6 +1556,58 @@ function ResultsDashboard() {
       <SiteFooter spacerClassName={hasResults && canDownload ? 'bg-stone-100' : 'bg-background'} />
     </div>
   );
+}
+
+// ── Dating Pool Grid (plain-JS blip visualization) ──
+function DatingPoolGridCard({ data, demographics }: { data: MarketData | null; demographics: Demographics }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !data?.matchPool) return;
+
+    const pool = data.matchPool;
+    const metro = data.location?.cbsaLabel || data.location?.cbsaName || 'Your Metro';
+    const metroPop = data.location?.population || 0;
+    const singlesPool = pool.localSinglePool || 0;
+
+    // Derive targetGender from user's gender (seeking opposite)
+    const userGender = demographics.gender;
+    let targetGender: TargetGender = 'women';
+    if (userGender === 'Woman' || userGender === 'woman' || userGender === 'F' || userGender === 'female') {
+      targetGender = 'men';
+    } else if (userGender === 'Man' || userGender === 'man' || userGender === 'M' || userGender === 'male') {
+      targetGender = 'women';
+    } else {
+      targetGender = 'all';
+    }
+
+    // Also check explicit "seeking" preference if available
+    const seeking = demographics.seeking;
+    if (seeking) {
+      const s = String(seeking).toLowerCase();
+      if (s.includes('women') || s.includes('woman') || s.includes('female')) targetGender = 'women';
+      else if (s.includes('men') || s.includes('man') || s.includes('male')) targetGender = 'men';
+      else targetGender = 'all';
+    }
+
+    const poolData: DatingPoolData = {
+      metro,
+      metroPopulation: metroPop,
+      pools: {
+        metro:     { label: 'Metro Singles Pool',        count: singlesPool },
+        identity:  { label: 'Identity Pool',             count: pool.identityPool || 0 },
+        realistic: { label: 'Your Realistic Match Pool', count: pool.realisticPool || 0 },
+        preferred: { label: 'Your Preferred Pool',       count: pool.preferredPool || 0 },
+        ideal:     { label: 'Your Ideal Match Pool',     count: pool.idealPool || 0 },
+      },
+    };
+
+    renderDatingPoolGrid(containerRef.current, poolData, targetGender);
+  }, [data, demographics]);
+
+  if (!data?.matchPool) return null;
+
+  return <div ref={containerRef} />;
 }
 
 // ── Dating Market Visualization ──
