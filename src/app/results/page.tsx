@@ -1969,6 +1969,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
 
         return (
           <div className="pt-4">
+            <h4 className="text-sm font-semibold text-foreground mb-2">Match Likelihood</h4>
             {/* Rectangle bar — match color fills left-to-right, rest is gray */}
             <div className="relative w-full rounded overflow-hidden" style={{ height: '48px', backgroundColor: bgColor }}>
               {/* Filled portion */}
@@ -1986,7 +1987,17 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
               <p className="text-[11px] text-secondary">Estimated Matches</p>
               <p className="text-[11px] text-secondary">Ideal Match Pool</p>
             </div>
-            <p className="text-xs text-secondary mt-2">Number of {datingGender} from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats. That is {singlesPool > 0 ? ((matchCount / singlesPool) * 100).toFixed(2) : '0'}% of the Metro Singles Pool &mdash; {singlesPool > 0 ? ((matchCount / singlesPool) * 1000).toFixed(1) : '0'} out of 1,000 local single {datingGender}.</p>
+            <p className="text-xs text-secondary mt-2 mb-0">Number of {datingGender} from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats. That is {singlesPool > 0 ? ((matchCount / singlesPool) * 100).toFixed(2) : '0'}% of the Metro Singles Pool. {(() => {
+              if (singlesPool <= 0) return '0 out of 1,000';
+              // Scale denominator up until we get at least 1 whole person
+              let denom = 1000;
+              while (denom <= 1_000_000) {
+                const num = (matchCount / singlesPool) * denom;
+                if (num >= 1) return `${Math.round(num).toLocaleString()} out of ${denom.toLocaleString()}`;
+                denom *= 10;
+              }
+              return `${((matchCount / singlesPool) * denom).toFixed(1)} out of ${denom.toLocaleString()}`;
+            })()} local single {datingGender}.</p>
           </div>
         );
       })()}
