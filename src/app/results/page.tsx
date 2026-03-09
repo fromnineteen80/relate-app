@@ -1801,7 +1801,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
       </h3>
       <p className="explainer mb-4">Top 20 metro areas where you have the best chance of finding a match.</p>
 
-      <div ref={wrapperRef} className="relative w-full" style={{ overflow: 'visible' }}
+      <div ref={wrapperRef} className="relative w-full" style={{ overflow: 'visible' }}>
         <svg
           ref={svgRef}
           viewBox={`0 0 ${W} ${H}`}
