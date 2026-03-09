@@ -1816,7 +1816,6 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
           ref={svgRef}
           viewBox={`0 0 ${W} ${H}`}
           className="w-full h-auto"
-          style={{ minWidth: '400px' }}
         >
           {/* Grid lines */}
           {xTicks.map(t => (
