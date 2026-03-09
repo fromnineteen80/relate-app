@@ -313,9 +313,24 @@ export function renderDatingPoolGrid(
   });
 
   // ── Blip color on hover ──
+  // Pools are nested: metro ⊃ identity ⊃ realistic ⊃ preferred ⊃ ideal
+  // A blip tagged "realistic" also belongs to identity and metro.
+  const poolDepth: Record<string, number> = { metro: 0, identity: 1, realistic: 2, preferred: 3, ideal: 4, empty: -1 };
+
+  function blipBelongsToPool(blipTier: string, hoveredPool: string): boolean {
+    const blipD = poolDepth[blipTier] ?? -1;
+    const hovD = poolDepth[hoveredPool] ?? -1;
+    // A blip belongs to a pool if it's at the same depth or deeper (more filtered)
+    return blipD >= hovD && blipD >= 0;
+  }
+
   function blipColor(idx: number): string {
     if (!hovered) return blips[idx];
-    return tiers[idx] === hovered ? blips[idx] : COLORS.empty;
+    if (blipBelongsToPool(tiers[idx], hovered)) {
+      // Show all matching blips in the hovered pool's color
+      return COLORS[hovered as keyof typeof COLORS] as string;
+    }
+    return COLORS.empty;
   }
 
   function repaintBlips() {
@@ -325,7 +340,7 @@ export function renderDatingPoolGrid(
       if (tiers[i] === 'ideal') {
         const show = !hovered || hovered === 'ideal';
         blipEls[i].style.animation = show ? 'dpg-blink 2s ease-in-out infinite' : 'none';
-        if (!show) blipEls[i].style.backgroundColor = COLORS.empty;
+        if (!show) blipEls[i].style.backgroundColor = blipColor(i);
       }
     }
   }
