@@ -1880,26 +1880,42 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
 
       {/* ── Estimated Matches — person icon bar ── */}
       {(() => {
+        const ICON_COUNT = 15;
         const idealCount = pool?.idealPool || 0;
         const matchPct = idealCount > 0 ? Math.min(1, matchCount / idealCount) : 0;
+        const filledExact = matchPct * ICON_COUNT; // e.g. 3.6
+        const fullIcons = Math.floor(filledExact);
+        const halfFraction = filledExact - fullIcons; // 0..1 — used for partial clip
         const isMale = demographics?.gender === 'Man';
-        const genderColor = isMale ? 'text-rose-400' : 'text-blue-500';
+        const matchColor = isMale ? '#fb7185' : '#3b82f6'; // rose-400 / blue-500
+        const grayColor = '#e7e5e4'; // stone-200
+        const iconStyle = { fontSize: 18, fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 18" };
 
         return (
           <div className="pt-4 border-t border-border">
-            <div className="relative w-full overflow-hidden" style={{ lineHeight: 0 }}>
-              {/* Gray base: person icons filling the width */}
-              <div className="flex w-full" style={{ color: '#e7e5e4' }}>
-                {Array.from({ length: 40 }).map((_, i) => (
-                  <span key={`base-${i}`} className="material-symbols-rounded flex-1 text-center" style={{ fontSize: 'clamp(12px, 2.5vw, 18px)', fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 18" }} aria-hidden="true">person</span>
-                ))}
-              </div>
-              {/* Colored overlay: person_heart icons for estimated matches */}
-              <div className={`absolute top-0 left-0 h-full flex overflow-hidden ${genderColor}`} style={{ width: `${Math.max(matchPct > 0 ? 2 : 0, matchPct * 100)}%` }}>
-                {Array.from({ length: 40 }).map((_, i) => (
-                  <span key={`match-${i}`} className="material-symbols-rounded flex-1 text-center flex-shrink-0" style={{ fontSize: 'clamp(12px, 2.5vw, 18px)', width: `${100 / 40}%`, fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 18" }} aria-hidden="true">person_heart</span>
-                ))}
-              </div>
+            <div className="flex w-full justify-between" style={{ lineHeight: 0, gap: 0 }}>
+              {Array.from({ length: ICON_COUNT }).map((_, i) => {
+                const isFullColor = i < fullIcons;
+                const isPartial = i === fullIcons && halfFraction > 0.05;
+
+                if (isFullColor) {
+                  return (
+                    <span key={i} className="material-symbols-rounded" style={{ ...iconStyle, color: matchColor }} aria-hidden="true">person_heart</span>
+                  );
+                }
+                if (isPartial) {
+                  // Half-fill: overlay a clipped colored icon on top of gray
+                  return (
+                    <span key={i} style={{ position: 'relative', display: 'inline-flex', width: 18, height: 18 }}>
+                      <span className="material-symbols-rounded" style={{ ...iconStyle, color: grayColor, position: 'absolute', left: 0, top: 0 }} aria-hidden="true">person</span>
+                      <span className="material-symbols-rounded" style={{ ...iconStyle, color: matchColor, position: 'absolute', left: 0, top: 0, clipPath: `inset(0 ${((1 - halfFraction) * 100).toFixed(0)}% 0 0)` }} aria-hidden="true">person_heart</span>
+                    </span>
+                  );
+                }
+                return (
+                  <span key={i} className="material-symbols-rounded" style={{ ...iconStyle, color: grayColor }} aria-hidden="true">person</span>
+                );
+              })}
             </div>
             <div className="flex items-start justify-between mt-2">
               <div>
