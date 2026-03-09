@@ -1979,15 +1979,15 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
             return (
               <div
                 key={m.cbsa || i}
-                className="flex items-center gap-2.5 py-1.5 px-1.5 cursor-pointer hover:bg-stone-50 transition-colors"
+                className="flex items-center gap-1.5 py-1.5 px-1.5 cursor-pointer hover:bg-stone-50 transition-colors"
                 style={{ borderBottom: i < metros.length - 1 ? '1px solid #f0efed' : 'none' }}
                 onMouseEnter={() => handleListHover(m)}
                 onMouseLeave={handleMouseLeave}
               >
-                <span style={{ fontSize: '12px', color: '#78716c', fontFamily: 'monospace', width: '24px', textAlign: 'right', flexShrink: 0 }}>
+                <span style={{ fontSize: '11px', color: '#78716c', fontFamily: 'monospace', width: '24px', textAlign: 'right', flexShrink: 0 }}>
                   #{i + 1}
                 </span>
-                <span style={{ fontSize: '12px', color: '#141413', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: '11px', color: '#141413', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {shortName}
                 </span>
               </div>
