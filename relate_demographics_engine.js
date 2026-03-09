@@ -1621,13 +1621,20 @@ function findQuestionByKey(key) {
  * 2. Highest match likelihood (tie-breaker)
  * 3. Income + education percentile (tie-breaker)
  */
-async function findTopMetros(userProfile, preferences) {
+async function findTopMetros(userProfile, preferences, homeScore) {
   const cbsas = await loadCBSAData();
   const allCBSAs = Object.values(cbsas).filter(c => c.cbsa_population > 0);
   const results = [];
 
+  // Minimum competition score: no more than 5 below the user's home metro score
+  const minScore = (homeScore || 0) - 5;
+
   for (const cbsa of allCBSAs) {
     const relateScore = calculateRelateScore(userProfile, cbsa);
+
+    // Skip metros where user's competition score drops more than 5 below home
+    if (relateScore.score < minScore) continue;
+
     const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
     const matchProbability = getMatchProbability(relateScore.score);
     const matchCount = Math.round(matchPool.idealPool * matchProbability);

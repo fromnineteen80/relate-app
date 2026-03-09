@@ -6,7 +6,7 @@ const demoEngine = require('../../../../relate_demographics_engine.js');
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { demographics, preferences } = body;
+    const { demographics, preferences, homeScore } = body;
 
     if (!demographics) {
       return NextResponse.json({ error: 'Demographics are required' }, { status: 400 });
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     };
 
     await demoEngine.initializeData();
-    const topMetros = await demoEngine.findTopMetros(userProfile, prefs);
+    const topMetros = await demoEngine.findTopMetros(userProfile, prefs, homeScore);
 
     return NextResponse.json({ success: true, topMetros });
   } catch (error: any) {

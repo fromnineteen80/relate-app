@@ -253,7 +253,7 @@ function ResultsDashboard() {
     fetch('/api/top-metros', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(req.body),
+      body: JSON.stringify({ ...req.body, homeScore: marketData.relateScore?.score ?? 0 }),
     })
       .then(r => r.json())
       .then(data => { if (data.success) setTopMetros(data.topMetros); })
