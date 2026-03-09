@@ -1921,11 +1921,11 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
     </section>
 
     <section className="card">
-      <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="filter_alt" size={20} className="text-accent" />Match Pool Funnel</h3>
+      <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="filter_alt" size={20} className="text-accent" />Your Match Funnel</h3>
       <p className="explainer mb-4">{metro}</p>
       {pool && (
         <div className="mb-6">
-          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
+          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Finding Your Ideal Match</span>
           <p className="text-[11px] text-secondary mt-1 mb-3">The {metroShort} metro population is <span className="font-medium">{metroPop.toLocaleString()}</span>.</p>
           <div className="mt-3 space-y-1">
             {milestones.map((m, i) => {
@@ -1973,10 +1973,10 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
         const bgColor = '#e7e5e4'; // stone-200
 
         return (
-          <div className="pt-4">
-            <h4 className="text-sm font-semibold text-foreground mb-2">Match Likelihood</h4>
+          <div className="mt-4 pt-4 border-t border-border">
+            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Likelihood</span>
             {/* Rectangle bar — match color fills left-to-right, rest is gray */}
-            <div className="relative w-full rounded overflow-hidden" style={{ height: '48px', backgroundColor: bgColor }}>
+            <div className="relative w-full rounded overflow-hidden mt-3" style={{ height: '48px', backgroundColor: bgColor }}>
               {/* Filled portion */}
               <div className="absolute inset-y-0 left-0" style={{ width: `${Math.max(1, matchPct * 100)}%`, backgroundColor: matchColor }} />
               {/* Estimated Matches — left-justified, white text */}
@@ -1992,7 +1992,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
               <p className="text-[11px] text-secondary">Estimated Matches</p>
               <p className="text-[11px] text-secondary">Ideal Match Pool</p>
             </div>
-            <p className="text-xs text-secondary mt-2 mb-0">Number of {datingGender} from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats. That is {singlesPool > 0 ? ((matchCount / singlesPool) * 100).toFixed(2) : '0'}% of the Metro Singles Pool. {(() => {
+            <p className="text-[11px] text-secondary mt-2 mb-0">Number of {datingGender} from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats. That is {singlesPool > 0 ? ((matchCount / singlesPool) * 100).toFixed(2) : '0'}% of the Metro Singles Pool. {(() => {
               if (singlesPool <= 0) return '0 out of 1,000';
               // Scale denominator up until we get at least 1 whole person
               let denom = 1000;
