@@ -289,16 +289,20 @@ export function renderDatingPoolGrid(
   buildGrid();
   card.appendChild(grid);
 
-  // After mount, pick the best total blip count to fill available height
+  // After mount, pick the best total blip count to fill available height.
+  // The grid has flex:1 so it fills remaining card space. We measure that
+  // height, compute how many 12px rows fit, and rebuild if needed.
   requestAnimationFrame(() => {
-    BLIP_ROW_H = 12; // 8px blip + 4px margin
+    BLIP_ROW_H = 12; // 8px blip + 4px margin (top+bottom)
     const availH = grid.clientHeight;
-    if (availH > 0 && BLIP_ROW_H > 0) {
+    if (availH > 0) {
       const rowsThatFit = Math.max(1, Math.floor(availH / BLIP_ROW_H));
       const ideal = rowsThatFit * BLIPS_PER_ROW;
-      const newTotal = Math.max(MIN_BLIPS, Math.min(MAX_BLIPS, ideal));
-      totalBlips = Math.round(newTotal / BLIPS_PER_ROW) * BLIPS_PER_ROW;
-      if (totalBlips !== MIN_BLIPS) {
+      const snapped = Math.round(
+        Math.max(MIN_BLIPS, Math.min(MAX_BLIPS, ideal)) / BLIPS_PER_ROW,
+      ) * BLIPS_PER_ROW;
+      if (snapped !== totalBlips) {
+        totalBlips = snapped;
         ({ blips, tiers, counts } = buildBlipColors(pools, COLORS, totalBlips));
         updateSubtitle();
         buildGrid();
