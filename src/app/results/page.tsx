@@ -738,8 +738,7 @@ function ResultsDashboard() {
           <section className="card mb-4 scroll-mt-32">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Your Persona</span>
-                <h3 className="font-serif text-lg font-semibold mt-1">{persona.name}</h3>
+                <h3 className="font-serif text-lg font-semibold">{persona.name}</h3>
                 {persona.code && <span className="font-mono text-xs text-accent">{persona.code}</span>}
               </div>
               <Link href="/results/persona" className="btn-secondary text-xs">Details</Link>
