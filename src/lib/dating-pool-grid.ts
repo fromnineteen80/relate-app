@@ -35,7 +35,7 @@ export type TargetGender = 'women' | 'men' | 'all';
 
 const COLOR_BLIP_EMPTY    = '#e7e5e4';  // stone-200 — progress bar background
 const COLOR_IDEAL         = '#F9A825';  // brand yellow — ideal tier
-const COLOR_IDEAL_BLINK   = '#78716c';  // brand gray — ideal blink target
+const COLOR_IDEAL_BLINK   = '#e7e5e4';  // stone-200 — ideal blinks to empty gray
 const COLOR_IDENTITY      = '#292524';  // brand black — identity pool
 const COLOR_GREEN         = '#047857';  // brand green — realistic/preferred base
 
@@ -212,12 +212,13 @@ export function renderDatingPoolGrid(
   // ── Header ──
   const header = el('div', { marginBottom: '18px' });
 
-  header.appendChild(text('h3', `Dating Pool — ${metro}`, {
-    fontSize: '11px',
-    fontWeight: '700',
+  const metroShort = metro.includes(',') ? metro.split(',')[0] : metro;
+
+  header.appendChild(text('h3', `Dating Pool — ${metroShort}`, {
+    fontSize: '18px',
+    fontWeight: '600',
+    fontFamily: "'Noto Serif', 'Lora', Georgia, serif",
     color: COLORS.textPrimary,
-    textTransform: 'uppercase',
-    letterSpacing: '0.07em',
     margin: '0 0 4px 0',
   }));
 
