@@ -261,7 +261,7 @@ export function renderDatingPoolGrid(
     lineHeight: '1.5',
   });
   function updateSubtitle() {
-    const genderLabel = targetGender === 'women' ? 'women' : targetGender === 'men' ? 'men' : 'singles';
+    const genderLabel = targetGender === 'women' ? 'women' : targetGender === 'men' ? 'men' : 'people';
     subtitle.textContent = `${fmt(pools.metro.count)} ${genderLabel} in your local dating pool.`;
   }
   updateSubtitle();
@@ -487,7 +487,7 @@ export function renderDatingPoolGrid(
     lineHeight: '1.5',
   });
   function updateBlipNote() {
-    const genderLabel = targetGender === 'women' ? 'women' : targetGender === 'men' ? 'men' : 'singles';
+    const genderLabel = targetGender === 'women' ? 'women' : targetGender === 'men' ? 'men' : 'people';
     blipNote.textContent = `Each blip ≈ ${fmt(Math.max(1, Math.round(pools.metro.count / totalBlips)))} ${genderLabel}.`;
   }
   updateBlipNote();
