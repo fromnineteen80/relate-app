@@ -2662,15 +2662,37 @@ function computeIntimacyConflictBridge(m3, m4, gender, m5) {
   const genderKey = gender === 'M' ? 'male' : gender === 'W' ? 'female' : 'general';
   const starterNarrative = patternData.starters[genderKey] || patternData.starters.general;
   
-  // Build customizations
+  // Build customizations — human-readable, no raw scores or jargon
   const customizations = [];
-  
-  customizations.push(`Your intimacy type is ${m3Type} (Want: ${wantScore}/100, Offer: ${offerScore}/100).`);
-  customizations.push(`Your conflict approach is ${conflictApproach} with ${conflictIntensity}% intensity.`);
-  customizations.push(`Your repair speed is ${repairSpeed}. Your emotional capacity is ${capacityLevel}.`);
-  
+
+  // Conflict approach in plain language
+  if (isPursuer) {
+    customizations.push('You move toward conflict — you'd rather address things head-on than let them fester.');
+  } else {
+    customizations.push('You pull back from conflict — you need space before you can engage productively.');
+  }
+
+  // Repair style in plain language
+  if (quickRepair) {
+    customizations.push('After a fight, you want to reconnect quickly. Lingering distance feels worse than the argument itself.');
+  } else {
+    customizations.push('After a fight, you need time before you can reconnect. Rushing repair feels forced and makes things worse.');
+  }
+
+  // Emotional capacity in plain language
+  if (highCapacity) {
+    customizations.push('You can hold a lot of emotional intensity without shutting down. This is a strength, but it can also mean you expect the same from partners.');
+  } else if (lowCapacity) {
+    customizations.push('Your emotional bandwidth runs out faster than your willingness to engage. You start conversations you may not have the energy to finish.');
+  }
+
+  // Pattern-specific insights
   if (pattern === 'paradoxicalBridge') {
-    customizations.push('This combination creates confusion for partners: you want everything but disappear when it gets hard.');
+    customizations.push('This creates confusion for partners: you want everything but disappear when it gets hard.');
+  } else if (pattern === 'conflictedBridge') {
+    customizations.push('You open doors you can\'t walk through — you initiate conflict but get overwhelmed before reaching resolution.');
+  } else if (pattern === 'avoidantBridge') {
+    customizations.push('The closeness you want lives on the other side of the conflict you avoid.');
   }
   
   // Calculate bridge health score (0-100)
