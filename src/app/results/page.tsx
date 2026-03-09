@@ -1746,7 +1746,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
   })();
 
   // Chart dimensions
-  const W = 560, H = 360;
+  const W = 560, H = 480;
   const pad = { top: 20, right: 30, bottom: 50, left: 60 };
   const plotW = W - pad.left - pad.right;
   const plotH = H - pad.top - pad.bottom;
@@ -1965,12 +1965,12 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
       </div>
 
       {/* Metro legend */}
-      <div className="hidden md:block w-48 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '360px' }}>
+      <div className="hidden md:block flex-shrink-0" style={{ paddingRight: '6px' }}>
         <div className="space-y-0">
           {/* Column header */}
           <div className="flex items-end gap-2.5 py-1 px-1.5 border-b border-[#e7e5e4]">
             <span style={{ fontSize: '10px', color: '#78716c', fontFamily: 'monospace', width: '24px', textAlign: 'right', flexShrink: 0 }}>&nbsp;</span>
-            <span style={{ fontSize: '10px', color: '#78716c', fontWeight: 600, flex: 1, minWidth: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <span style={{ fontSize: '10px', color: '#78716c', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
               Metro Area
             </span>
           </div>
@@ -1987,7 +1987,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
                 <span style={{ fontSize: '11px', color: '#78716c', fontFamily: 'monospace', width: '24px', textAlign: 'right', flexShrink: 0 }}>
                   #{i + 1}
                 </span>
-                <span style={{ fontSize: '11px', color: '#141413', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: '11px', color: '#141413', whiteSpace: 'nowrap' }}>
                   {shortName}
                 </span>
               </div>
