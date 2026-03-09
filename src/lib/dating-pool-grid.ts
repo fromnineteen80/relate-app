@@ -240,9 +240,9 @@ export function renderDatingPoolGrid(
   }));
   header.appendChild(titleRow);
 
-  // Metro location subtitle (matches Dating Market card style)
+  // Metro location subtitle (matches Dating Market card's .explainer style: text-sm text-secondary)
   header.appendChild(text('p', metro, {
-    fontSize: '12px',
+    fontSize: '14px',
     color: COLORS.textSecondary,
     margin: '0 0 4px 0',
     lineHeight: '1.5',
@@ -256,7 +256,7 @@ export function renderDatingPoolGrid(
   });
   function updateSubtitle() {
     const genderLabel = targetGender === 'women' ? 'women' : targetGender === 'men' ? 'men' : 'singles';
-    subtitle.textContent = `${fmt(pools.metro.count)} singles in your dating pool. Each blip ≈ ${fmt(Math.max(1, Math.round(pools.metro.count / totalBlips)))} ${genderLabel}.`;
+    subtitle.textContent = `${fmt(pools.metro.count)} ${genderLabel} in your dating pool.`;
   }
   updateSubtitle();
   header.appendChild(subtitle);
@@ -331,6 +331,7 @@ export function renderDatingPoolGrid(
         totalBlips = snapped;
         ({ blips, tiers, counts } = buildBlipColors(pools, COLORS, totalBlips));
         updateSubtitle();
+        updateBlipNote();
         buildGrid();
       }
     }
@@ -472,6 +473,19 @@ export function renderDatingPoolGrid(
     margin: '14px 0 0 0',
     lineHeight: '1.5',
   }));
+
+  const blipNote = text('p', '', {
+    fontSize: '10px',
+    color: COLORS.textMuted,
+    margin: '2px 0 0 0',
+    lineHeight: '1.5',
+  });
+  function updateBlipNote() {
+    const genderLabel = targetGender === 'women' ? 'women' : targetGender === 'men' ? 'men' : 'singles';
+    blipNote.textContent = `Each blip ≈ ${fmt(Math.max(1, Math.round(pools.metro.count / totalBlips)))} ${genderLabel}.`;
+  }
+  updateBlipNote();
+  card.appendChild(blipNote);
 
   container.appendChild(card);
 }
