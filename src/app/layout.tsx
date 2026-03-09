@@ -11,8 +11,8 @@ export const metadata: Metadata = {
   description: "A 386-question relationship assessment. Discover your persona, compatibility rankings, and personalized coaching.",
   icons: {
     icon: [
-      { url: '/favicon.svg', type: 'image/svg+xml' },
       { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
     ],
   },
 };
