@@ -440,9 +440,9 @@ function ResultsDashboard() {
 
   // Sub-nav items, grouped
   const navItems = [
-    { id: 'persona', label: 'Persona', show: !!persona || hasDimensions || !!ic?.attachment || !!m4Summary || !!(tensionStacks && Object.keys(tensionStacks).length > 0) },
+    { id: 'persona', label: 'Your Persona', show: !!persona || hasDimensions || !!ic?.attachment || !!m4Summary || !!(tensionStacks && Object.keys(tensionStacks).length > 0) },
     { id: 'how-you-date', label: 'How You Date', show: matches.length > 0 || !!(ic?.attachmentTiers) || !!m3 || (hasResults && true) },
-    { id: 'know-your-market', label: 'Know Your Market', show: hasMarket },
+    { id: 'know-your-market', label: 'Dating Market', show: hasMarket },
   ].filter(n => n.show);
 
   // Helper: render a single tension stack card by key
@@ -728,7 +728,7 @@ function ResultsDashboard() {
           <div id="persona" className="scroll-mt-32 mb-2">
             <div className="flex items-baseline gap-3 mb-4 mt-6">
               <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">01</span>
-              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Persona</span>
+              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Your Persona</span>
             </div>
           </div>
         )}
@@ -737,8 +737,8 @@ function ResultsDashboard() {
         {persona && (
           <section className="card mb-4 scroll-mt-32">
             <div className="flex items-center justify-between mb-1">
-              <h3 className="font-serif text-lg font-semibold flex items-center gap-2">{persona.code && <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-accent text-white text-[9px] font-mono font-bold leading-none shrink-0">{persona.code}</span>}{persona.name}</h3>
-              <Link href="/results/persona" className="btn-secondary text-xs">Details</Link>
+              <h3 className="font-serif text-lg font-semibold flex items-center gap-2">{persona.code && <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-accent text-white text-[7px] font-mono font-bold leading-none shrink-0"><span className="flex flex-col items-center gap-px"><span>{persona.code.slice(0,2)}</span><span>{persona.code.slice(2,4)}</span></span></span>}{persona.name}</h3>
+              <Link href="/results/persona" className="text-xs text-accent hover:underline">View Details</Link>
             </div>
             {persona.traits && <p className="explainer mb-4">{persona.traits}</p>}
             {/* Dating Behavior */}
@@ -1502,7 +1502,7 @@ function ResultsDashboard() {
           <div id="know-your-market" className="scroll-mt-32 mb-2">
             <div className="flex items-baseline gap-3 mb-4 mt-10">
               <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">03</span>
-              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Know Your Market</span>
+              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Dating Market</span>
             </div>
           </div>
         )}
