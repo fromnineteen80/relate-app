@@ -238,7 +238,7 @@ export function renderDatingPoolGrid(
   const grid = el('div', {
     display: 'grid',
     gridTemplateColumns: `repeat(${BLIPS_PER_ROW}, 1fr)`,
-    gap: '3px',
+    gap: '2px',
     width: '100%',
   });
 
@@ -246,8 +246,8 @@ export function renderDatingPoolGrid(
   for (let i = 0; i < TOTAL_BLIPS; i++) {
     const dot = el('div', {
       width: '100%',
-      aspectRatio: '1',
-      borderRadius: '2px',
+      height: '4px',
+      borderRadius: '1px',
       backgroundColor: blips[i],
       transition: 'background-color 0.15s ease',
     });
