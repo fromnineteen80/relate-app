@@ -1152,7 +1152,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
     { label: 'Metro Singles Pool', value: pool?.localSinglePool || 0, desc: 'Unmarried adults of your preferred gender and orientation' },
     { label: 'Identity Pool', value: pool?.identityPool || 0, desc: 'Singles matching your preferred ethnicity' },
     { label: 'Your Realistic Match Pool', value: pool?.realisticPool || 0, desc: 'Singles within your age range and income requirements' },
-    { label: 'Your Preferred Pool', value: pool?.preferredPool || 0, desc: 'Singles who additionally meet your lifestyle preferences' },
+    { label: 'Your Preferred Lifestyle Pool', value: pool?.preferredPool || 0, desc: 'Singles who match your aesthetic and fitness choices' },
     { label: 'Your Ideal Match Pool', value: pool?.idealPool || 0, desc: 'Singles who meet every preference you set' },
   ];
 

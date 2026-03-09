@@ -1706,7 +1706,7 @@ function DatingPoolGridCard({ data, demographics }: { data: MarketData | null; d
         metro:     { label: 'Metro Singles Pool',        count: singlesPool },
         identity:  { label: 'Identity Pool',             count: pool.identityPool || 0 },
         realistic: { label: 'Your Realistic Match Pool', count: pool.realisticPool || 0 },
-        preferred: { label: 'Your Preferred Pool',       count: pool.preferredPool || 0 },
+        preferred: { label: 'Your Preferred Lifestyle Pool', count: pool.preferredPool || 0 },
         ideal:     { label: 'Your Ideal Match Pool',     count: pool.idealPool || 0 },
       },
     };
@@ -2074,7 +2074,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
     { label: 'Metro Singles Pool', value: singlesPool, desc: 'Unmarried adults of your preferred gender and orientation' },
     { label: 'Identity Pool', value: pool?.identityPool || 0, desc: `${datingGenderCap} matching your preferred ethnicity` },
     { label: 'Your Realistic Match Pool', value: pool?.realisticPool || 0, desc: `${datingGenderCap} within your age range and income requirements` },
-    { label: 'Your Preferred Pool', value: pool?.preferredPool || 0, desc: `${datingGenderCap} who additionally meet your lifestyle preferences` },
+    { label: 'Your Preferred Lifestyle Pool', value: pool?.preferredPool || 0, desc: `${datingGenderCap} who match your aesthetic and fitness choices` },
     { label: 'Your Ideal Match Pool', value: pool?.idealPool || 0, desc: `${datingGenderCap} who meet every preference you set` },
   ];
 
