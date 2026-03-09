@@ -2667,7 +2667,7 @@ function computeIntimacyConflictBridge(m3, m4, gender, m5) {
 
   // Conflict approach in plain language
   if (isPursuer) {
-    customizations.push('You move toward conflict — you'd rather address things head-on than let them fester.');
+    customizations.push('You move toward conflict \u2014 you\'d rather address things head-on than let them fester.');
   } else {
     customizations.push('You pull back from conflict — you need space before you can engage productively.');
   }
