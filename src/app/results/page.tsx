@@ -1801,7 +1801,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
       </h3>
       <p className="explainer mb-4">Top 20 metro areas where you have the best chance of finding a match.</p>
 
-      <div ref={wrapperRef} className="relative w-full overflow-x-auto">
+      <div ref={wrapperRef} className="relative w-full" style={{ overflow: 'visible' }}
         <svg
           ref={svgRef}
           viewBox={`0 0 ${W} ${H}`}
@@ -1949,6 +1949,22 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
           </h4>
           <p className="explainer mb-3">Bottom 10 metros (pop. 1.5M+) ranked by smallest ideal match pool.</p>
           <div className="space-y-0">
+            {/* Column headers */}
+            <div className="flex items-end gap-2.5 py-1 px-1.5 border-b border-[#e7e5e4]">
+              <span style={{ fontSize: '10px', color: '#78716c', fontFamily: 'monospace', width: '24px', textAlign: 'right', flexShrink: 0 }}>&nbsp;</span>
+              <span style={{ fontSize: '10px', color: '#78716c', fontWeight: 600, flex: 1, minWidth: 0, textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: '1.3' }}>
+                Metro<br />Area
+              </span>
+              <span style={{ fontSize: '10px', color: '#78716c', fontWeight: 600, fontFamily: 'monospace', width: '32px', textAlign: 'right', flexShrink: 0, textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: '1.3' }}>
+                Comp<br />Score
+              </span>
+              <span style={{ fontSize: '10px', color: '#78716c', fontWeight: 600, fontFamily: 'monospace', width: '48px', textAlign: 'right', flexShrink: 0, textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: '1.3' }}>
+                Est.<br />Matches
+              </span>
+              <span style={{ fontSize: '10px', color: '#78716c', fontWeight: 600, fontFamily: 'monospace', width: '80px', textAlign: 'right', flexShrink: 0, textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: '1.3' }}>
+                Ideal<br />per 10k
+              </span>
+            </div>
             {worstMetros.map((m, i) => {
               const per10k = m.localSinglePool > 0
                 ? Math.round((m.idealPool / m.localSinglePool) * 10000)
@@ -1978,10 +1994,8 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
               );
             })}
           </div>
-          <p className="text-[10px] text-secondary mt-2 flex gap-4">
-            <span>Score = competition score</span>
-            <span>Matches = est. matches</span>
-            <span>/ 10k = ideal per 10,000 local single {datingGender}</span>
+          <p className="text-[10px] text-secondary mt-2">
+            per 10k = ideal matches per 10,000 local single {datingGender}
           </p>
         </>
       )}
