@@ -2218,7 +2218,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
           </div>
           <span className="text-xs text-secondary font-mono">/100</span>
         </div>
-        <div className="relative h-3 bg-stone-200 rounded-full overflow-hidden">
+        <div className="relative h-5 bg-stone-200 rounded-full overflow-hidden">
           <div className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out" style={{ width: `${score}%`, background: score >= 65 ? 'var(--color-success)' : score >= 50 ? 'var(--color-accent)' : score >= 35 ? 'var(--color-warning)' : 'var(--color-danger)' }} />
           {[25, 50, 75].map(tick => <div key={tick} className="absolute top-0 bottom-0 w-px bg-white/50" style={{ left: `${tick}%` }} />)}
         </div>
