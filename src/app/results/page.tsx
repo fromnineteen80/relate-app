@@ -1642,7 +1642,6 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
   const pool = data.matchPool;
   const metro = data.location?.cbsaLabel || data.location?.cbsaName || 'Your Metro';
   const metroPop = data.location?.population || 0;
-  const prob = data.matchProbability;
   const matchCount = data.matchCount ?? 0;
 
   function scoreTier(s: number) {
@@ -1879,18 +1878,43 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
-        <div className="text-center">
-          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Probability</span>
-          <p className="font-mono text-2xl font-semibold mt-1">{prob?.percentage || 'N/A'}</p>
-          <p className="text-xs text-secondary mt-1">Chance of matching with someone from your ideal pool</p>
-        </div>
-        <div className="text-center">
-          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Estimated Matches</span>
-          <p className="font-mono text-2xl font-semibold mt-1">{matchCount.toLocaleString()}</p>
-          <p className="text-xs text-secondary mt-1">Number of Singles from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats</p>
-        </div>
-      </div>
+      {/* ── Estimated Matches — person icon bar ── */}
+      {(() => {
+        const idealCount = pool?.idealPool || 0;
+        const matchPct = idealCount > 0 ? Math.min(1, matchCount / idealCount) : 0;
+        const isMale = demographics?.gender === 'Man';
+        const genderColor = isMale ? 'text-rose-400' : 'text-blue-500';
+
+        return (
+          <div className="pt-4 border-t border-border">
+            <div className="relative w-full overflow-hidden" style={{ lineHeight: 0 }}>
+              {/* Gray base: person icons filling the width */}
+              <div className="flex w-full" style={{ color: '#e7e5e4' }}>
+                {Array.from({ length: 40 }).map((_, i) => (
+                  <span key={`base-${i}`} className="material-symbols-rounded flex-1 text-center" style={{ fontSize: 'clamp(12px, 2.5vw, 18px)', fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 18" }} aria-hidden="true">person</span>
+                ))}
+              </div>
+              {/* Colored overlay: person_heart icons for estimated matches */}
+              <div className={`absolute top-0 left-0 h-full flex overflow-hidden ${genderColor}`} style={{ width: `${Math.max(matchPct > 0 ? 2 : 0, matchPct * 100)}%` }}>
+                {Array.from({ length: 40 }).map((_, i) => (
+                  <span key={`match-${i}`} className="material-symbols-rounded flex-1 text-center flex-shrink-0" style={{ fontSize: 'clamp(12px, 2.5vw, 18px)', width: `${100 / 40}%`, fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 18" }} aria-hidden="true">person_heart</span>
+                ))}
+              </div>
+            </div>
+            <div className="flex items-start justify-between mt-2">
+              <div>
+                <p className="font-mono text-sm font-semibold">{matchCount.toLocaleString()}</p>
+                <p className="text-[11px] text-secondary">Estimated Matches</p>
+              </div>
+              <div className="text-right">
+                <p className="font-mono text-sm font-semibold">{(pool?.idealPool || 0).toLocaleString()}</p>
+                <p className="text-[11px] text-secondary">Ideal Match Pool</p>
+              </div>
+            </div>
+            <p className="text-xs text-secondary mt-2">Number of singles from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats</p>
+          </div>
+        );
+      })()}
     </section>
   );
 }
