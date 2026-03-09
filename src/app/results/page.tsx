@@ -1390,13 +1390,18 @@ function ResultsDashboard() {
         {/* ── Couples Mode ── */}
         {hasResults && (
           <section className="card mb-4 border-accent">
-            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="favorite" size={20} className="text-accent" />Couples Mode</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="favorite" size={20} className="text-accent" />Couples Mode</h3>
+              {hasPartner && hasResults && partnerHasResults && hasCouplesAccess && (
+                <Link href="/results/compare" className="text-xs text-accent hover:underline font-medium whitespace-nowrap">View Your Couples Results</Link>
+              )}
+            </div>
 
             {hasPartner ? (
               <div>
-                {/* User / Connected / Partner row */}
-                <div className="flex items-center justify-between gap-3">
-                  {/* Left: current user */}
+                {/* User / Connected / Partner — horizontal on desktop, vertical on mobile */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+                  {/* User */}
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="w-10 h-10 rounded-full flex-shrink-0 overflow-hidden border-2 border-border">
                       {userProfilePhoto ? (
@@ -1417,17 +1422,17 @@ function ResultsDashboard() {
                     </div>
                   </div>
 
-                  {/* Center: connected pill */}
+                  {/* Connected pill */}
                   <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
 
-                  {/* Right: partner */}
-                  <div className="flex items-center gap-3 min-w-0 flex-row-reverse">
+                  {/* Partner */}
+                  <div className="flex items-center gap-3 min-w-0 sm:flex-row-reverse">
                     <div className="w-10 h-10 rounded-full flex-shrink-0 overflow-hidden border-2 border-border">
                       <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-sm font-medium">
                         {partnerName ? partnerName.charAt(0).toUpperCase() : '?'}
                       </span>
                     </div>
-                    <div className="min-w-0 text-right">
+                    <div className="min-w-0 sm:text-right">
                       <p className="text-sm font-medium truncate">{partnerName || 'Partner'}</p>
                       {partnerPersonaName ? (
                         <span className="text-xs text-secondary truncate block">{partnerPersonaName}</span>
@@ -1440,10 +1445,8 @@ function ResultsDashboard() {
                   </div>
                 </div>
 
-                {/* Action button */}
-                {hasResults && partnerHasResults && hasCouplesAccess ? (
-                  <Link href="/results/compare" className="btn-secondary text-xs w-full text-center block mt-4">View Couples Results</Link>
-                ) : hasResults && partnerHasResults ? (
+                {/* Activate prompt (only when not yet unlocked) */}
+                {hasResults && partnerHasResults && !hasCouplesAccess ? (
                   <div className="mt-4">
                     <p className="text-xs text-secondary mb-2">Both assessments complete. Activate Couples access to unlock your compatibility report.</p>
                     <Link href="/invite" className="btn-secondary text-xs w-full text-center block">Activate Couples</Link>
@@ -1739,6 +1742,14 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
   })();
   const datingGenderCap = datingGender.charAt(0).toUpperCase() + datingGender.slice(1);
 
+  // The user's own gender (plural) for "How competitive you are with other men/women"
+  const ownGender = (() => {
+    const g = demographics?.gender;
+    if (g === 'Man' || g === 'man' || g === 'M' || g === 'male') return 'men';
+    if (g === 'Woman' || g === 'woman' || g === 'F' || g === 'female') return 'women';
+    return 'singles';
+  })();
+
   const singlesPool = pool?.localSinglePool || 0;
   const milestones = [
     { label: 'Metro Singles Pool', value: singlesPool, desc: 'Unmarried adults of your preferred gender and orientation' },
@@ -1892,11 +1903,11 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
           <div className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out" style={{ width: `${score}%`, background: score >= 65 ? 'var(--color-success)' : score >= 50 ? 'var(--color-accent)' : score >= 35 ? 'var(--color-warning)' : 'var(--color-danger)' }} />
           {[25, 50, 75].map(tick => <div key={tick} className="absolute top-0 bottom-0 w-px bg-white/50" style={{ left: `${tick}%` }} />)}
         </div>
-        <p className="text-xs text-secondary mt-2">How competitive you are in the local dating market based on income, education, age, and other demographic data points.</p>
+        <p className="text-[11px] text-secondary mt-2">How competitive you are with other {ownGender} in the local dating market based on income, education, age, and other demographic data points.</p>
       </div>
 
       {Object.keys(components).length > 0 && (
-        <div className="mb-6">
+        <div className="mt-4 pt-4 border-t border-border">
           <span className="text-xs font-mono text-secondary uppercase tracking-wider">Your Stats</span>
           <div className="space-y-2 mt-2">
             {compOrder.map(key => {
@@ -1915,7 +1926,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
               );
             })}
           </div>
-          <p className="text-[11px] text-secondary mt-2">Each bar shows your local percentile (0 = bottom, 100 = top).</p>
+          <p className="text-[10px] text-gray-400 mt-2">Each bar shows your local percentile (0 = bottom, 100 = top).</p>
         </div>
       )}
     </section>
@@ -1992,7 +2003,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
               <p className="text-[11px] text-secondary">Estimated Matches</p>
               <p className="text-[11px] text-secondary">Ideal Match Pool</p>
             </div>
-            <p className="text-[11px] text-secondary mt-2 mb-0">Number of {datingGender} from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats. That is {singlesPool > 0 ? ((matchCount / singlesPool) * 100).toFixed(2) : '0'}% of the Metro Singles Pool. {(() => {
+            <p className="text-[11px] text-secondary mt-2 mb-0">Number of {datingGender} from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats. That is {singlesPool > 0 ? ((matchCount / singlesPool) * 100).toFixed(2) : '0'}% of the Metro Singles Pool, or {(() => {
               if (singlesPool <= 0) return '0 out of 1,000';
               // Scale denominator up until we get at least 1 whole person
               let denom = 1000;
