@@ -1964,15 +1964,22 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
         })()}
       </div>
 
-      {/* Metro list */}
+      {/* Metro legend */}
       <div className="hidden md:block w-48 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '360px' }}>
         <div className="space-y-0">
+          {/* Column header */}
+          <div className="flex items-end gap-2.5 py-1 px-1.5 border-b border-[#e7e5e4]">
+            <span style={{ fontSize: '10px', color: '#78716c', fontFamily: 'monospace', width: '24px', textAlign: 'right', flexShrink: 0 }}>&nbsp;</span>
+            <span style={{ fontSize: '10px', color: '#78716c', fontWeight: 600, flex: 1, minWidth: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Metro Area
+            </span>
+          </div>
           {metros.map((m, i) => {
             const shortName = (m.cbsaLabel || m.cbsaName || '').split(/[,\-]/)[0].trim();
             return (
               <div
                 key={m.cbsa || i}
-                className="flex items-center gap-2 py-1 px-1.5 cursor-pointer hover:bg-stone-50 transition-colors"
+                className="flex items-center gap-2.5 py-1.5 px-1.5 cursor-pointer hover:bg-stone-50 transition-colors"
                 style={{ borderBottom: i < metros.length - 1 ? '1px solid #f0efed' : 'none' }}
                 onMouseEnter={() => handleListHover(m)}
                 onMouseLeave={handleMouseLeave}
