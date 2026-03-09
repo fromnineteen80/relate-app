@@ -1968,8 +1968,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
       <div className="hidden md:block flex-shrink-0" style={{ paddingRight: '6px' }}>
         <div className="space-y-0">
           {/* Column header */}
-          <div className="flex items-end gap-2.5 py-1 px-1.5 border-b border-[#e7e5e4]">
-            <span style={{ fontSize: '10px', color: '#78716c', fontFamily: 'monospace', width: '24px', textAlign: 'right', flexShrink: 0 }}>&nbsp;</span>
+          <div className="py-1 px-1.5 border-b border-[#e7e5e4]">
             <span style={{ fontSize: '10px', color: '#78716c', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
               Metro Area
             </span>
@@ -1984,10 +1983,10 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
                 onMouseEnter={() => handleListHover(m)}
                 onMouseLeave={handleMouseLeave}
               >
-                <span style={{ fontSize: '11px', color: '#78716c', fontFamily: 'monospace', width: '24px', textAlign: 'right', flexShrink: 0 }}>
+                <span style={{ fontSize: '10px', color: '#78716c', fontFamily: 'monospace', width: '24px', textAlign: 'right', flexShrink: 0 }}>
                   #{i + 1}
                 </span>
-                <span style={{ fontSize: '11px', color: '#141413', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: '10px', color: '#141413', whiteSpace: 'nowrap' }}>
                   {shortName}
                 </span>
               </div>
