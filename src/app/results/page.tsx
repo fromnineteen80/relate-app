@@ -1886,10 +1886,12 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
         const filledExact = matchPct * ICON_COUNT; // e.g. 3.6
         const fullIcons = Math.floor(filledExact);
         const halfFraction = filledExact - fullIcons; // 0..1 — used for partial clip
-        const isMale = demographics?.gender === 'Man';
-        const matchColor = isMale ? '#fb7185' : '#3b82f6'; // rose-400 / blue-500
+        // Color of gender being dated: Man (M) dates women → pink, Woman (W) dates men → blue
+        const datingWomen = demographics?.gender === 'M' || demographics?.gender === 'Man';
+        const matchColor = datingWomen ? '#fb7185' : '#3b82f6'; // rose-400 / blue-500
         const grayColor = '#e7e5e4'; // stone-200
-        const iconStyle = { fontSize: 18, fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 18" };
+        const iconSize = 18;
+        const iconStyle: React.CSSProperties = { fontSize: iconSize, width: iconSize, height: iconSize, fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 18" };
 
         return (
           <div className="pt-4 border-t border-border">
@@ -1904,11 +1906,12 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
                   );
                 }
                 if (isPartial) {
-                  // Half-fill: overlay a clipped colored icon on top of gray
+                  // Half-fill: overlay a clipped colored icon on top of gray base
+                  const clipRight = ((1 - halfFraction) * 100).toFixed(0);
                   return (
-                    <span key={i} style={{ position: 'relative', display: 'inline-flex', width: 18, height: 18 }}>
+                    <span key={i} style={{ position: 'relative', display: 'inline-block', width: iconSize, height: iconSize }}>
                       <span className="material-symbols-rounded" style={{ ...iconStyle, color: grayColor, position: 'absolute', left: 0, top: 0 }} aria-hidden="true">person</span>
-                      <span className="material-symbols-rounded" style={{ ...iconStyle, color: matchColor, position: 'absolute', left: 0, top: 0, clipPath: `inset(0 ${((1 - halfFraction) * 100).toFixed(0)}% 0 0)` }} aria-hidden="true">person_heart</span>
+                      <span className="material-symbols-rounded" style={{ ...iconStyle, color: matchColor, position: 'absolute', left: 0, top: 0, clipPath: `inset(0 ${clipRight}% 0 0)` }} aria-hidden="true">person_heart</span>
                     </span>
                   );
                 }
@@ -1919,11 +1922,11 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
             </div>
             <div className="flex items-start justify-between mt-2">
               <div>
-                <p className="font-mono text-sm font-semibold">{matchCount.toLocaleString()}</p>
+                <p className="font-mono text-xl font-semibold">{matchCount.toLocaleString()}</p>
                 <p className="text-[11px] text-secondary">Estimated Matches</p>
               </div>
               <div className="text-right">
-                <p className="font-mono text-sm font-semibold">{(pool?.idealPool || 0).toLocaleString()}</p>
+                <p className="font-mono text-xl font-semibold">{(pool?.idealPool || 0).toLocaleString()}</p>
                 <p className="text-[11px] text-secondary">Ideal Match Pool</p>
               </div>
             </div>

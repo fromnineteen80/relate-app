@@ -94,6 +94,27 @@ export default function AstrologyPage() {
       setLongitude(String(existingBirth.longitude));
       setCity(existingBirth.locationName || '');
       if (existingBirth.latitude && existingBirth.longitude) setLocationResolved(true);
+
+      // Auto-calculate if birth data exists but no chart yet
+      if (!existingChart && existingBirth.latitude && existingBirth.longitude && existingBirth.year && existingBirth.month != null && existingBirth.day) {
+        setCalculating(true);
+        calculateBirthChart(existingBirth).then(result => {
+          saveChartResult(result);
+          setChart(result);
+          try {
+            const resultsStr2 = localStorage.getItem('relate_results');
+            const demoStr2 = localStorage.getItem('relate_demographics');
+            const demo2 = demoStr2 ? JSON.parse(demoStr2) : undefined;
+            if (resultsStr2) {
+              const results2 = JSON.parse(resultsStr2);
+              if (results2.persona?.code && results2.persona?.name) {
+                setPersonaName(results2.persona.name);
+                setAlignment(analyzePersonaAlignment(results2.persona.code, results2.persona.name, result, demo2));
+              }
+            }
+          } catch { /* */ }
+        }).catch(() => {}).finally(() => setCalculating(false));
+      }
     }
   }, [user, loading, router]);
 
