@@ -56,7 +56,12 @@ h1, h2, h3, h4, h5, h6 {
     @apply text-secondary after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-secondary;
   }
   .subnav-tab-inactive {
-    @apply text-foreground hover:text-secondary hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-secondary;
+    @apply text-foreground hover:text-secondary;
+  }
+  @media (hover: hover) {
+    .subnav-tab-inactive {
+      @apply hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-secondary;
+    }
   }
 
   /* Sub-navigation: page sub-links (after the | divider) */
@@ -67,7 +72,12 @@ h1, h2, h3, h4, h5, h6 {
     @apply text-accent after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-accent;
   }
   .subnav-page-tab-inactive {
-    @apply text-secondary hover:text-accent hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent;
+    @apply text-secondary hover:text-accent;
+  }
+  @media (hover: hover) {
+    .subnav-page-tab-inactive {
+      @apply hover:after:absolute hover:after:bottom-0 hover:after:inset-x-0 hover:after:h-0.5 hover:after:bg-accent;
+    }
   }
 
   /* Card subheader (small uppercase label) */
