@@ -1410,12 +1410,12 @@ function ResultsDashboard() {
 
         {/* ── Dating Market ── */}
         {hasMarket && (
-          <div className="scroll-mt-32 flex flex-col lg:flex-row gap-4 items-stretch mb-4">
+          <div className="scroll-mt-32 flex flex-col md:flex-row gap-4 items-stretch mb-4">
             <div className="flex-1 min-w-0">
               <DatingMarketViz data={marketData} loading={marketLoading} onRelaxPreference={recalculateMarket} demographics={demographics} />
             </div>
             {!marketLoading && marketData && (
-              <div className="w-full lg:w-[420px] shrink-0">
+              <div className="w-full md:w-[420px] shrink-0">
                 <DatingPoolGridCard data={marketData} demographics={demographics} />
               </div>
             )}
@@ -1607,7 +1607,7 @@ function DatingPoolGridCard({ data, demographics }: { data: MarketData | null; d
 
   if (!data?.matchPool) return null;
 
-  return <div ref={containerRef} />;
+  return <div ref={containerRef} className="w-full h-full" />;
 }
 
 // ── Dating Market Visualization ──
@@ -1880,7 +1880,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
 
       {/* ── Estimated Matches — person icon bar ── */}
       {(() => {
-        const ICON_COUNT = 15;
+        const ICON_COUNT = 20;
         const idealCount = pool?.idealPool || 0;
         const matchPct = idealCount > 0 ? Math.min(1, matchCount / idealCount) : 0;
         const filledExact = matchPct * ICON_COUNT; // e.g. 3.6
@@ -1890,33 +1890,33 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
         const datingWomen = demographics?.gender === 'M' || demographics?.gender === 'Man';
         const matchColor = datingWomen ? '#fb7185' : '#3b82f6'; // rose-400 / blue-500
         const grayColor = '#e7e5e4'; // stone-200
-        const iconSize = 18;
-        const iconStyle: React.CSSProperties = { fontSize: iconSize, width: iconSize, height: iconSize, fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 18" };
+        // Each icon is 1/ICON_COUNT of the row — flex fills the width
+        const iconStyle: React.CSSProperties = { fontSize: '1.4em', fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24", lineHeight: 1 };
 
         return (
           <div className="pt-4 border-t border-border">
-            <div className="flex w-full justify-between" style={{ lineHeight: 0, gap: 0 }}>
+            <div className="flex w-full" style={{ gap: 0 }}>
               {Array.from({ length: ICON_COUNT }).map((_, i) => {
                 const isFullColor = i < fullIcons;
                 const isPartial = i === fullIcons && halfFraction > 0.05;
 
                 if (isFullColor) {
                   return (
-                    <span key={i} className="material-symbols-rounded" style={{ ...iconStyle, color: matchColor }} aria-hidden="true">person_heart</span>
+                    <span key={i} className="material-symbols-rounded flex-1 text-center" style={{ ...iconStyle, color: matchColor }} aria-hidden="true">person_heart</span>
                   );
                 }
                 if (isPartial) {
                   // Half-fill: overlay a clipped colored icon on top of gray base
                   const clipRight = ((1 - halfFraction) * 100).toFixed(0);
                   return (
-                    <span key={i} style={{ position: 'relative', display: 'inline-block', width: iconSize, height: iconSize }}>
-                      <span className="material-symbols-rounded" style={{ ...iconStyle, color: grayColor, position: 'absolute', left: 0, top: 0 }} aria-hidden="true">person</span>
-                      <span className="material-symbols-rounded" style={{ ...iconStyle, color: matchColor, position: 'absolute', left: 0, top: 0, clipPath: `inset(0 ${clipRight}% 0 0)` }} aria-hidden="true">person_heart</span>
+                    <span key={i} className="flex-1 text-center" style={{ position: 'relative', lineHeight: 1 }}>
+                      <span className="material-symbols-rounded" style={{ ...iconStyle, color: grayColor }} aria-hidden="true">person</span>
+                      <span className="material-symbols-rounded" style={{ ...iconStyle, color: matchColor, position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', clipPath: `inset(0 ${clipRight}% 0 0)` }} aria-hidden="true">person_heart</span>
                     </span>
                   );
                 }
                 return (
-                  <span key={i} className="material-symbols-rounded" style={{ ...iconStyle, color: grayColor }} aria-hidden="true">person</span>
+                  <span key={i} className="material-symbols-rounded flex-1 text-center" style={{ ...iconStyle, color: grayColor }} aria-hidden="true">person</span>
                 );
               })}
             </div>
