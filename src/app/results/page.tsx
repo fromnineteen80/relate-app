@@ -1783,6 +1783,20 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
     setTooltip({ metro, x: e.clientX - rect.left, y: e.clientY - rect.top });
   };
 
+  const handleListHover = (metro: any) => {
+    const wrapper = wrapperRef.current;
+    const svg = svgRef.current;
+    if (!wrapper || !svg) return;
+    // Convert SVG coords to pixel coords within the wrapper
+    const svgRect = svg.getBoundingClientRect();
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const ratioX = svgRect.width / W;
+    const ratioY = svgRect.height / H;
+    const px = (scaleX(metro.idealPool) * ratioX) + svgRect.left - wrapperRect.left;
+    const py = (scaleY(metro.matchCount) * ratioY) + svgRect.top - wrapperRect.top;
+    setTooltip({ metro, x: px, y: py });
+  };
+
   const handleMouseLeave = () => setTooltip(null);
 
   // Dot color based on gender being pursued
@@ -1796,7 +1810,8 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
       </h3>
       <p className="explainer mb-4">Top 20 metro areas where you have the best chance of finding a match.</p>
 
-      <div ref={wrapperRef} className="relative w-full" style={{ overflow: 'visible' }}>
+      <div className="flex gap-4">
+      <div ref={wrapperRef} className="relative flex-1 min-w-0" style={{ overflow: 'visible' }}>
         <svg
           ref={svgRef}
           viewBox={`0 0 ${W} ${H}`}
@@ -1932,6 +1947,32 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
             </div>
           );
         })()}
+      </div>
+
+      {/* Metro list */}
+      <div className="hidden md:block w-48 flex-shrink-0 overflow-y-auto" style={{ maxHeight: '360px' }}>
+        <div className="space-y-0">
+          {metros.map((m, i) => {
+            const shortName = (m.cbsaLabel || m.cbsaName || '').split(/[,\-]/)[0].trim();
+            return (
+              <div
+                key={m.cbsa || i}
+                className="flex items-center gap-2 py-1 px-1.5 cursor-pointer hover:bg-stone-50 transition-colors"
+                style={{ borderBottom: i < metros.length - 1 ? '1px solid #f0efed' : 'none' }}
+                onMouseEnter={() => handleListHover(m)}
+                onMouseLeave={handleMouseLeave}
+              >
+                <span style={{ fontSize: '12px', color: '#78716c', fontFamily: 'monospace', width: '24px', textAlign: 'right', flexShrink: 0 }}>
+                  #{i + 1}
+                </span>
+                <span style={{ fontSize: '12px', color: '#141413', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {shortName}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
       </div>
 
       {/* ── Worst Metros ── */}
