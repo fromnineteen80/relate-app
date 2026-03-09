@@ -232,33 +232,45 @@ export function renderDatingPoolGrid(
 
   card.appendChild(header);
 
-  // ── Blip grid (flexible width) ──
-  // Each blip is 2% wide (100% / 50 columns) minus gap. We use a CSS grid
-  // with fr units so the blips stretch to fill whatever width the card has.
-  const grid = el('div', {
-    display: 'grid',
-    gridTemplateColumns: `repeat(${BLIPS_PER_ROW}, 1fr)`,
-    gap: '2px',
-    width: '100%',
-  });
+  // ── Blip grid (flex-compression pill effect) ──
+  // Each row is a flex container with BLIPS_PER_ROW items. Items are 8×8
+  // with 2px margin and rounded-sm, but WITHOUT flex-shrink: 0 — so flexbox
+  // compresses them horizontally into organic pill shapes that adapt to the
+  // card width.
+  const grid = el('div', { width: '100%' });
 
   const blipEls: HTMLDivElement[] = [];
-  for (let i = 0; i < TOTAL_BLIPS; i++) {
-    const dot = el('div', {
-      width: '100%',
-      height: '4px',
-      borderRadius: '1px',
-      backgroundColor: blips[i],
-      transition: 'background-color 0.15s ease',
+  const totalRows = Math.ceil(TOTAL_BLIPS / BLIPS_PER_ROW);
+
+  for (let row = 0; row < totalRows; row++) {
+    const rowEl = el('div', {
+      display: 'flex',
     });
 
-    // Ideal-tier blips get the blink animation
-    if (tiers[i] === 'ideal') {
-      dot.style.animation = 'dpg-blink 2s ease-in-out infinite';
+    for (let col = 0; col < BLIPS_PER_ROW; col++) {
+      const i = row * BLIPS_PER_ROW + col;
+      if (i >= TOTAL_BLIPS) break;
+
+      const dot = el('div', {
+        width: '8px',
+        height: '8px',
+        margin: '2px',
+        borderRadius: '2px',
+        backgroundColor: blips[i],
+        transition: 'background-color 0.15s ease',
+        // No flex-shrink: 0 — items compress horizontally into pills
+      });
+
+      // Ideal-tier blips get the blink animation
+      if (tiers[i] === 'ideal') {
+        dot.style.animation = 'dpg-blink 2s ease-in-out infinite';
+      }
+
+      blipEls.push(dot);
+      rowEl.appendChild(dot);
     }
 
-    blipEls.push(dot);
-    grid.appendChild(dot);
+    grid.appendChild(rowEl);
   }
 
   card.appendChild(grid);
