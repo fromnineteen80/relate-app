@@ -1829,11 +1829,11 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
           ))}
 
           {/* Axis labels */}
-          <text x={pad.left + plotW / 2} y={H - 6} textAnchor="middle" fontSize="11" fill="#78716c" fontFamily="sans-serif">
-            Ideal Match Pool
+          <text x={pad.left + plotW / 2} y={H - 6} textAnchor="middle" fontSize="12" fill="var(--color-secondary)" fontFamily="var(--font-mono, ui-monospace, monospace)" textDecoration="none" letterSpacing="0.05em">
+            IDEAL MATCH POOL
           </text>
-          <text x={14} y={pad.top + plotH / 2} textAnchor="middle" fontSize="11" fill="#78716c" fontFamily="sans-serif" transform={`rotate(-90, 14, ${pad.top + plotH / 2})`}>
-            Estimated Matches
+          <text x={14} y={pad.top + plotH / 2} textAnchor="middle" fontSize="12" fill="var(--color-secondary)" fontFamily="var(--font-mono, ui-monospace, monospace)" letterSpacing="0.05em" transform={`rotate(-90, 14, ${pad.top + plotH / 2})`}>
+            ESTIMATED MATCHES
           </text>
 
           {/* Data points */}
