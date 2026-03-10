@@ -323,7 +323,7 @@ export default function AstrologyPage() {
               </div>
               {missing.length > 0 && (
                 <p className="text-xs text-secondary mt-3 italic">
-                  Missing {missing.map(m => m.element).join(' and ')} — these are growth areas you may consciously develop through awareness and effort.
+                  Missing {missing.map(m => m.element).join(' and ')}. These are growth areas you may consciously develop through awareness and effort.
                 </p>
               )}
             </div>

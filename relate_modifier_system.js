@@ -309,7 +309,7 @@ const MOVEMENT_RESULTS = {
       id: 'CEILING_RAISE',
       label: 'Ceiling Raise',
       description: 'Higher maximum relationship quality possible',
-      messageTemplate: 'Improving {modifier} raises your relationship ceilingâ€”better outcomes become possible.'
+      messageTemplate: 'Improving {modifier} raises your relationship ceiling. Better outcomes become possible.'
     },
     CEILING_REMOVE: {
       id: 'CEILING_REMOVE',
@@ -321,7 +321,7 @@ const MOVEMENT_RESULTS = {
       id: 'FLOOR_RAISE',
       label: 'Floor Raise',
       description: 'Better minimum outcomes during hard times',
-      messageTemplate: 'Improving {modifier} protects your relationship during stressâ€”your floor rises by {percent}%.'
+      messageTemplate: 'Improving {modifier} protects your relationship during stress. Your floor rises by {percent}%.'
     },
     RESILIENCE_BOOST: {
       id: 'RESILIENCE_BOOST',
@@ -333,13 +333,13 @@ const MOVEMENT_RESULTS = {
       id: 'DEPTH_UNLOCK',
       label: 'Depth Unlock',
       description: 'Deeper intimacy becomes accessible',
-      messageTemplate: 'Improving {modifier} allows deeper intimacyâ€”previously blocked by {barrier}.'
+      messageTemplate: 'Improving {modifier} allows deeper intimacy, previously blocked by {barrier}.'
     },
     STABILITY_GAIN: {
       id: 'STABILITY_GAIN',
       label: 'Stability Gain',
       description: 'Reduced volatility in relationship quality',
-      messageTemplate: 'Improving {modifier} stabilizes your relationshipâ€”less dramatic swings.'
+      messageTemplate: 'Improving {modifier} stabilizes your relationship. Less dramatic swings.'
     }
   }
 };

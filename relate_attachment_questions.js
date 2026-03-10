@@ -1,14 +1,14 @@
 /**
- * RELATE Dating Blueprint - Question Engine
+ * RELATE Attachment Deep Dive - Question Engine
  *
  * Implements the question bank for all four Quadrants as specified in
- * blueprint_spec_section4.md. Quadrants One through Three use static
+ * the spec (Section 4). Quadrants One through Three use static
  * question sets. Quadrant Four constructs its question set dynamically
  * at runtime from the user's persona code and the behavioral metadata
  * in relate_persona_definitions.js.
  *
  * Every question serves the dual function described in the spec:
- *   1. Producing a scoring signal for Profile routing / axis calculation
+ *   1. Producing a scoring signal for pattern routing / axis calculation
  *   2. Generating experiential material the report can draw on
  *
  * Question formats:
@@ -16,14 +16,14 @@
  *   - 'scaled'     => 5-point Likert (1-5) with custom anchors
  *
  * Each question carries:
- *   id          – unique stable identifier
- *   quadrant    – 1 | 2 | 3 | 4
- *   dimension   – which Dimension(s) the question scores against
- *   format      – 'narrative' | 'scaled'
- *   prompt      – the user-facing question text
- *   anchors     – (scaled only) labels for the 1 and 5 endpoints
- *   scoringNote – internal note for the scoring engine (never shown to user)
- *   angle       – 'behavioral' | 'emotional' | 'somatic' | 'relational'
+ *   id         : unique stable identifier
+ *   quadrant   : 1 | 2 | 3 | 4
+ *   dimension  : which Dimension(s) the question scores against
+ *   format     : 'narrative' | 'scaled'
+ *   prompt     : the user-facing question text
+ *   anchors    : (scaled only) labels for the 1 and 5 endpoints
+ *   scoringNote: internal note for the scoring engine (never shown to user)
+ *   angle      : 'behavioral' | 'emotional' | 'somatic' | 'relational'
  *                 Used to detect cross-angle consistency/tension
  */
 
@@ -41,7 +41,7 @@ const QUADRANT_ONE_QUESTIONS = [
     format: 'narrative',
     angle: 'emotional',
     prompt:
-      'Think about the emotional weather of the household you grew up in. Not specific events — the atmosphere. If you had to describe it as a season or a climate, what would it be? What did that atmosphere teach you about what love requires from the person inside it?',
+      'Think about the emotional weather of the household you grew up in. Not specific events, the atmosphere. If you had to describe it as a season or a climate, what would it be? What did that atmosphere teach you about what love requires from the person inside it?',
     scoringNote:
       'Chronic disruption answers describe sustained atmosphere. Acute disruption answers pivot to a specific event that changed the weather.'
   },
@@ -64,7 +64,7 @@ const QUADRANT_ONE_QUESTIONS = [
     angle: 'behavioral',
     prompt:
       'When someone asks about your childhood, you can point to a specific event that changed how you understood love.',
-    anchors: { low: 'There was no single event — it was just how things were', high: 'There is a clear before and after' },
+    anchors: { low: 'There was no single event, it was just how things were', high: 'There is a clear before and after' },
     scoringNote:
       'Low scores indicate chronic disruption. High scores indicate acute disruption.'
   },
@@ -75,7 +75,7 @@ const QUADRANT_ONE_QUESTIONS = [
     format: 'narrative',
     angle: 'somatic',
     prompt:
-      'Describe what conflict looked like in your earliest home. Not what it was about — what happened to the room when tension arrived. What did you learn to do with your body, your voice, or your attention when the air changed?',
+      'Describe what conflict looked like in your earliest home. Not what it was about, what happened to the room when tension arrived. What did you learn to do with your body, your voice, or your attention when the air changed?',
     scoringNote:
       'Chronic disruption: conflict was avoided, constant low-grade tension, or never resolved. Acute disruption: references specific explosive events or ruptures.'
   },
@@ -88,7 +88,7 @@ const QUADRANT_ONE_QUESTIONS = [
     format: 'narrative',
     angle: 'relational',
     prompt:
-      'Think about the patterns you bring into relationships — the way you protect yourself, the things you watch for, the distance you keep or cannot keep. Do those patterns feel like they have always been part of you, or can you trace them to a specific person you loved as an adult?',
+      'Think about the patterns you bring into relationships, the way you protect yourself, the things you watch for, the distance you keep or cannot keep. Do those patterns feel like they have always been part of you, or can you trace them to a specific person you loved as an adult?',
     scoringNote:
       'Caregiver origin: "always been this way." Romantic origin: names a specific relationship. Both = complex history; weight toward dominant narrative.'
   },
@@ -124,7 +124,7 @@ const QUADRANT_ONE_QUESTIONS = [
     format: 'narrative',
     angle: 'relational',
     prompt:
-      'Think about the most significant relational wound you carry. Did anything ever come along — a relationship, a conversation, a period of work on yourself — that genuinely changed what that wound concluded about love? Not intellectually. Did something shift in what you actually believe is possible?',
+      'Think about the most significant relational wound you carry. Did anything ever come along, a relationship, a conversation, a period of work on yourself, that genuinely changed what that wound concluded about love? Not intellectually. Did something shift in what you actually believe is possible?',
     scoringNote:
       'Repaired: describes a specific corrective experience with genuine shift in belief. Partially repaired: intellectual understanding without felt shift. Unresolved: no corrective experience or experience that did not land.'
   },
@@ -135,7 +135,7 @@ const QUADRANT_ONE_QUESTIONS = [
     format: 'narrative',
     angle: 'emotional',
     prompt:
-      'When you imagine entering a new relationship with someone who is genuinely trustworthy, what happens in your body? Describe the first feeling that arrives — not what you think should happen, but what actually happens before you have time to manage it.',
+      'When you imagine entering a new relationship with someone who is genuinely trustworthy, what happens in your body? Describe the first feeling that arrives, not what you think should happen, but what actually happens before you have time to manage it.',
     scoringNote:
       'Repaired: describes cautious openness with felt evidence of safety. Unresolved: describes fear, constriction, or habitual protection even when acknowledging the partner is safe.'
   },
@@ -158,7 +158,7 @@ const QUADRANT_ONE_QUESTIONS = [
     format: 'narrative',
     angle: 'relational',
     prompt:
-      'Has anyone — a parent, a partner, a therapist, a friend — ever acknowledged what happened to you in a way that changed how you carried it? Describe that moment if it exists. If it does not, describe what it would need to sound like for it to land.',
+      'Has anyone, a parent, a partner, a therapist, a friend, ever acknowledged what happened to you in a way that changed how you carried it? Describe that moment if it exists. If it does not, describe what it would need to sound like for it to land.',
     scoringNote:
       'Repaired: describes a real moment of witnessed acknowledgment. Unresolved: describes what they would need to hear but have not. The specificity of the hypothetical is itself diagnostic.'
   },
@@ -198,7 +198,7 @@ const QUADRANT_ONE_QUESTIONS = [
     format: 'narrative',
     angle: 'relational',
     prompt:
-      'Has a partner or close friend ever said something about your past that surprised you — a connection they drew between your history and your behavior that you had not made yourself? What did they say, and how did it land?',
+      'Has a partner or close friend ever said something about your past that surprised you, a connection they drew between your history and your behavior that you had not made yourself? What did they say, and how did it land?',
     scoringNote:
       'The content of the partner observation maps to disruption type and source. Whether the observation "landed" maps to awareness and repair status.'
   }
@@ -207,7 +207,7 @@ const QUADRANT_ONE_QUESTIONS = [
 
 // ============================================================================
 // QUADRANT TWO: TRIGGER EMOTION
-// Profiles: Fear of Abandonment, Shame, Contempt, Grief, Rage
+// patterns: Fear of Abandonment, Shame, Contempt, Grief, Rage
 // ============================================================================
 
 const QUADRANT_TWO_QUESTIONS = [
@@ -219,7 +219,7 @@ const QUADRANT_TWO_QUESTIONS = [
     format: 'narrative',
     angle: 'somatic',
     prompt:
-      'Think about the last time a relationship felt genuinely uncertain — not a small misunderstanding, but a moment when you did not know if the other person was still in it. What happened in your body before you did anything? Describe the physical sensation as precisely as you can.',
+      'Think about the last time a relationship felt genuinely uncertain, not a small misunderstanding, but a moment when you did not know if the other person was still in it. What happened in your body before you did anything? Describe the physical sensation as precisely as you can.',
     scoringNote:
       'Abandonment: chest tightness, reaching/grasping quality, heart racing. Shame: heat, face flushing, desire to hide or shrink. Contempt: jaw tightening, cooling, pulling upward. Grief: heaviness, sinking, pre-emptive sadness settling in chest. Rage: heat rising, fists, chest expanding, surge forward.'
   },
@@ -230,7 +230,7 @@ const QUADRANT_TWO_QUESTIONS = [
     format: 'narrative',
     angle: 'emotional',
     prompt:
-      'In that same moment of uncertainty, what was the very first thought that arrived — not the reasonable one you eventually talked yourself into, but the raw, unedited thought that came before you had time to manage it?',
+      'In that same moment of uncertainty, what was the very first thought that arrived, not the reasonable one you eventually talked yourself into, but the raw, unedited thought that came before you had time to manage it?',
     scoringNote:
       'Abandonment: "They are leaving." Shame: "They have seen the real me." Contempt: "They are not enough / cannot handle this." Grief: "This is already over." Rage: "This is not fair / I will not be treated this way."'
   },
@@ -241,7 +241,7 @@ const QUADRANT_TWO_QUESTIONS = [
     format: 'narrative',
     angle: 'behavioral',
     prompt:
-      'When a relationship feels threatened, what is the first thing you want to do — not what you actually do, but the impulse that arrives before you decide whether to follow it? And what is the thing you are most afraid of losing in that moment?',
+      'When a relationship feels threatened, what is the first thing you want to do, not what you actually do, but the impulse that arrives before you decide whether to follow it? And what is the thing you are most afraid of losing in that moment?',
     scoringNote:
       'Abandonment: impulse to pursue, reach out, confirm presence. Fears losing the person entirely. Shame: impulse to withdraw, deflect, perform normalcy. Fears being exposed as inadequate. Contempt: impulse to critique, distance, locate the flaw in the other. Fears dependency. Grief: impulse to withdraw quietly, pre-mourn. Fears this confirming that love does not hold. Rage: impulse to confront, assert, demand accountability. Fears powerlessness.'
   },
@@ -254,7 +254,7 @@ const QUADRANT_TWO_QUESTIONS = [
     format: 'narrative',
     angle: 'relational',
     prompt:
-      'When someone you are dating goes quiet — a slow reply, a change in tone, a cancelled plan — what is the story your mind builds in the silence? Walk through it: what do you conclude first, and where does the story end up if you let it run without interrupting it?',
+      'When someone you are dating goes quiet, a slow reply, a change in tone, a cancelled plan, what is the story your mind builds in the silence? Walk through it: what do you conclude first, and where does the story end up if you let it run without interrupting it?',
     scoringNote:
       'Critical differentiator. Abandonment: story ends with the person gone. Shame: story ends with being found out, found wanting, or found to be too much. Contempt: story reframes the other as not worth worrying about. Grief: story arrives at inevitable loss. Rage: story builds a case for having been wronged.'
   },
@@ -291,7 +291,7 @@ const QUADRANT_TWO_QUESTIONS = [
     format: 'narrative',
     angle: 'relational',
     prompt:
-      'Think about a moment when a partner disappointed you in a way that felt significant. Not what they did — what happened to your perception of them in that moment. Did they become smaller in your mind? Did they become dangerous? Did they become someone who was already leaving? Or did the moment confirm something you had been quietly expecting?',
+      'Think about a moment when a partner disappointed you in a way that felt significant. Not what they did, what happened to your perception of them in that moment. Did they become smaller in your mind? Did they become dangerous? Did they become someone who was already leaving? Or did the moment confirm something you had been quietly expecting?',
     scoringNote:
       'Became smaller = contempt. Became dangerous = rage or abandonment. Already leaving = abandonment. Quietly expected = grief. Answers involving self-reflection (what does this say about me) = shame.'
   },
@@ -302,7 +302,7 @@ const QUADRANT_TWO_QUESTIONS = [
     format: 'narrative',
     angle: 'emotional',
     prompt:
-      'Describe what intimacy feels like at its most difficult for you. Not conflict — closeness. The moment when someone is fully present and paying attention to you with no distraction. What arrives in you when that happens?',
+      'Describe what intimacy feels like at its most difficult for you. Not conflict, closeness. The moment when someone is fully present and paying attention to you with no distraction. What arrives in you when that happens?',
     scoringNote:
       'Shame: discomfort with being seen, desire to redirect attention. Abandonment: brief relief followed by fear of losing this. Contempt: scanning for whether the person deserves this closeness. Grief: tenderness mixed with awareness of impermanence. Rage: vulnerability feels like exposure; may generate defensiveness.'
   },
@@ -339,7 +339,7 @@ const QUADRANT_TWO_QUESTIONS = [
     format: 'narrative',
     angle: 'relational',
     prompt:
-      'What have partners consistently said about how you behave when things feel bad between you? Not what you think you do — what have you been told? If the same observation has come from more than one person, describe it.',
+      'What have partners consistently said about how you behave when things feel bad between you? Not what you think you do, what have you been told? If the same observation has come from more than one person, describe it.',
     scoringNote:
       'Partner observations are among the most diagnostically reliable signals. The content maps directly to trigger emotion. The repetition across partners confirms the pattern is structural rather than relational.'
   },
@@ -352,7 +352,7 @@ const QUADRANT_TWO_QUESTIONS = [
     format: 'narrative',
     angle: 'behavioral',
     prompt:
-      'Describe a moment in a past relationship when you wanted to respond one way — the way you believe a healthy, secure person would respond — and found yourself doing something else entirely. What did you intend? What happened instead? And what was the emotion that was running faster than your intention?',
+      'Describe a moment in a past relationship when you wanted to respond one way, the way you believe a healthy, secure person would respond, and found yourself doing something else entirely. What did you intend? What happened instead? And what was the emotion that was running faster than your intention?',
     scoringNote:
       'Gap question. The emotion named as "running faster" is often the trigger emotion stated directly. Tension between intention and action is itself a signal of how strongly the trigger operates.'
   },
@@ -381,14 +381,14 @@ const QUADRANT_TWO_QUESTIONS = [
     prompt:
       'If you could guarantee that a partner would never leave, would the fear go away? Or is there something else underneath the fear that would remain even if departure were impossible?',
     scoringNote:
-      'Critical differentiator for anxious presentations. Abandonment: yes, the fear would go away. Shame: no — the fear is about being seen, not about being left. Contempt: reframes — the issue is not their leaving but whether they deserve staying for. Grief: the fear is not about this person leaving but about love itself being temporary. Rage: the issue is not departure but control/fairness.'
+      'Critical differentiator for anxious presentations. Abandonment: yes, the fear would go away. Shame: no, the fear is about being seen, not about being left. Contempt: reframes, the issue is not their leaving but whether they deserve staying for. Grief: the fear is not about this person leaving but about love itself being temporary. Rage: the issue is not departure but control/fairness.'
   }
 ];
 
 
 // ============================================================================
 // QUADRANT THREE: DECISION ARCHITECTURE
-// Profiles: Intellectualization, Impulsive Action, Consensus Seeking,
+// patterns: Intellectualization, Impulsive Action, Consensus Seeking,
 //           Silence & Withdrawal, Catastrophic Forward Projection,
 //           Dissociative Backward Anchoring
 // Internal Axes: Direction (toward/away), Register (cognitive/behavioral/relational)
@@ -403,7 +403,7 @@ const QUADRANT_THREE_QUESTIONS = [
     format: 'narrative',
     angle: 'behavioral',
     prompt:
-      'Think about the last time you were in a new relationship and something felt off — not a dealbreaker, but a signal you could not quite read. What did you do in the hours after you noticed it? Walk through the sequence: the first thing, then the next thing, then what happened overnight.',
+      'Think about the last time you were in a new relationship and something felt off, not a dealbreaker, but a signal you could not quite read. What did you do in the hours after you noticed it? Walk through the sequence: the first thing, then the next thing, then what happened overnight.',
     scoringNote:
       'Intellectualization: researched, analyzed, built a framework. Impulsive action: texted, called, confronted, or made a decision. Consensus seeking: called a friend, replayed the conversation to someone else. Silence/withdrawal: went quiet, needed space, pulled inward. Catastrophic projection: mind went to the endpoint. Backward anchoring: compared to a past relationship.'
   },
@@ -414,7 +414,7 @@ const QUADRANT_THREE_QUESTIONS = [
     format: 'narrative',
     angle: 'emotional',
     prompt:
-      'When you cannot tell what someone you are dating is thinking or feeling, what happens to you internally? Not what you do — what is the experience of not knowing? Describe the texture of that uncertainty.',
+      'When you cannot tell what someone you are dating is thinking or feeling, what happens to you internally? Not what you do, what is the experience of not knowing? Describe the texture of that uncertainty.',
     scoringNote:
       'The texture of the uncertainty reveals the mode. Intellectualization: the uncertainty feels like a problem to solve. Impulsive action: the uncertainty is physically intolerable. Consensus seeking: the uncertainty feels like unreliable self-perception. Silence: the uncertainty collapses the ability to locate the self. Projection: the uncertainty fills with a specific imagined outcome. Backward anchoring: the uncertainty triggers comparison to something known.'
   },
@@ -425,9 +425,9 @@ const QUADRANT_THREE_QUESTIONS = [
     format: 'narrative',
     angle: 'behavioral',
     prompt:
-      'Describe a time in a past relationship when you acted on something — sent a message, made a decision, said something — and immediately or soon after wished you had waited. What drove the action? What was happening in the gap between the feeling and the doing?',
+      'Describe a time in a past relationship when you acted on something, sent a message, made a decision, said something, and immediately or soon after wished you had waited. What drove the action? What was happening in the gap between the feeling and the doing?',
     scoringNote:
-      'Impulsive action: gap was very small or nonexistent. Intellectualization: acted on an analysis that felt certain. Consensus seeking: acted on advice that overrode own signal. Projection: acted on an imagined future. Backward anchoring: acted on a comparison. Silence: may report the opposite — wished they had said something.'
+      'Impulsive action: gap was very small or nonexistent. Intellectualization: acted on an analysis that felt certain. Consensus seeking: acted on advice that overrode own signal. Projection: acted on an imagined future. Backward anchoring: acted on a comparison. Silence: may report the opposite, wished they had said something.'
   },
   {
     id: 'q3_04',
@@ -437,7 +437,7 @@ const QUADRANT_THREE_QUESTIONS = [
     angle: 'behavioral',
     prompt:
       'When a relationship feels uncertain, you are more likely to move toward the other person than to pull away.',
-    anchors: { low: 'I pull inward or away', high: 'I move toward them — to talk, to check, to resolve' },
+    anchors: { low: 'I pull inward or away', high: 'I move toward them, to talk, to check, to resolve' },
     scoringNote:
       'Direction axis. High = toward (intellectualization, impulsive action, catastrophic projection). Low = away (consensus seeking, silence, backward anchoring).'
   },
@@ -486,7 +486,7 @@ const QUADRANT_THREE_QUESTIONS = [
     format: 'scaled',
     angle: 'emotional',
     prompt:
-      'When a current relationship hits difficulty, you find your mind going to a past relationship — comparing, remembering, or measuring this person against someone who came before.',
+      'When a current relationship hits difficulty, you find your mind going to a past relationship, comparing, remembering, or measuring this person against someone who came before.',
     anchors: { low: 'Past relationships stay in the past', high: 'A specific past relationship becomes very present in my mind' },
     scoringNote:
       'High = dissociative backward anchoring. The temporal displacement toward a past reference point.'
@@ -498,7 +498,7 @@ const QUADRANT_THREE_QUESTIONS = [
     format: 'narrative',
     angle: 'relational',
     prompt:
-      'Think about a conflict in a past relationship where you went quiet — not as strategy, but because you genuinely could not access your own position in the presence of the other person\'s emotion. What was happening inside the silence? What were you trying to find in there?',
+      'Think about a conflict in a past relationship where you went quiet, not as strategy, but because you genuinely could not access your own position in the presence of the other person\'s emotion. What was happening inside the silence? What were you trying to find in there?',
     scoringNote:
       'Silence/withdrawal: describes loss of self-access, needing to leave the field to locate own position. Other modes: may describe silence differently (shame withdrawal, strategic withdrawal, freezing).'
   },
@@ -522,7 +522,7 @@ const QUADRANT_THREE_QUESTIONS = [
     format: 'narrative',
     angle: 'behavioral',
     prompt:
-      'When your usual way of handling relational uncertainty is not available to you — when you cannot analyze, cannot reach anyone, cannot act, cannot withdraw — what happens next? What is the backup system that runs when the primary one fails?',
+      'When your usual way of handling relational uncertainty is not available to you, when you cannot analyze, cannot reach anyone, cannot act, cannot withdraw, what happens next? What is the backup system that runs when the primary one fails?',
     scoringNote:
       'Reveals secondary decision mode. The backup system is diagnostically important for the conflict section of the report.'
   },
@@ -535,7 +535,7 @@ const QUADRANT_THREE_QUESTIONS = [
     format: 'narrative',
     angle: 'relational',
     prompt:
-      'Describe a high-stakes moment in a past relationship — the kind where what you did next would determine something important. Who did you intend to be in that moment? Who did you actually find yourself being? What was the distance between those two people, and what do you understand about that distance now?',
+      'Describe a high-stakes moment in a past relationship, the kind where what you did next would determine something important. Who did you intend to be in that moment? Who did you actually find yourself being? What was the distance between those two people, and what do you understand about that distance now?',
     scoringNote:
       'Gap question. The nature of the distance between intention and action reveals the decision mode. The quality of current understanding maps to awareness level (relevant for Q4 cross-quadrant scoring).'
   },
@@ -548,7 +548,7 @@ const QUADRANT_THREE_QUESTIONS = [
     format: 'narrative',
     angle: 'relational',
     prompt:
-      'What have partners said about how you handle conflict or uncertainty? Not how you think you handle it — what have you been told you do? If a pattern has been named by more than one person, describe it.',
+      'What have partners said about how you handle conflict or uncertainty? Not how you think you handle it, what have you been told you do? If a pattern has been named by more than one person, describe it.',
     scoringNote:
       'Partner observations on decision mode are highly reliable. Repeated patterns across partners confirm structural mode rather than relational artifact.'
   },
@@ -562,7 +562,7 @@ const QUADRANT_THREE_QUESTIONS = [
     angle: 'emotional',
     prompt:
       'When a relationship is under stress, you spend more time thinking about how it might end than about what happened in the past.',
-    anchors: { low: 'I go to the past — what went wrong before', high: 'I go to the future — how this will end' },
+    anchors: { low: 'I go to the past, what went wrong before', high: 'I go to the future, how this will end' },
     scoringNote:
       'High = catastrophic forward projection. Low = backward anchoring. Mid = present-oriented modes (intellectualization, impulsive action, consensus seeking, silence).'
   }
@@ -662,7 +662,7 @@ function buildQuadrantFourQuestions(personaCode, personaMetadata, personaName) {
       format: 'narrative',
       angle: 'relational',
       prompt:
-        `Think about a moment in a relationship when "${secondaryStruggle.toLowerCase().replace(/;.*/, '')}" was active. Not the version of it that you managed well — the version that a partner saw before you could catch it. What did they experience, and what were you protecting?`,
+        `Think about a moment in a relationship when "${secondaryStruggle.toLowerCase().replace(/;.*/, '')}" was active. Not the version of it that you managed well, the version that a partner saw before you could catch it. What did they experience, and what were you protecting?`,
       scoringNote:
         'Defense score: the ability to name what the pattern protects indicates defense awareness. Inability to identify the protected territory suggests high automaticity. Rich description of the partner experience confirms the shadow is active in relationships.'
     },
@@ -687,8 +687,8 @@ function buildQuadrantFourQuestions(personaCode, personaMetadata, personaName) {
       format: 'scaled',
       angle: 'emotional',
       prompt:
-        `You are aware that you have a specific way of showing up in relationships that is partly a choice and partly automatic — and you know which parts are which.`,
-      anchors: { low: 'I am just being myself — I do not see separate parts', high: 'I can distinguish the chosen parts from the automatic parts clearly' },
+        `You are aware that you have a specific way of showing up in relationships that is partly a choice and partly automatic, and you know which parts are which.`,
+      anchors: { low: 'I am just being myself, I do not see separate parts', high: 'I can distinguish the chosen parts from the automatic parts clearly' },
       scoringNote:
         'Low = automaticity. High = awareness. The ability to parse the persona into chosen vs automatic components is the core awareness signal.'
     },
@@ -699,7 +699,7 @@ function buildQuadrantFourQuestions(personaCode, personaMetadata, personaName) {
       format: 'narrative',
       angle: 'relational',
       prompt:
-        `If a partner told you: "${secondaryDisappointment.toLowerCase()}" — would this be the first time you have heard something like that, or a version of something you have heard before? If you have heard it before, describe what you have done with that feedback.`,
+        `If a partner told you: "${secondaryDisappointment.toLowerCase()}", would this be the first time you have heard something like that, or a version of something you have heard before? If you have heard it before, describe what you have done with that feedback.`,
       scoringNote:
         'High awareness: has heard it, has worked with it, can describe the effort. High automaticity: has heard it but does not recognize it as a pattern, or has not heard it. The treatment of partner feedback (dismissed, integrated, partially processed) maps directly to awareness level.'
     },
@@ -783,7 +783,7 @@ function buildQuadrantFourQuestions(personaCode, personaMetadata, personaName) {
       format: 'narrative',
       angle: 'behavioral',
       prompt:
-        `Partners have valued you for: "${primaryHowValued.toLowerCase()}." Describe a moment when that exact quality — the thing partners value — became the thing that was hurting the relationship. If you cannot recall a moment like that, describe what it would look like if that quality went too far.`,
+        `Partners have valued you for: "${primaryHowValued.toLowerCase()}." Describe a moment when that exact quality, the thing partners value, became the thing that was hurting the relationship. If you cannot recall a moment like that, describe what it would look like if that quality went too far.`,
       scoringNote:
         'The strength-to-shadow flip under amplification. High defense + high amplification: can describe the moment precisely. Low defense + low amplification: the hypothetical version is abstract. The specificity of the described moment maps to both defense level and amplification intensity.'
     },
@@ -796,7 +796,7 @@ function buildQuadrantFourQuestions(personaCode, personaMetadata, personaName) {
       format: 'narrative',
       angle: 'relational',
       prompt:
-        `What is the single piece of feedback from a past partner that you have carried the longest — the one that still sits with you, whether you agree with it or not? What did they say? And what have you done with it since?`,
+        `What is the single piece of feedback from a past partner that you have carried the longest, the one that still sits with you, whether you agree with it or not? What did they say? And what have you done with it since?`,
       scoringNote:
         'Comprehensive probe across all three axes. Content maps to which axis is most active. Whether the feedback was integrated (awareness), dismissed (automaticity), or acknowledged but unchanged (defense + awareness). Duration of carrying it maps to defense rigidity.'
     },
@@ -825,7 +825,7 @@ function buildQuadrantFourQuestions(personaCode, personaMetadata, personaName) {
 // ============================================================================
 
 /**
- * Returns the full question bank for the Blueprint session.
+ * Returns the full question bank for the Attachment assessment session.
  *
  * @param {object} params
  * @param {string} params.personaCode - Four-letter RELATE persona code
@@ -834,7 +834,7 @@ function buildQuadrantFourQuestions(personaCode, personaMetadata, personaName) {
  * @param {string} params.attachmentType - Attachment type from RELATE Session 3
  * @returns {object} { quadrant1, quadrant2, quadrant3, quadrant4, totalCount }
  */
-function getBlueprintQuestions(params) {
+function getAttachmentQuestions(params) {
   const { personaCode, personaMetadata, personaName, attachmentType } = params;
 
   const quadrant4 = buildQuadrantFourQuestions(personaCode, personaMetadata, personaName);
@@ -853,7 +853,7 @@ function getBlueprintQuestions(params) {
       personaCode,
       personaName,
       attachmentType,
-      sessionType: 'blueprint'
+      sessionType: 'attachment'
     }
   };
 }
@@ -868,5 +868,5 @@ module.exports = {
   QUADRANT_TWO_QUESTIONS,
   QUADRANT_THREE_QUESTIONS,
   buildQuadrantFourQuestions,
-  getBlueprintQuestions
+  getAttachmentQuestions
 };

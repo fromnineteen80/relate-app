@@ -51,7 +51,17 @@ Generate all sections following the report structure: Executive Summary, Your Pe
       }],
     });
 
-    const content = response.content[0]?.text || '';
+    let content = response.content[0]?.text || '';
+
+    // Sanitize: remove em dashes, en dashes, and corrupted Unicode sequences
+    content = content
+      .replace(/\s*[—–]\s*/g, ', ')
+      .replace(/â€"/g, ', ')
+      .replace(/â€"/g, ', ')
+      .replace(/â€™/g, "'")
+      .replace(/â€œ/g, '"')
+      .replace(/â€\x9d/g, '"')
+      .replace(/,\s*,/g, ',');
 
     return NextResponse.json({
       success: true,

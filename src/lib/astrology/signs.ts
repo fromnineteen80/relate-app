@@ -16,18 +16,18 @@ export type SignData = {
 };
 
 export const SIGN_DATA: Record<ZodiacSign, SignData> = {
-  Aries:       { name: 'Aries',       symbol: '♈', element: 'Fire',  modality: 'Cardinal', rulingPlanet: 'Mars',    dateRange: 'Mar 21 – Apr 19' },
-  Taurus:      { name: 'Taurus',      symbol: '♉', element: 'Earth', modality: 'Fixed',    rulingPlanet: 'Venus',   dateRange: 'Apr 20 – May 20' },
-  Gemini:      { name: 'Gemini',      symbol: '♊', element: 'Air',   modality: 'Mutable',  rulingPlanet: 'Mercury', dateRange: 'May 21 – Jun 20' },
-  Cancer:      { name: 'Cancer',      symbol: '♋', element: 'Water', modality: 'Cardinal', rulingPlanet: 'Moon',    dateRange: 'Jun 21 – Jul 22' },
-  Leo:         { name: 'Leo',         symbol: '♌', element: 'Fire',  modality: 'Fixed',    rulingPlanet: 'Sun',     dateRange: 'Jul 23 – Aug 22' },
-  Virgo:       { name: 'Virgo',       symbol: '♍', element: 'Earth', modality: 'Mutable',  rulingPlanet: 'Mercury', dateRange: 'Aug 23 – Sep 22' },
-  Libra:       { name: 'Libra',       symbol: '♎', element: 'Air',   modality: 'Cardinal', rulingPlanet: 'Venus',   dateRange: 'Sep 23 – Oct 22' },
-  Scorpio:     { name: 'Scorpio',     symbol: '♏', element: 'Water', modality: 'Fixed',    rulingPlanet: 'Pluto',   dateRange: 'Oct 23 – Nov 21' },
-  Sagittarius: { name: 'Sagittarius', symbol: '♐', element: 'Fire',  modality: 'Mutable',  rulingPlanet: 'Jupiter', dateRange: 'Nov 22 – Dec 21' },
-  Capricorn:   { name: 'Capricorn',   symbol: '♑', element: 'Earth', modality: 'Cardinal', rulingPlanet: 'Saturn',  dateRange: 'Dec 22 – Jan 19' },
-  Aquarius:    { name: 'Aquarius',    symbol: '♒', element: 'Air',   modality: 'Fixed',    rulingPlanet: 'Uranus',  dateRange: 'Jan 20 – Feb 18' },
-  Pisces:      { name: 'Pisces',      symbol: '♓', element: 'Water', modality: 'Mutable',  rulingPlanet: 'Neptune', dateRange: 'Feb 19 – Mar 20' },
+  Aries:       { name: 'Aries',       symbol: '♈', element: 'Fire',  modality: 'Cardinal', rulingPlanet: 'Mars',    dateRange: 'Mar 21 to Apr 19' },
+  Taurus:      { name: 'Taurus',      symbol: '♉', element: 'Earth', modality: 'Fixed',    rulingPlanet: 'Venus',   dateRange: 'Apr 20 to May 20' },
+  Gemini:      { name: 'Gemini',      symbol: '♊', element: 'Air',   modality: 'Mutable',  rulingPlanet: 'Mercury', dateRange: 'May 21 to Jun 20' },
+  Cancer:      { name: 'Cancer',      symbol: '♋', element: 'Water', modality: 'Cardinal', rulingPlanet: 'Moon',    dateRange: 'Jun 21 to Jul 22' },
+  Leo:         { name: 'Leo',         symbol: '♌', element: 'Fire',  modality: 'Fixed',    rulingPlanet: 'Sun',     dateRange: 'Jul 23 to Aug 22' },
+  Virgo:       { name: 'Virgo',       symbol: '♍', element: 'Earth', modality: 'Mutable',  rulingPlanet: 'Mercury', dateRange: 'Aug 23 to Sep 22' },
+  Libra:       { name: 'Libra',       symbol: '♎', element: 'Air',   modality: 'Cardinal', rulingPlanet: 'Venus',   dateRange: 'Sep 23 to Oct 22' },
+  Scorpio:     { name: 'Scorpio',     symbol: '♏', element: 'Water', modality: 'Fixed',    rulingPlanet: 'Pluto',   dateRange: 'Oct 23 to Nov 21' },
+  Sagittarius: { name: 'Sagittarius', symbol: '♐', element: 'Fire',  modality: 'Mutable',  rulingPlanet: 'Jupiter', dateRange: 'Nov 22 to Dec 21' },
+  Capricorn:   { name: 'Capricorn',   symbol: '♑', element: 'Earth', modality: 'Cardinal', rulingPlanet: 'Saturn',  dateRange: 'Dec 22 to Jan 19' },
+  Aquarius:    { name: 'Aquarius',    symbol: '♒', element: 'Air',   modality: 'Fixed',    rulingPlanet: 'Uranus',  dateRange: 'Jan 20 to Feb 18' },
+  Pisces:      { name: 'Pisces',      symbol: '♓', element: 'Water', modality: 'Mutable',  rulingPlanet: 'Neptune', dateRange: 'Feb 19 to Mar 20' },
 };
 
 /** Element-based color mapping used on cards */

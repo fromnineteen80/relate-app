@@ -3184,7 +3184,7 @@ const FILTER_COST_ESTIMATES = {
     adjustmentOptions: [
       { action: 'Expand range by 5 years', typicalGain: 0.15 },
       { action: 'Expand range by 10 years', typicalGain: 0.30 },
-      { action: 'Shift range to match your age Ã‚Â±5', typicalGain: 0.20 }
+      { action: 'Shift range to match your age, plus or minus 5', typicalGain: 0.20 }
     ],
     coachingNote: 'Age preferences often reflect assumptions rather than experience. Many successful relationships exist outside "preferred" age ranges.'
   },
@@ -4141,7 +4141,7 @@ function assessDemographicMismatch(m1Code, userGender, demographics) {
 }
 
 // =============================================================================
-// M1 Ã¢â€ â€™ MODIFIER SIGNAL EXTRACTION
+// M1 MODIFIER SIGNAL EXTRACTION
 // =============================================================================
 
 /**
@@ -12178,7 +12178,7 @@ const M5_VULNERABILITY_QUESTIONS_SHARED = [
   },
   {
     id_suffix: 'V_04',
-    text: 'When emotions get intense, I reach for something to take the edge off—phone, drink, food, work.',
+    text: 'When emotions get intense, I reach for something to take the edge off, phone, drink, food, work.',
     section: 'vulnerability',
     armorType: 'numbing',
     likertMin: 1,
@@ -12221,7 +12221,7 @@ const M5_VULNERABILITY_QUESTIONS_SHARED = [
   // Flooding (2)
   {
     id_suffix: 'V_09',
-    text: 'When I feel something, I feel it at full volume—there is no dimmer switch.',
+    text: 'When I feel something, I feel it at full volume, there is no dimmer switch.',
     section: 'vulnerability',
     armorType: 'flooding',
     likertMin: 1,
@@ -12257,7 +12257,7 @@ const M5_VULNERABILITY_QUESTIONS_SHARED = [
 const M5_EROTIC_QUESTIONS_SHARED = [
   {
     id_suffix: 'ED_01',
-    text: 'You meet someone new and feel an immediate spark. After a few months of dating, you realize the things that drew you in — their boldness, their edge — aren\'t what make you want to stay. You find yourself craving their gentleness instead.',
+    text: 'You meet someone new and feel an immediate spark. After a few months of dating, you realize the things that drew you in, their boldness, their edge, aren\'t what make you want to stay. You find yourself craving their gentleness instead.',
     section: 'eroticDimension',
     signal: 'polarity',
     likertMin: 1,
@@ -12265,7 +12265,7 @@ const M5_EROTIC_QUESTIONS_SHARED = [
   },
   {
     id_suffix: 'ED_02',
-    text: 'You\'ve been seeing someone for a while and things are going well. But lately, date nights feel predictable — same restaurant, same routine. You notice your interest picking back up when they surprise you with something unexpected.',
+    text: 'You\'ve been seeing someone for a while and things are going well. But lately, date nights feel predictable, same restaurant, same routine. You notice your interest picking back up when they surprise you with something unexpected.',
     section: 'eroticDimension',
     signal: 'novelty',
     likertMin: 1,
@@ -12284,7 +12284,7 @@ const M5_EROTIC_QUESTIONS_SHARED = [
 const M5_ATTRACTION_ATTACHMENT_QUESTIONS_SHARED = [
   {
     id_suffix: 'AA_01',
-    text: 'You\'re dating someone confident and independent — qualities you find incredibly attractive. But when they cancel plans to hang out with friends, you feel a pang of jealousy. The very self-sufficiency that drew you in now makes you uneasy.',
+    text: 'You\'re dating someone confident and independent, qualities you find incredibly attractive. But when they cancel plans to hang out with friends, you feel a pang of jealousy. The very self-sufficiency that drew you in now makes you uneasy.',
     section: 'attractionAttachment',
     signal: 'conflict',
     likertMin: 1,
@@ -12292,7 +12292,7 @@ const M5_ATTRACTION_ATTACHMENT_QUESTIONS_SHARED = [
   },
   {
     id_suffix: 'AA_02',
-    text: 'You go on a date with someone who checks every box — stable job, kind, shares your values — but you don\'t feel a strong spark. A friend says "give it time." You decide to keep seeing them because you trust the compatibility over the missing butterflies.',
+    text: 'You go on a date with someone who checks every box, stable job, kind, shares your values, but you don\'t feel a strong spark. A friend says "give it time." You decide to keep seeing them because you trust the compatibility over the missing butterflies.',
     section: 'attractionAttachment',
     signal: 'alignment',
     likertMin: 1,
@@ -12311,7 +12311,7 @@ const M5_ATTRACTION_ATTACHMENT_QUESTIONS_SHARED = [
 const M5_INTIMACY_CONFLICT_BRIDGE_QUESTIONS_SHARED = [
   {
     id_suffix: 'ICB_01',
-    text: 'You and your partner had a heated argument this morning about finances. That evening, they reach for your hand on the couch. You pull away — you can\'t imagine being close to them until you\'ve fully resolved what happened.',
+    text: 'You and your partner had a heated argument this morning about finances. That evening, they reach for your hand on the couch. You pull away, you can\'t imagine being close to them until you\'ve fully resolved what happened.',
     section: 'intimacyConflictBridge',
     signal: 'bridgeGap',
     likertMin: 1,
@@ -12319,7 +12319,7 @@ const M5_INTIMACY_CONFLICT_BRIDGE_QUESTIONS_SHARED = [
   },
   {
     id_suffix: 'ICB_02',
-    text: 'You and your partner disagree sharply about weekend plans and voices get raised. An hour later, you\'re laughing together making dinner. For you, the argument and the closeness don\'t cancel each other out — they coexist naturally.',
+    text: 'You and your partner disagree sharply about weekend plans and voices get raised. An hour later, you\'re laughing together making dinner. For you, the argument and the closeness don\'t cancel each other out, they coexist naturally.',
     section: 'intimacyConflictBridge',
     signal: 'bridgeStrength',
     likertMin: 1,
@@ -12327,7 +12327,7 @@ const M5_INTIMACY_CONFLICT_BRIDGE_QUESTIONS_SHARED = [
   },
   {
     id_suffix: 'ICB_03',
-    text: 'Your partner snaps at you over something small — leaving dishes in the sink. Instead of addressing the dishes, your mind spirals: "Maybe we\'re not right for each other. Maybe this is a sign." One disagreement makes you question everything.',
+    text: 'Your partner snaps at you over something small, leaving dishes in the sink. Instead of addressing the dishes, your mind spirals: "Maybe we\'re not right for each other. Maybe this is a sign." One disagreement makes you question everything.',
     section: 'intimacyConflictBridge',
     signal: 'catastrophizing',
     likertMin: 1,
@@ -12346,7 +12346,7 @@ const M5_INTERNAL_CONFLICT_COHERENCE_QUESTIONS_SHARED = [
   },
   {
     id_suffix: 'ICC_02',
-    text: 'My instinct during conflict—whether to engage or step back—feels aligned with what I actually need.',
+    text: 'My instinct during conflict, whether to engage or step back, feels aligned with what I actually need.',
     section: 'internalConflictCoherence',
     signal: 'coherence',
     likertMin: 1,
