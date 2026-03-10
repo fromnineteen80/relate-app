@@ -447,8 +447,8 @@ function ResultsDashboard() {
   // Sub-nav items, grouped
   const navItems = [
     { id: 'persona', label: 'Your Persona', show: !!persona || hasDimensions || !!ic?.attachment || !!m4Summary || !!(tensionStacks && Object.keys(tensionStacks).length > 0) },
-    { id: 'how-you-date', label: 'How You Date', show: matches.length > 0 || !!(ic?.attachmentTiers) || !!m3 || (hasResults && true) },
     { id: 'know-your-market', label: 'Dating Market', show: hasMarket },
+    { id: 'how-you-date', label: 'How You Date', show: matches.length > 0 || !!(ic?.attachmentTiers) || !!m3 || (hasResults && true) },
   ].filter(n => n.show);
 
   // Helper: render a single tension stack card by key
@@ -1045,12 +1045,61 @@ function ResultsDashboard() {
         {tensionStacks?.internalConflictCoherence && renderTensionStack('internalConflictCoherence', tensionStacks.internalConflictCoherence)}
 
         {/* ══════════════════════════════════════════════════
-            GROUP 2: HOW YOU DATE
+            GROUP 2: KNOW YOUR MARKET
+        ══════════════════════════════════════════════════ */}
+        {hasMarket && (
+          <div id="know-your-market" className="scroll-mt-32 mb-2">
+            <div className="flex items-baseline gap-3 mb-4 mt-10">
+              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">02</span>
+              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Dating Market</span>
+            </div>
+          </div>
+        )}
+
+        {/* ── Dating Market ── */}
+        {hasMarket && (
+          <div className="scroll-mt-32 flex flex-col md:flex-row gap-4 items-stretch mb-4">
+            <div className="w-full md:w-1/2 min-w-0 flex flex-col gap-4">
+              <DatingMarketViz data={marketData} loading={marketLoading} onRelaxPreference={recalculateMarket} demographics={demographics} />
+            </div>
+            {!marketLoading && marketData && (
+              <div className="w-full md:w-1/2 min-w-0">
+                <DatingPoolGridCard data={marketData} demographics={demographics} />
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Top Metros Scatter Plot ── */}
+        {topMetros && topMetros.length > 0 && (
+          <TopMetrosScatterPlot metros={topMetros} worstMetros={worstMetros} demographics={demographics} marketData={marketData} topMetrosInfo={topMetrosInfo} />
+        )}
+
+        {/* ── Market Coaching ── */}
+        {marketData && (
+          <MarketCoaching
+            marketData={marketData}
+            demographics={demographics}
+            m3={fullM3}
+            m4={fullM4}
+            persona={persona || null}
+          />
+        )}
+
+        {/* ── Market Data Sources Caveat ── */}
+        {hasMarket && !marketLoading && marketData && (
+          <p className="text-xs text-secondary text-center max-w-2xl mx-auto mb-6">
+            Demographic data sourced from public datasets provided by the U.S. Census Bureau, Centers for Disease Control and Prevention (CDC), and Pew Research Center. Segments of the population that are homeless or have committed felonies have been automatically excluded using local county and FBI data.
+          </p>
+        )}
+
+        {/* ══════════════════════════════════════════════════
+            GROUP 3: HOW YOU DATE
         ══════════════════════════════════════════════════ */}
         {(matches.length > 0 || ic?.attachmentTiers || m3 || hasResults) && (
           <div id="how-you-date" className="scroll-mt-32 mb-2">
             <div className="flex items-baseline gap-3 mb-4 mt-10">
-              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">02</span>
+              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">03</span>
               <span className="font-mono text-xs text-secondary uppercase tracking-widest">How You Date</span>
             </div>
           </div>
@@ -1500,55 +1549,6 @@ function ResultsDashboard() {
             )}
           </section>
         )}
-
-        {/* ══════════════════════════════════════════════════
-            GROUP 3: KNOW YOUR MARKET
-        ══════════════════════════════════════════════════ */}
-        {hasMarket && (
-          <div id="know-your-market" className="scroll-mt-32 mb-2">
-            <div className="flex items-baseline gap-3 mb-4 mt-10">
-              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">03</span>
-              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Dating Market</span>
-            </div>
-          </div>
-        )}
-
-        {/* ── Dating Market ── */}
-        {hasMarket && (
-          <div className="scroll-mt-32 flex flex-col md:flex-row gap-4 items-stretch mb-4">
-            <div className="w-full md:w-1/2 min-w-0 flex flex-col gap-4">
-              <DatingMarketViz data={marketData} loading={marketLoading} onRelaxPreference={recalculateMarket} demographics={demographics} />
-            </div>
-            {!marketLoading && marketData && (
-              <div className="w-full md:w-1/2 min-w-0">
-                <DatingPoolGridCard data={marketData} demographics={demographics} />
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── Top Metros Scatter Plot ── */}
-        {topMetros && topMetros.length > 0 && (
-          <TopMetrosScatterPlot metros={topMetros} worstMetros={worstMetros} demographics={demographics} marketData={marketData} topMetrosInfo={topMetrosInfo} />
-        )}
-
-        {/* ── Market Coaching ── */}
-        {marketData && (
-          <MarketCoaching
-            marketData={marketData}
-            demographics={demographics}
-            m3={fullM3}
-            m4={fullM4}
-            persona={persona || null}
-          />
-        )}
-
-        {/* ── Market Data Sources Caveat ── */}
-        {hasMarket && !marketLoading && marketData && (
-          <p className="text-xs text-secondary text-center max-w-2xl mx-auto mb-6">
-            Demographic data sourced from public datasets provided by the U.S. Census Bureau, Centers for Disease Control and Prevention (CDC), and Pew Research Center. Segments of the population that are homeless or have committed felonies have been automatically excluded using local county and FBI data.
-          </p>
-        )}
       </main>
 
       {/* ── Ongoing Coaching Section ── */}
@@ -1802,6 +1802,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
   const homeCbsa = topMetrosInfo?.homeCbsa || null;
 
   return (
+    <>
     <section className="card mb-4">
       <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2">
         <Icon name="scatter_plot" size={20} className="text-accent" />
@@ -1973,7 +1974,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
       <div className="hidden md:block flex-shrink-0" style={{ paddingRight: '6px' }}>
         <div className="space-y-0">
           {/* Column header */}
-          <div className="py-1 px-1.5 border-b border-[#e7e5e4]">
+          <div className="py-1 px-1.5 border-b border-[#e7e5e4]" style={{ textAlign: 'center' }}>
             <span style={{ fontSize: '10px', color: '#78716c', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
               Metro Area
             </span>
@@ -2000,6 +2001,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
         </div>
       </div>
       </div>
+    </section>
 
       {/* ── Worst Metros ── */}
       {worstMetros && worstMetros.length > 0 && (
@@ -2060,7 +2062,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
           </p>
         </section>
       )}
-    </section>
+    </>
   );
 }
 
