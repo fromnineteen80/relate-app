@@ -81,7 +81,39 @@ export default function AstrologyPage() {
       }
     } catch { /* */ }
 
-    const existingBirth = loadBirthData();
+    // Try astrology-specific birth data first, then fall back to demographics profile
+    let existingBirth = loadBirthData();
+    if (!existingBirth) {
+      try {
+        const demoStr = localStorage.getItem('relate_demographics');
+        if (demoStr) {
+          const demo = JSON.parse(demoStr);
+          if (demo.birth_month != null && demo.birth_day && demo.birth_year) {
+            let h24 = 12; // default noon if no time provided
+            if (demo.birth_hour != null && demo.birth_ampm) {
+              const h12 = parseInt(demo.birth_hour);
+              h24 = demo.birth_ampm === 'PM' ? (h12 === 12 ? 12 : h12 + 12) : (h12 === 12 ? 0 : h12);
+            }
+            const lat = demo.birth_latitude ? parseFloat(demo.birth_latitude) : null;
+            const lng = demo.birth_longitude ? parseFloat(demo.birth_longitude) : null;
+            if (lat != null && lng != null) {
+              existingBirth = {
+                year: parseInt(demo.birth_year),
+                month: parseInt(demo.birth_month),
+                day: parseInt(demo.birth_day),
+                hour: h24,
+                minute: demo.birth_minute != null ? parseInt(demo.birth_minute) : 0,
+                latitude: lat,
+                longitude: lng,
+                locationName: demo.birth_city || undefined,
+              };
+              // Persist so we don't need to rebuild next time
+              saveBirthData(existingBirth);
+            }
+          }
+        }
+      } catch { /* */ }
+    }
     if (existingBirth) {
       setMonth(String(existingBirth.month));
       setDay(String(existingBirth.day));
