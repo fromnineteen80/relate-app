@@ -1741,6 +1741,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const datingGender = demographics?.gender === 'M' ? 'women' : demographics?.gender === 'W' ? 'men' : 'singles';
+  const userGender = demographics?.gender === 'M' ? 'men' : demographics?.gender === 'W' ? 'women' : 'singles';
 
   // Chart dimensions
   const W = 560, H = 480;
@@ -1963,7 +1964,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
         {/* ── Explainer paragraph ── */}
         {topMetrosInfo?.homeMetroRank != null && marketData?.location && (
           <p className="text-[11px] text-secondary mt-3 mb-0">
-            The {(marketData.location.cbsaLabel || marketData.location.cbsaName || 'your area').split(',')[0]} metro area ranks #{topMetrosInfo.homeMetroRank} nationally among metro areas where you are competitive amongst your single peers (at least a 75 score). If your ideal match pool and the number of {datingGender} feels small, consider how and where you are looking for love. Are dating apps working? Are they worth the investment? Are there things you can do to improve your desirability to {datingGender} in your ideal match pool? Do you need to adjust your expectations? Could you expand your search to other metro areas where you have better chances of matching?
+            The {(marketData.location.cbsaLabel || marketData.location.cbsaName || 'your area').split(',')[0]} metro area ranks #{topMetrosInfo.homeMetroRank} nationally among metro areas where you are competitive amongst other local single {userGender} (at least a 75 score). If your ideal match pool and the number of {datingGender} feels small, consider how and where you are looking for love. Are dating apps working? Are they worth the investment? Are there things you can do to improve your desirability to {datingGender} in your ideal match pool? Do you need to adjust your expectations? Could you expand your search to other metro areas where you have better chances of matching?
           </p>
         )}
       </div>
