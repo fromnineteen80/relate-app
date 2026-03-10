@@ -164,6 +164,7 @@ function AccountPage() {
   const [partnerPersonaName, setPartnerPersonaName] = useState<string | null>(null);
   const [partnerAssessmentComplete, setPartnerAssessmentComplete] = useState(false);
   const [partnerHasResults, setPartnerHasResults] = useState(false);
+  const [partnerPhotoUrl, setPartnerPhotoUrl] = useState<string | null>(null);
   const [moduleProgress, setModuleProgress] = useState<Record<number, boolean>>({});
   const [mockUpgrading, setMockUpgrading] = useState(false);
   const [profileData, setProfileData] = useState<{ firstName: string; lastName: string; photoUrl: string | null } | null>(null);
@@ -282,6 +283,10 @@ function AccountPage() {
             if (data.partner.personaName) setPartnerPersonaName(data.partner.personaName);
             if (data.partner.assessmentComplete) setPartnerAssessmentComplete(true);
             if (data.partner.hasResults) setPartnerHasResults(true);
+            if (data.partner.photoUrl) {
+              setPartnerPhotoUrl(data.partner.photoUrl);
+              localStorage.setItem('relate_partner_photo', data.partner.photoUrl);
+            }
             localStorage.setItem('relate_partner_email', data.partner.email);
             if (data.partner.gender) localStorage.setItem('relate_partner_gender', data.partner.gender);
             if (data.partner.results) {
@@ -757,7 +762,11 @@ function AccountPage() {
               <div className="space-y-4">
                 <div className="flex items-center gap-4 p-3 bg-success/5 border border-success/20 rounded-md">
                   <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center text-lg font-medium flex-shrink-0 overflow-hidden">
-                    {partnerName ? partnerName.charAt(0).toUpperCase() : partnerEmail?.charAt(0).toUpperCase() || '?'}
+                    {partnerPhotoUrl ? (
+                      <img src={partnerPhotoUrl} alt={partnerName || 'Partner'} className="w-full h-full object-cover" />
+                    ) : (
+                      partnerName ? partnerName.charAt(0).toUpperCase() : partnerEmail?.charAt(0).toUpperCase() || '?'
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">

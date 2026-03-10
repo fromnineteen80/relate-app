@@ -14,6 +14,7 @@ type PartnerInfo = {
   email: string;
   firstName: string | null;
   lastName: string | null;
+  photoUrl?: string | null;
 };
 
 export default function InvitePage() {
@@ -74,6 +75,7 @@ export default function InvitePage() {
         setConnectedAt(data.connectedAt);
         localStorage.setItem('relate_partner_email', data.partner.email);
         if (data.partner.gender) localStorage.setItem('relate_partner_gender', data.partner.gender);
+        if (data.partner.photoUrl) localStorage.setItem('relate_partner_photo', data.partner.photoUrl);
         if (data.partner.results) {
           localStorage.setItem('relate_partner_results', JSON.stringify(data.partner.results));
         }
@@ -143,6 +145,7 @@ export default function InvitePage() {
         if (fullData.partner) {
           setPartner(fullData.partner);
           if (fullData.partner.gender) localStorage.setItem('relate_partner_gender', fullData.partner.gender);
+          if (fullData.partner.photoUrl) localStorage.setItem('relate_partner_photo', fullData.partner.photoUrl);
           if (fullData.partner.results) {
             localStorage.setItem('relate_partner_results', JSON.stringify(fullData.partner.results));
           }
@@ -262,8 +265,12 @@ export default function InvitePage() {
             {/* Partner Card */}
             <div className="card border-success">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center text-lg font-medium flex-shrink-0">
-                  {partnerInitial}
+                <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center text-lg font-medium flex-shrink-0 overflow-hidden">
+                  {partner?.photoUrl ? (
+                    <img src={partner.photoUrl} alt={partnerName} className="w-full h-full object-cover" />
+                  ) : (
+                    partnerInitial
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">

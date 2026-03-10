@@ -422,12 +422,14 @@ export async function loadCouplesDataFromDb(userId: string): Promise<boolean> {
   // Load partner profile (name, gender)
   if (partnerId) {
     const { data: partner } = await supabase.from('users')
-      .select('first_name, gender')
+      .select('first_name, gender, photo_url')
       .eq('id', partnerId)
       .single();
     if (partner) {
       if (partner.gender) localStorage.setItem('relate_partner_gender', partner.gender);
       if (partner.first_name) localStorage.setItem('relate_partner_first_name', partner.first_name);
+      if (partner.photo_url) localStorage.setItem('relate_partner_photo', partner.photo_url);
+      else localStorage.removeItem('relate_partner_photo');
     }
 
     // Load partner results
@@ -519,6 +521,8 @@ export function subscribeToPartnerChanges(
           const p = payload.new;
           if (p.gender) localStorage.setItem('relate_partner_gender', p.gender);
           if (p.first_name) localStorage.setItem('relate_partner_first_name', p.first_name);
+          if (p.photo_url) localStorage.setItem('relate_partner_photo', p.photo_url);
+          else localStorage.removeItem('relate_partner_photo');
           onPartnerUpdate(p);
         })
         .on('postgres_changes', {
