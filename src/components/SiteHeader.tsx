@@ -71,12 +71,22 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
   const hasCouplesAccess = typeof window !== 'undefined'
     ? !!(localStorage.getItem('relate_couples_discount') || localStorage.getItem('relate_payment_tier')?.includes('couples'))
     : false;
-  const hasBlueprint = typeof window !== 'undefined' ? !!localStorage.getItem('relate_blueprint_results') : false;
+  const hasBlueprint = typeof window !== 'undefined'
+    ? !!(localStorage.getItem('relate_blueprint_results') || localStorage.getItem('relate_blueprint_purchased') || localStorage.getItem('relate_blueprint_access')?.includes('"purchased":true'))
+    : false;
+  const blueprintHasResults = typeof window !== 'undefined' ? !!localStorage.getItem('relate_blueprint_results') : false;
   const isWoman = typeof window !== 'undefined'
     ? (() => {
         const g = localStorage.getItem('relate_gender');
         if (g === 'W') return true;
         try { const d = JSON.parse(localStorage.getItem('relate_demographics') || '{}'); return d.gender === 'W'; } catch { return false; }
+      })()
+    : false;
+  const hasAstrology = typeof window !== 'undefined'
+    ? (() => {
+        const astroStored = localStorage.getItem('relate_astrology_enabled');
+        if (astroStored !== null) return astroStored === 'true';
+        return isWoman;
       })()
     : false;
   const initial = profileName ? profileName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || '?';
@@ -152,7 +162,9 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
                   hasPartner={hasPartner}
                   hasCouplesAccess={hasCouplesAccess}
                   hasBlueprint={hasBlueprint}
+                  blueprintHasResults={blueprintHasResults}
                   isWoman={isWoman}
+                  hasAstrology={hasAstrology}
                 />
               </>
             )}
@@ -263,7 +275,9 @@ function ProfileAvatar({
   hasPartner,
   hasCouplesAccess,
   hasBlueprint,
+  blueprintHasResults,
   isWoman,
+  hasAstrology,
 }: {
   initial: string;
   photoUrl: string | null;
@@ -274,7 +288,9 @@ function ProfileAvatar({
   hasPartner: boolean;
   hasCouplesAccess: boolean;
   hasBlueprint: boolean;
+  blueprintHasResults: boolean;
   isWoman: boolean;
+  hasAstrology: boolean;
 }) {
   return (
     <div className="relative ml-2" ref={dropdownRef}>
@@ -300,8 +316,8 @@ function ProfileAvatar({
             { href: '/assessment', label: 'Assessment' },
             { href: '/results', label: 'Your Results' },
             ...(hasPartner ? [{ href: hasCouplesAccess ? '/results/compare' : '/invite', label: 'Couples Results' }] : []),
-            ...(hasBlueprint ? [{ href: '/results/attachment', label: 'Attachment Style' }] : []),
-            ...(isWoman ? [{ href: '/results/astrology', label: 'Sun, Moon & Rise' }] : []),
+            ...(hasBlueprint ? [{ href: blueprintHasResults ? '/results/attachment' : '/blueprint', label: 'Attachment Style' }] : []),
+            ...(hasAstrology ? [{ href: '/results/astrology', label: 'Sun, Moon & Rise' }] : []),
           ].map(item => (
             <Link
               key={item.href}

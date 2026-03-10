@@ -194,6 +194,7 @@ function AccountPage() {
   // Blueprint add-on state
   const [blueprintPurchased, setBlueprintPurchased] = useState(false);
   const [blueprintProduct, setBlueprintProduct] = useState<string | null>(null);
+  const [blueprintHasResults, setBlueprintHasResults] = useState(false);
 
   // Fetch payment tier (works in both mock and real mode)
   useEffect(() => {
@@ -270,6 +271,7 @@ function AccountPage() {
     }
 
     setHasResults(!!localStorage.getItem('relate_results'));
+    setBlueprintHasResults(!!localStorage.getItem('relate_blueprint_results'));
     setPartnerEmail(localStorage.getItem('relate_partner_email'));
     setHasPartner(!!(localStorage.getItem('relate_partner_email') || localStorage.getItem('relate_partner_results')));
     setProfileData(getProfile());
@@ -934,6 +936,23 @@ function AccountPage() {
                 )}
               </div>
             ))}
+            {blueprintPurchased && (
+              <div className="flex items-center justify-between py-2">
+                <div className="flex items-center gap-3">
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-serif font-semibold ${
+                    blueprintHasResults ? 'bg-success text-white' : 'bg-accent text-white'
+                  }`}>
+                    A
+                  </div>
+                  <span className="text-sm">Attachment Style</span>
+                </div>
+                {blueprintHasResults ? (
+                  <span className="text-xs text-success font-mono">Complete</span>
+                ) : (
+                  <Link href="/blueprint" className="text-xs text-accent hover:underline">Start</Link>
+                )}
+              </div>
+            )}
           </div>
 
           {!assessmentComplete && (

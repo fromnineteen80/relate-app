@@ -440,7 +440,7 @@ export default function BillingPage() {
         )}
 
         {/* ── Attachment Style Add-On ── */}
-        {paid && !isTestMode && (
+        {!isTestMode && (
           <div className="card mb-4">
             <h3 className="font-serif font-semibold mb-3">Add-Ons</h3>
             {blueprintPurchased ? (
