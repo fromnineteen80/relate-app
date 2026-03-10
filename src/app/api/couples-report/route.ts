@@ -137,13 +137,17 @@ Generate all 8 sections of the couples report as flowing prose narrative.`,
           }],
         });
 
-        aiNarrative = response.content[0]?.text || null;
+        aiNarrative = (response.content[0]?.text || '')
+          .replace(/\s*[—–]\s*/g, ', ')
+          .replace(/â€"/g, ', ')
+          .replace(/â€™/g, "'")
+          .replace(/,\s*,/g, ',') || null;
       } catch (err) {
         console.error('AI narrative generation failed, returning data-only report:', err);
       }
     }
 
-    // Enhanced compatibility scoring (additive — no existing data modified)
+    // Enhanced compatibility scoring (additive, no existing data modified)
     let enhancedCompatibility = null;
     try {
       enhancedCompatibility = calculateEnhancedCouplesCompatibility(user1Results, user2Results);

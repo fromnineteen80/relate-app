@@ -270,7 +270,7 @@ function extractQ1NarrativeSignals(questionId, text) {
 
   // Cross-angle consistency tracking
   if (['q1_01', 'q1_04'].includes(questionId)) {
-    // Somatic/emotional angles — check if disruption signal aligns with earlier behavioral
+    // Somatic/emotional angles, check if disruption signal aligns with earlier behavioral
     signals.consistent = true; // baseline; refined when compared across all responses
   }
 
@@ -425,15 +425,15 @@ function extractQ2NarrativeSignals(questionId, text) {
 
   // Weight by question importance
   const questionWeight = {
-    'q2_01': 2, // Somatic phenomenology — high value
-    'q2_02': 2, // First thought — high value
-    'q2_03': 2, // Impulse and fear — high value
-    'q2_04': 3, // Story in the silence — critical differentiator
-    'q2_07': 2, // Perception shift — high value
-    'q2_08': 2, // Intimacy difficulty — high value
-    'q2_11': 3, // Partner feedback — highest reliability
-    'q2_12': 2, // Gap question — high value
-    'q2_14': 3  // Departure guarantee — critical differentiator
+    'q2_01': 2, // Somatic phenomenology, high value
+    'q2_02': 2, // First thought, high value
+    'q2_03': 2, // Impulse and fear, high value
+    'q2_04': 3, // Story in the silence, critical differentiator
+    'q2_07': 2, // Perception shift, high value
+    'q2_08': 2, // Intimacy difficulty, high value
+    'q2_11': 3, // Partner feedback, highest reliability
+    'q2_12': 2, // Gap question, high value
+    'q2_14': 3  // Departure guarantee, critical differentiator
   };
 
   const weight = questionWeight[questionId] || 1;
@@ -674,7 +674,7 @@ function extractQ3NarrativeSignals(questionId, text) {
 
 /**
  * Scores Quadrant Four responses and calculates the three axis scores.
- * Does not route to a single named Profile — produces axis modifier values
+ * Does not route to a single named Profile, produces axis modifier values
  * that the report generation engine uses to calibrate the narrative.
  *
  * @param {Array} responses - Array of { questionId, value } for Q4 questions
@@ -1007,7 +1007,7 @@ function detectEmergentPattern(q1, q2, q3, q4) {
   }
 
   // Pattern Seven: The Reconstructed Skeptic
-  // Q1: Profile 4 or 6 with repair (Romantic, Repaired) — but Profile 6 is unresolved,
+  // Q1: Profile 4 or 6 with repair (Romantic, Repaired), but Profile 6 is unresolved,
   // so accept Profile 4 or Profile 2 (repaired histories)
   // Q2: Any
   // Q3: Intellectualization or Catastrophic Projection
@@ -1041,7 +1041,7 @@ function detectEmergentPattern(q1, q2, q3, q4) {
     return {
       patternId: 'circling_seeker',
       patternName: 'The Circling Seeker',
-      synthesisFrame: 'Names the past relationship directly — not its content but its gravitational pull. Tells this person they are in two relationships simultaneously and asks which one they are actually in right now.'
+      synthesisFrame: 'Names the past relationship directly, not its content but its gravitational pull. Tells this person they are in two relationships simultaneously and asks which one they are actually in right now.'
     };
   }
 
@@ -1161,7 +1161,7 @@ function initializeBlueprint(assessmentResults) {
     throw new Error('Blueprint requires completed RELATE assessment with personaCode and attachmentType.');
   }
 
-  // Resolve persona metadata — caller must provide or we indicate it needs to be loaded
+  // Resolve persona metadata, caller must provide or we indicate it needs to be loaded
   const personaMetadata = assessmentResults.personaMetadata || null;
   const personaName = assessmentResults.personaName || null;
 
@@ -1445,7 +1445,7 @@ function getQ2CollisionFrame(emotion1, emotion2) {
     },
     'fear_of_abandonment_grief': {
       name: 'Pursuit Meets Impermanence',
-      mechanism: 'The abandonment person pursues presence. The grief-triggered person is present with an awareness of loss that reads as distance or emotional unavailability. The grief person is not distant — they are loving with the weight of impermanence.',
+      mechanism: 'The abandonment person pursues presence. The grief-triggered person is present with an awareness of loss that reads as distance or emotional unavailability. The grief person is not distant, they are loving with the weight of impermanence.',
       misread: 'The abandonment person\'s pursuit feels to the grief person like being rushed past the depth they need. The grief quality reads to the abandonment person as not fully there.'
     },
     'fear_of_abandonment_rage': {
@@ -1465,7 +1465,7 @@ function getQ2CollisionFrame(emotion1, emotion2) {
     },
     'grief_shame': {
       name: 'Tenderness Meets Concealment',
-      mechanism: 'The grief person\'s quality of loving with awareness of loss can feel to the shame person like being loved without condition — the corrective experience the shame architecture most needs. But the grief person\'s pre-mourning can also activate the shame person\'s fear of being found insufficient.',
+      mechanism: 'The grief person\'s quality of loving with awareness of loss can feel to the shame person like being loved without condition, the corrective experience the shame architecture most needs. But the grief person\'s pre-mourning can also activate the shame person\'s fear of being found insufficient.',
       misread: 'The shame person may perform closeness rather than risk it, leaving the grief person mourning a connection that was never fully real.'
     },
     'rage_shame': {
