@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     // Look up the partner in the users table
     const { data: partnerUser, error: lookupError } = await supabase
       .from('users')
-      .select('id, email, first_name, last_name')
+      .select('id, email, first_name, last_name, photo_url')
       .eq('email', email.toLowerCase())
       .single();
 
@@ -58,6 +58,7 @@ export async function POST(request: NextRequest) {
           email: partnerUser.email,
           firstName: partnerUser.first_name,
           lastName: partnerUser.last_name,
+          photoUrl: partnerUser.photo_url || null,
         },
       });
     }
@@ -133,7 +134,7 @@ export async function GET(request: NextRequest) {
     const [{ data: partnerUser }, { data: partnerProgress }] = await Promise.all([
       supabase
         .from('users')
-        .select('id, email, first_name, last_name, gender')
+        .select('id, email, first_name, last_name, gender, photo_url')
         .eq('id', partnerId)
         .single(),
       supabase
@@ -173,6 +174,7 @@ export async function GET(request: NextRequest) {
         firstName: partnerUser.first_name,
         lastName: partnerUser.last_name,
         gender: partnerUser.gender,
+        photoUrl: partnerUser.photo_url || null,
         personaName: partnerPersonaName,
         personaCode: partnerPersonaCode,
         assessmentComplete,

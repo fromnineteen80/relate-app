@@ -129,6 +129,7 @@ function ResultsDashboard() {
   const [partnerAssessmentComplete, setPartnerAssessmentComplete] = useState(false);
   const [partnerHasResults, setPartnerHasResults] = useState(false);
   const [userProfilePhoto, setUserProfilePhoto] = useState<string | null>(null);
+  const [partnerProfilePhoto, setPartnerProfilePhoto] = useState<string | null>(null);
   const [userFullName, setUserFullName] = useState<string | null>(null);
   const marketFetchedRef = useRef(false);
   const [topMetros, setTopMetros] = useState<any[] | null>(null);
@@ -186,6 +187,7 @@ function ResultsDashboard() {
 
     // Load user's own profile photo and name
     setUserProfilePhoto(localStorage.getItem('relate_profile_photo'));
+    setPartnerProfilePhoto(localStorage.getItem('relate_partner_photo'));
     const profile = getProfile();
     if (profile?.firstName) setUserFullName(`${profile.firstName}${profile.lastName ? ` ${profile.lastName}` : ''}`);
 
@@ -201,6 +203,10 @@ function ResultsDashboard() {
           if (data.partner.personaName) setPartnerPersonaName(data.partner.personaName);
           if (data.partner.assessmentComplete) setPartnerAssessmentComplete(true);
           if (data.partner.hasResults) setPartnerHasResults(true);
+          if (data.partner.photoUrl) {
+            setPartnerProfilePhoto(data.partner.photoUrl);
+            localStorage.setItem('relate_partner_photo', data.partner.photoUrl);
+          }
           localStorage.setItem('relate_partner_email', data.partner.email);
           if (data.partner.gender) localStorage.setItem('relate_partner_gender', data.partner.gender);
           if (data.partner.results) {
@@ -1514,9 +1520,13 @@ function ResultsDashboard() {
                   {/* Partner */}
                   <div className="flex items-center gap-3 min-w-0 sm:flex-row-reverse">
                     <div className="w-10 h-10 rounded-full flex-shrink-0 overflow-hidden border-2 border-border">
-                      <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-sm font-medium">
-                        {partnerName ? partnerName.charAt(0).toUpperCase() : '?'}
-                      </span>
+                      {partnerProfilePhoto ? (
+                        <img src={partnerProfilePhoto} alt={partnerName || 'Partner'} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-sm font-medium">
+                          {partnerName ? partnerName.charAt(0).toUpperCase() : '?'}
+                        </span>
+                      )}
                     </div>
                     <div className="min-w-0 sm:text-right">
                       <p className="text-sm font-medium truncate">{partnerName || 'Partner'}</p>
