@@ -392,7 +392,7 @@ export default function BillingPage() {
           </div>
         )}
 
-        {/* ── Blueprint Add-On ── */}
+        {/* ── Attachment Style Add-On ── */}
         {paid && !isTestMode && (
           <div className="card mb-4">
             <h3 className="font-serif font-semibold mb-3">Add-Ons</h3>
@@ -402,7 +402,7 @@ export default function BillingPage() {
                   <Icon name="check" size={18} />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium">{blueprintProduct === 'blueprint_couples' ? 'Blueprint Couples' : 'Blueprint'}: Active</p>
+                  <p className="text-sm font-medium">{blueprintProduct === 'blueprint_couples' ? 'Attachment Style Couples' : 'Attachment Style'}: Active</p>
                   <p className="text-xs text-secondary">Deep attachment style assessment, personalized report, and growth plan.</p>
                 </div>
                 <div className="text-right">
@@ -414,23 +414,23 @@ export default function BillingPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="p-3 border rounded-md border-accent">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-medium">Blueprint</p>
+                    <p className="text-sm font-medium">Attachment Style</p>
                     <p className="font-mono text-sm">{BLUEPRINT_PRICING.blueprint.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
                   </div>
                   <p className="text-xs text-secondary mb-3">A 30-minute deep assessment revealing the psychology underneath your persona. 3,000-word personalized report and growth plan.</p>
                   <a href={`/api/blueprint/checkout?product=blueprint&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-primary">
-                    Add Blueprint
+                    Add Attachment Style
                   </a>
                 </div>
                 {partner && (
                   <div className="p-3 border rounded-md border-border">
                     <div className="flex items-center justify-between mb-1">
-                      <p className="text-sm font-medium">Blueprint Couples</p>
+                      <p className="text-sm font-medium">Attachment Style Couples</p>
                       <p className="font-mono text-sm">{BLUEPRINT_PRICING.blueprint_couples.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
                     </div>
-                    <p className="text-xs text-secondary mb-3">Both partners get the full Blueprint plus a couples overlay report analyzing your dynamic together.</p>
+                    <p className="text-xs text-secondary mb-3">Both partners get the full assessment plus a couples overlay report analyzing your dynamic together.</p>
                     <a href={`/api/blueprint/checkout?product=blueprint_couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
-                      Add Blueprint Couples
+                      Add Attachment Style Couples
                     </a>
                   </div>
                 )}
@@ -438,6 +438,52 @@ export default function BillingPage() {
             )}
           </div>
         )}
+
+        {/* ── Discount Code ── */}
+        <div className="card mb-4">
+          <h3 className="font-serif font-semibold mb-3">Discount Code</h3>
+          <p className="text-xs text-secondary mb-3">Have a discount code? Enter it below to apply it to any plan or add-on.</p>
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            const input = (e.target as HTMLFormElement).elements.namedItem('code') as HTMLInputElement;
+            const code = input?.value?.trim();
+            if (!code) return;
+            const btn = (e.target as HTMLFormElement).querySelector('button') as HTMLButtonElement;
+            btn.disabled = true;
+            btn.textContent = 'Applying...';
+            try {
+              const res = await fetch('/api/discount-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code, email: user?.email }),
+              });
+              const data = await res.json();
+              const msg = (e.target as HTMLFormElement).nextElementSibling;
+              if (msg) msg.remove();
+              const p = document.createElement('p');
+              p.className = res.ok && data.success ? 'text-xs text-success mt-2' : 'text-xs text-danger mt-2';
+              p.textContent = data.message || data.error || 'Something went wrong';
+              (e.target as HTMLFormElement).after(p);
+              if (res.ok && data.success) {
+                setTimeout(() => window.location.reload(), 1500);
+              }
+            } catch {
+              /* ignore */
+            } finally {
+              btn.disabled = false;
+              btn.textContent = 'Apply';
+            }
+          }} className="flex gap-2">
+            <input
+              name="code"
+              type="text"
+              placeholder="Enter code"
+              className="input flex-1 text-xs font-mono"
+              style={{ textTransform: 'uppercase' }}
+            />
+            <button type="submit" className="btn-secondary text-xs whitespace-nowrap">Apply</button>
+          </form>
+        </div>
 
         {/* ── Upgrade CTA for free users ── */}
         {!paid && !isTestMode && (

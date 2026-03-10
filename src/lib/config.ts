@@ -11,8 +11,8 @@ export const PRICING: Record<PricingTier, { label: string; price: number; priceD
 export type BlueprintProduct = 'blueprint' | 'blueprint_couples';
 
 export const BLUEPRINT_PRICING: Record<BlueprintProduct, { label: string; price: number; priceDisplay: string; stripeCents: number }> = {
-  blueprint: { label: 'Blueprint', price: 49, priceDisplay: '$49', stripeCents: 4900 },
-  blueprint_couples: { label: 'Blueprint Couples', price: 79, priceDisplay: '$79', stripeCents: 7900 },
+  blueprint: { label: 'Attachment Style', price: 49, priceDisplay: '$49', stripeCents: 4900 },
+  blueprint_couples: { label: 'Attachment Style Couples', price: 79, priceDisplay: '$79', stripeCents: 7900 },
 };
 
 export const config = {

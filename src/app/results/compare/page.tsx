@@ -285,16 +285,16 @@ export default function ComparePage() {
           )}
         </div>
 
-        {/* Blueprint Couples Overlay */}
-        <div id="blueprint-overlay" className="mt-12 pt-8 border-t border-border">
+        {/* Attachment Style Couples Overlay */}
+        <div id="attachment-overlay" className="mt-12 pt-8 border-t border-border">
           {blueprintStatus === 'overlay' && blueprintOverlay && (
             <BlueprintOverlaySection overlay={blueprintOverlay} />
           )}
           {blueprintStatus === 'both' && (
             <div className="card text-center">
-              <h3 className="font-serif text-lg font-semibold mb-2">Blueprint Couples Overlay</h3>
+              <h3 className="font-serif text-lg font-semibold mb-2">Attachment Style Couples Overlay</h3>
               <p className="text-sm text-secondary mb-4">
-                Both partners have completed the Blueprint. Generate the couples overlay for a deeper understanding of your relational dynamic.
+                Both partners have completed the Attachment Style assessment. Generate the couples overlay for a deeper understanding of your relational dynamic.
               </p>
               <button
                 onClick={generateBlueprintOverlay}
@@ -308,17 +308,17 @@ export default function ComparePage() {
           {blueprintStatus === 'one' && (
             <div className="card text-center">
               <p className="text-sm text-secondary">
-                Both partners need to complete the Blueprint for the couples overlay.
+                Both partners need to complete the Attachment Style assessment for the couples overlay.
               </p>
             </div>
           )}
           {blueprintStatus === 'none' && (
             <div className="card bg-stone-50 text-center">
               <p className="text-sm text-secondary mb-3">
-                Add the Blueprint Couples add-on for a deeper understanding of your dynamic together
+                Add the Attachment Style Couples add-on for a deeper understanding of your dynamic together
               </p>
               <Link href="/blueprint" className="text-sm text-accent hover:underline">
-                Learn about the Blueprint →
+                Learn about Attachment Style →
               </Link>
             </div>
           )}
@@ -342,7 +342,7 @@ function BlueprintOverlaySection({ overlay }: { overlay: any }) {
   return (
     <div className="space-y-8">
       <div className="text-center mb-6">
-        <p className="font-mono text-xs text-accent tracking-wide uppercase mb-2">Blueprint Couples Overlay</p>
+        <p className="font-mono text-xs text-accent tracking-wide uppercase mb-2">Attachment Style Couples Overlay</p>
         <h2 className="font-serif text-2xl font-semibold">The Dynamic Between You</h2>
       </div>
       {sectionConfig.map(({ key, title }) => {
