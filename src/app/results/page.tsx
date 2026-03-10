@@ -1802,6 +1802,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
   const homeCbsa = topMetrosInfo?.homeCbsa || null;
 
   return (
+    <>
     <section className="card mb-4">
       <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2">
         <Icon name="scatter_plot" size={20} className="text-accent" />
@@ -2000,6 +2001,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
         </div>
       </div>
       </div>
+    </section>
 
       {/* ── Worst Metros ── */}
       {worstMetros && worstMetros.length > 0 && (
@@ -2060,7 +2062,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
           </p>
         </section>
       )}
-    </section>
+    </>
   );
 }
 
