@@ -2102,7 +2102,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
 
   const singlesPool = pool?.localSinglePool || 0;
   const milestones = [
-    { label: 'Metro Singles Pool', value: singlesPool, desc: 'Unmarried adults of your preferred gender and orientation' },
+    { label: 'Metro Singles Pool', value: singlesPool, desc: `Unmarried ${datingGender} in the metro area` },
     { label: 'Identity Pool', value: pool?.identityPool || 0, desc: `${datingGenderCap} matching your preferred ethnicity` },
     { label: 'Your Realistic Match Pool', value: pool?.realisticPool || 0, desc: `${datingGenderCap} within your age range and income requirements` },
     { label: 'Your Preferred Lifestyle Pool', value: pool?.preferredPool || 0, desc: `${datingGenderCap} who match your aesthetic and fitness choices` },
