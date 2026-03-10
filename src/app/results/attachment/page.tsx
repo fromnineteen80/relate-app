@@ -10,8 +10,8 @@ import { Icon } from '@/components/Icon';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-// ── Profile display names ──
-const Q1_PROFILE_LABELS: Record<number, { title: string; subtitle: string; description: string }> = {
+// ── Style display names ──
+const Q1_STYLE_LABELS: Record<number, { title: string; subtitle: string; description: string }> = {
   1: {
     title: 'The Invisible Foundation',
     subtitle: 'Chronic, Caregiver, Unresolved',
@@ -44,7 +44,7 @@ const Q1_PROFILE_LABELS: Record<number, { title: string; subtitle: string; descr
   },
 };
 
-const Q2_PROFILE_LABELS: Record<string, { title: string; description: string }> = {
+const Q2_STYLE_LABELS: Record<string, { title: string; description: string }> = {
   fear_of_abandonment: {
     title: 'Fear of Abandonment',
     description: 'When the relationship feels uncertain, the emotion underneath everything is the fear of disappearance. Not conflict, not criticism. Gone. Your system is built to detect the earliest signals of withdrawal, and it is often right. It is also often responding before the other person has consciously decided anything.'
@@ -67,7 +67,7 @@ const Q2_PROFILE_LABELS: Record<string, { title: string; description: string }> 
   },
 };
 
-const Q3_PROFILE_LABELS: Record<string, { title: string; description: string }> = {
+const Q3_STYLE_LABELS: Record<string, { title: string; description: string }> = {
   intellectualization: {
     title: 'Intellectualization',
     description: 'When relational ambiguity arrives, you move it from the emotional register into the analytical register as quickly as possible. You research, theorize, build frameworks. The understanding you produce is genuine. It also operates in a different system from the one running the behavior.'
@@ -206,9 +206,9 @@ export default function AttachmentResultsPage() {
   const attachment = baseResults?.individualCompatibility?.attachment;
   const persona = baseResults?.persona;
 
-  const q1Info = Q1_PROFILE_LABELS[q1.profileId] || { title: q1.profileName, subtitle: '', description: '' };
-  const q2Info = Q2_PROFILE_LABELS[q2.profileId] || { title: q2.profileName, description: '' };
-  const q3Info = Q3_PROFILE_LABELS[q3.profileId] || { title: q3.profileName, description: '' };
+  const q1Info = Q1_STYLE_LABELS[q1.patternId] || { title: q1.patternName, subtitle: '', description: '' };
+  const q2Info = Q2_STYLE_LABELS[q2.patternId] || { title: q2.patternName, description: '' };
+  const q3Info = Q3_STYLE_LABELS[q3.patternId] || { title: q3.patternName, description: '' };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -406,7 +406,7 @@ export default function AttachmentResultsPage() {
                   .map(([emotion, score]) => {
                     const maxScore = Math.max(...Object.values(q2.emotionScores as Record<string, number>));
                     const pct = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
-                    const isPrimary = emotion === q2.profileId;
+                    const isPrimary = emotion === q2.patternId;
                     return (
                       <div key={emotion} className="mb-3">
                         <div className="flex justify-between items-center mb-1">

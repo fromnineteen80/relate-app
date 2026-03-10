@@ -8,7 +8,7 @@
  * in relate_persona_definitions.js.
  *
  * Every question serves the dual function described in the spec:
- *   1. Producing a scoring signal for Profile routing / axis calculation
+ *   1. Producing a scoring signal for pattern routing / axis calculation
  *   2. Generating experiential material the report can draw on
  *
  * Question formats:
@@ -207,7 +207,7 @@ const QUADRANT_ONE_QUESTIONS = [
 
 // ============================================================================
 // QUADRANT TWO: TRIGGER EMOTION
-// Profiles: Fear of Abandonment, Shame, Contempt, Grief, Rage
+// patterns: Fear of Abandonment, Shame, Contempt, Grief, Rage
 // ============================================================================
 
 const QUADRANT_TWO_QUESTIONS = [
@@ -388,7 +388,7 @@ const QUADRANT_TWO_QUESTIONS = [
 
 // ============================================================================
 // QUADRANT THREE: DECISION ARCHITECTURE
-// Profiles: Intellectualization, Impulsive Action, Consensus Seeking,
+// patterns: Intellectualization, Impulsive Action, Consensus Seeking,
 //           Silence & Withdrawal, Catastrophic Forward Projection,
 //           Dissociative Backward Anchoring
 // Internal Axes: Direction (toward/away), Register (cognitive/behavioral/relational)

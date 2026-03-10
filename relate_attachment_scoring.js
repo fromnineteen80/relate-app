@@ -1,10 +1,10 @@
 /**
  * RELATE Attachment Deep Dive - Scoring Engine
  *
- * Implements Profile routing for all four Quadrants, axis calculations
+ * Implements pattern routing for all four Quadrants, axis calculations
  * for Quadrants Three and Four, the emergent pattern detection logic
  * using the eight named patterns from Section 5, and confidence scoring
- * for each Profile assignment.
+ * for each pattern assignment.
  *
  * API surface (from Section 8):
  *   initializeAttachment(assessmentResults)
@@ -29,9 +29,9 @@ const STORAGE_KEYS = {
   couples: 'relate_attachment_couples'
 };
 
-// Quadrant One Profile definitions
+// Quadrant One pattern definitions
 // Three dimensions: A (Disruption Character), B (Source Figure), C (Repair History)
-const Q1_PROFILES = {
+const Q1_PATTERNS = {
   1: { name: 'Chronic, Caregiver, Unresolved', disruption: 'chronic', source: 'caregiver', repair: 'unresolved' },
   2: { name: 'Chronic, Caregiver, Repaired', disruption: 'chronic', source: 'caregiver', repair: 'repaired' },
   3: { name: 'Chronic, Romantic, Unresolved', disruption: 'chronic', source: 'romantic', repair: 'unresolved' },
@@ -40,8 +40,8 @@ const Q1_PROFILES = {
   6: { name: 'Acute, Romantic, Unresolved', disruption: 'acute', source: 'romantic', repair: 'unresolved' }
 };
 
-// Quadrant Two Profile definitions
-const Q2_PROFILES = {
+// Quadrant Two pattern definitions
+const Q2_EMOTIONS = {
   fear_of_abandonment: { name: 'Fear of Abandonment' },
   shame: { name: 'Shame' },
   contempt: { name: 'Contempt' },
@@ -49,8 +49,8 @@ const Q2_PROFILES = {
   rage: { name: 'Rage' }
 };
 
-// Quadrant Three Profile definitions
-const Q3_PROFILES = {
+// Quadrant Three pattern definitions
+const Q3_MODES = {
   intellectualization: { name: 'Intellectualization', direction: 'toward', register: 'cognitive' },
   impulsive_action: { name: 'Impulsive Action', direction: 'toward', register: 'behavioral' },
   consensus_seeking: { name: 'Consensus Seeking', direction: 'away', register: 'relational' },
@@ -65,14 +65,14 @@ const Q3_PROFILES = {
 // ============================================================================
 
 /**
- * Scores Quadrant One responses and routes to a Profile.
+ * Scores Quadrant One responses and routes to a pattern.
  *
  * Dimension A (Disruption Character): chronic vs acute
  * Dimension B (Source Figure): caregiver vs romantic
  * Dimension C (Repair History): repaired vs unresolved (with partial)
  *
  * @param {Array} responses - Array of { questionId, value } for Q1 questions
- * @returns {object} { profileId, profileName, dimensions, confidence }
+ * @returns {object} { patternId, patternName, dimensions, confidence }
  */
 function scoreQuadrantOne(responses) {
   const scores = {
@@ -135,7 +135,7 @@ function scoreQuadrantOne(responses) {
     }
   }
 
-  // Route to Profile
+  // Route to pattern
   const disruption = scores.disruption.chronic >= scores.disruption.acute ? 'chronic' : 'acute';
   const source = scores.source.caregiver >= scores.source.romantic ? 'caregiver' : 'romantic';
 
@@ -148,19 +148,19 @@ function scoreQuadrantOne(responses) {
     repair = 'unresolved';
   }
 
-  // Map to Profile ID
+  // Map to pattern ID
   // Acute + Caregiver + Repaired and Acute + Romantic + Repaired collapse into
-  // adjacent profiles per spec (8 theoretical -> 6 meaningful profiles)
-  let profileId;
-  if (disruption === 'chronic' && source === 'caregiver' && repair === 'unresolved') profileId = 1;
-  else if (disruption === 'chronic' && source === 'caregiver' && (repair === 'repaired' || repair === 'partial')) profileId = 2;
-  else if (disruption === 'chronic' && source === 'romantic' && repair === 'unresolved') profileId = 3;
-  else if (disruption === 'chronic' && source === 'romantic' && (repair === 'repaired' || repair === 'partial')) profileId = 4;
-  else if (disruption === 'acute' && source === 'caregiver') profileId = 5; // unresolved or repaired collapses here
-  else if (disruption === 'acute' && source === 'romantic') profileId = 6; // unresolved or repaired collapses here
-  else profileId = 1; // fallback
+  // adjacent patterns per spec (8 theoretical -> 6 meaningful patterns)
+  let patternId;
+  if (disruption === 'chronic' && source === 'caregiver' && repair === 'unresolved') patternId = 1;
+  else if (disruption === 'chronic' && source === 'caregiver' && (repair === 'repaired' || repair === 'partial')) patternId = 2;
+  else if (disruption === 'chronic' && source === 'romantic' && repair === 'unresolved') patternId = 3;
+  else if (disruption === 'chronic' && source === 'romantic' && (repair === 'repaired' || repair === 'partial')) patternId = 4;
+  else if (disruption === 'acute' && source === 'caregiver') patternId = 5; // unresolved or repaired collapses here
+  else if (disruption === 'acute' && source === 'romantic') patternId = 6; // unresolved or repaired collapses here
+  else patternId = 1; // fallback
 
-  const profile = Q1_PROFILES[profileId];
+  const pattern = Q1_PATTERNS[patternId];
 
   // Confidence: ratio of consistent signals and margin between top/runner-up dimensions
   const disruptionMargin = Math.abs(scores.disruption.chronic - scores.disruption.acute);
@@ -175,8 +175,8 @@ function scoreQuadrantOne(responses) {
   const confidence = Math.round((marginConfidence * 0.6 + consistencyConfidence * 0.4) * 100) / 100;
 
   return {
-    profileId,
-    profileName: profile.name,
+    patternId,
+    patternName: pattern.name,
     dimensions: {
       disruption: { value: disruption, scores: scores.disruption },
       source: { value: source, scores: scores.source },
@@ -283,10 +283,10 @@ function extractQ1NarrativeSignals(questionId, text) {
 // ============================================================================
 
 /**
- * Scores Quadrant Two responses and routes to a Trigger Emotion Profile.
+ * Scores Quadrant Two responses and routes to a trigger emotion.
  *
  * @param {Array} responses - Array of { questionId, value } for Q2 questions
- * @returns {object} { profileId, profileName, confidence }
+ * @returns {object} { patternId, patternName, confidence }
  */
 function scoreQuadrantTwo(responses) {
   const emotionScores = {
@@ -354,8 +354,8 @@ function scoreQuadrantTwo(responses) {
   const dominant = sorted[0];
   const runnerUp = sorted[1];
 
-  const profileId = dominant[0];
-  const profile = Q2_PROFILES[profileId];
+  const patternId = dominant[0];
+  const pattern = Q2_EMOTIONS[patternId];
 
   // Confidence: margin between dominant and runner-up
   const margin = dominant[1] - (runnerUp ? runnerUp[1] : 0);
@@ -365,8 +365,8 @@ function scoreQuadrantTwo(responses) {
     : 0.5;
 
   return {
-    profileId,
-    profileName: profile.name,
+    patternId,
+    patternName: pattern.name,
     emotionScores,
     confidence
   };
@@ -453,11 +453,11 @@ function extractQ2NarrativeSignals(questionId, text) {
 // ============================================================================
 
 /**
- * Scores Quadrant Three responses and routes to a Decision Mode Profile.
+ * Scores Quadrant Three responses and routes to a decision mode.
  * Also calculates the two internal axes: Direction and Register.
  *
  * @param {Array} responses - Array of { questionId, value } for Q3 questions
- * @returns {object} { profileId, profileName, axes, confidence }
+ * @returns {object} { patternId, patternName, axes, confidence }
  */
 function scoreQuadrantThree(responses) {
   const modeScores = {
@@ -547,13 +547,13 @@ function scoreQuadrantThree(responses) {
   const sorted = Object.entries(modeScores).sort((a, b) => b[1] - a[1]);
   const dominant = sorted[0];
   const runnerUp = sorted[1];
-  const profileId = dominant[0];
-  const profile = Q3_PROFILES[profileId];
+  const patternId = dominant[0];
+  const pattern = Q3_MODES[patternId];
 
   // Calculate axis scores (1-5 scale)
   const directionScore = directionCount > 0
     ? Math.round((directionSum / directionCount) * 10) / 10
-    : (profile.direction === 'toward' ? 4 : 2);
+    : (pattern.direction === 'toward' ? 4 : 2);
 
   const totalRegister = registerCognitiveSignal + registerBehavioralSignal + registerRelationalSignal;
   let registerScore;
@@ -564,7 +564,7 @@ function scoreQuadrantThree(responses) {
       totalRegister
     ) * 10) / 10;
   } else {
-    registerScore = profile.register === 'cognitive' ? 4 : profile.register === 'behavioral' ? 2 : 3;
+    registerScore = pattern.register === 'cognitive' ? 4 : pattern.register === 'behavioral' ? 2 : 3;
   }
 
   // Confidence
@@ -575,8 +575,8 @@ function scoreQuadrantThree(responses) {
     : 0.5;
 
   return {
-    profileId,
-    profileName: profile.name,
+    patternId,
+    patternName: pattern.name,
     modeScores,
     axes: {
       direction: { value: directionScore, label: directionScore >= 3 ? 'toward' : 'away' },
@@ -674,7 +674,7 @@ function extractQ3NarrativeSignals(questionId, text) {
 
 /**
  * Scores Quadrant Four responses and calculates the three axis scores.
- * Does not route to a single named Profile, produces axis modifier values
+ * Does not route to a single named pattern, produces axis modifier values
  * that the report generation engine uses to calibrate the narrative.
  *
  * @param {Array} responses - Array of { questionId, value } for Q4 questions
@@ -884,22 +884,22 @@ function extractQ4NarrativeSignals(questionId, text) {
  * @returns {object|null} { patternId, patternName, synthesisFrame } or null
  */
 function detectEmergentPattern(q1, q2, q3, q4) {
-  const q1Profile = q1.profileId;
-  const q2Profile = q2.profileId;
-  const q3Profile = q3.profileId;
+  const q1Pattern = q1.patternId;
+  const q2Pattern = q2.patternId;
+  const q3Pattern = q3.patternId;
   const q4Defense = q4.axes.defense.label;
   const q4Awareness = q4.axes.awareness.label;
   const q4Amplification = q4.axes.amplification.label;
 
   // Pattern One: The Convinced Realist
-  // Q1: Profile 1 (Chronic, Caregiver, Unresolved)
+  // Q1: Pattern 1 (Chronic, Caregiver, Unresolved)
   // Q2: Contempt or Grief
   // Q3: Intellectualization
   // Q4: High defense, high automaticity (low awareness)
   if (
-    q1Profile === 1 &&
-    (q2Profile === 'contempt' || q2Profile === 'grief') &&
-    q3Profile === 'intellectualization' &&
+    q1Pattern === 1 &&
+    (q2Pattern === 'contempt' || q2Pattern === 'grief') &&
+    q3Pattern === 'intellectualization' &&
     q4Defense === 'high' &&
     (q4Awareness === 'low' || q4Awareness === 'moderate')
   ) {
@@ -911,14 +911,14 @@ function detectEmergentPattern(q1, q2, q3, q4) {
   }
 
   // Pattern Two: The Loyal Exile
-  // Q1: Profile 5 (Acute, Caregiver, Unresolved)
+  // Q1: Pattern 5 (Acute, Caregiver, Unresolved)
   // Q2: Fear of Abandonment
   // Q3: Impulsive Action or Consensus Seeking
   // Q4: High defense, high amplification
   if (
-    q1Profile === 5 &&
-    q2Profile === 'fear_of_abandonment' &&
-    (q3Profile === 'impulsive_action' || q3Profile === 'consensus_seeking') &&
+    q1Pattern === 5 &&
+    q2Pattern === 'fear_of_abandonment' &&
+    (q3Pattern === 'impulsive_action' || q3Pattern === 'consensus_seeking') &&
     q4Defense === 'high' &&
     q4Amplification === 'high'
   ) {
@@ -930,14 +930,14 @@ function detectEmergentPattern(q1, q2, q3, q4) {
   }
 
   // Pattern Three: The Performing Sovereign
-  // Q1: Profile 1 or 2 (Chronic, Caregiver)
+  // Q1: Pattern 1 or 2 (Chronic, Caregiver)
   // Q2: Shame
   // Q3: Silence/Withdrawal or Intellectualization
   // Q4: High defense, high awareness, variable amplification
   if (
-    (q1Profile === 1 || q1Profile === 2) &&
-    q2Profile === 'shame' &&
-    (q3Profile === 'silence_withdrawal' || q3Profile === 'intellectualization') &&
+    (q1Pattern === 1 || q1Pattern === 2) &&
+    q2Pattern === 'shame' &&
+    (q3Pattern === 'silence_withdrawal' || q3Pattern === 'intellectualization') &&
     q4Defense === 'high' &&
     q4Awareness === 'high'
   ) {
@@ -949,14 +949,14 @@ function detectEmergentPattern(q1, q2, q3, q4) {
   }
 
   // Pattern Four: The Tender Catastrophist
-  // Q1: Profile 6 (Acute, Romantic, Unresolved)
+  // Q1: Pattern 6 (Acute, Romantic, Unresolved)
   // Q2: Grief
   // Q3: Catastrophic Forward Projection
   // Q4: Moderate defense, high awareness, moderate amplification
   if (
-    q1Profile === 6 &&
-    q2Profile === 'grief' &&
-    q3Profile === 'catastrophic_projection' &&
+    q1Pattern === 6 &&
+    q2Pattern === 'grief' &&
+    q3Pattern === 'catastrophic_projection' &&
     (q4Defense === 'moderate' || q4Defense === 'low') &&
     q4Awareness === 'high'
   ) {
@@ -968,14 +968,14 @@ function detectEmergentPattern(q1, q2, q3, q4) {
   }
 
   // Pattern Five: The Invisible Architect
-  // Q1: Profile 1 (Chronic, Caregiver, Unresolved)
+  // Q1: Pattern 1 (Chronic, Caregiver, Unresolved)
   // Q2: Shame or Fear of Abandonment
   // Q3: Consensus Seeking or Silence/Withdrawal
   // Q4: High defense, high automaticity, high amplification
   if (
-    q1Profile === 1 &&
-    (q2Profile === 'shame' || q2Profile === 'fear_of_abandonment') &&
-    (q3Profile === 'consensus_seeking' || q3Profile === 'silence_withdrawal') &&
+    q1Pattern === 1 &&
+    (q2Pattern === 'shame' || q2Pattern === 'fear_of_abandonment') &&
+    (q3Pattern === 'consensus_seeking' || q3Pattern === 'silence_withdrawal') &&
     q4Defense === 'high' &&
     (q4Awareness === 'low' || q4Awareness === 'moderate') &&
     q4Amplification === 'high'
@@ -993,8 +993,8 @@ function detectEmergentPattern(q1, q2, q3, q4) {
   // Q3: Impulsive Action
   // Q4: Moderate-high defense, low-moderate awareness, high amplification
   if (
-    q2Profile === 'rage' &&
-    q3Profile === 'impulsive_action' &&
+    q2Pattern === 'rage' &&
+    q3Pattern === 'impulsive_action' &&
     (q4Defense === 'high' || q4Defense === 'moderate') &&
     (q4Awareness === 'low' || q4Awareness === 'moderate') &&
     q4Amplification === 'high'
@@ -1007,14 +1007,14 @@ function detectEmergentPattern(q1, q2, q3, q4) {
   }
 
   // Pattern Seven: The Reconstructed Skeptic
-  // Q1: Profile 4 or 6 with repair (Romantic, Repaired), but Profile 6 is unresolved,
-  // so accept Profile 4 or Profile 2 (repaired histories)
+  // Q1: Pattern 4 or 6 with repair (Romantic, Repaired), but Pattern 6 is unresolved,
+  // so accept Pattern 4 or Pattern 2 (repaired histories)
   // Q2: Any
   // Q3: Intellectualization or Catastrophic Projection
   // Q4: Low-moderate defense, high awareness, moderate amplification
   if (
-    (q1Profile === 2 || q1Profile === 4) &&
-    (q3Profile === 'intellectualization' || q3Profile === 'catastrophic_projection') &&
+    (q1Pattern === 2 || q1Pattern === 4) &&
+    (q3Pattern === 'intellectualization' || q3Pattern === 'catastrophic_projection') &&
     (q4Defense === 'low' || q4Defense === 'moderate') &&
     q4Awareness === 'high' &&
     (q4Amplification === 'moderate' || q4Amplification === 'low')
@@ -1032,8 +1032,8 @@ function detectEmergentPattern(q1, q2, q3, q4) {
   // Q3: Dissociative Backward Anchoring
   // Q4: Moderate defense, moderate awareness, high amplification
   if (
-    (q2Profile === 'fear_of_abandonment' || q2Profile === 'shame') &&
-    q3Profile === 'dissociative_backward_anchoring' &&
+    (q2Pattern === 'fear_of_abandonment' || q2Pattern === 'shame') &&
+    q3Pattern === 'dissociative_backward_anchoring' &&
     q4Defense === 'moderate' &&
     (q4Awareness === 'moderate' || q4Awareness === 'low') &&
     q4Amplification === 'high'
@@ -1364,14 +1364,14 @@ function generateGrowthPlan(attachmentResults, attachmentReport, assessmentResul
 function generateCouplesOverlay(attachmentResults1, attachmentResults2, assessmentResults1, assessmentResults2) {
   // Determine the Q2 collision from the collision matrix
   const q2Collision = getQ2CollisionFrame(
-    attachmentResults1.quadrant2.profileId,
-    attachmentResults2.quadrant2.profileId
+    attachmentResults1.quadrant2.patternId,
+    attachmentResults2.quadrant2.patternId
   );
 
   // Determine the Q3 collision from the collision library
   const q3Collision = getQ3CollisionFrame(
-    attachmentResults1.quadrant3.profileId,
-    attachmentResults2.quadrant3.profileId
+    attachmentResults1.quadrant3.patternId,
+    attachmentResults2.quadrant3.patternId
   );
 
   return {
@@ -1552,10 +1552,10 @@ module.exports = {
   // Storage keys
   STORAGE_KEYS,
 
-  // Profile definitions
-  Q1_PROFILES,
-  Q2_PROFILES,
-  Q3_PROFILES,
+  // pattern definitions
+  Q1_PATTERNS,
+  Q2_EMOTIONS,
+  Q3_MODES,
 
   // Individual quadrant scoring
   scoreQuadrantOne,
