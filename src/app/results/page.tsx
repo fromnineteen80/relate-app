@@ -132,6 +132,7 @@ function ResultsDashboard() {
   const [userFullName, setUserFullName] = useState<string | null>(null);
   const marketFetchedRef = useRef(false);
   const [topMetros, setTopMetros] = useState<any[] | null>(null);
+  const [topMetrosInfo, setTopMetrosInfo] = useState<{ totalCompetitive: number; homeMetroRank: number | null; homeCbsa: string | null } | null>(null);
   const topMetrosFetchedRef = useRef(false);
   const [worstMetros, setWorstMetros] = useState<any[] | null>(null);
   const worstMetrosFetchedRef = useRef(false);
@@ -258,7 +259,12 @@ function ResultsDashboard() {
       body: JSON.stringify({ ...req.body, homeScore: marketData.relateScore?.score ?? 0 }),
     })
       .then(r => r.json())
-      .then(data => { if (data.success) setTopMetros(data.topMetros); })
+      .then(data => {
+        if (data.success) {
+          setTopMetros(data.topMetros);
+          setTopMetrosInfo({ totalCompetitive: data.totalCompetitive, homeMetroRank: data.homeMetroRank, homeCbsa: data.homeCbsa });
+        }
+      })
       .catch(() => { });
   }, [marketData, user]);
 
@@ -1523,7 +1529,7 @@ function ResultsDashboard() {
 
         {/* ── Top Metros Scatter Plot ── */}
         {topMetros && topMetros.length > 0 && (
-          <TopMetrosScatterPlot metros={topMetros} worstMetros={worstMetros} demographics={demographics} />
+          <TopMetrosScatterPlot metros={topMetros} worstMetros={worstMetros} demographics={demographics} marketData={marketData} topMetrosInfo={topMetrosInfo} />
         )}
 
         {/* ── Market Coaching ── */}
@@ -1729,7 +1735,7 @@ function nextMultipleOf10(n: number) {
   return Math.ceil(n / 10) * 10;
 }
 
-function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: any[]; worstMetros?: any[] | null; demographics?: any }) {
+function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, topMetrosInfo }: { metros: any[]; worstMetros?: any[] | null; demographics?: any; marketData?: any; topMetrosInfo?: { totalCompetitive: number; homeMetroRank: number | null; homeCbsa: string | null } | null }) {
   const [tooltip, setTooltip] = useState<{ metro: any; x: number; y: number } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -1790,8 +1796,9 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
 
   const handleMouseLeave = () => setTooltip(null);
 
-  // Dot color based on gender being pursued
+  // Dot color based on gender being pursued; user's home metro gets green
   const dotColor = datingGender === 'women' ? '#fb7185' : datingGender === 'men' ? '#3b82f6' : '#c2854a';
+  const homeCbsa = topMetrosInfo?.homeCbsa || null;
 
   return (
     <section className="card mb-4">
@@ -1853,7 +1860,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
                 cx={scaleX(m.idealPool)}
                 cy={scaleY(m.matchCount)}
                 r={8}
-                fill={dotColor}
+                fill={m.cbsa === homeCbsa ? '#16a34a' : dotColor}
                 fillOpacity={0.85}
                 stroke="#fff"
                 strokeWidth={1.5}
@@ -1986,6 +1993,13 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
       </div>
       </div>
 
+      {/* ── Explainer paragraph ── */}
+      {topMetrosInfo?.homeMetroRank != null && marketData?.location && (
+        <p className="explainer mt-4">
+          The {(marketData.location.cbsaLabel || marketData.location.cbsaName || 'your area').split(',')[0]} metro area ranks #{topMetrosInfo.homeMetroRank} nationally among metro areas where you are competitive amongst your single peers (at least a 75 score). If your ideal match pool and the number of {datingGender} feels small, consider how and where you are looking for love. Are dating apps working? Are they worth the investment? Are there things you can do to improve your desirability to {datingGender} in your ideal match pool? Do you need to adjust your expectations? Could you expand your search to other metro areas where you have better chances of matching?
+        </p>
+      )}
+
       {/* ── Worst Metros ── */}
       {worstMetros && worstMetros.length > 0 && (
         <section className="card mb-4 mt-4">
@@ -1993,7 +2007,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
             <Icon name="trending_down" size={20} className="text-accent" />
             Your Worst Large Metro Areas
           </h3>
-          <p className="explainer mb-3">Bottom 10 metros (pop. 1.5M+) ranked by smallest ideal match pool.</p>
+          <p className="explainer mb-3">Bottom 10 metros (pop. 750k+) ranked by smallest ideal match pool.</p>
           <div className="space-y-0">
             {/* Column headers */}
             <div className="flex items-end gap-2.5 py-1 px-1.5 border-b border-[#e7e5e4]">
