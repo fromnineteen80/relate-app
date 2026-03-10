@@ -1062,7 +1062,21 @@ function ResultsDashboard() {
             </div>
 
           <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="shield" size={20} className="text-accent" />Your Attachment Style</h3>
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="shield" size={20} className="text-accent" />Your Attachment Style</h3>
+              {(() => {
+                const hasReport = typeof window !== 'undefined' && localStorage.getItem('relate_blueprint_results');
+                return hasReport ? (
+                  <Link href="/results/attachment" className="text-xs text-accent hover:underline font-medium whitespace-nowrap">
+                    View Full Report <Icon name="arrow_forward" size={12} />
+                  </Link>
+                ) : (
+                  <Link href="/blueprint" className="text-xs text-secondary hover:text-accent transition-colors whitespace-nowrap">
+                    Go deeper <Icon name="arrow_forward" size={12} />
+                  </Link>
+                );
+              })()}
+            </div>
             <p className="explainer mb-4">How you connect, protect, and respond in close relationships</p>
             <div className="flex items-center gap-3 mb-4">
               <span className="font-mono text-lg font-semibold capitalize">{ic.attachment.style}</span>
@@ -1128,22 +1142,11 @@ function ResultsDashboard() {
                           </div>
                         )}
                       </div>
-                      <div className="mt-3">
-                        <Link href="/results/attachment" className="text-xs text-accent hover:underline font-medium">
-                          View Full Attachment Style Report <Icon name="arrow_forward" size={12} />
-                        </Link>
-                      </div>
                     </div>
                   );
                 } catch { /* invalid JSON */ }
               }
-              return (
-                <div className="mt-4 pt-4 border-t border-border">
-                  <Link href="/blueprint" className="text-xs text-secondary hover:text-accent transition-colors">
-                    Go deeper with Attachment Style <Icon name="arrow_forward" size={12} />
-                  </Link>
-                </div>
-              );
+              return null;
             })()}
           </section>
           </div>
@@ -2365,7 +2368,16 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
           <span className="text-xs font-mono text-secondary uppercase tracking-wider">Finding Your Ideal Match</span>
           <p className="text-[11px] text-secondary mt-1 mb-3">The {metroShort} metro population is <span className="font-medium">{metroPop.toLocaleString()}</span>.</p>
           <div className="mt-3 space-y-1">
-            {milestones.map((m, i) => {
+            {(() => {
+              const datingWomenFunnel = demographics?.gender === 'M';
+              const funnelColors = [
+                '#d6d3d1', // metro — stone-300
+                '#292524', // identity — brand black
+                '#F9A825', // realistic — yellow
+                '#047857', // preferred — green
+                datingWomenFunnel ? '#fb7185' : '#3b82f6', // ideal — rose/blue
+              ];
+              return milestones.map((m, i) => {
               const baseVal = singlesPool || 1;
               const pct = (m.value / baseVal) * 100;
               const isLast = i === milestones.length - 1;
@@ -2382,15 +2394,16 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
               return (
                 <div key={m.label}>
                   <div className="flex items-center justify-between mb-0.5">
-                    <span className={`text-xs ${isLast ? 'font-medium' : 'text-secondary'}`}>{m.label}</span>
-                    <span className={`text-xs font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{m.value.toLocaleString()}{pctLabel ? ` (${pctLabel})` : ''}</span>
+                    <span className={`text-[11px] ${isLast ? 'font-medium' : 'text-secondary'}`}>{m.label}</span>
+                    <span className={`text-[11px] font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{m.value.toLocaleString()}{pctLabel ? ` (${pctLabel})` : ''}</span>
                   </div>
-                  <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
-                    <div className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ${isLast ? 'bg-accent' : 'bg-stone-300'}`} style={{ width: `${Math.max(1, pct)}%` }} />
+                  <div className="relative h-1.5 bg-stone-100 rounded-full overflow-hidden">
+                    <div className="absolute inset-y-0 left-0 rounded-full transition-all duration-700" style={{ width: `${Math.max(1, pct)}%`, backgroundColor: funnelColors[i] }} />
                   </div>
                 </div>
               );
-            })}
+            });
+            })()}
           </div>
           <div className="mt-3 space-y-1">
             {milestones.map(m => (

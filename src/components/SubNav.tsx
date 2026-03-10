@@ -82,13 +82,9 @@ export function SubNav({ items = [] }: SubNavProps) {
     { id: 'astrology', label: 'Astrology', href: '/results/astrology', show: hasResults && astrologyEnabled },
   ];
 
-  // On match/matches pages, show match sub-links as page-tab items (after divider)
-  const isMatchPage = pathname.startsWith('/results/match');
-
   // Build results subpage links when hasResults and on a results subpage (but not couples pages)
   const resultsSubLinks: SubNavItem[] = (hasResults && isResultsSubpage && !isCouplesPage && !isAstrologyPage) ? [
-    { id: 'persona', label: 'Your Persona', href: '/results/persona', show: !isMatchPage },
-    { id: 'blueprint-results', label: 'Attachment Style', href: '/results/attachment', show: hasBlueprintResults },
+    { id: 'persona', label: 'Your Persona', href: '/results/persona', show: true },
     { id: 'match', label: 'Your #1 Match', href: topMatchCode ? `/results/match/${topMatchCode}` : '/results/matches', show: !!topMatchCode },
     { id: 'matches', label: `All Potential ${seekingLabel}`, href: '/results/matches', show: true },
   ] : [];
@@ -107,17 +103,12 @@ export function SubNav({ items = [] }: SubNavProps) {
   const visibleCouplesSubLinks = couplesSubLinks.filter(l => l.show !== false);
   const visiblePageItems = items.filter(l => l.show !== false);
 
-  // On match pages, results sub-links go after the divider as page-tab items
+  // On all results subpages, results sub-links go after the divider as page-tab items
   // On couples pages, show couples sub-links after divider
-  // On other results subpages, they stay as main tabs
-  const beforeDividerLinks = isMatchPage
-    ? [...visibleUniversal]
-    : [...visibleUniversal, ...visibleResultsSubLinks];
+  const beforeDividerLinks = [...visibleUniversal];
   const afterDividerLinks = isCouplesPage
     ? [...visibleCouplesSubLinks, ...visiblePageItems]
-    : isMatchPage
-      ? [...visibleResultsSubLinks, ...visiblePageItems]
-      : visiblePageItems;
+    : [...visibleResultsSubLinks, ...visiblePageItems];
 
   return (
     <nav className="border-b border-border bg-background sticky z-40" style={{ top: 'var(--header-height)' }}>
