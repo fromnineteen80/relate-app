@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { RELATE_SYSTEM_PROMPT, RELATE_MODELS, RELATE_MAX_TOKENS } from '@/lib/prompts/relate-system';
+import { cleanProse } from '@/lib/prose';
 
 /* eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any */
 
@@ -51,17 +52,7 @@ Generate all sections following the report structure: Executive Summary, Your Pe
       }],
     });
 
-    let content = response.content[0]?.text || '';
-
-    // Sanitize: remove em dashes, en dashes, and corrupted Unicode sequences
-    content = content
-      .replace(/\s*[—–]\s*/g, ', ')
-      .replace(/â€"/g, ', ')
-      .replace(/â€"/g, ', ')
-      .replace(/â€™/g, "'")
-      .replace(/â€œ/g, '"')
-      .replace(/â€\x9d/g, '"')
-      .replace(/,\s*,/g, ',');
+    const content = cleanProse(response.content[0]?.text || '');
 
     return NextResponse.json({
       success: true,

@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from 'react';
 import { useAdvisor } from '@/lib/advisor-context';
+import { cleanProse } from '@/lib/prose';
 import AdvisorStarters from './AdvisorStarters';
 
 interface AdvisorMessagesProps {
@@ -29,7 +30,7 @@ export default function AdvisorMessages({ hideStarters }: AdvisorMessagesProps) 
                 : 'text-foreground'
             }`}
           >
-            {msg.content.split('\n').map((line, j) => (
+            {cleanProse(msg.content).split('\n').map((line, j) => (
               <p key={j} className={j > 0 ? 'mt-2' : ''}>{line}</p>
             ))}
           </div>
