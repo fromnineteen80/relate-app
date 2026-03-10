@@ -866,6 +866,46 @@ function ResultsDashboard() {
                 <p className="text-sm text-secondary mt-2">{ic.attachment.underStress}</p>
               </div>
             )}
+            {/* Blueprint Insights */}
+            {(() => {
+              const bpRaw = typeof window !== 'undefined' ? localStorage.getItem('relate_blueprint_results') : null;
+              if (bpRaw) {
+                try {
+                  const bp = JSON.parse(bpRaw);
+                  return (
+                    <div className="mt-4 pt-4 border-t border-accent/30">
+                      <span className="text-[10px] font-mono text-accent uppercase tracking-widest">Blueprint Insights</span>
+                      <div className="mt-3 space-y-2">
+                        {bp.q2?.patternName && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-secondary">Trigger Emotion</span>
+                            <span className="text-xs font-medium">{bp.q2.patternName}</span>
+                          </div>
+                        )}
+                        {bp.q3?.patternName && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-secondary">Decision Mode</span>
+                            <span className="text-xs font-medium">{bp.q3.patternName}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="mt-3">
+                        <Link href="/results/attachment" className="text-xs text-accent hover:underline font-medium">
+                          View Full Attachment Style Report <Icon name="arrow_forward" size={12} />
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                } catch { /* invalid JSON */ }
+              }
+              return (
+                <div className="mt-4 pt-4 border-t border-border">
+                  <Link href="/blueprint" className="text-xs text-secondary hover:text-accent transition-colors">
+                    Go deeper with the Dating Blueprint <Icon name="arrow_forward" size={12} />
+                  </Link>
+                </div>
+              );
+            })()}
           </section>
         )}
 

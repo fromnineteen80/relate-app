@@ -19,6 +19,9 @@ export default function ComparePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeSection, setActiveSection] = useState(0);
+  const [blueprintOverlay, setBlueprintOverlay] = useState<any>(null);
+  const [blueprintStatus, setBlueprintStatus] = useState<'none' | 'one' | 'both' | 'overlay'>('none');
+  const [overlayGenerating, setOverlayGenerating] = useState(false);
 
   // Enrich report with actual first names from localStorage so all sections show real names
   function enrichReportNames(rpt: any): any {
@@ -84,6 +87,55 @@ export default function ComparePage() {
         setLoading(false);
       });
   }, [user]);
+
+  // Load Blueprint couples overlay state from localStorage
+  useEffect(() => {
+    const storedOverlay = localStorage.getItem('relate_blueprint_couples');
+    if (storedOverlay) {
+      setBlueprintOverlay(JSON.parse(storedOverlay));
+      setBlueprintStatus('overlay');
+      return;
+    }
+    const bp1 = localStorage.getItem('relate_blueprint_results');
+    const bp2 = localStorage.getItem('relate_partner_blueprint_results');
+    if (bp1 && bp2) {
+      setBlueprintStatus('both');
+    } else if (bp1 || bp2) {
+      setBlueprintStatus('one');
+    } else {
+      setBlueprintStatus('none');
+    }
+  }, []);
+
+  const generateBlueprintOverlay = useCallback(async () => {
+    setOverlayGenerating(true);
+    try {
+      const bp1 = JSON.parse(localStorage.getItem('relate_blueprint_results') || '{}');
+      const bp2 = JSON.parse(localStorage.getItem('relate_partner_blueprint_results') || '{}');
+      const a1 = JSON.parse(localStorage.getItem('relate_results') || '{}');
+      const a2 = JSON.parse(localStorage.getItem('relate_partner_results') || '{}');
+      const res = await fetch('/api/blueprint/couples-overlay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          partner1BlueprintResults: bp1,
+          partner2BlueprintResults: bp2,
+          partner1AssessmentResults: a1,
+          partner2AssessmentResults: a2,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        localStorage.setItem('relate_blueprint_couples', JSON.stringify(data.overlay));
+        setBlueprintOverlay(data.overlay);
+        setBlueprintStatus('overlay');
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setOverlayGenerating(false);
+    }
+  }, []);
 
   // Mock data generation for testing
   const generateMockReport = useCallback(() => {
@@ -231,8 +283,96 @@ export default function ComparePage() {
             </Link>
           )}
         </div>
+
+        {/* Blueprint Couples Overlay */}
+        <div id="blueprint-overlay" className="mt-12 pt-8 border-t border-border">
+          {blueprintStatus === 'overlay' && blueprintOverlay && (
+            <BlueprintOverlaySection overlay={blueprintOverlay} />
+          )}
+          {blueprintStatus === 'both' && (
+            <div className="card text-center">
+              <h3 className="font-serif text-lg font-semibold mb-2">Blueprint Couples Overlay</h3>
+              <p className="text-sm text-secondary mb-4">
+                Both partners have completed the Blueprint. Generate the couples overlay for a deeper understanding of your relational dynamic.
+              </p>
+              <button
+                onClick={generateBlueprintOverlay}
+                disabled={overlayGenerating}
+                className="btn-primary text-sm"
+              >
+                {overlayGenerating ? 'Generating...' : 'Generate Couples Overlay'}
+              </button>
+            </div>
+          )}
+          {blueprintStatus === 'one' && (
+            <div className="card text-center">
+              <p className="text-sm text-secondary">
+                Both partners need to complete the Blueprint for the couples overlay.
+              </p>
+            </div>
+          )}
+          {blueprintStatus === 'none' && (
+            <div className="card bg-stone-50 text-center">
+              <p className="text-sm text-secondary mb-3">
+                Add the Blueprint Couples add-on for a deeper understanding of your dynamic together
+              </p>
+              <Link href="/blueprint" className="text-sm text-accent hover:underline">
+                Learn about the Blueprint →
+              </Link>
+            </div>
+          )}
+        </div>
       </main>
       <SiteFooter />
+    </div>
+  );
+}
+
+function BlueprintOverlaySection({ overlay }: { overlay: any }) {
+  const sections = overlay?.sections || {};
+  const sectionConfig = [
+    { key: 'systemYouHaveBuilt', title: 'The System You Have Built' },
+    { key: 'emotionCollision', title: 'The Emotion Collision' },
+    { key: 'gapBetweenYou', title: 'The Gap Between You' },
+    { key: 'whatYouMakePossible', title: 'What You Make Possible' },
+    { key: 'whatBothAreAskedToUnderstand', title: 'What Both of You Are Being Asked to Understand' },
+  ];
+
+  return (
+    <div className="space-y-8">
+      <div className="text-center mb-6">
+        <p className="font-mono text-xs text-accent tracking-wide uppercase mb-2">Blueprint Couples Overlay</p>
+        <h2 className="font-serif text-2xl font-semibold">The Dynamic Between You</h2>
+      </div>
+      {sectionConfig.map(({ key, title }) => {
+        const section = sections[key];
+        if (!section) return null;
+        const content = section.content || section.mechanism || section.collisionFrame?.mechanism;
+        const misread = section.collisionFrame?.misread;
+        return (
+          <div key={key} className="space-y-2">
+            <h3 className="font-serif text-lg font-semibold">{title}</h3>
+            {content && <p className="text-sm leading-relaxed">{content}</p>}
+            {misread && (
+              <p className="text-sm leading-relaxed text-secondary italic">{misread}</p>
+            )}
+            {!content && !misread && section.collisionFrame?.name && (
+              <div className="card bg-stone-50">
+                <p className="text-xs font-mono text-secondary mb-1">{section.collisionFrame.name}</p>
+                {section.collisionFrame.mechanism && (
+                  <p className="text-sm leading-relaxed">{section.collisionFrame.mechanism}</p>
+                )}
+                {section.collisionFrame.misread && (
+                  <p className="text-sm leading-relaxed text-secondary italic mt-2">{section.collisionFrame.misread}</p>
+                )}
+              </div>
+            )}
+            {!content && !misread && !section.collisionFrame && (
+              <p className="text-sm text-secondary italic">This section is being prepared.</p>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

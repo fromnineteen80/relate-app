@@ -145,6 +145,9 @@ export default function CouplesDashboard() {
           </Link>
         </div>
 
+        {/* Blueprint Status */}
+        <BlueprintStatusCard />
+
         {/* Active Challenge */}
         {activeChallenge && (
           <div className="card border-accent">
@@ -391,5 +394,66 @@ function SliderField({ label, value, onChange }: { label: string; value: number;
         className="w-full accent-accent"
       />
     </div>
+  );
+}
+
+function BlueprintStatusCard() {
+  const [status, setStatus] = useState<'none' | 'one' | 'both' | 'overlay'>('none');
+
+  useEffect(() => {
+    const overlay = localStorage.getItem('relate_blueprint_couples');
+    if (overlay) {
+      setStatus('overlay');
+      return;
+    }
+    const bp1 = localStorage.getItem('relate_blueprint_results');
+    const bp2 = localStorage.getItem('relate_partner_blueprint_results');
+    if (bp1 && bp2) {
+      setStatus('both');
+    } else if (bp1 || bp2) {
+      setStatus('one');
+    } else {
+      setStatus('none');
+    }
+  }, []);
+
+  if (status === 'overlay' || status === 'both') {
+    return (
+      <Link href="/results/compare#blueprint-overlay" className="card flex items-center gap-3 hover:border-accent transition-colors">
+        <Icon name="diamond" size={20} className="text-accent" />
+        <div className="flex-1">
+          <p className="text-sm font-medium">
+            {status === 'overlay' ? 'Blueprint Overlay Available' : 'Blueprint Overlay Ready'}
+          </p>
+          <p className="text-xs text-secondary">
+            {status === 'overlay' ? 'View your deeper relational dynamic' : 'Both partners completed — generate your overlay'}
+          </p>
+        </div>
+        <Icon name="arrow_forward" size={16} className="text-secondary" />
+      </Link>
+    );
+  }
+
+  if (status === 'one') {
+    return (
+      <div className="card flex items-center gap-3">
+        <Icon name="diamond" size={20} className="text-secondary" />
+        <div>
+          <p className="text-sm font-medium">Partner needs to complete Blueprint</p>
+          <p className="text-xs text-secondary">Both partners must finish the Blueprint for the couples overlay</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Link href="/blueprint" className="card flex items-center gap-3 bg-stone-50 hover:border-accent transition-colors">
+      <Icon name="diamond" size={20} className="text-accent" />
+      <div className="flex-1">
+        <p className="text-sm font-medium">Unlock deeper couple insights</p>
+        <p className="text-xs text-secondary">Add the Blueprint for a deeper understanding of your dynamic together</p>
+      </div>
+      <Icon name="arrow_forward" size={16} className="text-secondary" />
+    </Link>
   );
 }

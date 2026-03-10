@@ -471,6 +471,67 @@ export default function MethodologyPage() {
         </div>
       </section>
 
+      {/* The Blueprint */}
+      <section className="px-6 py-16 border-b border-border">
+        <div className="max-w-3xl mx-auto">
+          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">The Blueprint</p>
+          <h2 className="font-serif text-3xl font-semibold mb-3">Dating Blueprint Methodology</h2>
+          <p className="text-secondary mb-8">
+            The Dating Blueprint extends the RELATE assessment into four psychological layers that a persona code alone cannot capture. Where the core assessment measures what you do in relationships, the Blueprint examines why you do it: the history, emotions, decision patterns, and identity structures underneath your results. It is a 30-minute guided assessment that produces a 3,000-word individualized report.
+          </p>
+
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Relational History</h3>
+              <p className="explainer leading-relaxed">
+                This quadrant draws from Mary Main&apos;s Adult Attachment Interview (AAI) framework, which demonstrated that the way adults narrate their early attachment experiences predicts their current attachment behavior more reliably than the experiences themselves. The Blueprint does not replicate the AAI, but it borrows its core insight: what matters is not what happened to you, but whether you have integrated what happened. The concept of earned security, where individuals with difficult attachment histories develop secure functioning through reflection and corrective experience, is central to how this quadrant is scored and interpreted.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Trigger Emotion</h3>
+              <p className="explainer leading-relaxed">
+                This quadrant identifies the specific emotion driving your attachment behavior under stress. It builds on Silvan Tomkins&apos; affect theory, which established that discrete emotions organize perception and action in fundamentally different ways. The assessment draws on Kaufman&apos;s compass of shame model, Bren&eacute; Brown&apos;s research on vulnerability and shame resilience, and Gottman&apos;s finding that contempt, a specific emotional stance, is the single strongest predictor of relationship dissolution. Two people with the same attachment style but different trigger emotions will behave in meaningfully different ways under pressure. This quadrant captures that distinction.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Decision Architecture</h3>
+              <p className="explainer leading-relaxed">
+                This quadrant maps what happens in the gap between feeling an emotion and acting on it. It draws on Gottman&apos;s research on flooding, the physiological state where heart rate exceeds 100 BPM and rational processing degrades, as well as Shaver and Mikulincer&apos;s model of hyperactivating and deactivating strategies in the attachment system. Hyperactivating strategies amplify distress signals to pull a partner closer. Deactivating strategies suppress distress to maintain independence. The Blueprint identifies which strategy you default to, how quickly you escalate, and what your partners actually experience as a result.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Persona in Practice</h3>
+              <p className="explainer leading-relaxed">
+                This quadrant examines how your RELATE persona operates in real relationship contexts. It draws on Jeffrey Young&apos;s schema therapy framework, which identifies early maladaptive schemas that shape how people interpret and respond to relational events. It also incorporates concepts from Internal Family Systems (IFS), particularly the distinction between authentic self-expression and protective parts that have taken over. The clinical concept of ego syntonic versus ego dystonic behavior is central: ego syntonic patterns feel natural and identity-consistent even when they are damaging, while ego dystonic patterns feel foreign and distressing. This quadrant identifies where your persona is genuine expression and where it has become an automatic protection system that you may not recognize as such.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">The Report</h3>
+              <p className="explainer leading-relaxed">
+                The Blueprint produces a 3,000-word report organized section by section across the four quadrants. The report is written in second person, addressing you directly rather than describing a type. Each section synthesizes your assessment responses into a narrative that explains your specific patterns, not the patterns typical of people who scored similarly. The report is generated against a quality rubric that ensures clinical accuracy, emotional nuance, actionable specificity, and internal consistency across all four quadrants.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">The Growth System</h3>
+              <p className="explainer leading-relaxed">
+                Each Blueprint report includes a personalized growth plan derived from the four quadrants. The plan identifies specific areas where change would have the highest impact on your relationship outcomes. It includes targeted journaling prompts designed to deepen self-awareness in each quadrant, as well as a gamified development track that breaks long-term growth into concrete, measurable steps. The development track is designed to maintain engagement over time, turning insight into sustained behavioral change rather than a one-time reading experience.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <p className="text-sm text-secondary italic leading-relaxed">
+              The Dating Blueprint is a psychoeducational framework built on established clinical constructs. It is not a diagnostic instrument and does not replace licensed therapy or clinical assessment.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="px-6 py-20 bg-stone-50 border-t border-border">
         <div className="max-w-3xl mx-auto text-center">

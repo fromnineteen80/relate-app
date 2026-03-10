@@ -5,9 +5,9 @@ import type { ReactNode, ErrorInfo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
-import { config, PRICING, type PricingTier } from '@/lib/config';
+import { config, PRICING, BLUEPRINT_PRICING, type PricingTier } from '@/lib/config';
 import { getMockPaymentStatus, mockPurchase } from '@/lib/mock/payments';
-import { fetchPaymentTier, refreshPaymentTier } from '@/lib/payments';
+import { fetchPaymentTier, refreshPaymentTier, fetchBlueprintAccess } from '@/lib/payments';
 import { getProfile } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
@@ -191,6 +191,9 @@ function AccountPage() {
   const [discountSubmitting, setDiscountSubmitting] = useState(false);
   const [discountResult, setDiscountResult] = useState<{ success?: boolean; message?: string; error?: string } | null>(null);
   const [activeDiscountCode, setActiveDiscountCode] = useState<string | null>(null);
+  // Blueprint add-on state
+  const [blueprintPurchased, setBlueprintPurchased] = useState(false);
+  const [blueprintProduct, setBlueprintProduct] = useState<string | null>(null);
 
   // Fetch payment tier (works in both mock and real mode)
   useEffect(() => {
@@ -202,6 +205,11 @@ function AccountPage() {
       const { tier } = await fetcher(user!.email);
       setCurrentTier(tier);
       if (isSuccess) setPaymentSuccess(true);
+
+      // Check Blueprint access
+      const bp = await fetchBlueprintAccess(user!.email);
+      setBlueprintPurchased(bp.purchased);
+      setBlueprintProduct(bp.product);
 
       // Also check for active discount code
       try {
@@ -384,9 +392,17 @@ function AccountPage() {
         setDiscountResult({ success: true, message: data.message });
         // Refresh payment tier after successful code redemption
         if (data.percent === 100) {
-          localStorage.removeItem('relate_payment_tier');
-          const { tier } = await refreshPaymentTier(user?.email);
-          setCurrentTier(tier);
+          if (data.tier === 'blueprint' || data.tier === 'blueprint_couples') {
+            // Blueprint add-on code: refresh blueprint access
+            localStorage.removeItem('relate_blueprint_access');
+            const bp = await fetchBlueprintAccess(user?.email);
+            setBlueprintPurchased(bp.purchased);
+            setBlueprintProduct(bp.product);
+          } else {
+            localStorage.removeItem('relate_payment_tier');
+            const { tier } = await refreshPaymentTier(user?.email);
+            setCurrentTier(tier);
+          }
         }
         setDiscountCode('');
       } else {
@@ -667,6 +683,88 @@ function AccountPage() {
                   <a href={`/api/checkout?product=couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
                     Upgrade to Couples
                   </a>
+                )}
+              </div>
+            )}
+
+            {/* Blueprint add-on card */}
+            {currentTier !== 'free' && (
+              blueprintPurchased ? (
+                <div className="flex items-center gap-3 p-3 mb-3 rounded-md border bg-stone-50 border-stone-300">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 bg-stone-200 text-stone-600">
+                    &#10003;
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">{blueprintProduct === 'blueprint_couples' ? 'Blueprint Couples' : 'Blueprint'}: Active</p>
+                    <p className="text-xs text-secondary">Deep attachment style assessment, personalized report, and growth plan.</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-3 border rounded-md border-border mt-1">
+                  <p className="text-[10px] uppercase tracking-wider text-secondary mb-1">Add-on</p>
+                  <p className="text-sm font-medium">Attachment Style Blueprint</p>
+                  <p className="font-serif text-xl font-semibold my-1">{BLUEPRINT_PRICING.blueprint.priceDisplay}</p>
+                  <p className="text-xs text-secondary mb-3">A 30-minute deep assessment revealing the psychology underneath your persona. 3,000-word personalized report.</p>
+                  {config.useMockPayments ? (
+                    <button onClick={async () => {
+                      localStorage.setItem('relate_blueprint_purchased', JSON.stringify({ purchased: true, product: 'blueprint' }));
+                      setBlueprintPurchased(true);
+                      setBlueprintProduct('blueprint');
+                    }} className="text-xs w-full btn-secondary">
+                      Add Blueprint
+                    </button>
+                  ) : (
+                    <a href={`/api/blueprint/checkout?product=blueprint&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
+                      Add Blueprint
+                    </a>
+                  )}
+                  {hasPartner && !blueprintPurchased && (
+                    <div className="mt-2">
+                      <p className="text-xs text-secondary">Or add for both partners:</p>
+                      {config.useMockPayments ? (
+                        <button onClick={async () => {
+                          localStorage.setItem('relate_blueprint_purchased', JSON.stringify({ purchased: true, product: 'blueprint_couples' }));
+                          setBlueprintPurchased(true);
+                          setBlueprintProduct('blueprint_couples');
+                        }} className="text-xs w-full btn-secondary mt-1">
+                          Add Blueprint Couples ({BLUEPRINT_PRICING.blueprint_couples.priceDisplay})
+                        </button>
+                      ) : (
+                        <a href={`/api/blueprint/checkout?product=blueprint_couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary mt-1">
+                          Add Blueprint Couples ({BLUEPRINT_PRICING.blueprint_couples.priceDisplay})
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )
+            )}
+
+            {/* Discount code for all users — works for both tiers and Blueprint add-ons */}
+            {currentTier !== 'free' && !blueprintPurchased && (
+              <div className="mt-3 pt-3 border-t border-border">
+                <p className="text-xs text-secondary mb-2">Have a discount code?</p>
+                <form onSubmit={handleDiscountCode} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={discountCode}
+                    onChange={e => setDiscountCode(e.target.value.toUpperCase())}
+                    placeholder="Enter code"
+                    className="input flex-1 text-xs font-mono"
+                  />
+                  <button
+                    type="submit"
+                    disabled={discountSubmitting || !discountCode.trim()}
+                    className="btn-secondary text-xs whitespace-nowrap"
+                  >
+                    {discountSubmitting ? 'Applying...' : 'Apply'}
+                  </button>
+                </form>
+                {discountResult?.success && (
+                  <p className="text-xs text-success mt-2">{discountResult.message}</p>
+                )}
+                {discountResult?.error && (
+                  <p className="text-xs text-danger mt-2">{discountResult.error}</p>
                 )}
               </div>
             )}
