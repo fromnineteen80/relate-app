@@ -1741,6 +1741,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const datingGender = demographics?.gender === 'M' ? 'women' : demographics?.gender === 'W' ? 'men' : 'singles';
+  const userGender = demographics?.gender === 'M' ? 'men' : demographics?.gender === 'W' ? 'women' : 'singles';
 
   // Chart dimensions
   const W = 560, H = 480;
@@ -1959,6 +1960,13 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
             </div>
           );
         })()}
+
+        {/* ── Explainer paragraph ── */}
+        {topMetrosInfo?.homeMetroRank != null && marketData?.location && (
+          <p className="text-[11px] text-secondary mt-3 mb-0">
+            The {(marketData.location.cbsaLabel || marketData.location.cbsaName || 'your area').split(',')[0]} metro area ranks #{topMetrosInfo.homeMetroRank} nationally among metro areas where you are competitive amongst other local single {userGender} (at least a 75 score). If your ideal match pool and the number of {datingGender} feels small, consider how and where you are looking for love. Are dating apps working? Are they worth the investment? Are there things you can do to improve your desirability to {datingGender} in your ideal match pool? Do you need to adjust your expectations? Could you expand your search to other metro areas where you have better chances of matching?
+          </p>
+        )}
       </div>
 
       {/* Metro legend */}
@@ -1993,13 +2001,6 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
       </div>
       </div>
 
-      {/* ── Explainer paragraph ── */}
-      {topMetrosInfo?.homeMetroRank != null && marketData?.location && (
-        <p className="explainer mt-4">
-          The {(marketData.location.cbsaLabel || marketData.location.cbsaName || 'your area').split(',')[0]} metro area ranks #{topMetrosInfo.homeMetroRank} nationally among metro areas where you are competitive amongst your single peers (at least a 75 score). If your ideal match pool and the number of {datingGender} feels small, consider how and where you are looking for love. Are dating apps working? Are they worth the investment? Are there things you can do to improve your desirability to {datingGender} in your ideal match pool? Do you need to adjust your expectations? Could you expand your search to other metro areas where you have better chances of matching?
-        </p>
-      )}
-
       {/* ── Worst Metros ── */}
       {worstMetros && worstMetros.length > 0 && (
         <section className="card mb-4 mt-4">
@@ -2007,7 +2008,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
             <Icon name="trending_down" size={20} className="text-accent" />
             Your Worst Large Metro Areas
           </h3>
-          <p className="explainer mb-3">Bottom 10 metros (pop. 750k+) ranked by smallest ideal match pool.</p>
+          <p className="explainer mb-3">Bottom 10 metros (population set at 750k+) ranked by smallest ideal match pool.</p>
           <div className="space-y-0">
             {/* Column headers */}
             <div className="flex items-end gap-2.5 py-1 px-1.5 border-b border-[#e7e5e4]">
