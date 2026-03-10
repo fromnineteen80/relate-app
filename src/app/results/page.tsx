@@ -1988,12 +1988,11 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
 
       {/* ── Worst Metros ── */}
       {worstMetros && worstMetros.length > 0 && (
-        <>
-          <div className="border-t border-[#f0efed] my-4" />
-          <h4 className="font-serif text-base font-semibold mb-1 flex items-center gap-2">
-            <Icon name="trending_down" size={18} className="text-accent" />
+        <section className="card mb-4 mt-4">
+          <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2">
+            <Icon name="trending_down" size={20} className="text-accent" />
             Your Worst Large Metro Areas
-          </h4>
+          </h3>
           <p className="explainer mb-3">Bottom 10 metros (pop. 1.5M+) ranked by smallest ideal match pool.</p>
           <div className="space-y-0">
             {/* Column headers */}
@@ -2044,7 +2043,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
           <p className="text-[10px] text-secondary mt-2">
             per 10k = ideal matches per 10,000 local single {datingGender}
           </p>
-        </>
+        </section>
       )}
     </section>
   );
