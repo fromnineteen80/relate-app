@@ -19,6 +19,7 @@ type SubNavProps = {
 export function SubNav({ items = [] }: SubNavProps) {
   const pathname = usePathname();
   const [hasResults, setHasResults] = useState(false);
+  const [hasBlueprintResults, setHasBlueprintResults] = useState(false);
   const [hasPartner, setHasPartner] = useState(false);
   const [topMatchCode, setTopMatchCode] = useState<string | null>(null);
   const [seekingLabel, setSeekingLabel] = useState<string>('Matches');
@@ -34,6 +35,11 @@ export function SubNav({ items = [] }: SubNavProps) {
           setTopMatchCode(parsed.matches[0].code);
         }
       } catch { /* */ }
+    }
+
+    // Check for Blueprint results
+    if (localStorage.getItem('relate_blueprint_results')) {
+      setHasBlueprintResults(true);
     }
 
     // Check for partner
@@ -70,6 +76,7 @@ export function SubNav({ items = [] }: SubNavProps) {
   const universalLinks: SubNavItem[] = [
     { id: 'account', label: 'Account', href: '/account', show: true },
     { id: 'results', label: 'Results', href: '/results', show: hasResults },
+    { id: 'attachment', label: 'Attachment Style', href: '/results/attachment', show: hasResults && hasBlueprintResults },
     { id: 'growth', label: 'Growth Plan', href: '/growth', show: hasResults },
     { id: 'couples', label: 'Couples', href: '/results/compare', show: hasPartner },
     { id: 'astrology', label: 'Astrology', href: '/results/astrology', show: hasResults && astrologyEnabled },
@@ -81,6 +88,7 @@ export function SubNav({ items = [] }: SubNavProps) {
   // Build results subpage links when hasResults and on a results subpage (but not couples pages)
   const resultsSubLinks: SubNavItem[] = (hasResults && isResultsSubpage && !isCouplesPage && !isAstrologyPage) ? [
     { id: 'persona', label: 'Your Persona', href: '/results/persona', show: !isMatchPage },
+    { id: 'blueprint-results', label: 'Attachment Style', href: '/results/attachment', show: hasBlueprintResults },
     { id: 'match', label: 'Your #1 Match', href: topMatchCode ? `/results/match/${topMatchCode}` : '/results/matches', show: !!topMatchCode },
     { id: 'matches', label: `All Potential ${seekingLabel}`, href: '/results/matches', show: true },
   ] : [];

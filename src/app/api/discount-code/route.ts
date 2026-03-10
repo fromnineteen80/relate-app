@@ -5,9 +5,11 @@ import type { PricingTier } from '@/lib/config';
 /**
  * Discount code format: {PERCENT}-{TIER}-{MONTH}-{YEAR}
  * Examples: 100-PRO-MARCH-2026, 50-PREMIUM-MARCH-2026, 100-PLUS-APRIL-2026, 100-COUPLES-MARCH-2026
+ *           100-ATTACH-MARCH-2026 (Blueprint attachment style add-on)
+ *           100-ATTACHCOUPLES-MARCH-2026 (Blueprint couples add-on)
  *
  * - PERCENT: 100 = fully free, 50 = half price, etc.
- * - TIER: PLUS, PREMIUM, PRO, COUPLES
+ * - TIER: PLUS, PREMIUM, PRO, COUPLES, ATTACH, ATTACHCOUPLES
  * - MONTH: Full month name, uppercase
  * - YEAR: 4-digit year
  *
@@ -15,11 +17,15 @@ import type { PricingTier } from '@/lib/config';
  * Codes are valid only during the specified month+year.
  */
 
-const VALID_TIERS: Record<string, PricingTier> = {
+type ProductKey = PricingTier | 'blueprint' | 'blueprint_couples';
+
+const VALID_TIERS: Record<string, ProductKey> = {
   PLUS: 'plus',
   PREMIUM: 'premium',
   PRO: 'pro',
   COUPLES: 'couples',
+  ATTACH: 'blueprint',
+  ATTACHCOUPLES: 'blueprint_couples',
 };
 
 const MONTHS = [
@@ -27,7 +33,7 @@ const MONTHS = [
   'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER',
 ];
 
-function parseDiscountCode(code: string): { percent: number; tier: PricingTier; month: number; year: number } | null {
+function parseDiscountCode(code: string): { percent: number; tier: ProductKey; month: number; year: number } | null {
   const parts = code.toUpperCase().trim().split('-');
   if (parts.length !== 4) return null;
 
@@ -84,8 +90,8 @@ export async function POST(request: NextRequest) {
         status: 'completed',
       });
 
-      // For couples tier, also grant access to partner if provided
-      if (parsed.tier === 'couples' && partnerEmail) {
+      // For couples tier or blueprint_couples, also grant access to partner if provided
+      if ((parsed.tier === 'couples' || parsed.tier === 'blueprint_couples') && partnerEmail) {
         await supabase.from('payments').insert({
           customer_email: partnerEmail,
           product: parsed.tier,

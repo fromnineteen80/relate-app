@@ -39,6 +39,29 @@ const MODULES = [
   },
 ];
 
+const BLUEPRINT_FEATURES = [
+  {
+    num: '01',
+    title: 'Relational History',
+    desc: 'Where your patterns came from, what your nervous system concluded about love, and whether that conclusion has ever been revised.',
+  },
+  {
+    num: '02',
+    title: 'Trigger Emotion',
+    desc: 'The specific emotional driver underneath your attachment behavior. The same attachment type looks completely different depending on what emotion is actually running it.',
+  },
+  {
+    num: '03',
+    title: 'Decision Architecture',
+    desc: 'What happens in the gap between feeling something and acting on it. This determines most of what your partners actually experience.',
+  },
+  {
+    num: '04',
+    title: 'Persona in Practice',
+    desc: 'How your RELATE persona shows up specifically in relationships. Where it is genuine expression and where it has become a protection system.',
+  },
+];
+
 const PERSONAS_PREVIEW = [
   { name: 'The Gladiator', code: 'ACEG', desc: 'Fitness + Leadership + Adventure + Traditional' },
   { name: 'The Maverick', code: 'ACEH', desc: 'Fitness + Leadership + Adventure + Egalitarian' },
@@ -191,6 +214,38 @@ export default function LandingPage() {
                 <p className="text-sm text-secondary leading-relaxed">{item.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── The Blueprint ── */}
+      <section className="px-6 py-20">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-14">
+            <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">The Blueprint</p>
+            <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">Go deeper than your persona.</h2>
+            <p className="text-secondary max-w-lg mx-auto">
+              The Dating Blueprint is a 30-minute deep assessment that reveals the four psychological layers underneath your RELATE results. Your history. The emotion driving your behavior. How you make decisions under pressure. And where your persona is working for you versus quietly working against you. The result is a 3,000-word portrait of how you specifically love, not how people like you tend to love.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {BLUEPRINT_FEATURES.map((f) => (
+              <div key={f.num} className="card flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
+                <div className="flex items-center gap-4 md:w-48 flex-shrink-0">
+                  <span className="font-mono text-3xl font-light text-stone-300">{f.num}</span>
+                  <h3 className="font-serif text-lg font-semibold">{f.title}</h3>
+                </div>
+                <p className="text-sm text-secondary leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link href="/blueprint" className="btn-primary text-base px-8 py-3">
+              Explore the Blueprint
+            </Link>
+            <p className="text-xs text-secondary mt-3">$49 one-time add-on</p>
           </div>
         </div>
       </section>

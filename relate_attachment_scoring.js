@@ -22,11 +22,11 @@ const { getAttachmentQuestions, buildQuadrantFourQuestions } = require('./relate
 // ============================================================================
 
 const STORAGE_KEYS = {
-  checkpoint: 'relate_attachment_checkpoint',
-  results: 'relate_attachment_results',
-  report: 'relate_attachment_report',
-  growth: 'relate_attachment_growth',
-  couples: 'relate_attachment_couples'
+  checkpoint: 'relate_blueprint_checkpoint',
+  results: 'relate_blueprint_results',
+  report: 'relate_blueprint_report',
+  growth: 'relate_blueprint_growth',
+  couples: 'relate_blueprint_couples'
 };
 
 // Quadrant One pattern definitions

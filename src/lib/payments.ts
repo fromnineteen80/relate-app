@@ -71,3 +71,43 @@ export async function refreshPaymentTier(email?: string): Promise<{ paid: boolea
 export function higherTier(a: PricingTier, b: PricingTier): PricingTier {
   return TIER_PRIORITY[a] >= TIER_PRIORITY[b] ? a : b;
 }
+
+/**
+ * Checks if the user has purchased the Blueprint add-on.
+ * Returns { purchased: boolean, product: 'blueprint' | 'blueprint_couples' | null }
+ */
+export async function fetchBlueprintAccess(email?: string): Promise<{ purchased: boolean; product: 'blueprint' | 'blueprint_couples' | null }> {
+  if (config.testFullAccess || (config as any).testBlueprintAccess) {
+    return { purchased: true, product: 'blueprint' };
+  }
+
+  if (config.useMockPayments) {
+    const stored = localStorage.getItem('relate_blueprint_purchased');
+    if (stored) return JSON.parse(stored);
+    return { purchased: false, product: null };
+  }
+
+  // Check localStorage cache
+  const cached = localStorage.getItem('relate_blueprint_access');
+  if (cached) {
+    try {
+      const parsed = JSON.parse(cached);
+      if (parsed.timestamp && Date.now() - parsed.timestamp < 60_000) {
+        return { purchased: parsed.purchased, product: parsed.product };
+      }
+    } catch { /* ignore */ }
+  }
+
+  if (!email) return { purchased: false, product: null };
+
+  try {
+    const res = await fetch(`/api/payment-status?email=${encodeURIComponent(email)}&check=blueprint`);
+    if (!res.ok) return { purchased: false, product: null };
+    const data = await res.json();
+    const result = { purchased: !!data.blueprintProduct, product: data.blueprintProduct || null };
+    localStorage.setItem('relate_blueprint_access', JSON.stringify({ ...result, timestamp: Date.now() }));
+    return result;
+  } catch {
+    return { purchased: false, product: null };
+  }
+}

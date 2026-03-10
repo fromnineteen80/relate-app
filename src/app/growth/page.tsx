@@ -388,6 +388,88 @@ export default function GrowthPage() {
           </div>
         )}
 
+        {/* ── Blueprint Growth Track ── */}
+        {(() => {
+          const blueprintGrowthRaw = typeof window !== 'undefined' ? localStorage.getItem('relate_blueprint_growth') : null;
+          const blueprintPurchased = typeof window !== 'undefined' ? localStorage.getItem('relate_blueprint_results') : null;
+
+          if (blueprintGrowthRaw) {
+            try {
+              const bg = JSON.parse(blueprintGrowthRaw);
+              return (
+                <div className="space-y-4 pt-6 border-t border-border">
+                  <div>
+                    <p className="text-[10px] font-mono text-accent uppercase tracking-widest mb-1">Attachment Style Add-On</p>
+                    <h2 className="font-serif text-xl font-semibold">Blueprint Growth Track</h2>
+                  </div>
+
+                  {bg.part1 && (
+                    <div className="card">
+                      <h3 className="font-serif text-sm font-semibold mb-2">What the Blueprint Adds to Your RELATE Portrait</h3>
+                      <p className="text-sm text-secondary leading-relaxed whitespace-pre-line">{bg.part1}</p>
+                    </div>
+                  )}
+
+                  {bg.part2 && Array.isArray(bg.part2) && bg.part2.length > 0 && (
+                    <div className="card">
+                      <h3 className="font-serif text-sm font-semibold mb-2">Reflection Prompts</h3>
+                      <ol className="list-decimal list-inside space-y-2">
+                        {bg.part2.map((prompt: string, i: number) => (
+                          <li key={i} className="text-sm text-secondary leading-relaxed">{prompt}</li>
+                        ))}
+                      </ol>
+                    </div>
+                  )}
+
+                  {bg.part3 && (
+                    <div className="card">
+                      <h3 className="font-serif text-sm font-semibold mb-2">The Specific Work</h3>
+                      <p className="text-sm text-secondary leading-relaxed whitespace-pre-line">{bg.part3}</p>
+                    </div>
+                  )}
+
+                  {bg.part4 && (
+                    <div className="card">
+                      <h3 className="font-serif text-sm font-semibold mb-2">What to Watch For</h3>
+                      <p className="text-sm text-secondary leading-relaxed whitespace-pre-line">{bg.part4}</p>
+                    </div>
+                  )}
+                </div>
+              );
+            } catch { /* invalid JSON, fall through */ }
+          }
+
+          if (blueprintPurchased) {
+            return (
+              <div className="space-y-4 pt-6 border-t border-border">
+                <div>
+                  <p className="text-[10px] font-mono text-accent uppercase tracking-widest mb-1">Attachment Style Add-On</p>
+                  <h2 className="font-serif text-xl font-semibold">Blueprint Growth Track</h2>
+                </div>
+                <div className="card border-accent/30 text-center py-8">
+                  <Icon name="psychology" size={32} className="text-accent mx-auto mb-3" />
+                  <p className="text-sm font-medium mb-2">Your Blueprint growth plan hasn&apos;t been generated yet</p>
+                  <p className="text-xs text-secondary mb-4">Complete the Dating Blueprint to unlock personalized attachment-based growth exercises.</p>
+                  <Link href="/blueprint" className="btn-primary text-xs">Complete the Blueprint</Link>
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <div className="pt-6 border-t border-border">
+              <div className="card bg-stone-50 border-dashed border-stone-300 text-center py-8">
+                <Icon name="lock" size={28} className="text-secondary mx-auto mb-3" />
+                <p className="text-sm font-medium mb-1">Unlock deeper growth insights with the Dating Blueprint</p>
+                <p className="text-xs text-secondary mb-4">Attachment-based growth exercises tailored to your unique patterns.</p>
+                <Link href="/blueprint" className="text-xs text-accent hover:underline font-medium">
+                  Learn More <Icon name="arrow_forward" size={12} />
+                </Link>
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Navigation */}
         <div className="flex gap-3 flex-wrap pt-4">
           <Link href="/results" className="btn-secondary text-xs">Results</Link>

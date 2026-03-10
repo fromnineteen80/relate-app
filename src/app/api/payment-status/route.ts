@@ -35,14 +35,21 @@ export async function GET(request: NextRequest) {
 
     // Find the highest tier among all completed payments
     let highestTier: PricingTier = 'free';
+    let blueprintProduct: string | null = null;
     for (const payment of payments) {
-      const tier = payment.product as string;
-      if (tier in TIER_PRIORITY && TIER_PRIORITY[tier] > TIER_PRIORITY[highestTier]) {
-        highestTier = tier as PricingTier;
+      const product = payment.product as string;
+      if (product in TIER_PRIORITY && TIER_PRIORITY[product] > TIER_PRIORITY[highestTier]) {
+        highestTier = product as PricingTier;
+      }
+      // Track Blueprint add-on purchases (blueprint_couples supersedes blueprint)
+      if (product === 'blueprint_couples') {
+        blueprintProduct = 'blueprint_couples';
+      } else if (product === 'blueprint' && blueprintProduct !== 'blueprint_couples') {
+        blueprintProduct = 'blueprint';
       }
     }
 
-    return NextResponse.json({ tier: highestTier });
+    return NextResponse.json({ tier: highestTier, blueprintProduct });
   } catch (err) {
     console.error('Payment status error:', err);
     return NextResponse.json({ tier: 'free' });

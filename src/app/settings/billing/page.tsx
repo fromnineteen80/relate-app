@@ -3,8 +3,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
-import { PRICING, type PricingTier, config } from '@/lib/config';
-import { fetchPaymentTier } from '@/lib/payments';
+import { PRICING, BLUEPRINT_PRICING, type PricingTier, config } from '@/lib/config';
+import { fetchPaymentTier, fetchBlueprintAccess } from '@/lib/payments';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
 import { SiteFooter } from '@/components/SiteFooter';
@@ -48,6 +48,8 @@ export default function BillingPage() {
   const [portalLoading, setPortalLoading] = useState(false);
   const [isTestMode, setIsTestMode] = useState(false);
   const [partner, setPartner] = useState<PartnerInfo | null>(null);
+  const [blueprintPurchased, setBlueprintPurchased] = useState(false);
+  const [blueprintProduct, setBlueprintProduct] = useState<string | null>(null);
 
   const loadSubscription = useCallback(async () => {
     if (!user?.email) return;
@@ -67,6 +69,10 @@ export default function BillingPage() {
       setSubscription(data.subscription || null);
       setLegacyPayment(data.legacyPayment || false);
       setDiscountCode(data.discountCode || null);
+      // Check Blueprint access
+      const bp = await fetchBlueprintAccess(user.email);
+      setBlueprintPurchased(bp.purchased);
+      setBlueprintProduct(bp.product);
       // Load partner info
       try {
         const partnerRes = await fetch(`/api/partner-lookup?userId=${user.id}`);
@@ -383,6 +389,53 @@ export default function BillingPage() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* ── Blueprint Add-On ── */}
+        {paid && !isTestMode && (
+          <div className="card mb-4">
+            <h3 className="font-serif font-semibold mb-3">Add-Ons</h3>
+            {blueprintPurchased ? (
+              <div className="flex items-center gap-3 p-3 rounded-md border bg-stone-50 border-stone-300">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm flex-shrink-0 bg-accent/10 text-accent">
+                  <Icon name="check" size={18} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{blueprintProduct === 'blueprint_couples' ? 'Blueprint Couples' : 'Blueprint'}: Active</p>
+                  <p className="text-xs text-secondary">Deep attachment style assessment, personalized report, and growth plan.</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-serif text-lg font-semibold">{blueprintProduct === 'blueprint_couples' ? BLUEPRINT_PRICING.blueprint_couples.priceDisplay : BLUEPRINT_PRICING.blueprint.priceDisplay}</p>
+                  <p className="text-[10px] text-secondary">one-time</p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="p-3 border rounded-md border-accent">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-sm font-medium">Blueprint</p>
+                    <p className="font-mono text-sm">{BLUEPRINT_PRICING.blueprint.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
+                  </div>
+                  <p className="text-xs text-secondary mb-3">A 30-minute deep assessment revealing the psychology underneath your persona. 3,000-word personalized report and growth plan.</p>
+                  <a href={`/api/blueprint/checkout?product=blueprint&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-primary">
+                    Add Blueprint
+                  </a>
+                </div>
+                {partner && (
+                  <div className="p-3 border rounded-md border-border">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-sm font-medium">Blueprint Couples</p>
+                      <p className="font-mono text-sm">{BLUEPRINT_PRICING.blueprint_couples.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
+                    </div>
+                    <p className="text-xs text-secondary mb-3">Both partners get the full Blueprint plus a couples overlay report analyzing your dynamic together.</p>
+                    <a href={`/api/blueprint/checkout?product=blueprint_couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
+                      Add Blueprint Couples
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 
