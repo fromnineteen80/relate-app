@@ -2007,7 +2007,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
             <Icon name="trending_down" size={20} className="text-accent" />
             Your Worst Large Metro Areas
           </h3>
-          <p className="explainer mb-3">Bottom 10 metros (pop. 750k+) ranked by smallest ideal match pool.</p>
+          <p className="explainer mb-3">Bottom 10 metros (population set at 750k+) ranked by smallest ideal match pool.</p>
           <div className="space-y-0">
             {/* Column headers */}
             <div className="flex items-end gap-2.5 py-1 px-1.5 border-b border-[#e7e5e4]">
