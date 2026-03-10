@@ -1,5 +1,5 @@
 /**
- * RELATE Dating Blueprint - Prompt Template Library
+ * RELATE Attachment Deep Dive - Prompt Template Library
  *
  * Contains all report generation prompts for:
  *   - Six individual report sections (Section 6)
@@ -74,7 +74,7 @@ function getRelationalHistoryPrompt(context) {
   const q1Responses = (flaggedResponses || []).filter(r => r.quadrant === '1');
 
   return {
-    system: `You are generating Section 1 of a Dating Blueprint report: Relational History.
+    system: `You are generating Section 1 of a Attachment Deep Dive report: Relational History.
 ${WRITING_STANDARD}
 
 ### TONE: ${TONE_PROGRESSION[1]}
@@ -112,7 +112,7 @@ function getEmotionUnderneathPrompt(context, previousSections) {
   const q2Responses = (flaggedResponses || []).filter(r => r.quadrant === '2');
 
   return {
-    system: `You are generating Section 2 of a Dating Blueprint report: The Emotion Underneath.
+    system: `You are generating Section 2 of a Attachment Deep Dive report: The Emotion Underneath.
 ${WRITING_STANDARD}
 
 ### TONE: ${TONE_PROGRESSION[2]}
@@ -152,7 +152,7 @@ function getNavigateUncertaintyPrompt(context, previousSections) {
   const q3Responses = (flaggedResponses || []).filter(r => r.quadrant === '3');
 
   return {
-    system: `You are generating Section 3 of a Dating Blueprint report: How You Navigate Uncertainty.
+    system: `You are generating Section 3 of a Attachment Deep Dive report: How You Navigate Uncertainty.
 ${WRITING_STANDARD}
 
 ### TONE: ${TONE_PROGRESSION[3]}
@@ -195,7 +195,7 @@ function getPersonaInContextPrompt(context, previousSections) {
   const personaName = context.personaName || 'your persona';
 
   return {
-    system: `You are generating Section 4 of a Dating Blueprint report: Your Persona in This Context.
+    system: `You are generating Section 4 of a Attachment Deep Dive report: Your Persona in This Context.
 ${WRITING_STANDARD}
 
 ### TONE: ${TONE_PROGRESSION[4]}
@@ -253,7 +253,7 @@ function getPortraitPrompt(context, previousSections) {
   const { quadrant1, quadrant2, quadrant3, quadrant4, emergentPattern, attachmentType } = context;
 
   return {
-    system: `You are generating Section 5 of a Dating Blueprint report: The Portrait.
+    system: `You are generating Section 5 of a Attachment Deep Dive report: The Portrait.
 
 This is the synthesis section. It is built ENTIRELY from cross-Quadrant inference. It does NOT summarize the four preceding sections. It draws conclusions that the individual sections could not reach alone. It names patterns that only become visible when all four Quadrants are read together.
 
@@ -312,7 +312,7 @@ function getPartnershipPrompt(context, previousSections) {
   const personaName = context.personaName || 'this person';
 
   return {
-    system: `You are generating Section 6 of a Dating Blueprint report: What This Means for Partnership.
+    system: `You are generating Section 6 of a Attachment Deep Dive report: What This Means for Partnership.
 
 This section is addressed to a DIFFERENT person, a current or future partner, not to the user who completed the assessment. The shift in addressee must be marked clearly at the opening.
 
@@ -356,7 +356,7 @@ function getGrowingEdgePrompt(context, previousSections) {
   const { quadrant1, quadrant2, quadrant3, quadrant4 } = context;
 
   return {
-    system: `You are generating Section 7 of a Dating Blueprint report: The Growing Edge.
+    system: `You are generating Section 7 of a Attachment Deep Dive report: The Growing Edge.
 
 This is the closing section. It is addressed back to the user (not the partner).
 
@@ -401,32 +401,32 @@ Write the section now.`,
 // ============================================================================
 
 /**
- * Returns the prompt for Growth Plan Part 1: What the Blueprint Adds
+ * Returns the prompt for Growth Plan Part 1: What the Attachment Deep Dive Adds
  */
 function getGrowthPlanPart1Prompt(context) {
-  const { blueprintResults, assessmentResults, personaMetadata } = context;
+  const { attachmentResults, assessmentResults, personaMetadata } = context;
 
   return {
-    system: `You are generating Part 1 of a Dating Blueprint Growth Plan: What the Blueprint Adds to Your RELATE Portrait.
+    system: `You are generating Part 1 of a Attachment Deep Dive Growth Plan: What the Attachment Deep Dive Adds to Your RELATE Portrait.
 
-This section draws explicit connections between the Blueprint Quadrant results and the existing RELATE persona dimensions. Tell the user specifically how the Blueprint findings explain or deepen what the RELATE assessment found.
+This section draws explicit connections between the Attachment Deep Dive Quadrant results and the existing RELATE persona dimensions. Tell the user specifically how the Attachment Deep Dive findings explain or deepen what the RELATE assessment found.
 
 ${WRITING_STANDARD}
 
 ### INSTRUCTIONS:
-- Name the specific connections between Blueprint findings and RELATE persona dimensions.
-- If the RELATE assessment identified certain persona traits and the Blueprint found a specific trigger emotion with a specific decision mode, name the connection: what the persona presentation is partly doing on behalf of the deeper architecture.
-- The Blueprint finding does not replace the RELATE finding. It explains it at a level of depth the RELATE assessment was not designed to reach.
+- Name the specific connections between Attachment Deep Dive findings and RELATE persona dimensions.
+- If the RELATE assessment identified certain persona traits and the Attachment Deep Dive found a specific trigger emotion with a specific decision mode, name the connection: what the persona presentation is partly doing on behalf of the deeper architecture.
+- The Attachment Deep Dive finding does not replace the RELATE finding. It explains it at a level of depth the RELATE assessment was not designed to reach.
 
 ### INPUTS:
 Persona: ${assessmentResults.personaName || assessmentResults.personaCode}
 Persona Traits: ${personaMetadata.traits}
 Attachment Type: ${assessmentResults.attachmentType}
-Q1 Profile: ${blueprintResults.quadrant1.profileName}
-Q2 Profile: ${blueprintResults.quadrant2.profileName}
-Q3 Profile: ${blueprintResults.quadrant3.profileName}
-Q4 Composite: ${blueprintResults.quadrant4.compositeDescriptor}
-${blueprintResults.emergentPattern ? `Emergent Pattern: ${blueprintResults.emergentPattern.patternName}` : ''}
+Q1 Profile: ${attachmentResults.quadrant1.profileName}
+Q2 Profile: ${attachmentResults.quadrant2.profileName}
+Q3 Profile: ${attachmentResults.quadrant3.profileName}
+Q4 Composite: ${attachmentResults.quadrant4.compositeDescriptor}
+${attachmentResults.emergentPattern ? `Emergent Pattern: ${attachmentResults.emergentPattern.patternName}` : ''}
 
 Write Part 1 now.`,
     maxTokens: 600
@@ -437,10 +437,10 @@ Write Part 1 now.`,
  * Returns the prompt for Growth Plan Part 2: Reflection Prompts
  */
 function getGrowthPlanPart2Prompt(context) {
-  const { blueprintResults, personaMetadata } = context;
+  const { attachmentResults, personaMetadata } = context;
 
   return {
-    system: `You are generating Part 2 of a Dating Blueprint Growth Plan: Reflection Prompts.
+    system: `You are generating Part 2 of a Attachment Deep Dive Growth Plan: Reflection Prompts.
 
 Generate 12 to 15 journaling prompts derived specifically from this user's four Quadrant Profiles and their interaction with the RELATE persona.
 
@@ -451,9 +451,9 @@ Organize the prompts in three groups:
 
 GROUP ONE (4-5 prompts): Ask the user to explore the Quadrant findings through specific memories, going back to moments the report referenced and spending more time in them.
 
-GROUP TWO (4-5 prompts): Ask the user to examine the gap between their RELATE persona presentation and what the Blueprint found underneath it, using specific relational situations as anchors.
+GROUP TWO (4-5 prompts): Ask the user to examine the gap between their RELATE persona presentation and what the Attachment Deep Dive found underneath it, using specific relational situations as anchors.
 
-GROUP THREE (4-5 prompts): Ask the user to imagine forward, not catastrophically but with genuine curiosity, describing what a relationship might look and feel like from the inside if the patterns the Blueprint named were operating at reduced intensity.
+GROUP THREE (4-5 prompts): Ask the user to imagine forward, not catastrophically but with genuine curiosity, describing what a relationship might look and feel like from the inside if the patterns the Attachment Deep Dive named were operating at reduced intensity.
 
 ### REQUIREMENTS:
 - Every prompt must be specific to this person's combination of results. No generic self-reflection questions.
@@ -461,11 +461,11 @@ GROUP THREE (4-5 prompts): Ask the user to imagine forward, not catastrophically
 
 ### INPUTS:
 Persona: ${personaMetadata.traits}
-Q1 Profile: ${blueprintResults.quadrant1.profileName}
-Q2 Profile: ${blueprintResults.quadrant2.profileName}
-Q3 Profile: ${blueprintResults.quadrant3.profileName}
-Q4 Composite: ${blueprintResults.quadrant4.compositeDescriptor}
-${blueprintResults.emergentPattern ? `Emergent Pattern: ${blueprintResults.emergentPattern.patternName}` : ''}
+Q1 Profile: ${attachmentResults.quadrant1.profileName}
+Q2 Profile: ${attachmentResults.quadrant2.profileName}
+Q3 Profile: ${attachmentResults.quadrant3.profileName}
+Q4 Composite: ${attachmentResults.quadrant4.compositeDescriptor}
+${attachmentResults.emergentPattern ? `Emergent Pattern: ${attachmentResults.emergentPattern.patternName}` : ''}
 
 Generate the reflection prompts now.`,
     maxTokens: 1200
@@ -476,29 +476,29 @@ Generate the reflection prompts now.`,
  * Returns the prompt for Growth Plan Part 3: The Specific Work
  */
 function getGrowthPlanPart3Prompt(context) {
-  const { blueprintResults, assessmentResults } = context;
+  const { attachmentResults, assessmentResults } = context;
 
   return {
-    system: `You are generating Part 3 of a Dating Blueprint Growth Plan: The Specific Work.
+    system: `You are generating Part 3 of a Attachment Deep Dive Growth Plan: The Specific Work.
 
-Name 2 to 3 very specific behavioral or relational experiments derived from the Blueprint findings.
+Name 2 to 3 very specific behavioral or relational experiments derived from the Attachment Deep Dive findings.
 
 ${WRITING_STANDARD}
 
 ### REQUIREMENTS:
 - These are NOT general recommendations like "practice vulnerability" or "communicate more openly."
 - Each experiment must be specific enough that the user knows exactly what to do, when to do it, and what to notice when they do.
-- Each experiment is derived from the exact findings of this person's Blueprint and cannot be copy-pasted into a different person's growth plan without losing its meaning.
+- Each experiment is derived from the exact findings of this person's Attachment Deep Dive and cannot be copy-pasted into a different person's growth plan without losing its meaning.
 - The experiments should target the intersection of the trigger emotion (Q2) and the decision mode (Q3), because that intersection is where the automatic pattern is most visible and most interruptible.
 
 ### INPUTS:
-Q2 Profile (Trigger Emotion): ${blueprintResults.quadrant2.profileName}
-Q3 Profile (Decision Mode): ${blueprintResults.quadrant3.profileName}
-Q4 Defense: ${blueprintResults.quadrant4.axes.defense.label}
-Q4 Awareness: ${blueprintResults.quadrant4.axes.awareness.label}
-Q4 Amplification: ${blueprintResults.quadrant4.axes.amplification.label}
+Q2 Profile (Trigger Emotion): ${attachmentResults.quadrant2.profileName}
+Q3 Profile (Decision Mode): ${attachmentResults.quadrant3.profileName}
+Q4 Defense: ${attachmentResults.quadrant4.axes.defense.label}
+Q4 Awareness: ${attachmentResults.quadrant4.axes.awareness.label}
+Q4 Amplification: ${attachmentResults.quadrant4.axes.amplification.label}
 Attachment Type: ${assessmentResults.attachmentType}
-${blueprintResults.emergentPattern ? `Emergent Pattern: ${blueprintResults.emergentPattern.patternName}` : ''}
+${attachmentResults.emergentPattern ? `Emergent Pattern: ${attachmentResults.emergentPattern.patternName}` : ''}
 
 Generate the specific experiments now.`,
     maxTokens: 600
@@ -512,9 +512,9 @@ function getGrowthPlanPart4Prompt(context) {
   const { quadrant2, quadrant3, emergentPattern } = context;
 
   return {
-    system: `You are generating Part 4 of a Dating Blueprint Growth Plan: What to Watch For.
+    system: `You are generating Part 4 of a Attachment Deep Dive Growth Plan: What to Watch For.
 
-Name the specific early signals that indicate the patterns the Blueprint identified are activating in a current or developing relationship.
+Name the specific early signals that indicate the patterns the Attachment Deep Dive identified are activating in a current or developing relationship.
 
 ${WRITING_STANDARD}
 
@@ -554,7 +554,7 @@ function getCouplesSystemPrompt(context) {
   const { partner1, partner2 } = context;
 
   return {
-    system: `You are generating Section 1 of a Dating Blueprint Couples Overlay: The System You Have Built.
+    system: `You are generating Section 1 of a Attachment Deep Dive Couples Overlay: The System You Have Built.
 
 ${WRITING_STANDARD}
 
@@ -591,7 +591,7 @@ function getCouplesEmotionCollisionPrompt(context) {
   const { collisionFrame, partner1Emotion, partner2Emotion } = context;
 
   return {
-    system: `You are generating Section 2 of a Dating Blueprint Couples Overlay: The Emotion Collision.
+    system: `You are generating Section 2 of a Attachment Deep Dive Couples Overlay: The Emotion Collision.
 
 ${WRITING_STANDARD}
 
@@ -622,7 +622,7 @@ function getCouplesGapPrompt(context) {
   const { collisionFrame, partner1Mode, partner2Mode } = context;
 
   return {
-    system: `You are generating Section 3 of a Dating Blueprint Couples Overlay: The Gap Between You.
+    system: `You are generating Section 3 of a Attachment Deep Dive Couples Overlay: The Gap Between You.
 
 ${WRITING_STANDARD}
 
@@ -653,7 +653,7 @@ function getCouplesGiftPrompt(context) {
   const { partner1, partner2 } = context;
 
   return {
-    system: `You are generating Section 4 of a Dating Blueprint Couples Overlay: What You Make Possible.
+    system: `You are generating Section 4 of a Attachment Deep Dive Couples Overlay: What You Make Possible.
 
 ${WRITING_STANDARD}
 
@@ -685,7 +685,7 @@ function getCouplesUnderstandPrompt(context, previousSections) {
   const { partner1, partner2 } = context;
 
   return {
-    system: `You are generating Section 5 of a Dating Blueprint Couples Overlay: What Both of You Are Being Asked to Understand.
+    system: `You are generating Section 5 of a Attachment Deep Dive Couples Overlay: What Both of You Are Being Asked to Understand.
 
 ${WRITING_STANDARD}
 
@@ -729,7 +729,7 @@ Write the section now.`,
  */
 function getQualityEvaluationPrompt(sectionContent, sectionNumber, wordRange) {
   return {
-    system: `You are a quality evaluator for a Dating Blueprint report section. Evaluate the following generated section against each criterion below. Return a JSON object with a pass/fail determination and brief explanation for each criterion.
+    system: `You are a quality evaluator for a Attachment Deep Dive report section. Evaluate the following generated section against each criterion below. Return a JSON object with a pass/fail determination and brief explanation for each criterion.
 
 ### THE SECTION TO EVALUATE:
 ${sectionContent}

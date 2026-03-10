@@ -1,5 +1,5 @@
 /**
- * RELATE Dating Blueprint - Scoring Engine
+ * RELATE Attachment Deep Dive - Scoring Engine
  *
  * Implements Profile routing for all four Quadrants, axis calculations
  * for Quadrants Three and Four, the emergent pattern detection logic
@@ -7,26 +7,26 @@
  * for each Profile assignment.
  *
  * API surface (from Section 8):
- *   initializeBlueprint(assessmentResults)
- *   saveBlueprintProgress(quadrantIndex, responses)
- *   scoreBlueprintSession(allResponses, assessmentResults)
- *   generateBlueprintReport(blueprintResults, assessmentResults, personaMetadata)
- *   generateGrowthPlan(blueprintResults, blueprintReport, assessmentResults, personaMetadata)
- *   generateCouplesOverlay(blueprintResults1, blueprintResults2, assessmentResults1, assessmentResults2)
+ *   initializeAttachment(assessmentResults)
+ *   saveAttachmentProgress(quadrantIndex, responses)
+ *   scoreAttachmentSession(allResponses, assessmentResults)
+ *   generateAttachmentReport(attachmentResults, assessmentResults, personaMetadata)
+ *   generateGrowthPlan(attachmentResults, attachmentReport, assessmentResults, personaMetadata)
+ *   generateCouplesOverlay(attachmentResults1, attachmentResults2, assessmentResults1, assessmentResults2)
  */
 
-const { getBlueprintQuestions, buildQuadrantFourQuestions } = require('./relate_blueprint_questions');
+const { getAttachmentQuestions, buildQuadrantFourQuestions } = require('./relate_attachment_questions');
 
 // ============================================================================
 // CONSTANTS
 // ============================================================================
 
 const STORAGE_KEYS = {
-  checkpoint: 'relate_blueprint_checkpoint',
-  results: 'relate_blueprint_results',
-  report: 'relate_blueprint_report',
-  growth: 'relate_blueprint_growth',
-  couples: 'relate_blueprint_couples'
+  checkpoint: 'relate_attachment_checkpoint',
+  results: 'relate_attachment_results',
+  report: 'relate_attachment_report',
+  growth: 'relate_attachment_growth',
+  couples: 'relate_attachment_couples'
 };
 
 // Quadrant One Profile definitions
@@ -1055,13 +1055,13 @@ function detectEmergentPattern(q1, q2, q3, q4) {
 // ============================================================================
 
 /**
- * Scores a complete Blueprint session and returns the full results object.
+ * Scores a complete Attachment session and returns the full results object.
  *
  * @param {object} allResponses - { quadrant1: [...], quadrant2: [...], quadrant3: [...], quadrant4: [...] }
  * @param {object} assessmentResults - Complete RELATE assessment results
- * @returns {object} The Blueprint results object as specified in Section 8
+ * @returns {object} The Attachment results object as specified in Section 8
  */
-function scoreBlueprintSession(allResponses, assessmentResults) {
+function scoreAttachmentSession(allResponses, assessmentResults) {
   const personaCode = assessmentResults.personaCode;
 
   const q1 = scoreQuadrantOne(allResponses.quadrant1 || []);
@@ -1148,17 +1148,17 @@ function flagHighValueResponses(allResponses) {
 // ============================================================================
 
 /**
- * Initializes a Blueprint session from completed RELATE assessment results.
+ * Initializes a Attachment session from completed RELATE assessment results.
  *
  * @param {object} assessmentResults - Must contain personaCode, attachmentType,
  *   and the persona metadata lookup context
- * @returns {object} Blueprint session configuration
+ * @returns {object} Attachment session configuration
  */
-function initializeBlueprint(assessmentResults) {
+function initializeAttachment(assessmentResults) {
   const { personaCode, attachmentType, gender } = assessmentResults;
 
   if (!personaCode || !attachmentType) {
-    throw new Error('Blueprint requires completed RELATE assessment with personaCode and attachmentType.');
+    throw new Error('Attachment assessment requires completed RELATE assessment with personaCode and attachmentType.');
   }
 
   // Resolve persona metadata, caller must provide or we indicate it needs to be loaded
@@ -1167,7 +1167,7 @@ function initializeBlueprint(assessmentResults) {
 
   let questions;
   if (personaMetadata && personaName) {
-    questions = getBlueprintQuestions({
+    questions = getAttachmentQuestions({
       personaCode,
       personaMetadata,
       personaName,
@@ -1179,8 +1179,8 @@ function initializeBlueprint(assessmentResults) {
   }
 
   return {
-    sessionId: `blueprint_${Date.now()}`,
-    sessionType: 'blueprint',
+    sessionId: `attachment_${Date.now()}`,
+    sessionType: 'attachment',
     fixedInputs: {
       personaCode,
       attachmentType,
@@ -1195,13 +1195,13 @@ function initializeBlueprint(assessmentResults) {
 }
 
 /**
- * Saves Blueprint progress at a Quadrant boundary.
+ * Saves Attachment progress at a Quadrant boundary.
  *
  * @param {number} quadrantIndex - The Quadrant just completed (1-4)
  * @param {object} responses - All responses captured to this point
  * @returns {object} Checkpoint data to be persisted under STORAGE_KEYS.checkpoint
  */
-function saveBlueprintProgress(quadrantIndex, responses) {
+function saveAttachmentProgress(quadrantIndex, responses) {
   return {
     storageKey: STORAGE_KEYS.checkpoint,
     checkpoint: {
@@ -1213,19 +1213,19 @@ function saveBlueprintProgress(quadrantIndex, responses) {
 }
 
 /**
- * Generates the Blueprint report by calling the report generation engine
+ * Generates the Attachment report by calling the report generation engine
  * section by section as specified in Section 6.
  *
  * This function returns the structured input that the report generation
  * engine (LLM) receives. The actual LLM calls are performed by the
  * calling application layer.
  *
- * @param {object} blueprintResults - Output of scoreBlueprintSession
+ * @param {object} attachmentResults - Output of scoreAttachmentSession
  * @param {object} assessmentResults - Complete RELATE assessment results
  * @param {object} personaMetadata - Persona metadata from relate_persona_definitions.js
  * @returns {object} Report generation input structured by section
  */
-function generateBlueprintReport(blueprintResults, assessmentResults, personaMetadata) {
+function generateAttachmentReport(attachmentResults, assessmentResults, personaMetadata) {
   const reportInput = {
     // Universal context passed to every section prompt
     universalContext: {
@@ -1240,13 +1240,13 @@ function generateBlueprintReport(blueprintResults, assessmentResults, personaMet
         disappointments: personaMetadata.disappointments,
         howValued: personaMetadata.howValued
       },
-      quadrant1: blueprintResults.quadrant1,
-      quadrant2: blueprintResults.quadrant2,
-      quadrant3: blueprintResults.quadrant3,
-      quadrant4: blueprintResults.quadrant4,
-      emergentPattern: blueprintResults.emergentPattern,
-      confidenceScores: blueprintResults.confidenceScores,
-      flaggedResponses: blueprintResults.flaggedResponses
+      quadrant1: attachmentResults.quadrant1,
+      quadrant2: attachmentResults.quadrant2,
+      quadrant3: attachmentResults.quadrant3,
+      quadrant4: attachmentResults.quadrant4,
+      emergentPattern: attachmentResults.emergentPattern,
+      confidenceScores: attachmentResults.confidenceScores,
+      flaggedResponses: attachmentResults.flaggedResponses
     },
 
     // Section-specific inputs
@@ -1254,31 +1254,31 @@ function generateBlueprintReport(blueprintResults, assessmentResults, personaMet
       relationalHistory: {
         sectionNumber: 1,
         wordRange: { min: 400, max: 500 },
-        primaryInput: blueprintResults.quadrant1,
+        primaryInput: attachmentResults.quadrant1,
         crossQuadrantConnections: []
       },
       emotionUnderneath: {
         sectionNumber: 2,
         wordRange: { min: 400, max: 500 },
-        primaryInput: blueprintResults.quadrant2,
+        primaryInput: attachmentResults.quadrant2,
         crossQuadrantConnections: ['quadrant1']
       },
       howYouNavigateUncertainty: {
         sectionNumber: 3,
         wordRange: { min: 400, max: 500 },
-        primaryInput: blueprintResults.quadrant3,
+        primaryInput: attachmentResults.quadrant3,
         crossQuadrantConnections: ['quadrant2']
       },
       personaInContext: {
         sectionNumber: 4,
         wordRange: { min: 450, max: 550 },
-        primaryInput: blueprintResults.quadrant4,
+        primaryInput: attachmentResults.quadrant4,
         crossQuadrantConnections: ['quadrant1', 'quadrant2', 'quadrant3']
       },
       thePortrait: {
         sectionNumber: 5,
         wordRange: { min: 500, max: 600 },
-        primaryInput: blueprintResults.emergentPattern,
+        primaryInput: attachmentResults.emergentPattern,
         crossQuadrantConnections: ['quadrant1', 'quadrant2', 'quadrant3', 'quadrant4']
       },
       whatThisMeansForPartnership: {
@@ -1304,19 +1304,19 @@ function generateBlueprintReport(blueprintResults, assessmentResults, personaMet
 /**
  * Generates the growth plan input structure.
  *
- * @param {object} blueprintResults - Output of scoreBlueprintSession
- * @param {object} blueprintReport - The generated report sections
+ * @param {object} attachmentResults - Output of scoreAttachmentSession
+ * @param {object} attachmentReport - The generated report sections
  * @param {object} assessmentResults - Complete RELATE assessment results
  * @param {object} personaMetadata - Persona metadata
  * @returns {object} Growth plan generation input
  */
-function generateGrowthPlan(blueprintResults, blueprintReport, assessmentResults, personaMetadata) {
+function generateGrowthPlan(attachmentResults, attachmentReport, assessmentResults, personaMetadata) {
   return {
     parts: {
-      whatBlueprintAdds: {
+      whatDeepDiveAdds: {
         partNumber: 1,
         context: {
-          blueprintResults,
+          attachmentResults,
           assessmentResults,
           personaMetadata
         }
@@ -1326,7 +1326,7 @@ function generateGrowthPlan(blueprintResults, blueprintReport, assessmentResults
         promptCount: { min: 12, max: 15 },
         groups: ['memory_exploration', 'persona_gap_examination', 'forward_imagination'],
         context: {
-          blueprintResults,
+          attachmentResults,
           personaMetadata
         }
       },
@@ -1334,20 +1334,20 @@ function generateGrowthPlan(blueprintResults, blueprintReport, assessmentResults
         partNumber: 3,
         experimentCount: { min: 2, max: 3 },
         context: {
-          blueprintResults,
+          attachmentResults,
           assessmentResults
         }
       },
       whatToWatchFor: {
         partNumber: 4,
         context: {
-          quadrant2: blueprintResults.quadrant2,
-          quadrant3: blueprintResults.quadrant3,
-          emergentPattern: blueprintResults.emergentPattern
+          quadrant2: attachmentResults.quadrant2,
+          quadrant3: attachmentResults.quadrant3,
+          emergentPattern: attachmentResults.emergentPattern
         }
       }
     },
-    fullReportContext: blueprintReport,
+    fullReportContext: attachmentReport,
     storageKey: STORAGE_KEYS.growth
   };
 }
@@ -1355,23 +1355,23 @@ function generateGrowthPlan(blueprintResults, blueprintReport, assessmentResults
 /**
  * Generates the couples overlay input structure.
  *
- * @param {object} blueprintResults1 - Partner 1 Blueprint results
- * @param {object} blueprintResults2 - Partner 2 Blueprint results
+ * @param {object} attachmentResults1 - Partner 1 Attachment results
+ * @param {object} attachmentResults2 - Partner 2 Attachment results
  * @param {object} assessmentResults1 - Partner 1 RELATE results
  * @param {object} assessmentResults2 - Partner 2 RELATE results
  * @returns {object} Couples overlay generation input
  */
-function generateCouplesOverlay(blueprintResults1, blueprintResults2, assessmentResults1, assessmentResults2) {
+function generateCouplesOverlay(attachmentResults1, attachmentResults2, assessmentResults1, assessmentResults2) {
   // Determine the Q2 collision from the collision matrix
   const q2Collision = getQ2CollisionFrame(
-    blueprintResults1.quadrant2.profileId,
-    blueprintResults2.quadrant2.profileId
+    attachmentResults1.quadrant2.profileId,
+    attachmentResults2.quadrant2.profileId
   );
 
   // Determine the Q3 collision from the collision library
   const q3Collision = getQ3CollisionFrame(
-    blueprintResults1.quadrant3.profileId,
-    blueprintResults2.quadrant3.profileId
+    attachmentResults1.quadrant3.profileId,
+    attachmentResults2.quadrant3.profileId
   );
 
   return {
@@ -1379,34 +1379,34 @@ function generateCouplesOverlay(blueprintResults1, blueprintResults2, assessment
       systemYouHaveBuilt: {
         sectionNumber: 1,
         wordRange: { min: 250, max: 300 },
-        partner1: blueprintResults1,
-        partner2: blueprintResults2
+        partner1: attachmentResults1,
+        partner2: attachmentResults2
       },
       emotionCollision: {
         sectionNumber: 2,
         wordRange: { min: 300, max: 350 },
         collisionFrame: q2Collision,
-        partner1Emotion: blueprintResults1.quadrant2,
-        partner2Emotion: blueprintResults2.quadrant2
+        partner1Emotion: attachmentResults1.quadrant2,
+        partner2Emotion: attachmentResults2.quadrant2
       },
       gapBetweenYou: {
         sectionNumber: 3,
         wordRange: { min: 250, max: 300 },
         collisionFrame: q3Collision,
-        partner1Mode: blueprintResults1.quadrant3,
-        partner2Mode: blueprintResults2.quadrant3
+        partner1Mode: attachmentResults1.quadrant3,
+        partner2Mode: attachmentResults2.quadrant3
       },
       whatYouMakePossible: {
         sectionNumber: 4,
         wordRange: { min: 150, max: 200 },
-        partner1: blueprintResults1,
-        partner2: blueprintResults2
+        partner1: attachmentResults1,
+        partner2: attachmentResults2
       },
       whatBothAreAskedToUnderstand: {
         sectionNumber: 5,
         wordRange: { min: 250, max: 300 },
-        partner1: blueprintResults1,
-        partner2: blueprintResults2,
+        partner1: attachmentResults1,
+        partner2: attachmentResults2,
         assessmentResults1,
         assessmentResults2
       }
@@ -1567,12 +1567,12 @@ module.exports = {
   detectEmergentPattern,
 
   // Full session scoring
-  scoreBlueprintSession,
+  scoreAttachmentSession,
 
   // Session management API (Section 8)
-  initializeBlueprint,
-  saveBlueprintProgress,
-  generateBlueprintReport,
+  initializeAttachment,
+  saveAttachmentProgress,
+  generateAttachmentReport,
   generateGrowthPlan,
   generateCouplesOverlay,
 

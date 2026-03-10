@@ -1,8 +1,8 @@
 /**
- * RELATE Dating Blueprint - Question Engine
+ * RELATE Attachment Deep Dive - Question Engine
  *
  * Implements the question bank for all four Quadrants as specified in
- * blueprint_spec_section4.md. Quadrants One through Three use static
+ * the spec (Section 4). Quadrants One through Three use static
  * question sets. Quadrant Four constructs its question set dynamically
  * at runtime from the user's persona code and the behavioral metadata
  * in relate_persona_definitions.js.
@@ -825,7 +825,7 @@ function buildQuadrantFourQuestions(personaCode, personaMetadata, personaName) {
 // ============================================================================
 
 /**
- * Returns the full question bank for the Blueprint session.
+ * Returns the full question bank for the Attachment assessment session.
  *
  * @param {object} params
  * @param {string} params.personaCode - Four-letter RELATE persona code
@@ -834,7 +834,7 @@ function buildQuadrantFourQuestions(personaCode, personaMetadata, personaName) {
  * @param {string} params.attachmentType - Attachment type from RELATE Session 3
  * @returns {object} { quadrant1, quadrant2, quadrant3, quadrant4, totalCount }
  */
-function getBlueprintQuestions(params) {
+function getAttachmentQuestions(params) {
   const { personaCode, personaMetadata, personaName, attachmentType } = params;
 
   const quadrant4 = buildQuadrantFourQuestions(personaCode, personaMetadata, personaName);
@@ -853,7 +853,7 @@ function getBlueprintQuestions(params) {
       personaCode,
       personaName,
       attachmentType,
-      sessionType: 'blueprint'
+      sessionType: 'attachment'
     }
   };
 }
@@ -868,5 +868,5 @@ module.exports = {
   QUADRANT_TWO_QUESTIONS,
   QUADRANT_THREE_QUESTIONS,
   buildQuadrantFourQuestions,
-  getBlueprintQuestions
+  getAttachmentQuestions
 };

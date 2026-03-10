@@ -121,7 +121,7 @@ function AxisBar({ label, value, low, high }: { label: string; value: number; lo
   );
 }
 
-export default function BlueprintResultsPage() {
+export default function AttachmentResultsPage() {
   const router = useRouter();
   const [results, setResults] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
@@ -131,14 +131,14 @@ export default function BlueprintResultsPage() {
   const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
-    // Load Blueprint results
-    const stored = localStorage.getItem('relate_blueprint_results');
-    const storedReport = localStorage.getItem('relate_blueprint_report');
-    const storedGrowth = localStorage.getItem('relate_blueprint_growth');
+    // Load Attachment results
+    const stored = localStorage.getItem('relate_attachment_results');
+    const storedReport = localStorage.getItem('relate_attachment_report');
+    const storedGrowth = localStorage.getItem('relate_attachment_growth');
     const base = localStorage.getItem('relate_results');
 
     if (!stored) {
-      // No Blueprint results yet, show the landing state
+      // No Attachment results yet, show the landing state
       if (base) {
         try { setBaseResults(JSON.parse(base)); } catch { /* */ }
       }
@@ -173,7 +173,7 @@ export default function BlueprintResultsPage() {
         <main className="max-w-3xl mx-auto px-6 py-12 w-full">
           <div className="card text-center py-12">
             <Icon name="psychology" size={48} className="text-accent mb-4" />
-            <h1 className="font-serif text-2xl font-semibold mb-3">Dating Blueprint</h1>
+            <h1 className="font-serif text-2xl font-semibold mb-3">Attachment Deep Dive</h1>
             <p className="explainer max-w-lg mx-auto mb-6">
               A deep psychological portrait of how you love, what drives your relational behavior under pressure,
               and where your patterns are costing you something they do not have to cost.
@@ -181,8 +181,8 @@ export default function BlueprintResultsPage() {
             </p>
             {hasCompletedAssessment ? (
               <p className="text-sm text-secondary">
-                Your RELATE assessment is complete. The Blueprint assessment will be available here
-                once the Blueprint session is built into the assessment flow.
+                Your RELATE assessment is complete. The Attachment Deep Dive will be available here
+                once the session flow is built into the assessment.
               </p>
             ) : (
               <div>
@@ -218,7 +218,7 @@ export default function BlueprintResultsPage() {
       <main className="max-w-3xl mx-auto px-6 py-8 w-full">
         {/* Header */}
         <div className="mb-8">
-          <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">Dating Blueprint</span>
+          <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">Attachment Deep Dive</span>
           <h1 className="font-serif text-3xl font-semibold mt-1 mb-2">Your Relational Portrait</h1>
           {persona && (
             <p className="text-sm text-secondary">
@@ -304,7 +304,7 @@ export default function BlueprintResultsPage() {
                   </div>
                 </div>
                 <p className="text-sm text-secondary leading-relaxed mb-4">
-                  Your attachment type describes the shape of how you connect. The Blueprint describes what is inside that shape,
+                  Your attachment type describes the shape of how you connect. This deep dive describes what is inside that shape,
                   the specific history, emotion, and decision architecture that makes your version of {attachment.style} attachment
                   different from anyone else who shares the same type.
                 </p>
@@ -613,7 +613,7 @@ export default function BlueprintResultsPage() {
         {activeSection === 'report' && report && (
           <div className="space-y-8">
             <div>
-              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">Your Blueprint Report</span>
+              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">Your Attachment Report</span>
               <h2 className="font-serif text-2xl font-semibold mt-1">The Full Portrait</h2>
             </div>
 
@@ -672,10 +672,10 @@ export default function BlueprintResultsPage() {
               <h2 className="font-serif text-2xl font-semibold mt-1">Your Specific Work</h2>
             </div>
 
-            {growth.whatBlueprintAdds && (
+            {growth.whatDeepDiveAdds && (
               <section className="card">
-                <h3 className="font-serif text-sm font-semibold mb-3">What the Blueprint Adds to Your Portrait</h3>
-                <div className="text-sm text-secondary leading-relaxed whitespace-pre-line">{growth.whatBlueprintAdds}</div>
+                <h3 className="font-serif text-sm font-semibold mb-3">What This Deep Dive Adds to Your Portrait</h3>
+                <div className="text-sm text-secondary leading-relaxed whitespace-pre-line">{growth.whatDeepDiveAdds}</div>
               </section>
             )}
             {growth.reflectionPrompts && (
