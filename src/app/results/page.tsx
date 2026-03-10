@@ -453,6 +453,7 @@ function ResultsDashboard() {
   // Sub-nav items, grouped
   const navItems = [
     { id: 'persona', label: 'Your Persona', show: !!persona || hasDimensions || !!ic?.attachment || !!m4Summary || !!(tensionStacks && Object.keys(tensionStacks).length > 0) },
+    { id: 'attachment', label: 'Attachment', show: !!ic?.attachment },
     { id: 'know-your-market', label: 'Dating Market', show: hasMarket },
     { id: 'how-you-date', label: 'How You Date', show: matches.length > 0 || !!(ic?.attachmentTiers) || !!m3 || (hasResults && true) },
   ].filter(n => n.show);
@@ -819,6 +820,55 @@ function ResultsDashboard() {
           </section>
         )}
 
+        {/* ── Your Attachment Style ── */}
+        {ic?.attachment && (
+          <section id="attachment" className="card mb-4 scroll-mt-32">
+            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="shield" size={20} className="text-accent" />Your Attachment Style</h3>
+            <p className="explainer mb-4">How you connect, protect, and respond in close relationships</p>
+            <div className="flex items-center gap-3 mb-4">
+              <span className="font-mono text-lg font-semibold capitalize">{ic.attachment.style}</span>
+              {ic.attachment.subtype && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded capitalize">{ic.attachment.subtype}</span>}
+              {ic.attachment.leaningToward && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded">leaning {ic.attachment.leaningToward}</span>}
+              <span className="text-xs font-mono text-secondary ml-auto">{Math.round((ic.attachment.confidence ?? 0) * 100)}% confidence</span>
+            </div>
+            {ic.attachment.description && <p className="explainer mb-4">{ic.attachment.description}</p>}
+            {ic.attachment.strengths && Array.isArray(ic.attachment.strengths) && ic.attachment.strengths.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
+                <div>
+                  <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
+                  <ul className="bullet-list mt-2">
+                    {ic.attachment.strengths.map((s: string, i: number) => (
+                      <li key={i}>{s}</li>
+                    ))}
+                  </ul>
+                </div>
+                {ic.attachment.challenges && Array.isArray(ic.attachment.challenges) && ic.attachment.challenges.length > 0 && (
+                  <div>
+                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
+                    <ul className="bullet-list mt-2">
+                      {ic.attachment.challenges.map((c: string, i: number) => (
+                        <li key={i}>{c}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+            {ic.attachment.inRelationships && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">In Relationships</span>
+                <p className="text-sm text-secondary mt-2">{ic.attachment.inRelationships}</p>
+              </div>
+            )}
+            {ic.attachment.underStress && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Under Stress</span>
+                <p className="text-sm text-secondary mt-2">{ic.attachment.underStress}</p>
+              </div>
+            )}
+          </section>
+        )}
+
         {/* ── Score Breakdown ── */}
         {hasDimensions && (() => {
           const dimOrder = ['physical', 'social', 'lifestyle', 'values'] as const;
@@ -889,55 +939,6 @@ function ResultsDashboard() {
           </section>
           );
         })()}
-
-        {/* ── Your Attachment Style ── */}
-        {ic?.attachment && (
-          <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="shield" size={20} className="text-accent" />Your Attachment Style</h3>
-            <p className="explainer mb-4">How you connect, protect, and respond in close relationships</p>
-            <div className="flex items-center gap-3 mb-4">
-              <span className="font-mono text-lg font-semibold capitalize">{ic.attachment.style}</span>
-              {ic.attachment.subtype && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded capitalize">{ic.attachment.subtype}</span>}
-              {ic.attachment.leaningToward && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded">leaning {ic.attachment.leaningToward}</span>}
-              <span className="text-xs font-mono text-secondary ml-auto">{Math.round((ic.attachment.confidence ?? 0) * 100)}% confidence</span>
-            </div>
-            {ic.attachment.description && <p className="explainer mb-4">{ic.attachment.description}</p>}
-            {ic.attachment.strengths && Array.isArray(ic.attachment.strengths) && ic.attachment.strengths.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
-                <div>
-                  <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
-                  <ul className="bullet-list mt-2">
-                    {ic.attachment.strengths.map((s: string, i: number) => (
-                      <li key={i}>{s}</li>
-                    ))}
-                  </ul>
-                </div>
-                {ic.attachment.challenges && Array.isArray(ic.attachment.challenges) && ic.attachment.challenges.length > 0 && (
-                  <div>
-                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
-                    <ul className="bullet-list mt-2">
-                      {ic.attachment.challenges.map((c: string, i: number) => (
-                        <li key={i}>{c}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
-            {ic.attachment.inRelationships && (
-              <div className="mt-4 pt-4 border-t border-border">
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">In Relationships</span>
-                <p className="text-sm text-secondary mt-2">{ic.attachment.inRelationships}</p>
-              </div>
-            )}
-            {ic.attachment.underStress && (
-              <div className="mt-4 pt-4 border-t border-border">
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Under Stress</span>
-                <p className="text-sm text-secondary mt-2">{ic.attachment.underStress}</p>
-              </div>
-            )}
-          </section>
-        )}
 
         {/* ── Vulnerability Profile ── */}
         {tensionStacks?.vulnerabilityProfile && renderTensionStack('vulnerabilityProfile', tensionStacks.vulnerabilityProfile)}
