@@ -1062,7 +1062,21 @@ function ResultsDashboard() {
             </div>
 
           <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="shield" size={20} className="text-accent" />Your Attachment Style</h3>
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="shield" size={20} className="text-accent" />Your Attachment Style</h3>
+              {(() => {
+                const hasReport = typeof window !== 'undefined' && localStorage.getItem('relate_blueprint_results');
+                return hasReport ? (
+                  <Link href="/results/attachment" className="text-xs text-accent hover:underline font-medium whitespace-nowrap">
+                    View Full Report <Icon name="arrow_forward" size={12} />
+                  </Link>
+                ) : (
+                  <Link href="/blueprint" className="text-xs text-secondary hover:text-accent transition-colors whitespace-nowrap">
+                    Go deeper <Icon name="arrow_forward" size={12} />
+                  </Link>
+                );
+              })()}
+            </div>
             <p className="explainer mb-4">How you connect, protect, and respond in close relationships</p>
             <div className="flex items-center gap-3 mb-4">
               <span className="font-mono text-lg font-semibold capitalize">{ic.attachment.style}</span>
@@ -1128,22 +1142,11 @@ function ResultsDashboard() {
                           </div>
                         )}
                       </div>
-                      <div className="mt-3">
-                        <Link href="/results/attachment" className="text-xs text-accent hover:underline font-medium">
-                          View Full Attachment Style Report <Icon name="arrow_forward" size={12} />
-                        </Link>
-                      </div>
                     </div>
                   );
                 } catch { /* invalid JSON */ }
               }
-              return (
-                <div className="mt-4 pt-4 border-t border-border">
-                  <Link href="/blueprint" className="text-xs text-secondary hover:text-accent transition-colors">
-                    Go deeper with Attachment Style <Icon name="arrow_forward" size={12} />
-                  </Link>
-                </div>
-              );
+              return null;
             })()}
           </section>
           </div>

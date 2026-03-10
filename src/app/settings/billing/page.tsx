@@ -257,6 +257,53 @@ export default function BillingPage() {
               </div>
             </div>
           )}
+
+          {/* Discount code input — show when no active discount */}
+          {!subscription?.discount && !discountCode && (
+            <div className="mt-3 pt-3 border-t border-border">
+              <p className="text-xs text-secondary mb-2">Have a discount code?</p>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                const input = (e.target as HTMLFormElement).elements.namedItem('code') as HTMLInputElement;
+                const code = input?.value?.trim();
+                if (!code) return;
+                const btn = (e.target as HTMLFormElement).querySelector('button') as HTMLButtonElement;
+                btn.disabled = true;
+                btn.textContent = 'Applying...';
+                try {
+                  const res = await fetch('/api/discount-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code, email: user?.email }),
+                  });
+                  const data = await res.json();
+                  const existing = (e.target as HTMLFormElement).parentElement?.querySelector('.discount-feedback');
+                  if (existing) existing.remove();
+                  const p = document.createElement('p');
+                  p.className = `text-xs mt-2 discount-feedback ${res.ok && data.success ? 'text-success' : 'text-danger'}`;
+                  p.textContent = data.message || data.error || 'Something went wrong';
+                  (e.target as HTMLFormElement).after(p);
+                  if (res.ok && data.success) {
+                    setTimeout(() => window.location.reload(), 1500);
+                  }
+                } catch {
+                  /* ignore */
+                } finally {
+                  btn.disabled = false;
+                  btn.textContent = 'Apply';
+                }
+              }} className="flex gap-2">
+                <input
+                  name="code"
+                  type="text"
+                  placeholder="Enter code"
+                  className="input flex-1 text-xs font-mono"
+                  style={{ textTransform: 'uppercase' }}
+                />
+                <button type="submit" className="btn-secondary text-xs whitespace-nowrap">Apply</button>
+              </form>
+            </div>
+          )}
         </div>
 
         {/* ── Partner Connection ── */}
@@ -438,52 +485,6 @@ export default function BillingPage() {
             )}
           </div>
         )}
-
-        {/* ── Discount Code ── */}
-        <div className="card mb-4">
-          <h3 className="font-serif font-semibold mb-3">Discount Code</h3>
-          <p className="text-xs text-secondary mb-3">Have a discount code? Enter it below to apply it to any plan or add-on.</p>
-          <form onSubmit={async (e) => {
-            e.preventDefault();
-            const input = (e.target as HTMLFormElement).elements.namedItem('code') as HTMLInputElement;
-            const code = input?.value?.trim();
-            if (!code) return;
-            const btn = (e.target as HTMLFormElement).querySelector('button') as HTMLButtonElement;
-            btn.disabled = true;
-            btn.textContent = 'Applying...';
-            try {
-              const res = await fetch('/api/discount-code', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code, email: user?.email }),
-              });
-              const data = await res.json();
-              const msg = (e.target as HTMLFormElement).nextElementSibling;
-              if (msg) msg.remove();
-              const p = document.createElement('p');
-              p.className = res.ok && data.success ? 'text-xs text-success mt-2' : 'text-xs text-danger mt-2';
-              p.textContent = data.message || data.error || 'Something went wrong';
-              (e.target as HTMLFormElement).after(p);
-              if (res.ok && data.success) {
-                setTimeout(() => window.location.reload(), 1500);
-              }
-            } catch {
-              /* ignore */
-            } finally {
-              btn.disabled = false;
-              btn.textContent = 'Apply';
-            }
-          }} className="flex gap-2">
-            <input
-              name="code"
-              type="text"
-              placeholder="Enter code"
-              className="input flex-1 text-xs font-mono"
-              style={{ textTransform: 'uppercase' }}
-            />
-            <button type="submit" className="btn-secondary text-xs whitespace-nowrap">Apply</button>
-          </form>
-        </div>
 
         {/* ── Upgrade CTA for free users ── */}
         {!paid && !isTestMode && (
