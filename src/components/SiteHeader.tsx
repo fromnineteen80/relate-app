@@ -71,6 +71,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
   const hasCouplesAccess = typeof window !== 'undefined'
     ? !!(localStorage.getItem('relate_couples_discount') || localStorage.getItem('relate_payment_tier')?.includes('couples'))
     : false;
+  const hasBlueprint = typeof window !== 'undefined' ? !!localStorage.getItem('relate_blueprint_results') : false;
   const isWoman = typeof window !== 'undefined'
     ? (() => {
         const g = localStorage.getItem('relate_gender');
@@ -150,6 +151,7 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
                   onSignOut={handleSignOut}
                   hasPartner={hasPartner}
                   hasCouplesAccess={hasCouplesAccess}
+                  hasBlueprint={hasBlueprint}
                   isWoman={isWoman}
                 />
               </>
@@ -260,6 +262,7 @@ function ProfileAvatar({
   onSignOut,
   hasPartner,
   hasCouplesAccess,
+  hasBlueprint,
   isWoman,
 }: {
   initial: string;
@@ -270,6 +273,7 @@ function ProfileAvatar({
   onSignOut: () => void;
   hasPartner: boolean;
   hasCouplesAccess: boolean;
+  hasBlueprint: boolean;
   isWoman: boolean;
 }) {
   return (
@@ -296,13 +300,14 @@ function ProfileAvatar({
             { href: '/assessment', label: 'Assessment' },
             { href: '/results', label: 'Your Results' },
             ...(hasPartner ? [{ href: hasCouplesAccess ? '/results/compare' : '/invite', label: 'Couples Results' }] : []),
+            ...(hasBlueprint ? [{ href: '/results/attachment', label: 'Attachment Style' }] : []),
             ...(isWoman ? [{ href: '/results/astrology', label: 'Sun, Moon & Rise' }] : []),
           ].map(item => (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setDropdownOpen(false)}
-              className="block px-4 py-2 text-[13px] text-secondary text-right hover:bg-stone-50 hover:text-foreground cursor-pointer"
+              className="block px-4 py-1.5 text-[13px] text-secondary text-right hover:bg-stone-50 hover:text-foreground cursor-pointer"
             >
               {item.label}
             </Link>
@@ -317,7 +322,7 @@ function ProfileAvatar({
               key={item.href}
               href={item.href}
               onClick={() => setDropdownOpen(false)}
-              className="block px-4 py-2 text-[13px] text-secondary text-right hover:bg-stone-50 hover:text-foreground cursor-pointer"
+              className="block px-4 py-1.5 text-[13px] text-secondary text-right hover:bg-stone-50 hover:text-foreground cursor-pointer"
             >
               {item.label}
             </Link>
@@ -325,7 +330,7 @@ function ProfileAvatar({
           <div className="border-t border-border my-1" />
           <button
             onClick={() => { setDropdownOpen(false); onSignOut(); }}
-            className="block w-full text-right px-4 py-2 text-[13px] text-secondary hover:bg-stone-50"
+            className="block w-full text-right px-4 py-1.5 text-[13px] text-secondary hover:bg-stone-50"
           >
             Sign out
           </button>
