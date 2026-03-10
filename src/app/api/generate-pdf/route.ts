@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cleanProseDeep } from '@/lib/prose';
 
 // PDF generation route for RELATE reports
 // Uses jsPDF-compatible HTML-to-PDF approach
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { report, persona, dimensions, m3, m4, matches, individualCompatibility, marketData, demographics, fullM3, fullM4 } = body;
+    const { persona, dimensions, m3, m4, matches, individualCompatibility, marketData, demographics, fullM3, fullM4 } = body;
+    // Clean all prose strings in the report before building HTML
+    const report = cleanProseDeep(body.report);
 
     if (!persona) {
       return NextResponse.json({ error: 'No report data provided' }, { status: 400 });

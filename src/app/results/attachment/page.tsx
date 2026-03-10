@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
+import { cleanProse } from '@/lib/prose';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -332,7 +333,7 @@ export default function BlueprintResultsPage() {
                 return (
                   <div key={key}>
                     <h3 className="font-serif text-lg font-semibold mb-3">{heading}</h3>
-                    {content.split('\n\n').map((paragraph: string, i: number) => (
+                    {cleanProse(content).split('\n\n').map((paragraph: string, i: number) => (
                       <p key={i} className="text-sm text-secondary leading-relaxed mb-3">
                         {paragraph}
                       </p>
@@ -375,7 +376,7 @@ export default function BlueprintResultsPage() {
                   <h3 className="font-serif text-lg font-semibold mb-3">
                     What the Blueprint Adds to Your RELATE Portrait
                   </h3>
-                  {growthContent(growth, 'whatDeepDiveAdds')!.split('\n\n').map((p: string, i: number) => (
+                  {cleanProse(growthContent(growth, 'whatDeepDiveAdds')!).split('\n\n').map((p: string, i: number) => (
                     <p key={i} className="text-sm text-secondary leading-relaxed mb-3">{p}</p>
                   ))}
                 </div>
@@ -386,7 +387,7 @@ export default function BlueprintResultsPage() {
                 <div>
                   <h3 className="font-serif text-lg font-semibold mb-3">Reflection Prompts</h3>
                   <ol className="list-decimal list-inside space-y-2">
-                    {growthContent(growth, 'reflectionPrompts')!
+                    {cleanProse(growthContent(growth, 'reflectionPrompts')!)
                       .split('\n')
                       .filter((line: string) => line.trim())
                       .map((line: string, i: number) => (
@@ -402,7 +403,7 @@ export default function BlueprintResultsPage() {
               {growthContent(growth, 'specificWork') && (
                 <div>
                   <h3 className="font-serif text-lg font-semibold mb-3">The Specific Work</h3>
-                  {growthContent(growth, 'specificWork')!.split('\n\n').map((p: string, i: number) => (
+                  {cleanProse(growthContent(growth, 'specificWork')!).split('\n\n').map((p: string, i: number) => (
                     <p key={i} className="text-sm text-secondary leading-relaxed mb-3">{p}</p>
                   ))}
                 </div>
@@ -412,7 +413,7 @@ export default function BlueprintResultsPage() {
               {growthContent(growth, 'whatToWatchFor') && (
                 <div>
                   <h3 className="font-serif text-lg font-semibold mb-3">What to Watch For</h3>
-                  {growthContent(growth, 'whatToWatchFor')!.split('\n\n').map((p: string, i: number) => (
+                  {cleanProse(growthContent(growth, 'whatToWatchFor')!).split('\n\n').map((p: string, i: number) => (
                     <p key={i} className="text-sm text-secondary leading-relaxed mb-3">{p}</p>
                   ))}
                 </div>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateCouplesReport } from '@/lib/couples';
 import { calculateEnhancedCouplesCompatibility } from '@/lib/compatibility';
 import { RELATE_SYSTEM_PROMPT, RELATE_MODELS, RELATE_MAX_TOKENS } from '@/lib/prompts/relate-system';
+import { cleanProse } from '@/lib/prose';
 
 /* eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any */
 const questionsModule = require('../../../../relate_questions.js');
@@ -137,11 +138,7 @@ Generate all 8 sections of the couples report as flowing prose narrative.`,
           }],
         });
 
-        aiNarrative = (response.content[0]?.text || '')
-          .replace(/\s*[—–]\s*/g, ', ')
-          .replace(/â€"/g, ', ')
-          .replace(/â€™/g, "'")
-          .replace(/,\s*,/g, ',') || null;
+        aiNarrative = cleanProse(response.content[0]?.text || '') || null;
       } catch (err) {
         console.error('AI narrative generation failed, returning data-only report:', err);
       }

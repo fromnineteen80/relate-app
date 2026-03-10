@@ -9,6 +9,7 @@ import { SubNav } from '@/components/SubNav';
 import { Icon } from '@/components/Icon';
 import { useAuth } from '@/lib/auth-context';
 import { saveCouplesReportToDb } from '@/lib/supabase/progress';
+import { cleanProseDeep } from '@/lib/prose';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -37,7 +38,7 @@ export default function ComparePage() {
         rpt.overview.user2.name = partnerFirstName;
       }
     }
-    return rpt;
+    return cleanProseDeep(rpt);
   }
 
   useEffect(() => {
