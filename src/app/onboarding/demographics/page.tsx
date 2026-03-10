@@ -219,6 +219,51 @@ export default function DemographicsPage() {
 
   const persistForm = useCallback((updated: FormData) => {
     localStorage.setItem('relate_demographics_draft', JSON.stringify(updated));
+
+    // Also keep relate_demographics in sync so the results page sees changes immediately
+    // (previously only updated on final Save, meaning changes made mid-form were invisible)
+    try {
+      const existing = localStorage.getItem('relate_demographics');
+      if (existing) {
+        const demo = JSON.parse(existing);
+        const profile = getProfile();
+        const synced = {
+          ...demo,
+          gender: updated.gender === 'Man' ? 'M' : updated.gender === 'Woman' ? 'W' : demo.gender,
+          age: updated.age ? parseInt(updated.age) : demo.age,
+          zip_code: profile?.zipCode || demo.zip_code,
+          ethnicity: updated.ethnicity || demo.ethnicity,
+          orientation: updated.orientation || demo.orientation,
+          income: updated.income ?? demo.income,
+          education: updated.education || demo.education,
+          height: updated.height || null,
+          body_type: updated.bodyType || demo.body_type,
+          fitness_level: updated.fitness || demo.fitness_level,
+          political: updated.political || demo.political,
+          smoking: updated.smoking === 'Yes' ? true : updated.smoking === 'No' ? false : demo.smoking,
+          has_kids: updated.hasKids === 'Yes' ? true : updated.hasKids === 'No' ? false : demo.has_kids,
+          want_kids: updated.wantKids || demo.want_kids,
+          relationship_status: updated.relationshipStatus || demo.relationship_status,
+          pref_age_min: updated.prefAgeMin ? parseInt(updated.prefAgeMin) : demo.pref_age_min,
+          pref_age_max: updated.prefAgeMax ? parseInt(updated.prefAgeMax) : demo.pref_age_max,
+          pref_income_min: updated.prefIncome ?? demo.pref_income_min,
+          pref_height_min: updated.prefHeight || null,
+          pref_body_types: updated.prefBodyTypes.length > 0 ? updated.prefBodyTypes : demo.pref_body_types,
+          pref_fitness_levels: updated.prefFitnessLevels.length > 0 ? updated.prefFitnessLevels : demo.pref_fitness_levels,
+          pref_smoking: updated.prefSmoking || demo.pref_smoking,
+          pref_has_kids: updated.prefHasKids || demo.pref_has_kids,
+          pref_want_kids: updated.prefWantKids || demo.pref_want_kids,
+          pref_ethnicities: updated.prefEthnicities.length > 0 ? updated.prefEthnicities : demo.pref_ethnicities,
+          pref_political: updated.prefPolitical.length > 0 ? updated.prefPolitical : demo.pref_political,
+          pref_education_levels: updated.prefEducation.length > 0 ? updated.prefEducation : demo.pref_education_levels,
+          seeking: updated.seeking || demo.seeking,
+        };
+        localStorage.setItem('relate_demographics', JSON.stringify(synced));
+        // Clear stale market cache so results page refetches
+        localStorage.removeItem('relate_market_data');
+      }
+    } catch { /* non-blocking */ }
+
     // Debounced Supabase save
     if (user && !config.useMockAuth) {
       if (dbSaveTimer.current) clearTimeout(dbSaveTimer.current);
