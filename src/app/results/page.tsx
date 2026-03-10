@@ -1685,13 +1685,15 @@ function DatingPoolGridCard({ data, demographics }: { data: MarketData | null; d
       targetGender = 'all';
     }
 
-    // Also check explicit "seeking" preference if available
-    const seeking = demographics.seeking;
-    if (seeking) {
-      const s = String(seeking).toLowerCase();
-      if (s.includes('women') || s.includes('woman') || s.includes('female')) targetGender = 'women';
-      else if (s.includes('men') || s.includes('man') || s.includes('male')) targetGender = 'men';
-      else targetGender = 'all';
+    // Also check explicit orientation if available (gay/lesbian flips the target)
+    const orientation = demographics.orientation;
+    if (orientation) {
+      const o = String(orientation).toLowerCase();
+      if (o.includes('gay') || o.includes('lesbian')) {
+        // Same-gender attraction: target = own gender
+        if (userGender === 'W') targetGender = 'women';
+        else if (userGender === 'M') targetGender = 'men';
+      }
     }
 
     const poolData: DatingPoolData = {
