@@ -367,9 +367,9 @@ export default function BlueprintPage() {
         <SubNav />
         <main className="flex-1 flex items-center justify-center px-6">
           <div className="max-w-lg text-center">
-            <h2 className="font-serif text-3xl font-semibold mb-4">The Dating Blueprint</h2>
+            <h2 className="font-serif text-3xl font-semibold mb-4">Attachment Style Assessment</h2>
             <p className="text-secondary mb-6 leading-relaxed">
-              The Dating Blueprint is a deep 30-minute assessment that maps your
+              The Attachment Style assessment is a deep 30-minute dive that maps your
               relational patterns, emotional triggers, and decision-making architecture.
               It builds on your RELATE persona and attachment profile to generate a
               personalized report you can actually use.
@@ -378,13 +378,13 @@ export default function BlueprintPage() {
               <p className="font-mono text-xs text-secondary mb-1">One-time purchase</p>
               <p className="font-serif text-4xl font-semibold mb-4">$49</p>
               <p className="text-sm text-secondary mb-6">
-                Includes full Blueprint session, personalized report, and growth plan.
+                Includes full assessment session, personalized report, and growth plan.
               </p>
               <Link
                 href="/api/blueprint/checkout"
                 className="btn-primary inline-block px-8 py-3"
               >
-                Purchase Blueprint
+                Purchase Attachment Style
               </Link>
             </div>
             <Link href="/results" className="text-sm text-secondary hover:text-foreground transition-colors">
@@ -406,7 +406,7 @@ export default function BlueprintPage() {
           <div className="max-w-md text-center">
             <h2 className="font-serif text-3xl font-semibold mb-4">Prerequisites Needed</h2>
             <p className="text-secondary mb-8 leading-relaxed">
-              Complete the RELATE assessment first to unlock the Blueprint.
+              Complete the RELATE assessment first to unlock the Attachment Style assessment.
               You need your persona code and attachment type before starting.
             </p>
             <Link href="/assessment" className="btn-primary inline-block px-8 py-3">
@@ -427,7 +427,7 @@ export default function BlueprintPage() {
         <main className="flex-1 flex items-center justify-center px-6">
           <div className="max-w-md text-center">
             <span className="font-mono text-xs text-secondary">4 quadrants</span>
-            <h2 className="font-serif text-3xl font-semibold mt-2 mb-4">The Dating Blueprint</h2>
+            <h2 className="font-serif text-3xl font-semibold mt-2 mb-4">Attachment Style Assessment</h2>
             <p className="text-secondary mb-4 leading-relaxed">
               This session takes about 30 minutes. You will move through four quadrants
               that map your relational history, emotional triggers, decision patterns,
@@ -505,7 +505,7 @@ export default function BlueprintPage() {
             <div className="w-12 h-12 rounded-full bg-success text-white flex items-center justify-center mx-auto mb-4 text-lg">
               &#10003;
             </div>
-            <h2 className="font-serif text-2xl font-semibold mb-2">Blueprint Complete</h2>
+            <h2 className="font-serif text-2xl font-semibold mb-2">Assessment Complete</h2>
             <p className="text-secondary mb-4">Redirecting to your results...</p>
           </div>
         </main>

@@ -191,12 +191,12 @@ export default function BlueprintResultsPage() {
         <SubNav />
         <main className="max-w-3xl mx-auto px-6 py-12 w-full">
           <div className="card text-center py-12">
-            <h1 className="font-serif text-2xl font-semibold mb-3">Dating Blueprint</h1>
+            <h1 className="font-serif text-2xl font-semibold mb-3">Attachment Style</h1>
             <p className="text-sm text-secondary max-w-lg mx-auto mb-6">
-              Complete the Dating Blueprint to see your results here.
+              Complete the Attachment Style assessment to see your results here.
             </p>
             <Link href="/blueprint" className="btn-primary text-sm">
-              Go to Blueprint
+              Go to Attachment Style
             </Link>
           </div>
         </main>
@@ -227,7 +227,7 @@ export default function BlueprintResultsPage() {
             PAGE HEADER
         ═══════════════════════════════════════════════ */}
         <div className="mb-10">
-          <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">Dating Blueprint</span>
+          <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">Attachment Style</span>
           <h1 className="font-serif text-3xl font-semibold mt-1 mb-2">Your Attachment Style</h1>
           {persona && (
             <p className="text-sm text-secondary">
@@ -345,7 +345,7 @@ export default function BlueprintResultsPage() {
           ) : (
             <div className="card text-center py-8">
               <p className="text-sm text-secondary mb-4">
-                Your Blueprint has been scored. Generate your full report to see a flowing narrative portrait
+                Your Attachment Style has been scored. Generate your full report to see a flowing narrative portrait
                 of your relational patterns.
               </p>
               {genError && (
@@ -370,11 +370,11 @@ export default function BlueprintResultsPage() {
             <h2 className="font-serif text-xl font-semibold mb-6">Your Growth Plan</h2>
             <div className="space-y-8">
 
-              {/* Part 1: What the Blueprint Adds */}
+              {/* Part 1: What Attachment Style Adds */}
               {growthContent(growth, 'whatDeepDiveAdds') && (
                 <div>
                   <h3 className="font-serif text-lg font-semibold mb-3">
-                    What the Blueprint Adds to Your RELATE Portrait
+                    What the Attachment Style Assessment Adds to Your RELATE Portrait
                   </h3>
                   {cleanProse(growthContent(growth, 'whatDeepDiveAdds')!).split('\n\n').map((p: string, i: number) => (
                     <p key={i} className="text-sm text-secondary leading-relaxed mb-3">{p}</p>

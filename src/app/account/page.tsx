@@ -687,7 +687,7 @@ function AccountPage() {
               </div>
             )}
 
-            {/* Blueprint add-on card */}
+            {/* Attachment Style add-on card */}
             {currentTier !== 'free' && (
               blueprintPurchased ? (
                 <div className="flex items-center gap-3 p-3 mb-3 rounded-md border bg-stone-50 border-stone-300">
@@ -695,14 +695,14 @@ function AccountPage() {
                     &#10003;
                   </div>
                   <div>
-                    <p className="text-sm font-medium">{blueprintProduct === 'blueprint_couples' ? 'Blueprint Couples' : 'Blueprint'}: Active</p>
+                    <p className="text-sm font-medium">{blueprintProduct === 'blueprint_couples' ? 'Attachment Style Couples' : 'Attachment Style'}: Active</p>
                     <p className="text-xs text-secondary">Deep attachment style assessment, personalized report, and growth plan.</p>
                   </div>
                 </div>
               ) : (
                 <div className="p-3 border rounded-md border-border mt-1">
                   <p className="text-[10px] uppercase tracking-wider text-secondary mb-1">Add-on</p>
-                  <p className="text-sm font-medium">Attachment Style Blueprint</p>
+                  <p className="text-sm font-medium">Attachment Style Assessment</p>
                   <p className="font-serif text-xl font-semibold my-1">{BLUEPRINT_PRICING.blueprint.priceDisplay}</p>
                   <p className="text-xs text-secondary mb-3">A 30-minute deep assessment revealing the psychology underneath your persona. 3,000-word personalized report.</p>
                   {config.useMockPayments ? (
@@ -711,11 +711,11 @@ function AccountPage() {
                       setBlueprintPurchased(true);
                       setBlueprintProduct('blueprint');
                     }} className="text-xs w-full btn-secondary">
-                      Add Blueprint
+                      Add Attachment Style
                     </button>
                   ) : (
-                    <a href={`/api/blueprint/checkout?product=blueprint&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
-                      Add Blueprint
+                    <a href="/settings/billing" className="text-xs w-full text-center block btn-secondary">
+                      Add Attachment Style
                     </a>
                   )}
                   {hasPartner && !blueprintPurchased && (
@@ -727,11 +727,11 @@ function AccountPage() {
                           setBlueprintPurchased(true);
                           setBlueprintProduct('blueprint_couples');
                         }} className="text-xs w-full btn-secondary mt-1">
-                          Add Blueprint Couples ({BLUEPRINT_PRICING.blueprint_couples.priceDisplay})
+                          Add Attachment Style Couples ({BLUEPRINT_PRICING.blueprint_couples.priceDisplay})
                         </button>
                       ) : (
-                        <a href={`/api/blueprint/checkout?product=blueprint_couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary mt-1">
-                          Add Blueprint Couples ({BLUEPRINT_PRICING.blueprint_couples.priceDisplay})
+                        <a href="/settings/billing" className="text-xs w-full text-center block btn-secondary mt-1">
+                          Add Attachment Style Couples ({BLUEPRINT_PRICING.blueprint_couples.priceDisplay})
                         </a>
                       )}
                     </div>
@@ -740,7 +740,7 @@ function AccountPage() {
               )
             )}
 
-            {/* Discount code for all users — works for both tiers and Blueprint add-ons */}
+            {/* Discount code for all users — works for both tiers and add-ons */}
             {currentTier !== 'free' && !blueprintPurchased && (
               <div className="mt-3 pt-3 border-t border-border">
                 <p className="text-xs text-secondary mb-2">Have a discount code?</p>

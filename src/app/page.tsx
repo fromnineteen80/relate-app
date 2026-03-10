@@ -218,14 +218,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── The Blueprint ── */}
+      {/* ── Attachment Style ── */}
       <section className="px-6 py-20">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
-            <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">The Blueprint</p>
+            <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Attachment Style</p>
             <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">Go deeper than your persona.</h2>
             <p className="text-secondary max-w-lg mx-auto">
-              The Dating Blueprint is a 30-minute deep assessment that reveals the four psychological layers underneath your RELATE results. Your history. The emotion driving your behavior. How you make decisions under pressure. And where your persona is working for you versus quietly working against you. The result is a 3,000-word portrait of how you specifically love, not how people like you tend to love.
+              The Attachment Style assessment is a 30-minute deep dive that reveals the four psychological layers underneath your RELATE results. Your history. The emotion driving your behavior. How you make decisions under pressure. And where your persona is working for you versus quietly working against you. The result is a 3,000-word portrait of how you specifically love, not how people like you tend to love.
             </p>
           </div>
 
@@ -243,7 +243,7 @@ export default function LandingPage() {
 
           <div className="text-center mt-10">
             <Link href="/blueprint" className="btn-primary text-base px-8 py-3">
-              Explore the Blueprint
+              Explore Attachment Style
             </Link>
             <p className="text-xs text-secondary mt-3">$49 one-time add-on</p>
           </div>
@@ -436,6 +436,24 @@ export default function LandingPage() {
                 ))}
               </ul>
               <Link href="/invite" className="btn-secondary w-full text-center">Get Report</Link>
+            </div>
+
+            {/* Attachment Style */}
+            <div className="card flex flex-col border-accent/40">
+              <span className="font-mono text-xs text-accent tracking-wider">ATTACHMENT STYLE</span>
+              <p className="font-serif text-4xl font-semibold mt-2">$49</p>
+              <p className="text-sm text-secondary mt-3 mb-6">The psychology underneath your persona.</p>
+              <ul className="bullet-list mb-8 flex-1">
+                {[
+                  '30-minute deep assessment',
+                  '3,000-word personalized report',
+                  'Growth plan and reflection prompts',
+                  'Couples overlay available ($79)',
+                ].map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+              <Link href="/blueprint" className="btn-secondary w-full text-center">Add Attachment Style</Link>
             </div>
           </div>
         </div>

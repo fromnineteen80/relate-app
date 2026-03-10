@@ -452,9 +452,9 @@ function ResultsDashboard() {
 
   // Sub-nav items, grouped
   const navItems = [
-    { id: 'persona', label: 'Your Persona', show: !!persona || hasDimensions || !!ic?.attachment || !!m4Summary || !!(tensionStacks && Object.keys(tensionStacks).length > 0) },
-    { id: 'attachment', label: 'Attachment', show: !!ic?.attachment },
+    { id: 'persona', label: 'Your Persona', show: !!persona || hasDimensions || !!m4Summary || !!(tensionStacks && Object.keys(tensionStacks).length > 0) },
     { id: 'know-your-market', label: 'Dating Market', show: hasMarket },
+    { id: 'attachment', label: 'Attachment Style', show: !!ic?.attachment },
     { id: 'how-you-date', label: 'How You Date', show: matches.length > 0 || !!(ic?.attachmentTiers) || !!m3 || (hasResults && true) },
   ].filter(n => n.show);
 
@@ -737,7 +737,7 @@ function ResultsDashboard() {
         {/* ══════════════════════════════════════════════════
             GROUP 1: PERSONA
         ══════════════════════════════════════════════════ */}
-        {(persona || hasDimensions || m4Summary || ic?.attachment || tensionStacks) && (
+        {(persona || hasDimensions || m4Summary || tensionStacks) && (
           <div id="persona" className="scroll-mt-32 mb-2">
             <div className="flex items-baseline gap-3 mb-4 mt-6">
               <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">01</span>
@@ -817,95 +817,6 @@ function ResultsDashboard() {
                 )}
               </div>
             )}
-          </section>
-        )}
-
-        {/* ── Your Attachment Style ── */}
-        {ic?.attachment && (
-          <section id="attachment" className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="shield" size={20} className="text-accent" />Your Attachment Style</h3>
-            <p className="explainer mb-4">How you connect, protect, and respond in close relationships</p>
-            <div className="flex items-center gap-3 mb-4">
-              <span className="font-mono text-lg font-semibold capitalize">{ic.attachment.style}</span>
-              {ic.attachment.subtype && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded capitalize">{ic.attachment.subtype}</span>}
-              {ic.attachment.leaningToward && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded">leaning {ic.attachment.leaningToward}</span>}
-              <span className="text-xs font-mono text-secondary ml-auto">{Math.round((ic.attachment.confidence ?? 0) * 100)}% confidence</span>
-            </div>
-            {ic.attachment.description && <p className="explainer mb-4">{ic.attachment.description}</p>}
-            {ic.attachment.strengths && Array.isArray(ic.attachment.strengths) && ic.attachment.strengths.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
-                <div>
-                  <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
-                  <ul className="bullet-list mt-2">
-                    {ic.attachment.strengths.map((s: string, i: number) => (
-                      <li key={i}>{s}</li>
-                    ))}
-                  </ul>
-                </div>
-                {ic.attachment.challenges && Array.isArray(ic.attachment.challenges) && ic.attachment.challenges.length > 0 && (
-                  <div>
-                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
-                    <ul className="bullet-list mt-2">
-                      {ic.attachment.challenges.map((c: string, i: number) => (
-                        <li key={i}>{c}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
-            {ic.attachment.inRelationships && (
-              <div className="mt-4 pt-4 border-t border-border">
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">In Relationships</span>
-                <p className="text-sm text-secondary mt-2">{ic.attachment.inRelationships}</p>
-              </div>
-            )}
-            {ic.attachment.underStress && (
-              <div className="mt-4 pt-4 border-t border-border">
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Under Stress</span>
-                <p className="text-sm text-secondary mt-2">{ic.attachment.underStress}</p>
-              </div>
-            )}
-            {/* Blueprint Insights */}
-            {(() => {
-              const bpRaw = typeof window !== 'undefined' ? localStorage.getItem('relate_blueprint_results') : null;
-              if (bpRaw) {
-                try {
-                  const bp = JSON.parse(bpRaw);
-                  return (
-                    <div className="mt-4 pt-4 border-t border-accent/30">
-                      <span className="text-[10px] font-mono text-accent uppercase tracking-widest">Blueprint Insights</span>
-                      <div className="mt-3 space-y-2">
-                        {bp.q2?.patternName && (
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-secondary">Trigger Emotion</span>
-                            <span className="text-xs font-medium">{bp.q2.patternName}</span>
-                          </div>
-                        )}
-                        {bp.q3?.patternName && (
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-secondary">Decision Mode</span>
-                            <span className="text-xs font-medium">{bp.q3.patternName}</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="mt-3">
-                        <Link href="/results/attachment" className="text-xs text-accent hover:underline font-medium">
-                          View Full Attachment Style Report <Icon name="arrow_forward" size={12} />
-                        </Link>
-                      </div>
-                    </div>
-                  );
-                } catch { /* invalid JSON */ }
-              }
-              return (
-                <div className="mt-4 pt-4 border-t border-border">
-                  <Link href="/blueprint" className="text-xs text-secondary hover:text-accent transition-colors">
-                    Go deeper with the Dating Blueprint <Icon name="arrow_forward" size={12} />
-                  </Link>
-                </div>
-              );
-            })()}
           </section>
         )}
 
@@ -1141,12 +1052,110 @@ function ResultsDashboard() {
         )}
 
         {/* ══════════════════════════════════════════════════
-            GROUP 3: HOW YOU DATE
+            GROUP 3: ATTACHMENT STYLE
+        ══════════════════════════════════════════════════ */}
+        {ic?.attachment && (
+          <div id="attachment" className="scroll-mt-32 mb-2">
+            <div className="flex items-baseline gap-3 mb-4 mt-10">
+              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">03</span>
+              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Attachment Style</span>
+            </div>
+
+          <section className="card mb-4 scroll-mt-32">
+            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="shield" size={20} className="text-accent" />Your Attachment Style</h3>
+            <p className="explainer mb-4">How you connect, protect, and respond in close relationships</p>
+            <div className="flex items-center gap-3 mb-4">
+              <span className="font-mono text-lg font-semibold capitalize">{ic.attachment.style}</span>
+              {ic.attachment.subtype && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded capitalize">{ic.attachment.subtype}</span>}
+              {ic.attachment.leaningToward && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded">leaning {ic.attachment.leaningToward}</span>}
+              <span className="text-xs font-mono text-secondary ml-auto">{Math.round((ic.attachment.confidence ?? 0) * 100)}% confidence</span>
+            </div>
+            {ic.attachment.description && <p className="explainer mb-4">{ic.attachment.description}</p>}
+            {ic.attachment.strengths && Array.isArray(ic.attachment.strengths) && ic.attachment.strengths.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
+                <div>
+                  <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
+                  <ul className="bullet-list mt-2">
+                    {ic.attachment.strengths.map((s: string, i: number) => (
+                      <li key={i}>{s}</li>
+                    ))}
+                  </ul>
+                </div>
+                {ic.attachment.challenges && Array.isArray(ic.attachment.challenges) && ic.attachment.challenges.length > 0 && (
+                  <div>
+                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
+                    <ul className="bullet-list mt-2">
+                      {ic.attachment.challenges.map((c: string, i: number) => (
+                        <li key={i}>{c}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+            {ic.attachment.inRelationships && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">In Relationships</span>
+                <p className="text-sm text-secondary mt-2">{ic.attachment.inRelationships}</p>
+              </div>
+            )}
+            {ic.attachment.underStress && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Under Stress</span>
+                <p className="text-sm text-secondary mt-2">{ic.attachment.underStress}</p>
+              </div>
+            )}
+            {/* Attachment Style Insights */}
+            {(() => {
+              const bpRaw = typeof window !== 'undefined' ? localStorage.getItem('relate_blueprint_results') : null;
+              if (bpRaw) {
+                try {
+                  const bp = JSON.parse(bpRaw);
+                  return (
+                    <div className="mt-4 pt-4 border-t border-accent/30">
+                      <span className="text-[10px] font-mono text-accent uppercase tracking-widest">Attachment Style Insights</span>
+                      <div className="mt-3 space-y-2">
+                        {bp.q2?.patternName && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-secondary">Trigger Emotion</span>
+                            <span className="text-xs font-medium">{bp.q2.patternName}</span>
+                          </div>
+                        )}
+                        {bp.q3?.patternName && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-secondary">Decision Mode</span>
+                            <span className="text-xs font-medium">{bp.q3.patternName}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="mt-3">
+                        <Link href="/results/attachment" className="text-xs text-accent hover:underline font-medium">
+                          View Full Attachment Style Report <Icon name="arrow_forward" size={12} />
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                } catch { /* invalid JSON */ }
+              }
+              return (
+                <div className="mt-4 pt-4 border-t border-border">
+                  <Link href="/blueprint" className="text-xs text-secondary hover:text-accent transition-colors">
+                    Go deeper with Attachment Style <Icon name="arrow_forward" size={12} />
+                  </Link>
+                </div>
+              );
+            })()}
+          </section>
+          </div>
+        )}
+
+        {/* ══════════════════════════════════════════════════
+            GROUP 4: HOW YOU DATE
         ══════════════════════════════════════════════════ */}
         {(matches.length > 0 || ic?.attachmentTiers || m3 || hasResults) && (
           <div id="how-you-date" className="scroll-mt-32 mb-2">
             <div className="flex items-baseline gap-3 mb-4 mt-10">
-              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">03</span>
+              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">04</span>
               <span className="font-mono text-xs text-secondary uppercase tracking-widest">How You Date</span>
             </div>
           </div>

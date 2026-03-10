@@ -388,7 +388,7 @@ export default function GrowthPage() {
           </div>
         )}
 
-        {/* ── Blueprint Growth Track ── */}
+        {/* ── Attachment Style Growth Track ── */}
         {(() => {
           const blueprintGrowthRaw = typeof window !== 'undefined' ? localStorage.getItem('relate_blueprint_growth') : null;
           const blueprintPurchased = typeof window !== 'undefined' ? localStorage.getItem('relate_blueprint_results') : null;
@@ -400,12 +400,12 @@ export default function GrowthPage() {
                 <div className="space-y-4 pt-6 border-t border-border">
                   <div>
                     <p className="text-[10px] font-mono text-accent uppercase tracking-widest mb-1">Attachment Style Add-On</p>
-                    <h2 className="font-serif text-xl font-semibold">Blueprint Growth Track</h2>
+                    <h2 className="font-serif text-xl font-semibold">Attachment Style Growth Track</h2>
                   </div>
 
                   {bg.part1 && (
                     <div className="card">
-                      <h3 className="font-serif text-sm font-semibold mb-2">What the Blueprint Adds to Your RELATE Portrait</h3>
+                      <h3 className="font-serif text-sm font-semibold mb-2">What the Attachment Style Assessment Adds to Your RELATE Portrait</h3>
                       <p className="text-sm text-secondary leading-relaxed whitespace-pre-line">{bg.part1}</p>
                     </div>
                   )}
@@ -444,13 +444,13 @@ export default function GrowthPage() {
               <div className="space-y-4 pt-6 border-t border-border">
                 <div>
                   <p className="text-[10px] font-mono text-accent uppercase tracking-widest mb-1">Attachment Style Add-On</p>
-                  <h2 className="font-serif text-xl font-semibold">Blueprint Growth Track</h2>
+                  <h2 className="font-serif text-xl font-semibold">Attachment Style Growth Track</h2>
                 </div>
                 <div className="card border-accent/30 text-center py-8">
                   <Icon name="psychology" size={32} className="text-accent mx-auto mb-3" />
-                  <p className="text-sm font-medium mb-2">Your Blueprint growth plan hasn&apos;t been generated yet</p>
-                  <p className="text-xs text-secondary mb-4">Complete the Dating Blueprint to unlock personalized attachment-based growth exercises.</p>
-                  <Link href="/blueprint" className="btn-primary text-xs">Complete the Blueprint</Link>
+                  <p className="text-sm font-medium mb-2">Your Attachment Style growth plan hasn&apos;t been generated yet</p>
+                  <p className="text-xs text-secondary mb-4">Complete the Attachment Style assessment to unlock personalized growth exercises.</p>
+                  <Link href="/blueprint" className="btn-primary text-xs">Complete Attachment Style</Link>
                 </div>
               </div>
             );
@@ -460,7 +460,7 @@ export default function GrowthPage() {
             <div className="pt-6 border-t border-border">
               <div className="card bg-stone-50 border-dashed border-stone-300 text-center py-8">
                 <Icon name="lock" size={28} className="text-secondary mx-auto mb-3" />
-                <p className="text-sm font-medium mb-1">Unlock deeper growth insights with the Dating Blueprint</p>
+                <p className="text-sm font-medium mb-1">Unlock deeper growth insights with the Attachment Style assessment</p>
                 <p className="text-xs text-secondary mb-4">Attachment-based growth exercises tailored to your unique patterns.</p>
                 <Link href="/blueprint" className="text-xs text-accent hover:underline font-medium">
                   Learn More <Icon name="arrow_forward" size={12} />
