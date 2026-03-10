@@ -1741,7 +1741,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
       if (s.includes('men') || s.includes('man') || s.includes('male')) return 'men';
     }
     if (g === 'Man' || g === 'man' || g === 'M' || g === 'male') return 'women';
-    if (g === 'Woman' || g === 'woman' || g === 'F' || g === 'female') return 'men';
+    if (g === 'Woman' || g === 'woman' || g === 'W' || g === 'F' || g === 'female') return 'men';
     return 'singles';
   })();
 
@@ -2112,7 +2112,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
       if (s.includes('men') || s.includes('man') || s.includes('male')) return 'men';
     }
     if (g === 'Man' || g === 'man' || g === 'M' || g === 'male') return 'women';
-    if (g === 'Woman' || g === 'woman' || g === 'F' || g === 'female') return 'men';
+    if (g === 'Woman' || g === 'woman' || g === 'W' || g === 'F' || g === 'female') return 'men';
     return 'singles';
   })();
   const datingGenderCap = datingGender.charAt(0).toUpperCase() + datingGender.slice(1);
@@ -2121,7 +2121,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
   const ownGender = (() => {
     const g = demographics?.gender;
     if (g === 'Man' || g === 'man' || g === 'M' || g === 'male') return 'men';
-    if (g === 'Woman' || g === 'woman' || g === 'F' || g === 'female') return 'women';
+    if (g === 'Woman' || g === 'woman' || g === 'W' || g === 'F' || g === 'female') return 'women';
     return 'singles';
   })();
 
