@@ -1974,7 +1974,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
       <div className="hidden md:block flex-shrink-0" style={{ paddingRight: '6px' }}>
         <div className="space-y-0">
           {/* Column header */}
-          <div className="py-1 px-1.5 border-b border-[#e7e5e4]">
+          <div className="py-1 px-1.5 border-b border-[#e7e5e4]" style={{ textAlign: 'center' }}>
             <span style={{ fontSize: '10px', color: '#78716c', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
               Metro Area
             </span>
