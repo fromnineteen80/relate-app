@@ -1677,9 +1677,9 @@ function DatingPoolGridCard({ data, demographics }: { data: MarketData | null; d
     // Derive targetGender from user's gender (seeking opposite)
     const userGender = demographics.gender || localStorage.getItem('relate_gender');
     let targetGender: TargetGender = 'women';
-    if (userGender === 'Woman' || userGender === 'woman' || userGender === 'F' || userGender === 'female') {
+    if (userGender === 'W') {
       targetGender = 'men';
-    } else if (userGender === 'Man' || userGender === 'man' || userGender === 'M' || userGender === 'male') {
+    } else if (userGender === 'M') {
       targetGender = 'women';
     } else {
       targetGender = 'all';
@@ -1732,18 +1732,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
   const svgRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const datingGender = (() => {
-    const g = demographics?.gender;
-    const seeking = demographics?.seeking;
-    if (seeking) {
-      const s = String(seeking).toLowerCase();
-      if (s.includes('women') || s.includes('woman') || s.includes('female')) return 'women';
-      if (s.includes('men') || s.includes('man') || s.includes('male')) return 'men';
-    }
-    if (g === 'Man' || g === 'man' || g === 'M' || g === 'male') return 'women';
-    if (g === 'Woman' || g === 'woman' || g === 'W' || g === 'F' || g === 'female') return 'men';
-    return 'singles';
-  })();
+  const datingGender = demographics?.gender === 'M' ? 'women' : demographics?.gender === 'W' ? 'men' : 'singles';
 
   // Chart dimensions
   const W = 560, H = 480;
@@ -2103,27 +2092,11 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
   const metroShort = metro.includes(',') ? metro.split(',')[0] : metro;
 
   // Determine the gendered label for who the user is dating
-  const datingGender = (() => {
-    const g = demographics?.gender;
-    const seeking = demographics?.seeking;
-    if (seeking) {
-      const s = String(seeking).toLowerCase();
-      if (s.includes('women') || s.includes('woman') || s.includes('female')) return 'women';
-      if (s.includes('men') || s.includes('man') || s.includes('male')) return 'men';
-    }
-    if (g === 'Man' || g === 'man' || g === 'M' || g === 'male') return 'women';
-    if (g === 'Woman' || g === 'woman' || g === 'W' || g === 'F' || g === 'female') return 'men';
-    return 'singles';
-  })();
+  const datingGender = demographics?.gender === 'M' ? 'women' : demographics?.gender === 'W' ? 'men' : 'singles';
   const datingGenderCap = datingGender.charAt(0).toUpperCase() + datingGender.slice(1);
 
   // The user's own gender (plural) for "How competitive you are with other men/women"
-  const ownGender = (() => {
-    const g = demographics?.gender;
-    if (g === 'Man' || g === 'man' || g === 'M' || g === 'male') return 'men';
-    if (g === 'Woman' || g === 'woman' || g === 'W' || g === 'F' || g === 'female') return 'women';
-    return 'singles';
-  })();
+  const ownGender = demographics?.gender === 'M' ? 'men' : demographics?.gender === 'W' ? 'women' : 'singles';
 
   const singlesPool = pool?.localSinglePool || 0;
   const milestones = [
@@ -2354,7 +2327,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
         const idealCount = pool?.idealPool || 0;
         const matchPct = idealCount > 0 ? Math.min(1, matchCount / idealCount) : 0;
         // Color of gender being dated: Man (M) dates women → pink, Woman (W) dates men → blue
-        const datingWomen = demographics?.gender === 'M' || demographics?.gender === 'Man';
+        const datingWomen = demographics?.gender === 'M';
         const matchColor = datingWomen ? '#fb7185' : '#3b82f6'; // rose-400 / blue-500
         const bgColor = '#e7e5e4'; // stone-200
 
@@ -2408,7 +2381,7 @@ function humanizeBottleneck(
 ): { title: string; description: string; action: string } {
   const pctStr = Math.round(lostPct);
   const countStr = lostCount.toLocaleString();
-  const seeking = gender === 'Woman' ? 'men' : 'women';
+  const seeking = gender === 'W' ? 'men' : 'women';
 
   // Has kids: No / Yes / Open to either
   if (/^Has kids:/i.test(stageName)) {
@@ -2568,7 +2541,7 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
   if (weakest && weakest.local < 40) {
     const pct = Math.round(weakest.local);
     const weightPct = Math.round(weakest.weight * 100);
-    const genderLabel = demographics.gender === 'Woman' ? 'women' : 'men';
+    const genderLabel = demographics.gender === 'W' ? 'women' : 'men';
     const coaching: Record<string, { title: string; desc: string; action: string }> = {
       income: {
         title: 'Your Income Is Limiting Your Competitiveness',

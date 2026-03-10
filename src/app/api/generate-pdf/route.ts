@@ -373,7 +373,7 @@ function buildCoachingHTML(marketData: any, demographics: any, m3: any, m4: any)
   if (weakest && weakest.local < 40) {
     const gender = demographics?.gender || '';
     const coaching: Record<string, { t: string; d: string; a: string }> = {
-      income: { t: 'Your Income Is Limiting You', d: `Income ranks in the bottom ${Math.round(weakest.local)}% locally. For ${gender === 'Woman' ? 'women' : 'men'}, income carries ${Math.round(weakest.weight * 100)}% of your score weight.`, a: 'Negotiate a raise, pursue certifications, or add a side income. Even a 20% increase moves your score meaningfully.' },
+      income: { t: 'Your Income Is Limiting You', d: `Income ranks in the bottom ${Math.round(weakest.local)}% locally. For ${gender === 'W' ? 'women' : 'men'}, income carries ${Math.round(weakest.weight * 100)}% of your score weight.`, a: 'Negotiate a raise, pursue certifications, or add a side income. Even a 20% increase moves your score meaningfully.' },
       education: { t: 'Education Is Holding You Back', d: `Education ranks in the bottom ${Math.round(weakest.local)}% locally.`, a: 'Professional certifications, online degrees, or skill-based credentials can shift your percentile with one credential bump.' },
       age: { t: 'Age Is Working Against You', d: `Age score is ${Math.round(weakest.local)}.`, a: 'Offset age by maximizing income, fitness, and emotional maturity. Lead with depth.' },
       children: { t: 'Having Kids Is Narrowing Your Pool', d: `Children score is ${Math.round(weakest.local)}. Many singles prefer partners without existing children.`, a: 'Position parenting as a strength. Show you\'re a capable, present parent. Don\'t hide it.' },
