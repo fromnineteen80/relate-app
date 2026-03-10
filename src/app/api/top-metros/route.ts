@@ -46,9 +46,22 @@ export async function POST(request: NextRequest) {
     };
 
     await demoEngine.initializeData();
-    const topMetros = await demoEngine.findTopMetros(userProfile, prefs, homeScore);
+    const result = await demoEngine.findTopMetros(userProfile, prefs, homeScore);
+    const { topMetros, totalCompetitive, allCompetitive } = result;
 
-    return NextResponse.json({ success: true, topMetros });
+    // Find user's home metro rank among competitive metros
+    let homeMetroRank = null;
+    let homeCbsa = null;
+    if (demographics.zipCode) {
+      const homeLocation = await demoEngine.findCBSAFromZIP(demographics.zipCode);
+      if (homeLocation) {
+        homeCbsa = homeLocation.cbsa;
+        const idx = allCompetitive.findIndex((m: any) => m.cbsa === homeLocation.cbsa);
+        homeMetroRank = idx >= 0 ? idx + 1 : null;
+      }
+    }
+
+    return NextResponse.json({ success: true, topMetros, totalCompetitive, homeMetroRank, homeCbsa });
   } catch (error: any) {
     console.error('Top metros error:', error);
     return NextResponse.json(

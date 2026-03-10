@@ -80,11 +80,11 @@ export default function CheatSheetPage() {
         <SiteHeader />
         <SubNav />
         <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full text-center">
-          <h1 className="font-serif text-2xl font-semibold mb-4">Calculate Your Chart First</h1>
+          <h1 className="font-serif text-2xl font-semibold mb-4">Birth Data Needed</h1>
           <p className="explainer mb-6">
-            Your cheat sheet is personalized to your specific Sun, Moon, and Rising placements. Complete your birth chart to unlock it.
+            Your cheat sheet is personalized to your specific Sun, Moon, and Rising placements. Add your birth details in your profile to unlock it.
           </p>
-          <Link href="/results/astrology" className="btn-primary text-sm">Enter Birth Details</Link>
+          <Link href="/settings/profile" className="btn-primary text-sm">Edit Profile</Link>
         </main>
         <SiteFooter />
       </div>

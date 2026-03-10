@@ -46,7 +46,7 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
   const [fadeIn, setFadeIn] = useState(false);
 
   const { result, poles } = scoredData;
-  const gender = result?.gender === 'male' || result?.gender === 'M' ? 'M' : 'W';
+  const gender = result?.gender === 'M' ? 'M' : 'W';
   const dimensions = result?.dimensions || {};
 
   useEffect(() => {

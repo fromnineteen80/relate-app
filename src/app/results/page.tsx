@@ -132,6 +132,7 @@ function ResultsDashboard() {
   const [userFullName, setUserFullName] = useState<string | null>(null);
   const marketFetchedRef = useRef(false);
   const [topMetros, setTopMetros] = useState<any[] | null>(null);
+  const [topMetrosInfo, setTopMetrosInfo] = useState<{ totalCompetitive: number; homeMetroRank: number | null; homeCbsa: string | null } | null>(null);
   const topMetrosFetchedRef = useRef(false);
   const [worstMetros, setWorstMetros] = useState<any[] | null>(null);
   const worstMetrosFetchedRef = useRef(false);
@@ -258,7 +259,12 @@ function ResultsDashboard() {
       body: JSON.stringify({ ...req.body, homeScore: marketData.relateScore?.score ?? 0 }),
     })
       .then(r => r.json())
-      .then(data => { if (data.success) setTopMetros(data.topMetros); })
+      .then(data => {
+        if (data.success) {
+          setTopMetros(data.topMetros);
+          setTopMetrosInfo({ totalCompetitive: data.totalCompetitive, homeMetroRank: data.homeMetroRank, homeCbsa: data.homeCbsa });
+        }
+      })
       .catch(() => { });
   }, [marketData, user]);
 
@@ -1523,7 +1529,7 @@ function ResultsDashboard() {
 
         {/* ── Top Metros Scatter Plot ── */}
         {topMetros && topMetros.length > 0 && (
-          <TopMetrosScatterPlot metros={topMetros} worstMetros={worstMetros} demographics={demographics} />
+          <TopMetrosScatterPlot metros={topMetros} worstMetros={worstMetros} demographics={demographics} marketData={marketData} topMetrosInfo={topMetrosInfo} />
         )}
 
         {/* ── Market Coaching ── */}
@@ -1677,21 +1683,23 @@ function DatingPoolGridCard({ data, demographics }: { data: MarketData | null; d
     // Derive targetGender from user's gender (seeking opposite)
     const userGender = demographics.gender || localStorage.getItem('relate_gender');
     let targetGender: TargetGender = 'women';
-    if (userGender === 'Woman' || userGender === 'woman' || userGender === 'F' || userGender === 'female') {
+    if (userGender === 'W') {
       targetGender = 'men';
-    } else if (userGender === 'Man' || userGender === 'man' || userGender === 'M' || userGender === 'male') {
+    } else if (userGender === 'M') {
       targetGender = 'women';
     } else {
       targetGender = 'all';
     }
 
-    // Also check explicit "seeking" preference if available
-    const seeking = demographics.seeking;
-    if (seeking) {
-      const s = String(seeking).toLowerCase();
-      if (s.includes('women') || s.includes('woman') || s.includes('female')) targetGender = 'women';
-      else if (s.includes('men') || s.includes('man') || s.includes('male')) targetGender = 'men';
-      else targetGender = 'all';
+    // Also check explicit orientation if available (gay/lesbian flips the target)
+    const orientation = demographics.orientation;
+    if (orientation) {
+      const o = String(orientation).toLowerCase();
+      if (o.includes('gay') || o.includes('lesbian')) {
+        // Same-gender attraction: target = own gender
+        if (userGender === 'W') targetGender = 'women';
+        else if (userGender === 'M') targetGender = 'men';
+      }
     }
 
     const poolData: DatingPoolData = {
@@ -1727,23 +1735,12 @@ function nextMultipleOf10(n: number) {
   return Math.ceil(n / 10) * 10;
 }
 
-function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: any[]; worstMetros?: any[] | null; demographics?: any }) {
+function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, topMetrosInfo }: { metros: any[]; worstMetros?: any[] | null; demographics?: any; marketData?: any; topMetrosInfo?: { totalCompetitive: number; homeMetroRank: number | null; homeCbsa: string | null } | null }) {
   const [tooltip, setTooltip] = useState<{ metro: any; x: number; y: number } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const datingGender = (() => {
-    const g = demographics?.gender;
-    const seeking = demographics?.seeking;
-    if (seeking) {
-      const s = String(seeking).toLowerCase();
-      if (s.includes('women') || s.includes('woman') || s.includes('female')) return 'women';
-      if (s.includes('men') || s.includes('man') || s.includes('male')) return 'men';
-    }
-    if (g === 'Man' || g === 'man' || g === 'M' || g === 'male') return 'women';
-    if (g === 'Woman' || g === 'woman' || g === 'F' || g === 'female') return 'men';
-    return 'singles';
-  })();
+  const datingGender = demographics?.gender === 'M' ? 'women' : demographics?.gender === 'W' ? 'men' : 'singles';
 
   // Chart dimensions
   const W = 560, H = 480;
@@ -1799,8 +1796,9 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
 
   const handleMouseLeave = () => setTooltip(null);
 
-  // Dot color based on gender being pursued
+  // Dot color based on gender being pursued; user's home metro gets green
   const dotColor = datingGender === 'women' ? '#fb7185' : datingGender === 'men' ? '#3b82f6' : '#c2854a';
+  const homeCbsa = topMetrosInfo?.homeCbsa || null;
 
   return (
     <section className="card mb-4">
@@ -1862,7 +1860,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
                 cx={scaleX(m.idealPool)}
                 cy={scaleY(m.matchCount)}
                 r={8}
-                fill={dotColor}
+                fill={m.cbsa === homeCbsa ? '#16a34a' : dotColor}
                 fillOpacity={0.85}
                 stroke="#fff"
                 strokeWidth={1.5}
@@ -1995,15 +1993,21 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
       </div>
       </div>
 
+      {/* ── Explainer paragraph ── */}
+      {topMetrosInfo?.homeMetroRank != null && marketData?.location && (
+        <p className="explainer mt-4">
+          The {(marketData.location.cbsaLabel || marketData.location.cbsaName || 'your area').split(',')[0]} metro area ranks #{topMetrosInfo.homeMetroRank} nationally among metro areas where you are competitive amongst your single peers (at least a 75 score). If your ideal match pool and the number of {datingGender} feels small, consider how and where you are looking for love. Are dating apps working? Are they worth the investment? Are there things you can do to improve your desirability to {datingGender} in your ideal match pool? Do you need to adjust your expectations? Could you expand your search to other metro areas where you have better chances of matching?
+        </p>
+      )}
+
       {/* ── Worst Metros ── */}
       {worstMetros && worstMetros.length > 0 && (
-        <>
-          <div className="border-t border-[#f0efed] my-4" />
-          <h4 className="font-serif text-base font-semibold mb-1 flex items-center gap-2">
-            <Icon name="trending_down" size={18} className="text-accent" />
+        <section className="card mb-4 mt-4">
+          <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2">
+            <Icon name="trending_down" size={20} className="text-accent" />
             Your Worst Large Metro Areas
-          </h4>
-          <p className="explainer mb-3">Bottom 10 metros (pop. 1.5M+) ranked by smallest ideal match pool.</p>
+          </h3>
+          <p className="explainer mb-3">Bottom 10 metros (pop. 750k+) ranked by smallest ideal match pool.</p>
           <div className="space-y-0">
             {/* Column headers */}
             <div className="flex items-end gap-2.5 py-1 px-1.5 border-b border-[#e7e5e4]">
@@ -2053,7 +2057,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics }: { metros: a
           <p className="text-[10px] text-secondary mt-2">
             per 10k = ideal matches per 10,000 local single {datingGender}
           </p>
-        </>
+        </section>
       )}
     </section>
   );
@@ -2103,31 +2107,15 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
   const metroShort = metro.includes(',') ? metro.split(',')[0] : metro;
 
   // Determine the gendered label for who the user is dating
-  const datingGender = (() => {
-    const g = demographics?.gender;
-    const seeking = demographics?.seeking;
-    if (seeking) {
-      const s = String(seeking).toLowerCase();
-      if (s.includes('women') || s.includes('woman') || s.includes('female')) return 'women';
-      if (s.includes('men') || s.includes('man') || s.includes('male')) return 'men';
-    }
-    if (g === 'Man' || g === 'man' || g === 'M' || g === 'male') return 'women';
-    if (g === 'Woman' || g === 'woman' || g === 'F' || g === 'female') return 'men';
-    return 'singles';
-  })();
+  const datingGender = demographics?.gender === 'M' ? 'women' : demographics?.gender === 'W' ? 'men' : 'singles';
   const datingGenderCap = datingGender.charAt(0).toUpperCase() + datingGender.slice(1);
 
   // The user's own gender (plural) for "How competitive you are with other men/women"
-  const ownGender = (() => {
-    const g = demographics?.gender;
-    if (g === 'Man' || g === 'man' || g === 'M' || g === 'male') return 'men';
-    if (g === 'Woman' || g === 'woman' || g === 'F' || g === 'female') return 'women';
-    return 'singles';
-  })();
+  const ownGender = demographics?.gender === 'M' ? 'men' : demographics?.gender === 'W' ? 'women' : 'singles';
 
   const singlesPool = pool?.localSinglePool || 0;
   const milestones = [
-    { label: 'Metro Singles Pool', value: singlesPool, desc: 'Unmarried adults of your preferred gender and orientation' },
+    { label: 'Metro Singles Pool', value: singlesPool, desc: `Unmarried ${datingGender} in the metro area` },
     { label: 'Identity Pool', value: pool?.identityPool || 0, desc: `${datingGenderCap} matching your preferred ethnicity` },
     { label: 'Your Realistic Match Pool', value: pool?.realisticPool || 0, desc: `${datingGenderCap} within your age range and income requirements` },
     { label: 'Your Preferred Lifestyle Pool', value: pool?.preferredPool || 0, desc: `${datingGenderCap} who match your aesthetic and fitness choices` },
@@ -2354,7 +2342,7 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
         const idealCount = pool?.idealPool || 0;
         const matchPct = idealCount > 0 ? Math.min(1, matchCount / idealCount) : 0;
         // Color of gender being dated: Man (M) dates women → pink, Woman (W) dates men → blue
-        const datingWomen = demographics?.gender === 'M' || demographics?.gender === 'Man';
+        const datingWomen = demographics?.gender === 'M';
         const matchColor = datingWomen ? '#fb7185' : '#3b82f6'; // rose-400 / blue-500
         const bgColor = '#e7e5e4'; // stone-200
 
@@ -2408,7 +2396,7 @@ function humanizeBottleneck(
 ): { title: string; description: string; action: string } {
   const pctStr = Math.round(lostPct);
   const countStr = lostCount.toLocaleString();
-  const seeking = gender === 'Woman' ? 'men' : 'women';
+  const seeking = gender === 'W' ? 'men' : 'women';
 
   // Has kids: No / Yes / Open to either
   if (/^Has kids:/i.test(stageName)) {
@@ -2568,7 +2556,7 @@ function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
   if (weakest && weakest.local < 40) {
     const pct = Math.round(weakest.local);
     const weightPct = Math.round(weakest.weight * 100);
-    const genderLabel = demographics.gender === 'Woman' ? 'women' : 'men';
+    const genderLabel = demographics.gender === 'W' ? 'women' : 'men';
     const coaching: Record<string, { title: string; desc: string; action: string }> = {
       income: {
         title: 'Your Income Is Limiting Your Competitiveness',

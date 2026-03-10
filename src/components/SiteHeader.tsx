@@ -74,8 +74,8 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
   const isWoman = typeof window !== 'undefined'
     ? (() => {
         const g = localStorage.getItem('relate_gender');
-        if (g === 'W' || g === 'Woman') return true;
-        try { const d = JSON.parse(localStorage.getItem('relate_demographics') || '{}'); return d.gender === 'W' || d.gender === 'Woman'; } catch { return false; }
+        if (g === 'W') return true;
+        try { const d = JSON.parse(localStorage.getItem('relate_demographics') || '{}'); return d.gender === 'W'; } catch { return false; }
       })()
     : false;
   const initial = profileName ? profileName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || '?';

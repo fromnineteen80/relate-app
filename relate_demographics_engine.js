@@ -1626,13 +1626,13 @@ async function findTopMetros(userProfile, preferences, homeScore) {
   const allCBSAs = Object.values(cbsas).filter(c => c.cbsa_population > 0);
   const results = [];
 
-  // Minimum competition score: no more than 5 below the user's home metro score
-  const minScore = (homeScore || 0) - 5;
+  // Minimum competition score: must be at least 75
+  const minScore = 75;
 
   for (const cbsa of allCBSAs) {
     const relateScore = calculateRelateScore(userProfile, cbsa);
 
-    // Skip metros where user's competition score drops more than 5 below home
+    // Skip metros where user's competition score is below 75
     if (relateScore.score < minScore) continue;
 
     const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
@@ -1667,17 +1667,17 @@ async function findTopMetros(userProfile, preferences, homeScore) {
     return b.incomeEduRank - a.incomeEduRank;
   });
 
-  return results.slice(0, 20);
+  return { topMetros: results.slice(0, 20), totalCompetitive: results.length, allCompetitive: results };
 }
 
 /**
  * Find the 10 worst large metro areas for this user.
- * Only considers metros with population > 1,500,000.
+ * Only considers metros with population > 750,000.
  * Sorted ascending by idealPool (worst first = #1).
  */
 async function findWorstMetros(userProfile, preferences) {
   const cbsas = await loadCBSAData();
-  const largeCBSAs = Object.values(cbsas).filter(c => c.cbsa_population >= 1500000);
+  const largeCBSAs = Object.values(cbsas).filter(c => c.cbsa_population >= 750000);
   const results = [];
 
   for (const cbsa of largeCBSAs) {

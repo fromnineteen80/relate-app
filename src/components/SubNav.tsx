@@ -44,9 +44,9 @@ export function SubNav({ items = [] }: SubNavProps) {
     // Determine seeking label from gender (user's gender → they're seeking the opposite)
     const gender = localStorage.getItem('relate_gender');
     const demoStr = localStorage.getItem('relate_demographics');
-    if (gender === 'M' || gender === 'Man') {
+    if (gender === 'M') {
       setSeekingLabel('Female Matches');
-    } else if (gender === 'W' || gender === 'Woman') {
+    } else if (gender === 'W') {
       setSeekingLabel('Male Matches');
     }
 
@@ -55,7 +55,7 @@ export function SubNav({ items = [] }: SubNavProps) {
     if (astroStored !== null) {
       setAstrologyEnabled(astroStored === 'true');
     } else {
-      setAstrologyEnabled(gender === 'W' || gender === 'Woman');
+      setAstrologyEnabled(gender === 'W');
     }
 
   }, []);
