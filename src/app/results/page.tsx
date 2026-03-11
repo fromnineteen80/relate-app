@@ -1071,7 +1071,7 @@ function ResultsDashboard() {
             <div className="flex items-center justify-between mb-1">
               <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="shield" size={20} className="text-accent" />Your Attachment Style</h3>
               {(() => {
-                const hasReport = typeof window !== 'undefined' && localStorage.getItem('relate_blueprint_results');
+                const hasReport = typeof window !== 'undefined' && localStorage.getItem('relate_attachment_results');
                 return hasReport ? (
                   <Link href="/results/attachment" className="text-xs text-accent hover:underline font-medium whitespace-nowrap">
                     View Full Report <Icon name="arrow_forward" size={12} />
@@ -1127,7 +1127,7 @@ function ResultsDashboard() {
             )}
             {/* Attachment Style Insights */}
             {(() => {
-              const bpRaw = typeof window !== 'undefined' ? localStorage.getItem('relate_blueprint_results') : null;
+              const bpRaw = typeof window !== 'undefined' ? localStorage.getItem('relate_attachment_results') : null;
               if (bpRaw) {
                 try {
                   const bp = JSON.parse(bpRaw);

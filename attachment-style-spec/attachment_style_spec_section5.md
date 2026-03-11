@@ -1,4 +1,4 @@
-# RELATE DATING BLUEPRINT
+# RELATE DATING ATTACHMENT STYLE
 ## Technical and Clinical Specification
 ### Section 5: Cross-Quadrant Interaction and the Synthesis Architecture
 
@@ -8,7 +8,7 @@
 
 Each Quadrant produces a Profile that is clinically meaningful on its own. A person can read their Quadrant Two result and recognize their trigger emotion with enough precision to feel seen. A person can read their Quadrant Three result and recognize their decision mode with enough accuracy to feel understood. These individual results have value.
 
-But the most important thing the Blueprint produces is not any single Quadrant result. It is the portrait that emerges from the specific combination of all four. This is the insight no attachment label, no persona framework, and no single-dimension psychological instrument can generate. Two people can share an identical Quadrant Two Profile and have completely different relational lives because their Quadrant One histories explain the trigger emotion differently, their Quadrant Three modes respond to it differently, and their Quadrant Four personas have built different structures around it. The cross-Quadrant interaction is where the Blueprint stops describing a type and starts describing a person.
+But the most important thing the Attachment Style produces is not any single Quadrant result. It is the portrait that emerges from the specific combination of all four. This is the insight no attachment label, no persona framework, and no single-dimension psychological instrument can generate. Two people can share an identical Quadrant Two Profile and have completely different relational lives because their Quadrant One histories explain the trigger emotion differently, their Quadrant Three modes respond to it differently, and their Quadrant Four personas have built different structures around it. The cross-Quadrant interaction is where the Attachment Style stops describing a type and starts describing a person.
 
 The synthesis section of the report is built entirely from cross-Quadrant inference. It does not summarize the four Quadrant sections that precede it. It draws conclusions that the individual sections could not reach alone. It names patterns that only become visible when all four Quadrants are read together. It is the section most likely to produce the specific quality of recognition the best professional personality reports produce at their best, the sense that the report knows something about the person that the person has not fully known about themselves.
 
@@ -122,7 +122,7 @@ Quadrant One Profile: Any. Quadrant Two Profile: Fear of Abandonment or Shame. Q
 
 This person is living partly in a past relationship that has not yet released them. The dissociative backward anchoring mode means that current relational ambiguity activates the past template rather than producing engagement with the present situation. The fear of abandonment or shame trigger means the past template carries a specific emotional charge that the current relationship is being filtered through. The moderate amplification means this is most visible when the current relationship reaches emotional territory that resembles the past one.
 
-The synthesis for this pattern names the past relationship directly, not its content, which the Blueprint does not know, but its gravitational pull. The report tells this person that they are in two relationships simultaneously and asks which one they are actually in right now.
+The synthesis for this pattern names the past relationship directly, not its content, which the Attachment Style does not know, but its gravitational pull. The report tells this person that they are in two relationships simultaneously and asks which one they are actually in right now.
 
 ---
 
@@ -146,7 +146,7 @@ The fourth move names the specific thing this combination makes difficult, in la
 
 ## Couples Overlay Synthesis
 
-When the Blueprint is completed by both partners, the couples overlay synthesis performs the same four moves at the level of the combined system rather than the individual one.
+When the Attachment Style is completed by both partners, the couples overlay synthesis performs the same four moves at the level of the combined system rather than the individual one.
 
 The first move names what the two people's Quadrant combinations produce together as a relational system. Not whether they are compatible in the abstract but what specific dynamic their particular combination generates between them.
 

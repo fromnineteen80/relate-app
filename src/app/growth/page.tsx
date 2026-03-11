@@ -390,12 +390,12 @@ export default function GrowthPage() {
 
         {/* ── Attachment Style Growth Track ── */}
         {(() => {
-          const blueprintGrowthRaw = typeof window !== 'undefined' ? localStorage.getItem('relate_blueprint_growth') : null;
-          const blueprintPurchased = typeof window !== 'undefined' ? localStorage.getItem('relate_blueprint_results') : null;
+          const attachmentGrowthRaw = typeof window !== 'undefined' ? localStorage.getItem('relate_attachment_growth') : null;
+          const attachmentPurchased = typeof window !== 'undefined' ? localStorage.getItem('relate_attachment_results') : null;
 
-          if (blueprintGrowthRaw) {
+          if (attachmentGrowthRaw) {
             try {
-              const bg = JSON.parse(blueprintGrowthRaw);
+              const bg = JSON.parse(attachmentGrowthRaw);
               return (
                 <div className="space-y-4 pt-6 border-t border-border">
                   <div>
@@ -439,7 +439,7 @@ export default function GrowthPage() {
             } catch { /* invalid JSON, fall through */ }
           }
 
-          if (blueprintPurchased) {
+          if (attachmentPurchased) {
             return (
               <div className="space-y-4 pt-6 border-t border-border">
                 <div>

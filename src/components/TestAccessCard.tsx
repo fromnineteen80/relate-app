@@ -25,14 +25,14 @@ export function TestAccessCard() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code, email: user.email }),
         });
-        // Also grant blueprint access
+        // Also grant attachment style access
         const bpCode = `100-ATTACH-${month}-${now.getFullYear()}`;
         await fetch('/api/discount-code', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code: bpCode, email: user.email }),
         });
-        localStorage.removeItem('relate_blueprint_access');
+        localStorage.removeItem('relate_attachment_access');
       } catch { /* localStorage fallback still works */ }
       router.push('/assessment');
     } else {

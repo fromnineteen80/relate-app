@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
       personaMetadata: personaMetadata || null,
     });
   } catch (error: any) {
-    console.error('Blueprint scoring error:', error);
+    console.error('Attachment style scoring error:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'Scoring failed' },
       { status: 500 }

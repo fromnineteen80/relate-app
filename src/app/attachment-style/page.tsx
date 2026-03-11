@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { fetchBlueprintAccess } from '@/lib/payments';
+import { fetchAttachmentAccess } from '@/lib/payments';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
 import { saveAttachmentData } from '@/lib/supabase/progress';
@@ -11,7 +11,7 @@ import Link from 'next/link';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-type BlueprintQuestion = {
+type AttachmentQuestion = {
   id: string;
   quadrant: number;
   format: 'narrative' | 'scaled';
@@ -37,12 +37,12 @@ const QUADRANT_LABELS: Record<number, string> = {
   4: 'Persona in Practice',
 };
 
-export default function BlueprintPage() {
+export default function AttachmentStylePage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
 
   const [pageState, setPageState] = useState<PageState>('loading');
-  const [questions, setQuestions] = useState<BlueprintQuestion[]>([]);
+  const [questions, setQuestions] = useState<AttachmentQuestion[]>([]);
   const [sessionConfig, setSessionConfig] = useState<SessionConfig | null>(null);
   const [responses, setResponses] = useState<Record<string, string | number>>({});
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -68,7 +68,7 @@ export default function BlueprintPage() {
       }
 
       // Purchase check
-      const access = await fetchBlueprintAccess(user.email);
+      const access = await fetchAttachmentAccess(user.email);
       if (!access.purchased) {
         setPageState('gate');
         return;
@@ -100,7 +100,7 @@ export default function BlueprintPage() {
       relateResultsRef.current = results;
 
       // Check for existing checkpoint
-      const checkpoint = localStorage.getItem('relate_blueprint_checkpoint');
+      const checkpoint = localStorage.getItem('relate_attachment_checkpoint');
       if (checkpoint) {
         try {
           const cp = JSON.parse(checkpoint);
@@ -190,7 +190,7 @@ export default function BlueprintPage() {
       sessionConfig,
       savedAt: new Date().toISOString(),
     };
-    localStorage.setItem('relate_blueprint_checkpoint', JSON.stringify(checkpoint));
+    localStorage.setItem('relate_attachment_checkpoint', JSON.stringify(checkpoint));
 
     // Also POST progress to score endpoint
     const results = relateResultsRef.current;
@@ -295,9 +295,9 @@ export default function BlueprintPage() {
       const scoreData = await scoreRes.json();
       if (!scoreData.success) throw new Error(scoreData.error || 'Scoring failed');
 
-      const blueprintResults = scoreData.result;
+      const attachmentResults = scoreData.result;
       const personaMetadata = scoreData.personaMetadata;
-      localStorage.setItem('relate_blueprint_results', JSON.stringify(blueprintResults));
+      localStorage.setItem('relate_attachment_results', JSON.stringify(attachmentResults));
 
       // Step 2: Report
       setProcessingStep('Generating your report...');
@@ -305,7 +305,7 @@ export default function BlueprintPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          blueprintResults,
+          attachmentResults,
           assessmentResults,
           personaMetadata,
         }),
@@ -313,7 +313,7 @@ export default function BlueprintPage() {
       const reportData = await reportRes.json();
       if (!reportData.success) throw new Error(reportData.error || 'Report generation failed');
 
-      localStorage.setItem('relate_blueprint_report', JSON.stringify(reportData.report));
+      localStorage.setItem('relate_attachment_report', JSON.stringify(reportData.report));
 
       // Step 3: Growth plan
       setProcessingStep('Building your growth plan...');
@@ -321,8 +321,8 @@ export default function BlueprintPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          blueprintResults,
-          blueprintReport: reportData.report,
+          attachmentResults,
+          attachmentReport: reportData.report,
           assessmentResults,
           personaMetadata,
         }),
@@ -330,15 +330,15 @@ export default function BlueprintPage() {
       const growthData = await growthRes.json();
       if (!growthData.success) throw new Error(growthData.error || 'Growth plan generation failed');
 
-      localStorage.setItem('relate_blueprint_growth', JSON.stringify(growthData.growthPlan));
+      localStorage.setItem('relate_attachment_growth', JSON.stringify(growthData.growthPlan));
 
       // Persist to Supabase
       if (user) {
-        saveAttachmentData(user.id, blueprintResults, reportData.report, growthData.growthPlan);
+        saveAttachmentData(user.id, attachmentResults, reportData.report, growthData.growthPlan);
       }
 
       // Clear checkpoint
-      localStorage.removeItem('relate_blueprint_checkpoint');
+      localStorage.removeItem('relate_attachment_checkpoint');
 
       // Redirect
       setPageState('complete');
@@ -458,7 +458,7 @@ export default function BlueprintPage() {
                 </button>
                 <button
                   onClick={() => {
-                    localStorage.removeItem('relate_blueprint_checkpoint');
+                    localStorage.removeItem('relate_attachment_checkpoint');
                     setHasCheckpoint(false);
                     setResponses({});
                     setQuestions([]);

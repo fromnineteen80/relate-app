@@ -6,11 +6,11 @@ const attachmentScoringModule = require('../../../../../relate_attachment_scorin
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { blueprintResults, blueprintReport, assessmentResults, personaMetadata } = body;
+    const { attachmentResults, attachmentReport, assessmentResults, personaMetadata } = body;
 
-    if (!blueprintResults || !blueprintReport || !assessmentResults || !personaMetadata) {
+    if (!attachmentResults || !attachmentReport || !assessmentResults || !personaMetadata) {
       return NextResponse.json(
-        { success: false, error: 'Missing required fields: blueprintResults, blueprintReport, assessmentResults, and personaMetadata are required' },
+        { success: false, error: 'Missing required fields: attachmentResults, attachmentReport, assessmentResults, and personaMetadata are required' },
         { status: 400 }
       );
     }
@@ -21,8 +21,8 @@ export async function POST(request: NextRequest) {
     let growthPlan;
     try {
       growthPlan = attachmentScoringModule.generateGrowthPlan(
-        blueprintResults,
-        blueprintReport,
+        attachmentResults,
+        attachmentReport,
         assessmentResults,
         personaMetadata
       );
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       growthPlan,
     });
   } catch (error: any) {
-    console.error('Blueprint growth plan generation error:', error);
+    console.error('Attachment style growth plan generation error:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'Growth plan generation failed' },
       { status: 500 }

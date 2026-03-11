@@ -136,13 +136,13 @@ export async function loadAndHydrateProgress(userId: string): Promise<any | null
 
   // Hydrate attachment style data if present
   if (data.attachment_results) {
-    localStorage.setItem('relate_blueprint_results', JSON.stringify(data.attachment_results));
+    localStorage.setItem('relate_attachment_results', JSON.stringify(data.attachment_results));
   }
   if (data.attachment_report) {
-    localStorage.setItem('relate_blueprint_report', JSON.stringify(data.attachment_report));
+    localStorage.setItem('relate_attachment_report', JSON.stringify(data.attachment_report));
   }
   if (data.attachment_growth) {
-    localStorage.setItem('relate_blueprint_growth', JSON.stringify(data.attachment_growth));
+    localStorage.setItem('relate_attachment_growth', JSON.stringify(data.attachment_growth));
   }
 
   // Hydrate growth data if present

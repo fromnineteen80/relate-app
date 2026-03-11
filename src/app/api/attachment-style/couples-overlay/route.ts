@@ -7,15 +7,15 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      partner1BlueprintResults,
-      partner2BlueprintResults,
+      partner1AttachmentResults,
+      partner2AttachmentResults,
       partner1AssessmentResults,
       partner2AssessmentResults,
     } = body;
 
     if (
-      !partner1BlueprintResults ||
-      !partner2BlueprintResults ||
+      !partner1AttachmentResults ||
+      !partner2AttachmentResults ||
       !partner1AssessmentResults ||
       !partner2AssessmentResults
     ) {
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error:
-            'Missing required fields: partner1BlueprintResults, partner2BlueprintResults, partner1AssessmentResults, and partner2AssessmentResults are all required',
+            'Missing required fields: partner1AttachmentResults, partner2AttachmentResults, partner1AssessmentResults, and partner2AssessmentResults are all required',
         },
         { status: 400 }
       );
@@ -32,8 +32,8 @@ export async function POST(request: NextRequest) {
     let overlay;
     try {
       overlay = attachmentScoringModule.generateCouplesOverlay(
-        partner1BlueprintResults,
-        partner2BlueprintResults,
+        partner1AttachmentResults,
+        partner2AttachmentResults,
         partner1AssessmentResults,
         partner2AssessmentResults
       );
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
       overlay,
     });
   } catch (error: any) {
-    console.error('Blueprint couples overlay generation error:', error);
+    console.error('Attachment style couples overlay generation error:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'Couples overlay generation failed' },
       { status: 500 }

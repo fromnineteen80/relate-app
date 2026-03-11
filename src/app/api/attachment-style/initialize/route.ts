@@ -40,9 +40,9 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error('Blueprint initialize error:', error);
+    console.error('Attachment style initialize error:', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to initialize blueprint session' },
+      { success: false, error: error.message || 'Failed to initialize attachment style session' },
       { status: 500 }
     );
   }

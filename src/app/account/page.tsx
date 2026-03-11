@@ -5,9 +5,9 @@ import type { ReactNode, ErrorInfo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
-import { config, PRICING, BLUEPRINT_PRICING, type PricingTier } from '@/lib/config';
+import { config, PRICING, ATTACHMENT_PRICING, type PricingTier } from '@/lib/config';
 import { getMockPaymentStatus, mockPurchase } from '@/lib/mock/payments';
-import { fetchPaymentTier, refreshPaymentTier, fetchBlueprintAccess } from '@/lib/payments';
+import { fetchPaymentTier, refreshPaymentTier, fetchAttachmentAccess } from '@/lib/payments';
 import { getProfile } from '@/lib/onboarding';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
@@ -191,10 +191,10 @@ function AccountPage() {
   const [discountSubmitting, setDiscountSubmitting] = useState(false);
   const [discountResult, setDiscountResult] = useState<{ success?: boolean; message?: string; error?: string } | null>(null);
   const [activeDiscountCode, setActiveDiscountCode] = useState<string | null>(null);
-  // Blueprint add-on state
-  const [blueprintPurchased, setBlueprintPurchased] = useState(false);
-  const [blueprintProduct, setBlueprintProduct] = useState<string | null>(null);
-  const [blueprintHasResults, setBlueprintHasResults] = useState(false);
+  // Attachment style add-on state
+  const [attachmentPurchased, setAttachmentPurchased] = useState(false);
+  const [attachmentProduct, setAttachmentProduct] = useState<string | null>(null);
+  const [attachmentHasResults, setAttachmentHasResults] = useState(false);
 
   // Fetch payment tier (works in both mock and real mode)
   useEffect(() => {
@@ -207,10 +207,10 @@ function AccountPage() {
       setCurrentTier(tier);
       if (isSuccess) setPaymentSuccess(true);
 
-      // Check Blueprint access
-      const bp = await fetchBlueprintAccess(user!.email);
-      setBlueprintPurchased(bp.purchased);
-      setBlueprintProduct(bp.product);
+      // Check attachment style access
+      const bp = await fetchAttachmentAccess(user!.email);
+      setAttachmentPurchased(bp.purchased);
+      setAttachmentProduct(bp.product);
 
       // Also check for active discount code
       try {
@@ -271,7 +271,7 @@ function AccountPage() {
     }
 
     setHasResults(!!localStorage.getItem('relate_results'));
-    setBlueprintHasResults(!!localStorage.getItem('relate_blueprint_results'));
+    setAttachmentHasResults(!!localStorage.getItem('relate_attachment_results'));
     setPartnerEmail(localStorage.getItem('relate_partner_email'));
     setHasPartner(!!(localStorage.getItem('relate_partner_email') || localStorage.getItem('relate_partner_results')));
     setProfileData(getProfile());
@@ -394,12 +394,12 @@ function AccountPage() {
         setDiscountResult({ success: true, message: data.message });
         // Refresh payment tier after successful code redemption
         if (data.percent === 100) {
-          if (data.tier === 'blueprint' || data.tier === 'blueprint_couples') {
-            // Blueprint add-on code: refresh blueprint access
-            localStorage.removeItem('relate_blueprint_access');
-            const bp = await fetchBlueprintAccess(user?.email);
-            setBlueprintPurchased(bp.purchased);
-            setBlueprintProduct(bp.product);
+          if (data.tier === 'attachment_style' || data.tier === 'attachment_style_couples') {
+            // Attachment style add-on code: refresh attachment style access
+            localStorage.removeItem('relate_attachment_access');
+            const bp = await fetchAttachmentAccess(user?.email);
+            setAttachmentPurchased(bp.purchased);
+            setAttachmentProduct(bp.product);
           } else {
             localStorage.removeItem('relate_payment_tier');
             const { tier } = await refreshPaymentTier(user?.email);
@@ -691,13 +691,13 @@ function AccountPage() {
 
             {/* Attachment Style add-on card */}
             {currentTier !== 'free' && (
-              blueprintPurchased ? (
+              attachmentPurchased ? (
                 <div className="flex items-center gap-3 p-3 mb-3 rounded-md border bg-stone-50 border-stone-300">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 bg-stone-200 text-stone-600">
                     &#10003;
                   </div>
                   <div>
-                    <p className="text-sm font-medium">{blueprintProduct === 'blueprint_couples' ? 'Attachment Style Couples' : 'Attachment Style'}: Active</p>
+                    <p className="text-sm font-medium">{attachmentProduct === 'attachment_style_couples' ? 'Attachment Style Couples' : 'Attachment Style'}: Active</p>
                     <p className="text-xs text-secondary">Deep attachment style assessment, personalized report, and growth plan.</p>
                   </div>
                 </div>
@@ -705,13 +705,13 @@ function AccountPage() {
                 <div className="p-3 border rounded-md border-border mt-1">
                   <p className="text-[10px] uppercase tracking-wider text-secondary mb-1">Add-on</p>
                   <p className="text-sm font-medium">Attachment Style Assessment</p>
-                  <p className="font-serif text-xl font-semibold my-1">{BLUEPRINT_PRICING.blueprint.priceDisplay}</p>
+                  <p className="font-serif text-xl font-semibold my-1">{ATTACHMENT_PRICING.attachment_style.priceDisplay}</p>
                   <p className="text-xs text-secondary mb-3">A 30-minute deep assessment revealing the psychology underneath your persona. 3,000-word personalized report.</p>
                   {config.useMockPayments ? (
                     <button onClick={async () => {
-                      localStorage.setItem('relate_blueprint_purchased', JSON.stringify({ purchased: true, product: 'blueprint' }));
-                      setBlueprintPurchased(true);
-                      setBlueprintProduct('blueprint');
+                      localStorage.setItem('relate_attachment_purchased', JSON.stringify({ purchased: true, product: 'attachment_style' }));
+                      setAttachmentPurchased(true);
+                      setAttachmentProduct('attachment_style');
                     }} className="text-xs w-full btn-secondary">
                       Add Attachment Style
                     </button>
@@ -720,20 +720,20 @@ function AccountPage() {
                       Add Attachment Style
                     </a>
                   )}
-                  {hasPartner && !blueprintPurchased && (
+                  {hasPartner && !attachmentPurchased && (
                     <div className="mt-2">
                       <p className="text-xs text-secondary">Or add for both partners:</p>
                       {config.useMockPayments ? (
                         <button onClick={async () => {
-                          localStorage.setItem('relate_blueprint_purchased', JSON.stringify({ purchased: true, product: 'blueprint_couples' }));
-                          setBlueprintPurchased(true);
-                          setBlueprintProduct('blueprint_couples');
+                          localStorage.setItem('relate_attachment_purchased', JSON.stringify({ purchased: true, product: 'attachment_style_couples' }));
+                          setAttachmentPurchased(true);
+                          setAttachmentProduct('attachment_style_couples');
                         }} className="text-xs w-full btn-secondary mt-1">
-                          Add Attachment Style Couples ({BLUEPRINT_PRICING.blueprint_couples.priceDisplay})
+                          Add Attachment Style Couples ({ATTACHMENT_PRICING.attachment_style_couples.priceDisplay})
                         </button>
                       ) : (
                         <a href="/settings/billing" className="text-xs w-full text-center block btn-secondary mt-1">
-                          Add Attachment Style Couples ({BLUEPRINT_PRICING.blueprint_couples.priceDisplay})
+                          Add Attachment Style Couples ({ATTACHMENT_PRICING.attachment_style_couples.priceDisplay})
                         </a>
                       )}
                     </div>
@@ -743,7 +743,7 @@ function AccountPage() {
             )}
 
             {/* Discount code for all users — works for both tiers and add-ons */}
-            {currentTier !== 'free' && !blueprintPurchased && (
+            {currentTier !== 'free' && !attachmentPurchased && (
               <div className="mt-3 pt-3 border-t border-border">
                 <p className="text-xs text-secondary mb-2">Have a discount code?</p>
                 <form onSubmit={handleDiscountCode} className="flex gap-2">
@@ -936,17 +936,17 @@ function AccountPage() {
                 )}
               </div>
             ))}
-            {blueprintPurchased && (
+            {attachmentPurchased && (
               <div className="flex items-center justify-between py-2">
                 <div className="flex items-center gap-3">
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-serif font-semibold ${
-                    blueprintHasResults ? 'bg-success text-white' : 'bg-accent text-white'
+                    attachmentHasResults ? 'bg-success text-white' : 'bg-accent text-white'
                   }`}>
                     A
                   </div>
                   <span className="text-sm">Attachment Style</span>
                 </div>
-                {blueprintHasResults ? (
+                {attachmentHasResults ? (
                   <span className="text-xs text-success font-mono">Complete</span>
                 ) : (
                   <Link href="/attachment-style" className="text-xs text-accent hover:underline">Start</Link>

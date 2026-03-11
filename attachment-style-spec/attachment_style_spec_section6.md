@@ -1,4 +1,4 @@
-# RELATE DATING BLUEPRINT
+# RELATE DATING ATTACHMENT STYLE
 ## Technical and Clinical Specification
 ### Section 6: The Report Architecture and Writing Standard
 
@@ -8,7 +8,7 @@
 
 The questions are the instrument. The scoring engine is the infrastructure. The report is the product. Everything built before this section exists to make the report possible. The quality of the report is therefore not a writing consideration that follows the technical build. It is a technical requirement that governs the entire architecture. Every decision documented in the preceding sections, the indirect inference principle, the experiential question format, the dynamic Quadrant Four construction, the emergent pattern library, the synthesis architecture, was made in service of producing a report that meets the standard described in this section.
 
-That standard is the quality of the best professional deep personality reports available. Not their length. Not their specific constructs. Their quality of knowing. The best instruments in this category produce reports that feel, to the person reading them, like exposure rather than description. They make claims the person did not volunteer. They name patterns the person has felt but never had language for. They describe the experience of being that person from the inside with enough precision that the recognition response arrives before the evaluative response, before the person has had time to decide whether to accept or reject the claim. That sequence, recognition before evaluation, is what the Blueprint report must produce consistently.
+That standard is the quality of the best professional deep personality reports available. Not their length. Not their specific constructs. Their quality of knowing. The best instruments in this category produce reports that feel, to the person reading them, like exposure rather than description. They make claims the person did not volunteer. They name patterns the person has felt but never had language for. They describe the experience of being that person from the inside with enough precision that the recognition response arrives before the evaluative response, before the person has had time to decide whether to accept or reject the claim. That sequence, recognition before evaluation, is what the Attachment Style report must produce consistently.
 
 This section specifies exactly how to produce it.
 
@@ -119,13 +119,13 @@ This progression is intentional and must be maintained. A report that opens at m
 
 ## Forbidden Moves
 
-The following are specific writing behaviors that appear in lower-quality psychological reporting and are prohibited in the Blueprint report without exception.
+The following are specific writing behaviors that appear in lower-quality psychological reporting and are prohibited in the Attachment Style report without exception.
 
 Using more than one direct question in any single section. Questions are powerful tools in psychological narrative because they invite the reader into reflection. Used more than once per section they become a rhetorical habit that replaces the declarative confidence the report requires.
 
 Opening any paragraph with a generalization before making a specific claim. The specific claim leads. The context follows if it is needed. Never the reverse.
 
-Using the word journey in any context. It is the most overused word in the wellness and self-development industry and signals immediately that the report is operating in that register rather than the clinical depth register the Blueprint requires.
+Using the word journey in any context. It is the most overused word in the wellness and self-development industry and signals immediately that the report is operating in that register rather than the clinical depth register the Attachment Style requires.
 
 Using the phrase this does not mean followed by a softer restatement of a difficult claim. The difficult claim stands on its own. Softening it after delivering it signals ambivalence about the claim and teaches the reader to discount what precedes the softening.
 

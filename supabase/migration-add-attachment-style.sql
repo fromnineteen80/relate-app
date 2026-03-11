@@ -1,41 +1,41 @@
--- Migration: Add Blueprint (attachment style assessment) storage
--- Adds columns to user_progress and partnerships tables for Blueprint data.
+-- Migration: Add Attachment Style (attachment style assessment) storage
+-- Adds columns to user_progress and partnerships tables for Attachment Style data.
 -- Uses ADD COLUMN IF NOT EXISTS for idempotent/safe re-runs.
 
 -- =============================================================================
--- 1. Blueprint columns on user_progress
+-- 1. Attachment Style columns on user_progress
 -- =============================================================================
 
 -- Session checkpoint data (allows resuming an in-progress assessment)
 ALTER TABLE user_progress
-  ADD COLUMN IF NOT EXISTS blueprint_checkpoint jsonb;
+  ADD COLUMN IF NOT EXISTS attachment_style_checkpoint jsonb;
 
 -- Four quadrant results, axis scores, emergent pattern, confidence scores
 ALTER TABLE user_progress
-  ADD COLUMN IF NOT EXISTS blueprint_results jsonb;
+  ADD COLUMN IF NOT EXISTS attachment_style_results jsonb;
 
 -- Six report sections as named fields
 ALTER TABLE user_progress
-  ADD COLUMN IF NOT EXISTS blueprint_report jsonb;
+  ADD COLUMN IF NOT EXISTS attachment_style_report jsonb;
 
 -- Four growth plan parts as named fields
 ALTER TABLE user_progress
-  ADD COLUMN IF NOT EXISTS blueprint_growth jsonb;
+  ADD COLUMN IF NOT EXISTS attachment_style_growth jsonb;
 
--- Whether the user has completed the Blueprint assessment
+-- Whether the user has completed the Attachment Style assessment
 ALTER TABLE user_progress
-  ADD COLUMN IF NOT EXISTS blueprint_completed boolean DEFAULT false;
+  ADD COLUMN IF NOT EXISTS attachment_style_completed boolean DEFAULT false;
 
--- Timestamp when the user started the Blueprint assessment
+-- Timestamp when the user started the Attachment Style assessment
 ALTER TABLE user_progress
-  ADD COLUMN IF NOT EXISTS blueprint_started_at timestamp with time zone;
+  ADD COLUMN IF NOT EXISTS attachment_style_started_at timestamp with time zone;
 
--- Timestamp when the user completed the Blueprint assessment
+-- Timestamp when the user completed the Attachment Style assessment
 ALTER TABLE user_progress
-  ADD COLUMN IF NOT EXISTS blueprint_completed_at timestamp with time zone;
+  ADD COLUMN IF NOT EXISTS attachment_style_completed_at timestamp with time zone;
 
 -- =============================================================================
--- 2. Persona history on user_progress (Section 7 of Blueprint spec)
+-- 2. Persona history on user_progress (Section 7 of Attachment Style spec)
 --    Stores an array of {code, timestamp, source} objects tracking how the
 --    user's persona evolves over time.
 -- =============================================================================
@@ -44,15 +44,15 @@ ALTER TABLE user_progress
   ADD COLUMN IF NOT EXISTS persona_history jsonb;
 
 -- =============================================================================
--- 3. Blueprint couples overlay on partnerships
+-- 3. Attachment Style couples overlay on partnerships
 -- =============================================================================
 
--- Couples overlay report generated when both partners complete Blueprint
+-- Couples overlay report generated when both partners complete Attachment Style
 ALTER TABLE partnerships
-  ADD COLUMN IF NOT EXISTS blueprint_couples_overlay jsonb;
+  ADD COLUMN IF NOT EXISTS attachment_style_couples_overlay jsonb;
 
 -- =============================================================================
 -- 4. Payments — no schema change needed
 --    The existing payments.product text field already supports storing
---    'blueprint' or 'blueprint_couples' as product identifiers.
+--    'attachment_style' or 'attachment_style_couples' as product identifiers.
 -- =============================================================================

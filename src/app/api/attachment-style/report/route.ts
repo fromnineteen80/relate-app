@@ -6,11 +6,11 @@ const attachmentScoringModule = require('../../../../../relate_attachment_scorin
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { blueprintResults, assessmentResults, personaMetadata } = body;
+    const { attachmentResults, assessmentResults, personaMetadata } = body;
 
-    if (!blueprintResults || !assessmentResults || !personaMetadata) {
+    if (!attachmentResults || !assessmentResults || !personaMetadata) {
       return NextResponse.json(
-        { success: false, error: 'Missing required fields: blueprintResults, assessmentResults, and personaMetadata are required' },
+        { success: false, error: 'Missing required fields: attachmentResults, assessmentResults, and personaMetadata are required' },
         { status: 400 }
       );
     }
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     let report;
     try {
       report = attachmentScoringModule.generateAttachmentReport(
-        blueprintResults,
+        attachmentResults,
         assessmentResults,
         personaMetadata
       );
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       report,
     });
   } catch (error: any) {
-    console.error('Blueprint report generation error:', error);
+    console.error('Attachment style report generation error:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'Report generation failed' },
       { status: 500 }

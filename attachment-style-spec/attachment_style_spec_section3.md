@@ -1,4 +1,4 @@
-# RELATE DATING BLUEPRINT
+# RELATE DATING ATTACHMENT STYLE
 ## Technical and Clinical Specification
 ### Section 3: Terminology and User-Facing Results
 
@@ -6,7 +6,7 @@
 
 ## Resolved Terminology
 
-Four terms structure the entire Blueprint architecture. They are used consistently across every file, every prompt, and every user-facing surface. No synonyms. No substitutions. Consistency in naming is not a style preference. It is a technical requirement that prevents Claude Code from making judgment calls about what a term means in context.
+Four terms structure the entire Attachment Style architecture. They are used consistently across every file, every prompt, and every user-facing surface. No synonyms. No substitutions. Consistency in naming is not a style preference. It is a technical requirement that prevents Claude Code from making judgment calls about what a term means in context.
 
 **Quadrant**
 
@@ -32,7 +32,7 @@ The user-facing results display has three layers. Each layer serves a different 
 
 **Layer One: The Four Profile Names**
 
-Before the narrative report begins, the user sees their four Profile names presented cleanly as a set. This is the Blueprint equivalent of the four-letter MBTI code or the Enneagram type number. It gives the user a coordinate system they can hold, reference, and share. It also establishes the credibility of what follows. The user can see that something specific was measured before they read the narrative that explains what was found.
+Before the narrative report begins, the user sees their four Profile names presented cleanly as a set. This is the Attachment Style equivalent of the four-letter MBTI code or the Enneagram type number. It gives the user a coordinate system they can hold, reference, and share. It also establishes the credibility of what follows. The user can see that something specific was measured before they read the narrative that explains what was found.
 
 The four Profile names are presented with their Quadrant labels so the user understands what each result represents. The format is:
 
@@ -41,7 +41,7 @@ Quadrant Two: Trigger Emotion — [Profile Name]
 Quadrant Three: Decision Architecture — [Profile Name]
 Quadrant Four: Persona in Practice — [Profile Name, drawn from RELATE persona plus axis modifiers]
 
-No scores are shown. No numerical results are displayed. The user sees named Profiles, not ranked positions or percentile placements. The Blueprint does not produce a hierarchy of health. It produces a portrait of a specific person. Scores are internal architecture. Portraits are what the user receives.
+No scores are shown. No numerical results are displayed. The user sees named Profiles, not ranked positions or percentile placements. The Attachment Style does not produce a hierarchy of health. It produces a portrait of a specific person. Scores are internal architecture. Portraits are what the user receives.
 
 **Layer Two: The Short Profile Summaries**
 
@@ -83,7 +83,7 @@ The question experience does not tell the user what each Quadrant is measuring i
 
 Profile names are not clinical labels. They are not diagnostic categories. They are not evaluative. No Profile name implies health or dysfunction, success or failure, ease or difficulty. Every Profile name describes a position that has genuine strengths and genuine costs. The naming convention reflects this.
 
-Profile names for Quadrant One describe the character of the relational history in terms that are honest without being reductive. Profile names for Quadrant Two are the emotion names themselves, stated plainly, because the precision of naming the trigger emotion directly is itself part of the value the report delivers. Profile names for Quadrant Three describe the decision mode in functional terms that the user will recognize from the inside. Profile names for Quadrant Four are drawn from the RELATE persona system and modified by the axis scores, so the user sees their familiar persona name in a new context rather than a foreign label assigned by the Blueprint scoring.
+Profile names for Quadrant One describe the character of the relational history in terms that are honest without being reductive. Profile names for Quadrant Two are the emotion names themselves, stated plainly, because the precision of naming the trigger emotion directly is itself part of the value the report delivers. Profile names for Quadrant Three describe the decision mode in functional terms that the user will recognize from the inside. Profile names for Quadrant Four are drawn from the RELATE persona system and modified by the axis scores, so the user sees their familiar persona name in a new context rather than a foreign label assigned by the Attachment Style scoring.
 
 The complete Profile name list for each Quadrant is documented in the question engine specification in Section 4 of this document, where the routing logic that assigns each Profile is also defined.
 

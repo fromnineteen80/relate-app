@@ -10,7 +10,7 @@ import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 import { Icon } from '@/components/Icon';
 import { loadAndHydrateProgress, loadProfileFromDb, clearAllProgress } from '@/lib/supabase/progress';
-import { fetchPaymentTier, fetchBlueprintAccess } from '@/lib/payments';
+import { fetchPaymentTier, fetchAttachmentAccess } from '@/lib/payments';
 
 type ModuleStatus = { completed: boolean; questionIndex: number; total: number };
 
@@ -28,8 +28,8 @@ export default function AssessmentHub() {
   const [statuses, setStatuses] = useState<Record<number, ModuleStatus>>({});
   const [gender, setGender] = useState<string | null>(null);
   const [canRetake, setCanRetake] = useState(false);
-  const [blueprintPurchased, setBlueprintPurchased] = useState(false);
-  const [blueprintHasResults, setBlueprintHasResults] = useState(false);
+  const [attachmentPurchased, setAttachmentPurchased] = useState(false);
+  const [attachmentHasResults, setAttachmentHasResults] = useState(false);
 
   useEffect(() => {
     if (authLoading) return;
@@ -63,10 +63,10 @@ export default function AssessmentHub() {
         setCanRetake(true);
       }
 
-      // Check Blueprint access and results
-      const bp = await fetchBlueprintAccess(user?.email);
-      setBlueprintPurchased(bp.purchased);
-      setBlueprintHasResults(!!localStorage.getItem('relate_blueprint_results'));
+      // Check attachment style access and results
+      const bp = await fetchAttachmentAccess(user?.email);
+      setAttachmentPurchased(bp.purchased);
+      setAttachmentHasResults(!!localStorage.getItem('relate_attachment_results'));
     }
 
     loadProgress();
@@ -151,11 +151,11 @@ export default function AssessmentHub() {
             );
           })}
           {/* Attachment Style — shown when assessment is complete and user has purchased */}
-          {blueprintPurchased && (
+          {attachmentPurchased && (
             <div className="card flex items-center justify-between gap-4">
               <div className="flex items-center gap-4 min-w-0">
                 <div className={`w-8 h-8 min-w-[2rem] rounded-full flex items-center justify-center text-sm font-serif font-semibold ${
-                  blueprintHasResults ? 'bg-success text-white' : 'bg-accent text-white'
+                  attachmentHasResults ? 'bg-success text-white' : 'bg-accent text-white'
                 }`}>
                   A
                 </div>
@@ -164,7 +164,7 @@ export default function AssessmentHub() {
                   <p className="text-xs text-secondary">Deep attachment assessment · ~30 min</p>
                 </div>
               </div>
-              {blueprintHasResults ? (
+              {attachmentHasResults ? (
                 <Link href="/results/attachment" className="text-xs font-mono text-success flex-shrink-0">Complete</Link>
               ) : (
                 <Link href="/attachment-style" className="btn-primary text-sm flex-shrink-0">Start</Link>

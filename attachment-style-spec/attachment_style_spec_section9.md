@@ -1,4 +1,4 @@
-# RELATE DATING BLUEPRINT
+# RELATE DATING ATTACHMENT STYLE
 ## Technical and Clinical Specification
 ### Section 9: Homepage Section, Methodology Entry, and Pricing
 
@@ -14,36 +14,36 @@ Before implementing any changes in this section, Claude Code must read the curre
 
 The existing pricing ladder runs from Free at zero through Plus at $29.99, Premium at $49.99, Pro at $69.99, and Couples at $119. The Couples report is the ceiling and is framed as the most comprehensive product.
 
-The Blueprint is priced as follows.
+The Attachment Style is priced as follows.
 
-**Individual Blueprint: $49 one-time**
-Available to any user who has completed the RELATE assessment regardless of current tier. It is not a tier upgrade. It does not replace any existing tier. Users on the free tier must purchase any paid tier before accessing the Blueprint, since the Blueprint deepens the existing results and requires a complete scored profile to function.
+**Individual Attachment Style: $49 one-time**
+Available to any user who has completed the RELATE assessment regardless of current tier. It is not a tier upgrade. It does not replace any existing tier. Users on the free tier must purchase any paid tier before accessing the Attachment Style, since the Attachment Style deepens the existing results and requires a complete scored profile to function.
 
-**Couples Blueprint: $79 one-time**
-Both partners receive the full individual Blueprint plus the couples overlay report, the trigger emotion collision analysis, the decision architecture gap portrait, and the shared couples growth track. This is priced at a deliberate discount from two individual purchases at $49 each to incentivize the use case that produces the richest product experience.
+**Couples Attachment Style: $79 one-time**
+Both partners receive the full individual Attachment Style plus the couples overlay report, the trigger emotion collision analysis, the decision architecture gap portrait, and the shared couples growth track. This is priced at a deliberate discount from two individual purchases at $49 each to incentivize the use case that produces the richest product experience.
 
 The rationale for $49 individual pricing:
 
-It sits between Plus ($29.99) and Premium ($49.99) in price but delivers a categorically different kind of output than either, signaling that this is a different instrument rather than an incremental upgrade. It preserves the Couples report at $119 as the undisputed ceiling of the ladder. The couples Blueprint at $79 sits comfortably below the Couples report, reinforcing the existing product hierarchy while creating a natural ladder within the Blueprint product itself. A user who has purchased the individual Blueprint and later purchases the Couples report should receive a $20 credit toward the couples Blueprint, recognizing their prior investment.
+It sits between Plus ($29.99) and Premium ($49.99) in price but delivers a categorically different kind of output than either, signaling that this is a different instrument rather than an incremental upgrade. It preserves the Couples report at $119 as the undisputed ceiling of the ladder. The couples Attachment Style at $79 sits comfortably below the Couples report, reinforcing the existing product hierarchy while creating a natural ladder within the Attachment Style product itself. A user who has purchased the individual Attachment Style and later purchases the Couples report should receive a $20 credit toward the couples Attachment Style, recognizing their prior investment.
 
 ---
 
 ## Homepage: New Section
 
-The existing homepage uses a consistent section structure throughout: a small-caps category label followed by a two or three word heading, then a subheading, then content. The Blueprint section follows this structure exactly. It is positioned after the Your Results section and before the 32 Personas section, placing it at the moment the user understands what RELATE produces and is ready to learn that a deeper layer exists beneath it.
+The existing homepage uses a consistent section structure throughout: a small-caps category label followed by a two or three word heading, then a subheading, then content. The Attachment Style section follows this structure exactly. It is positioned after the Your Results section and before the 32 Personas section, placing it at the moment the user understands what RELATE produces and is ready to learn that a deeper layer exists beneath it.
 
 The section copy is written below verbatim. Claude Code implements this copy as written. No em dashes anywhere.
 
 ---
 
 **Section label** (same small-caps treatment as "The Assessment", "Your Results", "The Science", "Dating Economy"):
-The Blueprint
+The Attachment Style
 
 **H2 heading:**
 Go deeper than your persona.
 
 **Subheading paragraph:**
-The Dating Blueprint is a 30-minute deep assessment that reveals the four psychological layers underneath your RELATE results. Your history. The emotion driving your behavior. How you make decisions under pressure. And where your persona is working for you versus quietly working against you. The result is a 3,000-word portrait of how you specifically love, not how people like you tend to love.
+The Dating Attachment Style is a 30-minute deep assessment that reveals the four psychological layers underneath your RELATE results. Your history. The emotion driving your behavior. How you make decisions under pressure. And where your persona is working for you versus quietly working against you. The result is a 3,000-word portrait of how you specifically love, not how people like you tend to love.
 
 **Four numbered feature cards** (same visual treatment as the five module cards in The Assessment section, numbered 01 through 04):
 
@@ -64,15 +64,15 @@ What happens in the gap between feeling something and acting on it. This determi
 How your RELATE persona shows up specifically in relationships. Where it is genuine expression and where it has become a protection system.
 
 **Closing CTA block** (same treatment as other section CTAs):
-Your Blueprint report is 3,000 words written directly to you. Not a description of a type. A portrait of a person. Available after completing the RELATE assessment.
+Your Attachment Style report is 3,000 words written directly to you. Not a description of a type. A portrait of a person. Available after completing the RELATE assessment.
 
-[Explore the Blueprint]   $49 one-time add-on
+[Explore the Attachment Style]   $49 one-time add-on
 
 ---
 
 ## Homepage: Pricing Section Addition
 
-The existing pricing section displays TEST ACCESS, FREE, PLUS, PREMIUM, PRO, and COUPLES as a horizontal card row. The Blueprint pricing is added as a separate row beneath the existing tier row, under a visual divider with the label ADD-ONS. This placement preserves the existing tier architecture completely and frames the Blueprint as a category of its own rather than as another tier competing for position on the ladder.
+The existing pricing section displays TEST ACCESS, FREE, PLUS, PREMIUM, PRO, and COUPLES as a horizontal card row. The Attachment Style pricing is added as a separate row beneath the existing tier row, under a visual divider with the label ADD-ONS. This placement preserves the existing tier architecture completely and frames the Attachment Style as a category of its own rather than as another tier competing for position on the ladder.
 
 Two cards are added in this row.
 
@@ -80,7 +80,7 @@ Two cards are added in this row.
 
 **Card one:**
 
-Label: BLUEPRINT
+Label: ATTACHMENT STYLE
 
 Price: $49
 
@@ -101,14 +101,14 @@ CTA: Add to Your Results
 
 **Card two:**
 
-Label: BLUEPRINT COUPLES
+Label: ATTACHMENT STYLE COUPLES
 
 Price: $79
 
 Tagline: Both partners, one portrait of what you build together.
 
 Features:
-- Everything in Blueprint (x2)
+- Everything in Attachment Style (x2)
 - Couples overlay report
 - Trigger emotion collision analysis
 - Decision architecture gap portrait
@@ -121,22 +121,22 @@ CTA: Add for Both Partners
 
 ## Methodology Page: New Section
 
-The methodology page uses a consistent structure throughout: a small-caps section label, an H2 heading, and then either prose paragraphs or named subsections with H3 headings. Clinical frameworks are attributed by researcher name. Technical scoring details are explained with transparency. The Blueprint section matches this register and level of detail precisely.
+The methodology page uses a consistent structure throughout: a small-caps section label, an H2 heading, and then either prose paragraphs or named subsections with H3 headings. Clinical frameworks are attributed by researcher name. Technical scoring details are explained with transparency. The Attachment Style section matches this register and level of detail precisely.
 
-The section is inserted after the Demographics section ("Finding Your Ideal Match Pool") and before the closing CTA block at the bottom of the page. This placement puts the Blueprint at the end of the methodology document after the user has read the full clinical and technical foundation, which is the appropriate context for introducing a deeper instrument built on top of that foundation.
+The section is inserted after the Demographics section ("Finding Your Ideal Match Pool") and before the closing CTA block at the bottom of the page. This placement puts the Attachment Style at the end of the methodology document after the user has read the full clinical and technical foundation, which is the appropriate context for introducing a deeper instrument built on top of that foundation.
 
 The section copy is written below verbatim. Claude Code implements it as written.
 
 ---
 
 **Section label** (same small-caps treatment as "Foundations", "The Assessment", "Conflict Patterns", "Identity", "Matching", "Module 4 Deep Dive", "Transparency", "Demographics"):
-The Blueprint
+The Attachment Style
 
 **H2 heading:**
-Dating Blueprint Methodology
+Dating Attachment Style Methodology
 
 **Opening paragraph:**
-The Dating Blueprint extends the RELATE assessment into territory that persona typing and conflict profiling cannot reach on their own. Where the five assessment modules identify behavioral patterns, the Blueprint measures what is producing them. It does so through four Quadrants, each grounded in a distinct body of clinical research, that together map the psychological architecture underneath the patterns the main assessment found.
+The Dating Attachment Style extends the RELATE assessment into territory that persona typing and conflict profiling cannot reach on their own. Where the five assessment modules identify behavioral patterns, the Attachment Style measures what is producing them. It does so through four Quadrants, each grounded in a distinct body of clinical research, that together map the psychological architecture underneath the patterns the main assessment found.
 
 ---
 
@@ -178,7 +178,7 @@ The question set for this Quadrant is constructed dynamically at session initial
 
 **H3: The Report**
 
-The Blueprint produces a 3,000-word narrative report organized across six sections. The report is generated through the Anthropic Claude API using a section-by-section prompt architecture that builds context progressively rather than generating the full report in a single call. Each section receives the outputs of preceding sections as context, which allows the report to develop a coherent portrait across its full length rather than producing six independent section summaries.
+The Attachment Style produces a 3,000-word narrative report organized across six sections. The report is generated through the Anthropic Claude API using a section-by-section prompt architecture that builds context progressively rather than generating the full report in a single call. Each section receives the outputs of preceding sections as context, which allows the report to develop a coherent portrait across its full length rather than producing six independent section summaries.
 
 The report is written in the second person throughout and addresses the user directly at all times. It does not use clinical terminology in the narrative. It makes confident, specific inferences from the scoring that go beyond what the Profile descriptions alone would produce, operating in the register of a clinician who understands this person's specific combination of results rather than describing a general type. The writing standard targets the depth, specificity, and recognition quality of the best professional personality instruments available.
 
@@ -188,27 +188,27 @@ Each section is evaluated against a structured quality rubric before it is retur
 
 **H3: The Growth System**
 
-The Blueprint generates a personalized growth plan alongside the report. The growth plan connects the Blueprint findings back to the full RELATE profile, producing twelve to fifteen journaling prompts derived from the user's specific Quadrant combination, two to three behavioral experiments precise enough to be actionable, and an early warning indicator set that tells the user what to watch for as the patterns identified in the Blueprint activate in current or developing relationships.
+The Attachment Style generates a personalized growth plan alongside the report. The growth plan connects the Attachment Style findings back to the full RELATE profile, producing twelve to fifteen journaling prompts derived from the user's specific Quadrant combination, two to three behavioral experiments precise enough to be actionable, and an early warning indicator set that tells the user what to watch for as the patterns identified in the Attachment Style activate in current or developing relationships.
 
-The Blueprint also introduces a gamified development track that extends the existing RELATE gamification system. The track identifies the one or two RELATE persona dimensions most implicated by the user's Blueprint findings and focuses the development work there. As users engage with the growth plan material over time, the system tracks self-reported evidence of movement along those dimensions. Users who demonstrate sustained engagement are invited to retake the relevant assessment modules. A new persona code reached through this pathway represents genuine development rather than algorithmic reclassification. The user's full persona history is preserved in their profile, and the distance between the original code and the new one is the record of their growth.
+The Attachment Style also introduces a gamified development track that extends the existing RELATE gamification system. The track identifies the one or two RELATE persona dimensions most implicated by the user's Attachment Style findings and focuses the development work there. As users engage with the growth plan material over time, the system tracks self-reported evidence of movement along those dimensions. Users who demonstrate sustained engagement are invited to retake the relevant assessment modules. A new persona code reached through this pathway represents genuine development rather than algorithmic reclassification. The user's full persona history is preserved in their profile, and the distance between the original code and the new one is the record of their growth.
 
-For couples, the Blueprint generates a third document: a couples overlay that uses both partners' Quadrant results to name the specific dynamic their combination produces together. The overlay draws on a complete trigger emotion collision matrix covering all ten possible pairings of the five trigger emotions and a decision architecture gap library covering the most clinically significant mode collisions. The couples overlay names what each person is experiencing in the moment the recurring pattern activates, from inside their own experience simultaneously, and tells both people what they each need to understand about their own contribution before the pattern can shift.
+For couples, the Attachment Style generates a third document: a couples overlay that uses both partners' Quadrant results to name the specific dynamic their combination produces together. The overlay draws on a complete trigger emotion collision matrix covering all ten possible pairings of the five trigger emotions and a decision architecture gap library covering the most clinically significant mode collisions. The couples overlay names what each person is experiencing in the moment the recurring pattern activates, from inside their own experience simultaneously, and tells both people what they each need to understand about their own contribution before the pattern can shift.
 
 ---
 
 **Closing note** (same small italic treatment as the existing footer disclaimer):
-The Dating Blueprint is a psychoeducational framework built on established clinical constructs. It is not a diagnostic instrument and does not replace licensed therapy or clinical assessment.
+The Dating Attachment Style is a psychoeducational framework built on established clinical constructs. It is not a diagnostic instrument and does not replace licensed therapy or clinical assessment.
 
 ---
 
 ## Implementation Notes
 
-The homepage additions are two distinct components: the Blueprint feature section and the pricing add-on row. Neither modifies any existing section, card, tier, or CTA. They are additive only.
+The homepage additions are two distinct components: the Attachment Style feature section and the pricing add-on row. Neither modifies any existing section, card, tier, or CTA. They are additive only.
 
 The methodology addition is a new section inserted between the Demographics section and the closing CTA block. It does not modify any existing methodology section. Claude Code reads the current methodology component before implementing to match the heading hierarchy, label treatment, paragraph spacing, and link style exactly.
 
-The pricing logic for the Blueprint add-on connects to the existing billing and entitlement system. The individual Blueprint purchase unlocks the Blueprint session in the Results display as specified in Section 8. The couples Blueprint purchase unlocks the overlay generation and couples growth track for both linked partner accounts. Implementation follows whatever payment and entitlement architecture the existing system uses for the Couples tier, extended to the Blueprint add-on products.
+The pricing logic for the Attachment Style add-on connects to the existing billing and entitlement system. The individual Attachment Style purchase unlocks the Attachment Style session in the Results display as specified in Section 8. The couples Attachment Style purchase unlocks the overlay generation and couples growth track for both linked partner accounts. Implementation follows whatever payment and entitlement architecture the existing system uses for the Couples tier, extended to the Attachment Style add-on products.
 
 ---
 
-*This concludes Section 9 and the complete RELATE Dating Blueprint Technical and Clinical Specification. Sections 1 through 9 together constitute the full source of truth for the Blueprint build, the homepage and methodology additions, and the pricing architecture.*
+*This concludes Section 9 and the complete RELATE Dating Attachment Style Technical and Clinical Specification. Sections 1 through 9 together constitute the full source of truth for the Attachment Style build, the homepage and methodology additions, and the pricing architecture.*

@@ -19,7 +19,7 @@ type SubNavProps = {
 export function SubNav({ items = [] }: SubNavProps) {
   const pathname = usePathname();
   const [hasResults, setHasResults] = useState(false);
-  const [hasBlueprintResults, setHasBlueprintResults] = useState(false);
+  const [hasAttachmentResults, setHasAttachmentResults] = useState(false);
   const [hasPartner, setHasPartner] = useState(false);
   const [topMatchCode, setTopMatchCode] = useState<string | null>(null);
   const [seekingLabel, setSeekingLabel] = useState<string>('Matches');
@@ -37,9 +37,9 @@ export function SubNav({ items = [] }: SubNavProps) {
       } catch { /* */ }
     }
 
-    // Check for Blueprint results
-    if (localStorage.getItem('relate_blueprint_results')) {
-      setHasBlueprintResults(true);
+    // Check for attachment style results
+    if (localStorage.getItem('relate_attachment_results')) {
+      setHasAttachmentResults(true);
     }
 
     // Check for partner
@@ -76,7 +76,7 @@ export function SubNav({ items = [] }: SubNavProps) {
   const universalLinks: SubNavItem[] = [
     { id: 'account', label: 'Account', href: '/account', show: true },
     { id: 'results', label: 'Results', href: '/results', show: hasResults },
-    { id: 'attachment', label: 'Attachment Style', href: '/results/attachment', show: hasResults && hasBlueprintResults },
+    { id: 'attachment', label: 'Attachment Style', href: '/results/attachment', show: hasResults && hasAttachmentResults },
     { id: 'growth', label: 'Growth Plan', href: '/growth', show: hasResults },
     { id: 'couples', label: 'Couples', href: '/results/compare', show: hasPartner },
     { id: 'astrology', label: 'Astrology', href: '/results/astrology', show: hasResults && astrologyEnabled },

@@ -1,4 +1,4 @@
-# RELATE DATING BLUEPRINT
+# RELATE DATING ATTACHMENT STYLE
 ## Technical and Clinical Specification
 ### Section 2: The Four Quadrants
 
@@ -6,7 +6,7 @@
 
 ## Architecture Overview
 
-The Blueprint measures four distinct dimensions of relational psychology. Each dimension is called a Quadrant. Within each Quadrant, the user lands in a named position called a Profile. The scoring inputs that produce the Profile are called Dimensions. A fourth term, Axis, is used internally within the technical architecture and never surfaces to the user.
+The Attachment Style measures four distinct dimensions of relational psychology. Each dimension is called a Quadrant. Within each Quadrant, the user lands in a named position called a Profile. The scoring inputs that produce the Profile are called Dimensions. A fourth term, Axis, is used internally within the technical architecture and never surfaces to the user.
 
 The four Quadrants are not parallel structures. They operate at different levels of the person and measure different kinds of things. Quadrant One operates at the level of history. Quadrant Two operates at the level of emotion. Quadrant Three operates at the level of cognition and behavior under load. Quadrant Four operates at the level of identity. Together they produce a complete portrait of how this person loves, organized from the deepest layer outward.
 
