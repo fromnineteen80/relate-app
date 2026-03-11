@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
@@ -39,15 +40,29 @@ function truncateSentences(text: string, max: number): string {
   return parts.slice(0, max).join('').trim();
 }
 
+const ESTIMATED_ITEM_HEIGHT = 120;
+const GAP = 16;
+
 export default function MatchesPage() {
   const router = useRouter();
   const [report, setReport] = useState<any>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('relate_results');
     if (!stored) { router.push('/assessment'); return; }
     setReport(JSON.parse(stored));
   }, [router]);
+
+  const matches: any[] = report?.matches || [];
+
+  const virtualizer = useVirtualizer({
+    count: matches.length,
+    getScrollElement: () => scrollRef.current,
+    estimateSize: () => ESTIMATED_ITEM_HEIGHT,
+    overscan: 5,
+    gap: GAP,
+  });
 
   if (!report) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
 
@@ -58,7 +73,7 @@ export default function MatchesPage() {
       <SiteHeader />
       <SubNav />
 
-      <main className="max-w-3xl mx-auto px-6 py-8 w-full">
+      <main className="max-w-3xl mx-auto px-6 py-8 w-full flex-1 flex flex-col">
         <p className="text-xs text-secondary mb-1">Click on each persona to read the full match experience</p>
         <h2 className="font-serif text-2xl font-semibold mb-2">All Compatibility Rankings</h2>
         {persona && (
@@ -77,37 +92,54 @@ export default function MatchesPage() {
           ))}
         </div>
 
-        <div className="space-y-4">
-          {report.matches.map((match: any) => (
-            <button
-              key={match.code}
-              onClick={() => router.push(`/results/match/${match.code}`)}
-              className="card w-full text-left hover:border-accent/40 transition-colors cursor-pointer"
-            >
-              {/* Header row: rank + name/code/traits on left, score + tier on right, vertically centered */}
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4 min-w-0">
-                  <span className="font-mono text-lg text-secondary w-8 shrink-0 text-center">{match.rank}</span>
-                  <div className="min-w-0">
-                    <h3 className="font-serif font-semibold">{match.name}</h3>
-                    <span className="font-mono text-xs text-secondary">{match.code}</span>
-                    {match.traits && <p className="text-xs text-secondary mt-0.5">{match.traits}</p>}
-                  </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <span className="font-mono text-xl font-semibold block">{match.compatibilityScore}</span>
-                  <span className={`text-xs font-semibold ${tierTextColor(match.tier)}`}>
-                    {tierLabel(match.tier)}
-                  </span>
-                </div>
-              </div>
+        <div ref={scrollRef} className="flex-1 overflow-auto" style={{ contain: 'strict' }}>
+          <div style={{ height: virtualizer.getTotalSize(), position: 'relative' }}>
+            {virtualizer.getVirtualItems().map(virtualRow => {
+              const match = matches[virtualRow.index];
+              return (
+                <div
+                  key={match.code}
+                  data-index={virtualRow.index}
+                  ref={virtualizer.measureElement}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                >
+                  <button
+                    onClick={() => router.push(`/results/match/${match.code}`)}
+                    className="card w-full text-left hover:border-accent/40 transition-colors cursor-pointer"
+                  >
+                    {/* Header row: rank + name/code/traits on left, score + tier on right, vertically centered */}
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-4 min-w-0">
+                        <span className="font-mono text-lg text-secondary w-8 shrink-0 text-center">{match.rank}</span>
+                        <div className="min-w-0">
+                          <h3 className="font-serif font-semibold">{match.name}</h3>
+                          <span className="font-mono text-xs text-secondary">{match.code}</span>
+                          {match.traits && <p className="text-xs text-secondary mt-0.5">{match.traits}</p>}
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <span className="font-mono text-xl font-semibold block">{match.compatibilityScore}</span>
+                        <span className={`text-xs font-semibold ${tierTextColor(match.tier)}`}>
+                          {tierLabel(match.tier)}
+                        </span>
+                      </div>
+                    </div>
 
-              {/* Compatibility summary, first 3 sentences only on rankings page */}
-              {match.summary && (
-                <p className="text-sm text-secondary leading-relaxed mt-3 ml-12">{truncateSentences(match.summary.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ','), 3)}</p>
-              )}
-            </button>
-          ))}
+                    {/* Compatibility summary, first 3 sentences only on rankings page */}
+                    {match.summary && (
+                      <p className="text-sm text-secondary leading-relaxed mt-3 ml-12">{truncateSentences(match.summary.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ','), 3)}</p>
+                    )}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </main>
       <SiteFooter />

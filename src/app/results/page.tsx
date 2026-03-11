@@ -1,6 +1,6 @@
 'use client';
 
-import { Component, useEffect, useState, useCallback, useRef } from 'react';
+import { Component, useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import type { ReactNode, ErrorInfo } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -437,6 +437,39 @@ function ResultsDashboard() {
   const tensionStacks = report?.tensionStacks;
   const modifiers = report?.modifiers;
   const gottman = m4?.gottmanScreener || m4?.gottmanScores;
+
+  const sortedAttachmentMatches = useMemo(() => {
+    if (!ic?.attachmentTiers) return [];
+    const all: { style: string; score: number; tier: string; color: string; bg: string }[] = [];
+    [
+      { items: ic.attachmentTiers.bestMatches, tier: 'Best', color: 'text-success', bg: 'bg-success/10 border-success/30' },
+      { items: ic.attachmentTiers.goodMatches, tier: 'Good', color: 'text-success', bg: 'bg-success/10 border-success/30' },
+      { items: ic.attachmentTiers.workableMatches, tier: 'Workable', color: 'text-warning', bg: 'bg-warning/10 border-warning/30' },
+      { items: ic.attachmentTiers.riskyMatches, tier: 'Risky', color: 'text-danger/70', bg: 'bg-danger/5 border-danger/20' },
+      { items: ic.attachmentTiers.avoidMatches, tier: 'Avoid', color: 'text-danger', bg: 'bg-danger/10 border-danger/30' },
+    ].forEach(group => {
+      if (Array.isArray(group.items)) {
+        group.items.forEach((m: any) => all.push({ style: m.style, score: m.score, tier: group.tier, color: group.color, bg: group.bg }));
+      }
+    });
+    return all.sort((a, b) => b.score - a.score);
+  }, [ic?.attachmentTiers]);
+
+  const sortedDriverMatches = useMemo(() => {
+    if (!ic?.driverTiers) return [];
+    const all: { driver: string; score: number; tier: string; color: string; bg: string }[] = [];
+    [
+      { items: ic.driverTiers.bestMatches, tier: 'Best', color: 'text-success', bg: 'bg-success/10 border-success/30' },
+      { items: ic.driverTiers.goodMatches, tier: 'Good', color: 'text-success', bg: 'bg-success/10 border-success/30' },
+      { items: ic.driverTiers.workableMatches, tier: 'Workable', color: 'text-warning', bg: 'bg-warning/10 border-warning/30' },
+      { items: ic.driverTiers.avoidMatches, tier: 'Avoid', color: 'text-danger', bg: 'bg-danger/10 border-danger/30' },
+    ].forEach(group => {
+      if (Array.isArray(group.items)) {
+        group.items.forEach((m: any) => all.push({ driver: m.driver, score: m.score, tier: group.tier, color: group.color, bg: group.bg }));
+      }
+    });
+    return all.sort((a, b) => b.score - a.score);
+  }, [ic?.driverTiers]);
 
   let fullM3: any = null;
   let fullM4: any = null;
@@ -1228,26 +1261,12 @@ function ResultsDashboard() {
             <div className="mb-4">
               <span className="text-xs font-mono text-secondary uppercase tracking-wider">Partner Attachment Style</span>
               <div className="flex flex-wrap gap-2 mt-3">
-                {(() => {
-                  const allMatches: { style: string; score: number; tier: string; color: string; bg: string }[] = [];
-                  [
-                    { items: ic.attachmentTiers.bestMatches, tier: 'Best', color: 'text-success', bg: 'bg-success/10 border-success/30' },
-                    { items: ic.attachmentTiers.goodMatches, tier: 'Good', color: 'text-success', bg: 'bg-success/10 border-success/30' },
-                    { items: ic.attachmentTiers.workableMatches, tier: 'Workable', color: 'text-warning', bg: 'bg-warning/10 border-warning/30' },
-                    { items: ic.attachmentTiers.riskyMatches, tier: 'Risky', color: 'text-danger/70', bg: 'bg-danger/5 border-danger/20' },
-                    { items: ic.attachmentTiers.avoidMatches, tier: 'Avoid', color: 'text-danger', bg: 'bg-danger/10 border-danger/30' },
-                  ].forEach(group => {
-                    if (Array.isArray(group.items)) {
-                      group.items.forEach((m: any) => allMatches.push({ style: m.style, score: m.score, tier: group.tier, color: group.color, bg: group.bg }));
-                    }
-                  });
-                  return allMatches.sort((a, b) => b.score - a.score).map((m, i) => (
+                {sortedAttachmentMatches.map((m, i) => (
                     <div key={i} className={`text-center px-3 py-2 rounded-lg border ${m.bg}`}>
                       <p className="text-sm font-medium capitalize">{m.style}</p>
                       <p className={`text-xs font-mono ${m.color}`}>{m.score}</p>
                     </div>
-                  ));
-                })()}
+                  ))}
               </div>
               {ic.attachmentTiers.recommendation && <p className="text-sm text-secondary mt-3">{ic.attachmentTiers.recommendation}</p>}
             </div>
@@ -1258,25 +1277,12 @@ function ResultsDashboard() {
                 <span className="text-xs font-mono text-secondary uppercase tracking-wider">Partner Emotional Driver</span>
                 <p className="text-xs text-secondary mt-1 mb-3">Your primary: <span className="font-mono capitalize text-foreground">{ic.driverTiers.yourDriver?.primary || '-'}</span></p>
                 <div className="flex flex-wrap gap-2">
-                  {(() => {
-                    const allDrivers: { driver: string; score: number; tier: string; color: string; bg: string }[] = [];
-                    [
-                      { items: ic.driverTiers.bestMatches, tier: 'Best', color: 'text-success', bg: 'bg-success/10 border-success/30' },
-                      { items: ic.driverTiers.goodMatches, tier: 'Good', color: 'text-success', bg: 'bg-success/10 border-success/30' },
-                      { items: ic.driverTiers.workableMatches, tier: 'Workable', color: 'text-warning', bg: 'bg-warning/10 border-warning/30' },
-                      { items: ic.driverTiers.avoidMatches, tier: 'Avoid', color: 'text-danger', bg: 'bg-danger/10 border-danger/30' },
-                    ].forEach(group => {
-                      if (Array.isArray(group.items)) {
-                        group.items.forEach((m: any) => allDrivers.push({ driver: m.driver, score: m.score, tier: group.tier, color: group.color, bg: group.bg }));
-                      }
-                    });
-                    return allDrivers.sort((a, b) => b.score - a.score).map((m, i) => (
+                  {sortedDriverMatches.map((m, i) => (
                       <div key={i} className={`text-center px-3 py-2 rounded-lg border ${m.bg}`}>
                         <p className="text-sm font-medium capitalize">{m.driver}</p>
                         <p className={`text-xs font-mono ${m.color}`}>{m.score}</p>
                       </div>
-                    ));
-                  })()}
+                    ))}
                 </div>
                 {ic.driverTiers.recommendation && <p className="text-sm text-secondary mt-3">{ic.driverTiers.recommendation}</p>}
               </div>
