@@ -724,8 +724,8 @@ function ResultsDashboard() {
       {/* Sub-Navigation */}
       <SubNav items={navItems.map(n => ({ ...n, href: `#${n.id}` }))} />
 
-      <main className="flex-1 max-w-3xl mx-auto px-6 pt-[37px] pb-8 w-full">
-        <div className="flex items-baseline justify-between mb-[27px]">
+      <main className="flex-1 max-w-3xl lg:max-w-6xl mx-auto px-6 pt-[37px] pb-8 w-full lg:columns-2 lg:gap-x-6 [&>*]:break-inside-avoid">
+        <div className="flex items-baseline justify-between mb-[27px] lg:[column-span:all]">
           <h1 className="font-serif text-2xl font-semibold">Results</h1>
           {canDownload && (
             <button onClick={handleDownloadPDF} disabled={downloading} className="text-xs text-accent hover:underline">
@@ -736,7 +736,7 @@ function ResultsDashboard() {
 
         {/* ── Assessment Incomplete CTA ── */}
         {!hasResults && (
-          <section className="card mb-6 text-center py-12">
+          <section className="card mb-6 text-center py-12 lg:[column-span:all]">
             <h3 className="font-serif text-lg font-semibold mb-2">Assessment Not Complete</h3>
             <p className="explainer mb-6 max-w-md mx-auto">
               Complete all five modules of your RELATE assessment to generate your persona, compatibility rankings, dating market analysis, and personalized coaching.
@@ -749,7 +749,7 @@ function ResultsDashboard() {
 
         {/* ── Module 5 Upgrade Banner (for existing users with results but no M5) ── */}
         {hasResults && !report?.m5 && (
-          <section className="card border-accent/30 bg-accent/5 mb-4">
+          <section className="card border-accent/30 bg-accent/5 mb-4 lg:[column-span:all]">
             <p className="font-serif font-semibold mb-1">Enhance Your Tension Stacks</p>
             <p className="text-sm text-secondary mb-3">
               Complete Module 5 to unlock more accurate vulnerability, desire, and internal alignment profiles. Takes about 5 minutes.
@@ -764,7 +764,7 @@ function ResultsDashboard() {
             GROUP 1: PERSONA
         ══════════════════════════════════════════════════ */}
         {(persona || hasDimensions || m4Summary || tensionStacks) && (
-          <div id="persona" className="scroll-mt-32 mb-2">
+          <div id="persona" className="scroll-mt-32 mb-2 lg:[column-span:all]">
             <div className="flex items-baseline gap-3 mb-4 mt-6">
               <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">01</span>
               <span className="font-mono text-xs text-secondary uppercase tracking-widest">Your Persona</span>
@@ -1031,8 +1031,9 @@ function ResultsDashboard() {
         {/* ══════════════════════════════════════════════════
             GROUP 2: KNOW YOUR MARKET
         ══════════════════════════════════════════════════ */}
+        {hasMarket && <hr className="border-border my-8 lg:[column-span:all]" />}
         {hasMarket && (
-          <div id="know-your-market" className="scroll-mt-32 mb-2">
+          <div id="know-your-market" className="scroll-mt-32 mb-2 lg:[column-span:all]">
             <div className="flex items-baseline gap-3 mb-4 mt-10">
               <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">02</span>
               <span className="font-mono text-xs text-secondary uppercase tracking-widest">Dating Market</span>
@@ -1042,7 +1043,7 @@ function ResultsDashboard() {
 
         {/* ── Dating Market ── */}
         {hasMarket && (
-          <div className="scroll-mt-32 w-full flex flex-col md:flex-row gap-4 items-stretch mb-4">
+          <div className="scroll-mt-32 w-full flex flex-col md:flex-row gap-4 items-stretch mb-4 lg:[column-span:all]">
             <div className="w-full md:w-1/2 min-w-0 flex flex-col gap-4">
               <DatingMarketViz data={marketData} loading={marketLoading} onRelaxPreference={recalculateMarket} demographics={demographics} />
             </div>
@@ -1077,7 +1078,7 @@ function ResultsDashboard() {
 
         {/* ── Market Data Sources Caveat ── */}
         {hasMarket && !marketLoading && marketData && (
-          <p className="text-xs text-secondary text-center max-w-2xl mx-auto mb-6">
+          <p className="text-xs text-secondary text-center max-w-2xl mx-auto mb-6 lg:[column-span:all]">
             Demographic data sourced from public datasets provided by the U.S. Census Bureau, Centers for Disease Control and Prevention (CDC), and Pew Research Center. Segments of the population that are homeless or have committed felonies have been automatically excluded using local county and FBI data.
           </p>
         )}
@@ -1085,8 +1086,9 @@ function ResultsDashboard() {
         {/* ══════════════════════════════════════════════════
             GROUP 3: ATTACHMENT STYLE
         ══════════════════════════════════════════════════ */}
+        {ic?.attachment && <hr className="border-border my-8 lg:[column-span:all]" />}
         {ic?.attachment && (
-          <div id="attachment" className="scroll-mt-32 mb-2">
+          <div id="attachment" className="scroll-mt-32 mb-2 lg:[column-span:all]">
             <div className="flex items-baseline gap-3 mb-4 mt-10">
               <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">03</span>
               <span className="font-mono text-xs text-secondary uppercase tracking-widest">Attachment Style</span>
@@ -1186,8 +1188,9 @@ function ResultsDashboard() {
         {/* ══════════════════════════════════════════════════
             GROUP 4: HOW YOU DATE
         ══════════════════════════════════════════════════ */}
+        {(matches.length > 0 || ic?.attachmentTiers || m3 || hasResults) && <hr className="border-border my-8 lg:[column-span:all]" />}
         {(matches.length > 0 || ic?.attachmentTiers || m3 || hasResults) && (
-          <div id="how-you-date" className="scroll-mt-32 mb-2">
+          <div id="how-you-date" className="scroll-mt-32 mb-2 lg:[column-span:all]">
             <div className="flex items-baseline gap-3 mb-4 mt-10">
               <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">04</span>
               <span className="font-mono text-xs text-secondary uppercase tracking-widest">How You Date</span>
@@ -1621,7 +1624,7 @@ function ResultsDashboard() {
       {/* ── Ongoing Coaching Section ── */}
       {hasResults && canDownload && (
         <div id="coaching" className="bg-stone-100 border-t border-border scroll-mt-12">
-          <div className="max-w-3xl mx-auto px-6 py-10">
+          <div className="max-w-3xl lg:max-w-6xl mx-auto px-6 py-10">
             <h2 className="font-serif text-2xl font-semibold mb-2">Ongoing Coaching</h2>
             <p className="explainer mb-6">
               Take your RELATE results with you. Download a personalized AI coaching prompt built from your assessment data, conflict patterns, dating market analysis, and compatibility profile.
