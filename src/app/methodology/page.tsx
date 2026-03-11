@@ -471,6 +471,67 @@ export default function MethodologyPage() {
         </div>
       </section>
 
+      {/* Market Competition Curve */}
+      <section className="px-6 py-16 border-b border-border">
+        <div className="max-w-3xl mx-auto">
+          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Market Competition</p>
+          <h2 className="font-serif text-3xl font-semibold mb-3">Designing the Market Competition Curve</h2>
+          <p className="text-secondary mb-8">
+            The market competition curve measures how competitive you are in your local dating market. It uses publicly available CBSA demographic data and behavioral research to score each trait twice: once against research-calibrated preference curves that reflect how people actually choose partners, and once against the real distribution of single adults in your metro area. The result tells you not just how desirable a trait makes you in general, but how scarce or common your profile is relative to the people you are competing against locally.
+          </p>
+
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Primary Sources</h3>
+              <p className="explainer leading-relaxed">
+                The desirability curve draws from four foundational studies. The first is Bruch and Newman&apos;s 2018 analysis published in <span className="italic">Science Advances</span>, &quot;Aspirational Pursuit of Mates in Online Dating Markets,&quot; which examined messaging behavior across four major U.S. cities using data from a large free dating platform. That study is the source for the operational definition of desirability as a function of behavioral outcome rather than stated preference, the finding that education functions as a vertical preference for men but peaks at the bachelor&apos;s level for women, and the core methodology of treating desirability as a hierarchy derived from who pursues whom and who responds. The second is Horta&ccedil;su and Ariely&apos;s &quot;What Makes You Click? Mate Preferences and Matching,&quot; a University of Chicago working paper analyzing actual messaging data from a major dating site across Boston and San Diego, which produced the most behaviorally grounded estimates of optimal BMI by gender, the quantified height penalty curves for men, and the income preference gradients that distinguish men as targets from women as targets. The third is Buss&apos;s 2019 <span className="italic">Annual Review of Psychology</span> piece, &quot;Mate Preferences and Their Behavioral Manifestations,&quot; a meta-synthesis of decades of evolutionary and behavioral research that grounds the gender asymmetries in income sensitivity, physical attractiveness weighting, and age preference. That study is the source for the finding that women are roughly one thousand times more sensitive to salary information than men when rating partners across cultures. The fourth is the OKCupid behavioral dataset published by Christian Rudder and analyzed across the 2009 to 2014 period, covering more than 25 million user interactions, which provides the most granular cross-tabulated evidence on racial preference hierarchies by gender and the homophilous structure of smoking and political preferences. That dataset also produced the notable finding that stated racial attitudes became less biased over time while behavioral patterns remained stable across the same period.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Raw Score</h3>
+              <p className="explainer leading-relaxed">
+                The raw score translates a specific trait value, whether an age, an income bracket, or a BMI category, into a score from 0 to 100 using curves whose shape was determined by the behavioral literature. Curves are not assumed to be linear or uniform across traits or genders. Some traits produce monotonically increasing scores where more is always better, such as income for men as targets. Others produce peaked curves where both extremes are penalized and a mid-range value is optimal, such as age for both genders or education for women. Others produce threshold or step-function scores, such as smoking status and existing children, where the effect is not gradual but behaves more like an eligibility filter that sharply reduces the effective dating pool.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Market Score</h3>
+              <p className="explainer leading-relaxed">
+                The market score answers a different question. Given the distribution of a particular trait among same-gender single adults in a specific CBSA, where does this individual rank relative to the local competition? This is calculated by identifying the individual&apos;s trait value or bracket, summing the cumulative share of the local single adult population of the same gender at or below that value using the CBSA&apos;s bracket distributions, and expressing that result as a percentile from 0 to 100. A woman who is 28 years old in a CBSA where the single female population is concentrated in the 38 to 50 age range will carry a high market score on age even if her raw score is only moderate by national standards. The same woman in a metro where single women cluster in the 22 to 30 range will receive a lower market score because she faces a younger competitive pool. The logic holds across every trait: scarcity relative to local competition elevates a market score independent of the absolute value of the trait itself.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Final Composite</h3>
+              <p className="explainer leading-relaxed">
+                For most traits, the final trait score is a fixed 50/50 blend of raw score and market score. Two traits are exceptions. Political alignment is scored entirely from the market signal because the raw score is itself a function of how well the individual&apos;s politics match the local population distribution, making a separate market percentile redundant. Wanting children uses its own compatibility function that measures alignment between the individual&apos;s fertility preference and the CBSA&apos;s want-kids distribution rather than producing a traditional raw or market score. The final composite is a weighted average of all trait scores, with weights reflecting the relative magnitude of each trait&apos;s effect on behavioral outcomes in the literature.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Geographic Amplification</h3>
+              <p className="explainer leading-relaxed">
+                Cost of living is not scored as a standalone trait. It functions as an amplifier applied to the most gender-salient trait&apos;s market score, using Regional Price Parity to steepen local competition. For men as targets, it amplifies the income market score: a man earning $100,000 in San Jose, where RPP is roughly 130, faces stiffer income competition than the same earner in Birmingham, where RPP is roughly 86, because his purchasing power is lower relative to local expectations. For women as targets, it amplifies the body composition market score, reflecting the empirical correlation between higher-cost metros and lower obesity rates, better fitness infrastructure, and higher appearance competition. The amplifier is applied after the trait&apos;s own score is calculated and carries its own weight in the final composite.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Gender Asymmetry</h3>
+              <p className="explainer leading-relaxed">
+                The behavioral literature consistently shows that men and women are not evaluated on the same traits, and where the same trait appears in both scoring models, it rarely carries the same weight. When women evaluate men, income is the single strongest signal, consistent with Buss&apos;s cross-cultural finding that women weight financial prospects far more heavily than men do when assessing partners. But no single trait dominates the evaluation of men. Women assess men across a broad portfolio: income, height, ethnicity, body composition, age, education, political alignment, parental status, and fertility preference all carry meaningful weight, and the spread between the most and least important traits is relatively narrow. A man with a weak income score can partially offset it with strength in height, fitness, or age. The system reflects this by distributing weight more evenly across traits when scoring men as targets.
+              </p>
+              <p className="explainer leading-relaxed mt-3">
+                When men evaluate women, the picture is sharply different. Body composition and age together account for the largest share of the evaluation, reflecting the consistent finding across Bruch and Newman, Horta&ccedil;su and Ariely, and the OKCupid behavioral data that men&apos;s revealed preferences concentrate heavily on physical attractiveness and youth. Income carries relatively little weight when men evaluate women, and height is not scored at all because women do not report it. The result is a scoring model for women as targets that is more top-heavy: a smaller number of traits carry outsized influence, and underperformance on age or body composition is harder to offset with strength in other areas.
+              </p>
+              <p className="explainer leading-relaxed mt-3">
+                Because these asymmetries are fundamental to how the scoring system operates, all desirability scoring is computed separately for men seeking women and women seeking men. Results should never be aggregated across target genders without flagging this asymmetry, as doing so would obscure the most consequential finding the research produces: that the traits driving desirability are not the same across genders, and in several cases they point in opposite directions entirely.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Attachment Style */}
       <section className="px-6 py-16 border-b border-border">
         <div className="max-w-3xl mx-auto">
