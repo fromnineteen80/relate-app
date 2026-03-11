@@ -9,7 +9,7 @@
 ## Performance Backlog (approved future work)
 These are known issues. Only work on them when explicitly asked:
 - [x] Add useMemo/useCallback for sort-in-render patterns in results/page.tsx
-- [x] Add localStorage caching abstraction to replace scattered getItem calls
+- [ ] Add localStorage caching abstraction to replace scattered getItem calls
 - [x] Add list virtualization for match lists (react-virtual or similar)
 - [x] Add loading="lazy" to <img> tags in account/page.tsx
 - [ ] Add Suspense boundaries with skeleton placeholders for dynamic imports
