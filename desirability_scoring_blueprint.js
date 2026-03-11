@@ -475,17 +475,17 @@ const HEIGHT_INCH_BRACKETS = [
 // on market score because they're in a smaller top-tier pool.
 
 const BMI_RAW_SCORES = {
-  // Men as targets — peaked at overweight
+  // Men as targets — fit and slightly-above-normal both score at peak
   man: {
-    'Lean or Fit': 80,   // bmi_elite: good but not peak
+    'Lean or Fit': 95,   // bmi_elite: peak tier — fitness is never penalized
     'Average':     87,   // bmi_normal: strong
-    'Overweight':  94,   // bmi_overweight: PEAK (slightly above normal preferred)
+    'Overweight':  80,   // bmi_overweight: moderate — behavioral data shows tolerance, not preference
     'Obese':       45    // bmi_obesity: steep drop
   },
-  // Women as targets — peaked at normal, steep decline
+  // Women as targets — fit and normal both score at peak
   woman: {
-    'Lean or Fit': 83,   // bmi_elite: slight frailty discount at extreme
-    'Average':     94,   // bmi_normal: PEAK
+    'Lean or Fit': 96,   // bmi_elite: peak tier — fitness is never penalized
+    'Average':     90,   // bmi_normal: strong
     'Overweight':  60,   // bmi_overweight: significant drop
     'Obese':       30    // bmi_obesity: near-floor
   }
@@ -517,21 +517,21 @@ const FITNESS_CBSA_BRACKETS = [
 ];
 
 // BMI category order (for cumulative percentile: lower categories = less desirable)
-// Order by body composition desirability: obesity < elite < normal < overweight (men)
-// For men: obese(worst) → elite → normal → overweight(best)
+// Fit is ALWAYS top tier — fitness is never penalized.
+// For men: obese(worst) → overweight → normal → elite(best)
 const BMI_PERCENTILE_ORDER_MAN = [
   { bodyType: 'Obese',       key: 'bmi_obesity_cbsa' },
-  { bodyType: 'Lean or Fit', key: 'bmi_elite_cbsa' },
+  { bodyType: 'Overweight',  key: 'bmi_overweight_cbsa' },
   { bodyType: 'Average',     key: 'bmi_normal_cbsa' },
-  { bodyType: 'Overweight',  key: 'bmi_overweight_cbsa' }
+  { bodyType: 'Lean or Fit', key: 'bmi_elite_cbsa' }
 ];
 
-// For women: obese(worst) → overweight → elite → normal(best)
+// For women: obese(worst) → overweight → normal → elite(best)
 const BMI_PERCENTILE_ORDER_WOMAN = [
   { bodyType: 'Obese',       key: 'bmi_obesity_cbsa' },
   { bodyType: 'Overweight',  key: 'bmi_overweight_cbsa' },
-  { bodyType: 'Lean or Fit', key: 'bmi_elite_cbsa' },
-  { bodyType: 'Average',     key: 'bmi_normal_cbsa' }
+  { bodyType: 'Average',     key: 'bmi_normal_cbsa' },
+  { bodyType: 'Lean or Fit', key: 'bmi_elite_cbsa' }
 ];
 
 /**

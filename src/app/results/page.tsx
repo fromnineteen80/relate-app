@@ -16,6 +16,7 @@ import { getProfile } from '@/lib/onboarding';
 import { getSupabase } from '@/lib/supabase/client';
 import { buildMarketRequestBody } from '@/lib/market-request';
 import { renderDatingPoolGrid, type DatingPoolData, type TargetGender } from '@/lib/dating-pool-grid';
+import { cleanProse } from '@/lib/prose';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -1031,6 +1032,11 @@ function ResultsDashboard() {
         {/* ── Top Metros Scatter Plot ── */}
         {topMetros && topMetros.length > 0 && (
           <TopMetrosScatterPlot metros={topMetros} worstMetros={worstMetros} demographics={demographics} marketData={marketData} topMetrosInfo={topMetrosInfo} />
+        )}
+
+        {/* ── What's Making You Competitive ── */}
+        {marketData && marketData.relateScore && (
+          <CompetitivenessBreakdown marketData={marketData} demographics={demographics} />
         )}
 
         {/* ── Market Coaching ── */}
@@ -2603,6 +2609,121 @@ function humanizeBottleneck(
     description: `This preference removes ${pctStr}% of your remaining matches (${countStr} people) in ${metro}. Every filter you add compounds with the others, so even moderate individual cuts create large combined reductions.`,
     action: 'Rank your preferences by importance. Keep your top 2-3 non-negotiables firm and consider adding flexibility to the rest. Small concessions on lower-priority preferences often recover more matches than you\'d expect.',
   };
+}
+
+function CompetitivenessBreakdown({ marketData, demographics }: { marketData: MarketData; demographics: Demographics }) {
+  const score = marketData.relateScore;
+  if (!score || !score.components) return null;
+
+  const components = score.components;
+  const metro = marketData.location?.cbsaLabel || marketData.location?.cbsaName || 'your area';
+  const metroShort = metro.includes(',') ? metro.split(',')[0] : metro;
+  const ownGender = demographics?.gender === 'M' ? 'men' : demographics?.gender === 'W' ? 'women' : 'singles';
+
+  const labelMap: Record<string, string> = {
+    income: 'Income', education: 'Education', age: 'Age', ethnicity: 'Ethnicity',
+    children: 'Children', height: 'Height', body: 'Body & Fitness', politics: 'Politics',
+    smoking: 'Smoking', hasKids: 'Children', wantKids: 'Wants Kids', costOfLiving: 'Cost of Living',
+  };
+
+  const explanationMap: Record<string, (val: number) => string> = {
+    income: (v) => v >= 80 ? `Your income ranks in the top ${Math.round(100 - v)}% of ${ownGender} in ${metroShort} \u2014 one of the strongest signals in the dating market and a major driver of your overall score.`
+      : v >= 50 ? `Your income is above the local median for ${ownGender} in ${metroShort} \u2014 a solid foundation, though not yet a standout differentiator.`
+      : `Your income falls in the bottom half of ${ownGender} in ${metroShort}. For men, this is the single highest\u2011weighted factor \u2014 it has more influence on your score than any other trait.`,
+    education: (v) => v >= 80 ? `Your education level places you well above the local average \u2014 in ${metroShort}, this opens doors with credential\u2011conscious partners and signals long\u2011term earning potential.`
+      : v >= 50 ? `Your education is above the local median \u2014 a moderate advantage that reinforces other strengths.`
+      : `Your education level is below the local average in ${metroShort} \u2014 this limits your competitive position, especially in markets where partners filter on credentials.`,
+    age: (v) => v >= 70 ? `Your age falls squarely in the most desirable range for ${ownGender} \u2014 a structural advantage you don\u2019t have to work for.`
+      : v >= 50 ? `Your age is moderately competitive \u2014 past the absolute peak but still in a range that most partners find attractive.`
+      : `Your age is working against you in ${metroShort}. More than half of single ${ownGender} here are in a more preferred age bracket \u2014 which means you\u2019re competing uphill on this dimension.`,
+    ethnicity: (v) => v >= 70 ? `Your demographic profile aligns well with the preference patterns of singles in ${metroShort} \u2014 the local composition works in your favor.`
+      : v >= 50 ? `Your demographic compatibility is moderate in this market \u2014 neither a strong advantage nor a significant headwind.`
+      : `The local demographic composition creates a more competitive environment for your profile \u2014 preference patterns in ${metroShort} favor other groups more heavily.`,
+    children: (v) => v >= 70 ? `Not having children is a significant advantage here \u2014 the majority of singles in ${metroShort} prefer childless partners.`
+      : v >= 50 ? `Your parental status is near\u2011neutral in competitiveness \u2014 it\u2019s neither helping nor hurting you meaningfully.`
+      : `Having children creates real drag on your competitiveness. Many singles \u2014 especially those without kids of their own \u2014 prefer childless partners.`,
+    hasKids: (v) => v >= 70 ? `Not having children gives you a clear advantage in ${metroShort} \u2014 most singles here prefer partners without existing kids.`
+      : v >= 50 ? `Your parental status is near\u2011neutral \u2014 it\u2019s not a significant factor either way.`
+      : `Having children is your single biggest drag. Nearly two\u2011thirds of singles in ${metroShort} don\u2019t have kids \u2014 which means the market structurally favors childless competitors.`,
+    height: (v) => v >= 80 ? `Your height puts you in an elite bracket \u2014 a strong differentiator that the majority of ${ownGender} in ${metroShort} cannot match.`
+      : v >= 60 ? `Your height is above average and competitive in ${metroShort} \u2014 a modest but real advantage.`
+      : `Your height is below the local average \u2014 creating a structural disadvantage that\u2019s difficult to offset.`,
+    body: (v) => v >= 75 ? `Your body composition and fitness level rank highly in ${metroShort} \u2014 physical fitness is one of the most visible competitive signals in the dating market.`
+      : v >= 50 ? `Your body and fitness scores are above average \u2014 competitive, but not yet a standout differentiator in ${metroShort}.`
+      : `Your body composition is below the competitive threshold in ${metroShort} \u2014 but this is also one of the most changeable factors on the list.`,
+    politics: (v) => v >= 70 ? `Your political views align well with the dominant preferences of singles in ${metroShort} \u2014 this removes a common dealbreaker.`
+      : v >= 50 ? `Your political alignment is moderate \u2014 not a strong advantage or disadvantage in this market.`
+      : `Your political views are misaligned with the majority of the local singles pool \u2014 reducing your number of compatible matches before any other filter is applied.`,
+    smoking: (v) => v >= 80 ? `Being a non\u2011smoker puts you in alignment with the vast majority of the singles pool \u2014 one less barrier between you and a match.`
+      : `Smoking status is creating a hard filter \u2014 it excludes you from a large share of potential matches who list non\u2011smoking as a requirement.`,
+    wantKids: (v) => v >= 60 ? `Your fertility intentions align with the local singles pool \u2014 this removes friction in compatibility matching.`
+      : `Your wants\u2011kids preference creates friction with the local market composition \u2014 a meaningful share of singles here are looking for something different.`,
+    costOfLiving: (v) => v >= 80 ? `The local cost of living amplifies your financial competitiveness \u2014 your purchasing power stands out relative to peers in ${metroShort}.`
+      : v >= 50 ? `Cost of living has a moderate effect on your competitive position here \u2014 your income\u2019s real value is close to the national average.`
+      : `The high cost of living in ${metroShort} diminishes your financial advantage \u2014 your nominal income buys less here than it would elsewhere.`,
+  };
+
+  // Build entries from components
+  const entries = Object.entries(components).map(([key, comp]: [string, any]) => {
+    const val = comp.local ?? comp.score ?? comp.national ?? 50;
+    const weight = comp.weight ?? 0;
+    return { key, val, weight, weighted: val * weight, label: labelMap[key] || key.charAt(0).toUpperCase() + key.slice(1) };
+  }).sort((a, b) => b.weighted - a.weighted);
+
+  const strengths = entries.filter(e => e.val >= 65 && e.weight > 0);
+  const weaknesses = entries.filter(e => e.val < 50 && e.weight > 0);
+
+  if (strengths.length === 0 && weaknesses.length === 0) return null;
+
+  return (
+    <section className="card mb-4">
+      <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2">
+        <Icon name="insights" size={20} className="text-accent" />
+        What&apos;s Making You Competitive
+      </h3>
+      <p className="explainer mb-4">How each trait is affecting your score in {metroShort}</p>
+
+      {strengths.length > 0 && (
+        <div className="mb-4">
+          <span className="text-xs font-mono text-success uppercase tracking-wider">Pulling You Up</span>
+          <div className="space-y-3 mt-2">
+            {strengths.map(s => (
+              <div key={s.key} className="border border-success/20 bg-success/5 rounded-md p-3">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium">{s.label}</span>
+                  <span className="text-xs font-mono text-success">{Math.round(s.val)}/100</span>
+                </div>
+                <div className="h-1.5 bg-stone-200 rounded-full overflow-hidden mb-2">
+                  <div className="h-full bg-success rounded-full transition-all duration-700" style={{ width: `${Math.min(100, s.val)}%` }} />
+                </div>
+                <p className="text-xs text-secondary">{cleanProse((explanationMap[s.key] || (() => ''))(s.val))}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {weaknesses.length > 0 && (
+        <div>
+          <span className="text-xs font-mono text-danger uppercase tracking-wider">Pulling You Down</span>
+          <div className="space-y-3 mt-2">
+            {weaknesses.map(w => (
+              <div key={w.key} className="border border-danger/20 bg-danger/5 rounded-md p-3">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium">{w.label}</span>
+                  <span className="text-xs font-mono text-danger">{Math.round(w.val)}/100</span>
+                </div>
+                <div className="h-1.5 bg-stone-200 rounded-full overflow-hidden mb-2">
+                  <div className="h-full bg-danger rounded-full transition-all duration-700" style={{ width: `${Math.min(100, w.val)}%` }} />
+                </div>
+                <p className="text-xs text-secondary">{cleanProse((explanationMap[w.key] || (() => ''))(w.val))}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
+  );
 }
 
 function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
