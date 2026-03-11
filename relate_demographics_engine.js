@@ -481,13 +481,13 @@ const RELATE_SCORE_WEIGHTS = {
 // and the shape of the opposite-gender distribution in each CBSA.
 const RECIPROCAL_MATCH_CONFIG = {
   man: {
-    // Women are selective. A man needs to be meaningfully above a woman's
-    // perceived score for her to reciprocate. Women's perceived score is
-    // inflated ~12 points by casual attention from high-scoring men who
-    // engage but don't commit, skewing her self-assessed market position.
+    // Women are selective. A man needs to be above a woman's perceived
+    // score for her to reciprocate. Women's perceived score is inflated
+    // modestly by attention from higher-scoring men, but a genuinely
+    // high-scoring man (8/10+) should see strong reciprocation.
     steepness: 0.12,        // logistic steepness
-    sweetSpot: 8,           // gap above her inflated score where P = 50%
-    inflation: 12,          // women's self-assessed market inflation
+    sweetSpot: 5,           // gap above her inflated score where P = 50%
+    inflation: 6,           // women's self-assessed market inflation
   },
   woman: {
     // Men cast wider nets and are less selective. They commit near parity
