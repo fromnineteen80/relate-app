@@ -610,7 +610,7 @@ function AccountPage() {
           <div className="flex items-center gap-4 mb-4">
             <div className="relative w-14 h-14 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 border-2 border-border">
               {profilePhoto ? (
-                <Image src={profilePhoto} alt="Profile" className="object-cover" fill sizes="56px" />
+                <Image src={profilePhoto} alt="Profile" className="object-cover" fill sizes="56px" loading="lazy" />
               ) : (
                 <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-lg font-medium">
                   {initial}
@@ -871,7 +871,7 @@ function AccountPage() {
                 <div className="flex items-center gap-4 p-3 bg-success/5 border border-success/20 rounded-md">
                   <div className="relative w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center text-lg font-medium flex-shrink-0 overflow-hidden">
                     {partnerPhotoUrl ? (
-                      <Image src={partnerPhotoUrl} alt={partnerName || 'Partner'} className="object-cover" fill sizes="48px" />
+                      <Image src={partnerPhotoUrl} alt={partnerName || 'Partner'} className="object-cover" fill sizes="48px" loading="lazy" />
                     ) : (
                       partnerName ? partnerName.charAt(0).toUpperCase() : partnerEmail?.charAt(0).toUpperCase() || '?'
                     )}

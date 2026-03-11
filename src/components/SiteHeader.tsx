@@ -1,13 +1,29 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useAdvisor } from '@/lib/advisor-context';
 import { useIsMobileDevice } from '@/lib/use-mobile-platform';
+import { useLocalStorageBatch } from '@/lib/use-local-storage';
 import { Icon } from '@/components/Icon';
+
+const HEADER_STORAGE_KEYS = [
+  'relate_profile_name',
+  'relate_profile_photo',
+  'relate_partner_email',
+  'relate_partner_results',
+  'relate_couples_discount',
+  'relate_payment_tier',
+  'relate_attachment_results',
+  'relate_attachment_purchased',
+  'relate_attachment_access',
+  'relate_gender',
+  'relate_demographics',
+  'relate_astrology_enabled',
+] as const;
 
 type SiteHeaderProps = {
   variant?: 'default' | 'landing' | 'auth';
@@ -65,30 +81,24 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  const profileName = typeof window !== 'undefined' ? localStorage.getItem('relate_profile_name') : null;
-  const profilePhoto = typeof window !== 'undefined' ? localStorage.getItem('relate_profile_photo') : null;
-  const hasPartner = typeof window !== 'undefined' ? !!(localStorage.getItem('relate_partner_email') || localStorage.getItem('relate_partner_results')) : false;
-  const hasCouplesAccess = typeof window !== 'undefined'
-    ? !!(localStorage.getItem('relate_couples_discount') || localStorage.getItem('relate_payment_tier')?.includes('couples'))
-    : false;
-  const hasAttachment = typeof window !== 'undefined'
-    ? !!(localStorage.getItem('relate_attachment_results') || localStorage.getItem('relate_attachment_purchased') || localStorage.getItem('relate_attachment_access')?.includes('"purchased":true'))
-    : false;
-  const attachmentHasResults = typeof window !== 'undefined' ? !!localStorage.getItem('relate_attachment_results') : false;
-  const isWoman = typeof window !== 'undefined'
-    ? (() => {
-        const g = localStorage.getItem('relate_gender');
-        if (g === 'W') return true;
-        try { const d = JSON.parse(localStorage.getItem('relate_demographics') || '{}'); return d.gender === 'W'; } catch { return false; }
-      })()
-    : false;
-  const hasAstrology = typeof window !== 'undefined'
-    ? (() => {
-        const astroStored = localStorage.getItem('relate_astrology_enabled');
-        if (astroStored !== null) return astroStored === 'true';
-        return isWoman;
-      })()
-    : false;
+  const ls = useLocalStorageBatch(HEADER_STORAGE_KEYS);
+
+  const profileName = ls.relate_profile_name;
+  const profilePhoto = ls.relate_profile_photo;
+  const hasPartner = !!(ls.relate_partner_email || ls.relate_partner_results);
+  const hasCouplesAccess = !!(ls.relate_couples_discount || ls.relate_payment_tier?.includes('couples'));
+  const hasAttachment = !!(ls.relate_attachment_results || ls.relate_attachment_purchased || ls.relate_attachment_access?.includes('"purchased":true'));
+  const attachmentHasResults = !!ls.relate_attachment_results;
+  const isWoman = useMemo(() => {
+    const g = ls.relate_gender;
+    if (g === 'W') return true;
+    try { const d = JSON.parse(ls.relate_demographics || '{}'); return d.gender === 'W'; } catch { return false; }
+  }, [ls.relate_gender, ls.relate_demographics]);
+  const hasAstrology = useMemo(() => {
+    const astroStored = ls.relate_astrology_enabled;
+    if (astroStored !== null) return astroStored === 'true';
+    return isWoman;
+  }, [ls.relate_astrology_enabled, isWoman]);
   const initial = profileName ? profileName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || '?';
 
   async function handleSignOut() {
