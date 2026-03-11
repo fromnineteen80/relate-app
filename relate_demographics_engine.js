@@ -484,7 +484,7 @@ const RECIPROCAL_MATCH_CONFIG = {
     // Women are selective. A man needs to be meaningfully above a woman's
     // perceived score for her to reciprocate. Women's perceived score is
     // inflated ~12 points by casual attention from high-scoring men.
-    maxResponseRate: 0.40,  // max P any individual woman responds
+    maxResponseRate: 0.70,  // max P any individual woman responds
     steepness: 0.12,        // logistic steepness
     sweetSpot: 8,           // gap above her inflated score where P = 50% of max
     inflation: 12,          // women's self-assessed market inflation
