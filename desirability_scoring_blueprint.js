@@ -105,7 +105,7 @@ const DESIRABILITY_WEIGHTS = {
 //   For women: cost_of_living_score = body_market_score × col_amplifier
 //
 //   Clamp result to [0, 100].
-//   This score is then weighted at 11 (men) or 18 (women) in the final blend.
+//   This score is then weighted at 7 (men) or 10 (women) in the final blend.
 
 const COST_OF_LIVING_AMPLIFIER = {
   man: {
