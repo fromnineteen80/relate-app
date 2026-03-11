@@ -505,14 +505,21 @@ export default function MethodologyPage() {
             <div>
               <h3 className="font-serif font-semibold mb-2">Final Composite</h3>
               <p className="explainer leading-relaxed">
-                The final trait score blends both inputs at a 50/50 weight by default, though that blend can be adjusted based on how market-sensitive a given trait is. Traits where local context substantially changes the desirability signal, including BMI in high-obesity markets, income in low-wage markets, and age in markets with skewed single adult age distributions, are weighted toward the market score. Traits where the raw preference curve is strong and consistent regardless of local context, such as height and smoking status, carry more weight in the raw score component. The final composite score is a weighted average of all trait scores, with weights reflecting the relative magnitude of each trait&apos;s effect on behavioral outcomes in the literature.
+                For most traits, the final trait score is a fixed 50/50 blend of raw score and market score. Two traits are exceptions. Political alignment is scored entirely from the market signal because the raw score is itself a function of how well the individual&apos;s politics match the local population distribution, making a separate market percentile redundant. Wanting children uses its own compatibility function that measures alignment between the individual&apos;s fertility preference and the CBSA&apos;s want-kids distribution rather than producing a traditional raw or market score. The final composite is a weighted average of all trait scores, with weights reflecting the relative magnitude of each trait&apos;s effect on behavioral outcomes in the literature.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Geographic Amplification</h3>
+              <p className="explainer leading-relaxed">
+                Cost of living is not scored as a standalone trait. It functions as an amplifier applied to the most gender-salient trait&apos;s market score, using Regional Price Parity to steepen local competition. For men as targets, it amplifies the income market score: a man earning $100,000 in San Jose, where RPP is roughly 130, faces stiffer income competition than the same earner in Birmingham, where RPP is roughly 86, because his purchasing power is lower relative to local expectations. For women as targets, it amplifies the body composition market score, reflecting the empirical correlation between higher-cost metros and lower obesity rates, better fitness infrastructure, and higher appearance competition. The amplifier is applied after the trait&apos;s own score is calculated and carries its own weight in the final composite.
               </p>
             </div>
 
             <div>
               <h3 className="font-serif font-semibold mb-2">Gender Asymmetry</h3>
               <p className="explainer leading-relaxed">
-                Because the gender of the target substantially changes both the curve shape and the trait weight, income matters roughly three times more for men as targets than for women while body composition matters roughly twice as much for women as targets, all scoring is computed separately for men seeking women and women seeking men. Results should never be aggregated across target genders without flagging the asymmetry, as doing so would obscure the most consequential finding the research produces: that the traits driving desirability are not the same across genders, and in several cases they point in opposite directions entirely.
+                Because the gender of the target substantially changes both the curve shape and the trait weight, income matters roughly three times more for men as targets than for women while body composition matters roughly twice as much for women as targets, all scoring is computed separately for men seeking women and women seeking men. The weight distribution itself differs structurally: men as targets are evaluated across a flatter portfolio where no single trait dominates, while women as targets are evaluated with sharper concentration on age and body composition. Results should never be aggregated across target genders without flagging this asymmetry, as doing so would obscure the most consequential finding the research produces: that the traits driving desirability are not the same across genders, and in several cases they point in opposite directions entirely.
               </p>
             </div>
           </div>
