@@ -455,7 +455,7 @@ function ResultsDashboard() {
   const navItems = [
     { id: 'persona', label: 'Your Persona', show: !!persona || hasDimensions || !!m4Summary || !!(tensionStacks && Object.keys(tensionStacks).length > 0) },
     { id: 'know-your-market', label: 'Dating Market', show: hasMarket },
-    { id: 'attachment', label: 'Attachment Style', show: !!ic?.attachment },
+    { id: 'attachment', label: 'Attachment', show: !!ic?.attachment },
     { id: 'how-you-date', label: 'How You Date', show: matches.length > 0 || !!(ic?.attachmentTiers) || !!m3 || (hasResults && true) },
   ].filter(n => n.show);
 

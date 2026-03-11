@@ -125,10 +125,11 @@ function buildBlipColors(
   const counts: Record<string, number> = {};
   POOL_KEYS.forEach(k => {
     const raw = (pools[k].count / base) * totalBlips;
-    // Round down ideal if less than half a blip
+    // Ensure at least 1 blip for any pool with a non-zero count
+    const rounded = k === 'ideal' ? Math.floor(raw) : Math.round(raw);
     counts[k] = Math.min(
       totalBlips,
-      k === 'ideal' ? Math.floor(raw) : Math.round(raw),
+      pools[k].count > 0 ? Math.max(1, rounded) : rounded,
     );
   });
 
