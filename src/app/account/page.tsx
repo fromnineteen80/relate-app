@@ -4,6 +4,7 @@ import { Component, Suspense, useEffect, useState, useCallback, useRef } from 'r
 import type { ReactNode, ErrorInfo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/lib/auth-context';
 import { config, PRICING, ATTACHMENT_PRICING, type PricingTier } from '@/lib/config';
 import { getMockPaymentStatus, mockPurchase } from '@/lib/mock/payments';
@@ -315,21 +316,26 @@ function AccountPage() {
     const req = buildMarketRequestBody(user.id);
     if (!req) return;
 
-    // Use cached market data if demographics unchanged and cache is < 30s old
-    const cached = localStorage.getItem('relate_market_data');
+    // Use cached bundle data if demographics unchanged and cache is < 5 min old
+    const cachedBundle = localStorage.getItem('relate_market_bundle');
     const cachedDemoSnap = localStorage.getItem('relate_market_demo_snapshot');
     const cachedAt = parseInt(localStorage.getItem('relate_market_cached_at') || '0', 10);
     const cacheAge = Date.now() - cachedAt;
-    if (cached && cachedDemoSnap === req.demoStr && cacheAge < 30 * 1000) {
-      try { setMarketData(JSON.parse(cached)); marketFetchedRef.current = true; return; } catch { /* refetch */ }
+    if (cachedBundle && cachedDemoSnap === req.demoStr && cacheAge < 5 * 60 * 1000) {
+      try {
+        const bundle = JSON.parse(cachedBundle);
+        setMarketData(bundle.market);
+        marketFetchedRef.current = true;
+        return;
+      } catch { /* refetch */ }
     }
 
     marketFetchedRef.current = true;
     setMarketLoading(true);
-    fetch('/api/demographics-market', {
+    fetch('/api/market-bundle', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(req.body),
+      body: JSON.stringify({ ...req.body, includeTopMetros: false, includeWorstMetros: false }),
     })
       .then(res => res.json())
       .then(data => {
@@ -342,7 +348,9 @@ function AccountPage() {
             matchCount: data.matchCount,
           };
           setMarketData(md);
-          localStorage.setItem('relate_market_data', JSON.stringify(md));
+          // Cache as bundle for consistency with results page
+          const bundle = { market: md, topMetros: data.topMetros, worstMetros: data.worstMetros };
+          localStorage.setItem('relate_market_bundle', JSON.stringify(bundle));
           localStorage.setItem('relate_market_demo_snapshot', req.demoStr);
           localStorage.setItem('relate_market_cached_at', String(Date.now()));
         }
@@ -600,9 +608,9 @@ function AccountPage() {
             <Link href="/onboarding/profile" className="text-xs text-accent hover:underline">Edit</Link>
           </div>
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 border-2 border-border">
+            <div className="relative w-14 h-14 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 border-2 border-border">
               {profilePhoto ? (
-                <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" />
+                <Image src={profilePhoto} alt="Profile" className="object-cover" fill sizes="56px" />
               ) : (
                 <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-lg font-medium">
                   {initial}
@@ -861,9 +869,9 @@ function AccountPage() {
             {hasPartner ? (
               <div className="space-y-4">
                 <div className="flex items-center gap-4 p-3 bg-success/5 border border-success/20 rounded-md">
-                  <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center text-lg font-medium flex-shrink-0 overflow-hidden">
+                  <div className="relative w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center text-lg font-medium flex-shrink-0 overflow-hidden">
                     {partnerPhotoUrl ? (
-                      <img src={partnerPhotoUrl} alt={partnerName || 'Partner'} className="w-full h-full object-cover" />
+                      <Image src={partnerPhotoUrl} alt={partnerName || 'Partner'} className="object-cover" fill sizes="48px" />
                     ) : (
                       partnerName ? partnerName.charAt(0).toUpperCase() : partnerEmail?.charAt(0).toUpperCase() || '?'
                     )}
