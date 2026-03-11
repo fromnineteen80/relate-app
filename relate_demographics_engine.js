@@ -483,17 +483,16 @@ const RECIPROCAL_MATCH_CONFIG = {
   man: {
     // Women are selective. A man needs to be meaningfully above a woman's
     // perceived score for her to reciprocate. Women's perceived score is
-    // inflated ~12 points by casual attention from high-scoring men.
-    maxResponseRate: 0.70,  // max P any individual woman responds
+    // inflated ~12 points by casual attention from high-scoring men who
+    // engage but don't commit, skewing her self-assessed market position.
     steepness: 0.12,        // logistic steepness
-    sweetSpot: 8,           // gap above her inflated score where P = 50% of max
+    sweetSpot: 8,           // gap above her inflated score where P = 50%
     inflation: 12,          // women's self-assessed market inflation
   },
   woman: {
     // Men cast wider nets and are less selective. They commit near parity
     // or even slightly above. No inflation adjustment — men operating from
     // scarcity are more realistic about their market position.
-    maxResponseRate: 0.75,  // max P any individual man commits
     steepness: 0.10,
     sweetSpot: -5,          // negative: men commit to women slightly above them
     inflation: 0,
@@ -1545,7 +1544,9 @@ function getMatchProbability(relateScore, userGender, cbsa) {
     const gap = relateScore - effectiveOpp;
 
     // Probability of reciprocal interest: logistic of (gap - sweetSpot)
-    const pMatch = config.maxResponseRate / (1 + Math.exp(-config.steepness * (gap - config.sweetSpot)));
+    // No artificial ceiling — the logistic naturally saturates at 1.0.
+    // The inflation, sweetSpot, and steepness shape the curve.
+    const pMatch = 1 / (1 + Math.exp(-config.steepness * (gap - config.sweetSpot)));
 
     weightedProbSum += density * pMatch;
     densitySum += density;
