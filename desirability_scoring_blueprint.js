@@ -53,31 +53,31 @@
 const DESIRABILITY_WEIGHTS = {
   // Weights when scoring a MAN as target (women evaluating men)
   man: {
-    age: 15,
-    ethnicity: 8,
-    income: 12,
-    education: 8,
-    height: 7,
-    body: 14,       // BMI raw + fitness modifier, scored as one unit
-    politics: 8,
+    age: 9,
+    ethnicity: 11,
+    income: 15,
+    education: 9,
+    height: 11,
+    body: 10,
+    politics: 9,
     smoking: 5,
     hasKids: 9,
-    wantKids: 3,    // compatibility modifier, not standalone
-    costOfLiving: 11 // RPP amplifier on income (see COST_OF_LIVING_AMPLIFIER)
+    wantKids: 5,
+    costOfLiving: 7
   },
   // Weights when scoring a WOMAN as target (men evaluating women)
   woman: {
-    age: 22,         // dominant signal for women; redistributed from height(7) + income(8)
-    ethnicity: 8,
-    income: 4,       // weak positive; plateaus early
+    age: 17,
+    ethnicity: 11,
+    income: 5,
     education: 8,
     height: 0,       // not scored — women don't report height
-    body: 20,        // BMI raw + fitness modifier; second-heaviest signal for women
-    politics: 8,
+    body: 20,
+    politics: 9,
     smoking: 5,
-    hasKids: 10,     // +1; steeper penalty for women with kids in behavioral data
-    wantKids: 4,     // +1; fertility alignment matters more for women's market position
-    costOfLiving: 11 // RPP amplifier on body/fitness; symmetric with men
+    hasKids: 10,
+    wantKids: 5,
+    costOfLiving: 10
   }
 };
 
