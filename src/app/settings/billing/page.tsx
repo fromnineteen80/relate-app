@@ -36,6 +36,11 @@ type PartnerInfo = {
   email: string;
   firstName: string | null;
   lastName: string | null;
+  photoUrl: string | null;
+  personaName: string | null;
+  personaCode: string | null;
+  assessmentComplete: boolean;
+  hasResults: boolean;
 };
 
 export default function BillingPage() {
@@ -166,20 +171,9 @@ export default function BillingPage() {
         <div className="card mb-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-serif font-semibold">Current Plan</h3>
-            {isTestMode ? (
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-100 text-emerald-700">Test</span>
-            ) : subscription ? (
-              <span className={`text-xs font-mono px-2 py-0.5 rounded ${
-                subscription.status === 'active' ? 'bg-success/10 text-success' :
-                subscription.status === 'past_due' ? 'bg-warning/10 text-warning' :
-                subscription.status === 'canceled' ? 'bg-danger/10 text-danger' :
-                'bg-stone-100 text-secondary'
-              }`}>
-                {subscription.cancelAtPeriodEnd ? 'Canceling' : subscription.status}
-              </span>
-            ) : paid ? (
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-success/10 text-success">active</span>
-            ) : null}
+            {paid && !isTestMode && (
+              <a href="#manage-subscription" className="text-xs text-accent hover:underline">Manage</a>
+            )}
           </div>
 
           <div className="flex items-center gap-4 mb-3">
@@ -255,8 +249,18 @@ export default function BillingPage() {
             </div>
           )}
 
-          {/* Discount code input — show when no active discount */}
-          {!subscription?.discount && !discountCode && (
+          {/* Test mode indicator */}
+          {isTestMode && (
+            <div className="mt-3 pt-3 border-t border-border">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">Test Account</span>
+                <span className="text-xs text-secondary">Full Pro access enabled for testing</span>
+              </div>
+            </div>
+          )}
+
+          {/* Discount code input — show when no active discount and not test mode */}
+          {!isTestMode && !subscription?.discount && !discountCode && (
             <div className="mt-3 pt-3 border-t border-border">
               <p className="text-xs text-secondary mb-2">Have a discount code?</p>
               <form onSubmit={async (e) => {
@@ -387,9 +391,17 @@ export default function BillingPage() {
               <Link href="/invite" className="text-xs text-accent hover:underline">Manage</Link>
             </div>
             <div className="flex items-center gap-4 p-3 bg-success/5 border border-success/20 rounded-md">
-              <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center text-lg font-medium flex-shrink-0">
-                {partner.firstName ? partner.firstName.charAt(0).toUpperCase() : partner.email.charAt(0).toUpperCase()}
-              </div>
+              {partner.photoUrl ? (
+                <img
+                  src={partner.photoUrl}
+                  alt={partner.firstName || 'Partner'}
+                  className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center text-lg font-medium flex-shrink-0">
+                  {partner.firstName ? partner.firstName.charAt(0).toUpperCase() : partner.email.charAt(0).toUpperCase()}
+                </div>
+              )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium truncate">
@@ -398,6 +410,9 @@ export default function BillingPage() {
                   <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
                 </div>
                 {partner.firstName && <p className="text-xs text-secondary truncate">{partner.email}</p>}
+                {partner.personaName && (
+                  <p className="text-xs text-accent mt-0.5">{partner.personaName}{partner.personaCode ? ` (${partner.personaCode})` : ''}</p>
+                )}
               </div>
             </div>
             {tier === 'couples' && (
@@ -431,7 +446,7 @@ export default function BillingPage() {
 
         {/* ── Manage Subscription ── */}
         {paid && !isTestMode && (
-          <div className="card mb-4">
+          <div id="manage-subscription" className="card mb-4">
             <h3 className="font-serif font-semibold mb-4">Manage Subscription</h3>
 
             {/* Change plan */}

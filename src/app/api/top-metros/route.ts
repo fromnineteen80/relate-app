@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
     await demoEngine.initializeData();
     const result = await demoEngine.findTopMetros(userProfile, prefs, homeScore);
-    const { topMetros, totalCompetitive, allCompetitive } = result;
+    const { topMetros, totalCompetitive, allCompetitive, effectiveMinScore } = result;
 
     // Find user's home metro rank among competitive metros
     let homeMetroRank = null;
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ success: true, topMetros, totalCompetitive, homeMetroRank, homeCbsa });
+    return NextResponse.json({ success: true, topMetros, totalCompetitive, homeMetroRank, homeCbsa, effectiveMinScore });
   } catch (error: any) {
     console.error('Top metros error:', error);
     return NextResponse.json(
