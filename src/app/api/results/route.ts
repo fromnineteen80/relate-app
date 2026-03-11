@@ -362,6 +362,7 @@ export async function POST(request: NextRequest) {
       m2: m2Result,
       m3: m3Result,
       m4: m4Result,
+      m5: m5Result,
       attentiveness,
       tensionStacks,
       modifiers,

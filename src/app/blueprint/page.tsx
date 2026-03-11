@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth-context';
 import { fetchBlueprintAccess } from '@/lib/payments';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
+import { saveBlueprintData } from '@/lib/supabase/progress';
 import Link from 'next/link';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -330,6 +331,11 @@ export default function BlueprintPage() {
       if (!growthData.success) throw new Error(growthData.error || 'Growth plan generation failed');
 
       localStorage.setItem('relate_blueprint_growth', JSON.stringify(growthData.growthPlan));
+
+      // Persist to Supabase
+      if (user) {
+        saveBlueprintData(user.id, blueprintResults, reportData.report, growthData.growthPlan);
+      }
 
       // Clear checkpoint
       localStorage.removeItem('relate_blueprint_checkpoint');

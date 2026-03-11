@@ -145,6 +145,9 @@ create table if not exists public.user_progress (
   m4_scored jsonb,
   m5_scored jsonb,
   results jsonb,
+  blueprint_results jsonb,
+  blueprint_report jsonb,
+  blueprint_growth jsonb,
   updated_at timestamp with time zone default now()
 );
 

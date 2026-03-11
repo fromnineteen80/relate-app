@@ -92,6 +92,7 @@ export async function POST(request: NextRequest) {
         email: partnerUser.email,
         firstName: partnerUser.first_name,
         lastName: partnerUser.last_name,
+        photoUrl: partnerUser.photo_url || null,
       },
     });
   } catch (error: unknown) {
