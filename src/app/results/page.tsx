@@ -1832,8 +1832,9 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
   const yStep = maxMatch / 5;
   for (let i = 0; i <= 5; i++) yTicks.push(Math.round(yStep * i));
 
-  const compOrder = ['income', 'age', 'ethnicity', 'education', 'height', 'body', 'politics', 'smoking', 'hasKids', 'wantKids', 'costOfLiving'];
-  const compLabels: Record<string, string> = { income: 'Income', age: 'Age', ethnicity: 'Ethnicity', education: 'Education', height: 'Height', body: 'Body & Fitness', politics: 'Politics', smoking: 'Smoking', hasKids: 'Children', wantKids: 'Wants Kids', costOfLiving: 'Cost of Living' };
+  const compOrderBase = ['income', 'age', 'education', 'height', 'body', 'politics', 'hasKids', 'costOfLiving'];
+  const compOrder = demographics?.gender === 'W' ? compOrderBase.filter(k => k !== 'height') : compOrderBase;
+  const compLabels: Record<string, string> = { income: 'Income', age: 'Age', education: 'Education', height: 'Height', body: 'Fitness', politics: 'Politics', hasKids: 'Children', costOfLiving: 'Cost of Living' };
 
   function scoreTier(s: number) {
     if (s >= 80) return { label: 'Exceptional', color: '#16a34a' };
@@ -2177,8 +2178,9 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
 
   const tier = scoreTier(score);
   const components = data.relateScore?.components || {};
-  const compOrder = ['income', 'age', 'ethnicity', 'education', 'height', 'body', 'politics', 'smoking', 'hasKids', 'wantKids', 'costOfLiving'];
-  const compLabels: Record<string, string> = { income: 'Income', age: 'Age', ethnicity: 'Ethnicity', education: 'Education', height: 'Height', body: 'Body & Fitness', politics: 'Politics', smoking: 'Smoking', hasKids: 'Children', wantKids: 'Wants Kids', costOfLiving: 'Cost of Living' };
+  const compOrderBase = ['income', 'age', 'education', 'height', 'body', 'politics', 'hasKids', 'costOfLiving'];
+  const compOrder = demographics?.gender === 'W' ? compOrderBase.filter(k => k !== 'height') : compOrderBase;
+  const compLabels: Record<string, string> = { income: 'Income', age: 'Age', education: 'Education', height: 'Height', body: 'Fitness', politics: 'Politics', hasKids: 'Children', costOfLiving: 'Cost of Living' };
 
   const metroShort = metro.includes(',') ? metro.split(',')[0] : metro;
 
@@ -2622,10 +2624,12 @@ function CompetitivenessBreakdown({ marketData, demographics }: { marketData: Ma
   const ownGenderSingular = demographics?.gender === 'M' ? 'man' : demographics?.gender === 'W' ? 'woman' : 'person';
   const datingGender = demographics?.gender === 'M' ? 'women' : demographics?.gender === 'W' ? 'men' : 'singles';
 
+  const hiddenTraits = new Set(['ethnicity', 'smoking', 'wantKids']);
+  if (demographics?.gender === 'W') hiddenTraits.add('height');
   const labelMap: Record<string, string> = {
-    income: 'Income', education: 'Education', age: 'Age', ethnicity: 'Ethnicity',
-    height: 'Height', body: 'Body & Fitness', politics: 'Politics',
-    smoking: 'Smoking', hasKids: 'Children', wantKids: 'Wants Kids', costOfLiving: 'Cost of Living',
+    income: 'Income', education: 'Education', age: 'Age',
+    height: 'Height', body: 'Fitness', politics: 'Politics',
+    hasKids: 'Children', costOfLiving: 'Cost of Living',
   };
 
   const fmt$ = (n: number) => n >= 1000000 ? `$${(n / 1000000).toFixed(1)}M` : n >= 1000 ? `$${Math.round(n / 1000)}K` : `$${n}`;
@@ -2733,8 +2737,10 @@ function CompetitivenessBreakdown({ marketData, demographics }: { marketData: Ma
     return summary;
   }
 
-  // Build entries from components
-  const entries = Object.entries(components).map(([key, comp]: [string, any]) => {
+  // Build entries from components (exclude hidden traits)
+  const entries = Object.entries(components)
+    .filter(([key]) => !hiddenTraits.has(key))
+    .map(([key, comp]: [string, any]) => {
     const val = comp.local ?? comp.score ?? comp.national ?? 50;
     const weight = comp.weight ?? 0;
     return { key, val, weight, weighted: val * weight, label: labelMap[key] || key.charAt(0).toUpperCase() + key.slice(1), comp };

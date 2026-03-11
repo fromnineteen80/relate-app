@@ -467,13 +467,41 @@ const RELATE_SCORE_WEIGHTS = {
   }
 };
 
-// Sigmoid configuration for match probability
-const SIGMOID_CONFIG = {
-  floor: 0.005,      // 0.5% minimum
-  ceiling: 0.30,     // 30% maximum
-  midpoint: 65,      // Score where probability = ~15%
-  steepness: 0.08    // How sharply probability changes
+// Reciprocal match likelihood configuration
+// Based on Bruch & Newman (2018): people pursue partners ~25% more desirable
+// than themselves. Gender asymmetry: men are far less selective than women.
+//
+// For each CBSA, score the median opposite-gender profile to get the market
+// center. Then for each "slice" of the opposite-gender distribution, compute
+// the probability of reciprocal interest using a logistic function of the gap
+// between the user's score and that person's (inflation-adjusted) score.
+// Integrate over the distribution to get the overall match rate.
+//
+// No arbitrary floors or ceilings — the numbers emerge from the market data
+// and the shape of the opposite-gender distribution in each CBSA.
+const RECIPROCAL_MATCH_CONFIG = {
+  man: {
+    // Women are selective. A man needs to be meaningfully above a woman's
+    // perceived score for her to reciprocate. Women's perceived score is
+    // inflated ~12 points by casual attention from high-scoring men who
+    // engage but don't commit, skewing her self-assessed market position.
+    steepness: 0.12,        // logistic steepness
+    sweetSpot: 8,           // gap above her inflated score where P = 50%
+    inflation: 12,          // women's self-assessed market inflation
+  },
+  woman: {
+    // Men cast wider nets and are less selective. They commit near parity
+    // or even slightly above. No inflation adjustment — men operating from
+    // scarcity are more realistic about their market position.
+    steepness: 0.10,
+    sweetSpot: -5,          // negative: men commit to women slightly above them
+    inflation: 0,
+  },
+  distributionSD: 13,       // assumed SD of opposite-gender composite scores
 };
+
+// Representative income values for each bracket (used in median profile construction)
+const INCOME_BRACKET_MIDPOINTS = [25000, 42500, 62500, 87500, 125000, 175000, 250000, 400000, 625000, 900000];
 
 // Income brackets and their CBSA keys
 const INCOME_BRACKETS = [
@@ -1357,12 +1385,174 @@ function getDrugRate(targetGender, ethnicity, education) {
 }
 
 /**
- * Calculate match probability from Relate Score using sigmoid
+ * Build a median opposite-gender profile from CBSA demographic distributions.
+ * Used to estimate the competitive landscape of the opposite gender in each market.
  */
-function getMatchProbability(relateScore) {
-  const { floor, ceiling, midpoint, steepness } = SIGMOID_CONFIG;
-  const sigmoid = 1 / (1 + Math.exp(-steepness * (relateScore - midpoint)));
-  return floor + (ceiling - floor) * sigmoid;
+function buildMedianOppositeProfile(cbsa, userGender) {
+  const gender = (userGender === 'Man' || userGender === 'M') ? 'Woman' : 'Man';
+
+  // Find the value where cumulative % crosses 50
+  function findMedianBracketIndex(brackets) {
+    let cum = 0;
+    for (let i = 0; i < brackets.length; i++) {
+      cum += cbsa[brackets[i].key] || 0;
+      if (cum >= 50) return i;
+    }
+    return Math.floor(brackets.length / 2);
+  }
+
+  // Median age (18-64 singles)
+  const ageBrackets = AGE_BRACKETS.filter(b => b.max <= 64);
+  const ageIdx = findMedianBracketIndex(ageBrackets);
+  const ageBracket = ageBrackets[ageIdx];
+  const age = Math.round((ageBracket.min + ageBracket.max) / 2);
+
+  // Median income
+  const incIdx = findMedianBracketIndex(INCOME_BRACKETS);
+  const income = INCOME_BRACKET_MIDPOINTS[incIdx] || 50000;
+
+  // Median education
+  const eduBrackets = [
+    { key: 'education_less_hs_cbsa', level: 'Less than High School' },
+    { key: 'education_hs_grad_cbsa', level: 'High School Graduate' },
+    { key: 'education_trade_cbsa', level: 'Trade/Vocational' },
+    { key: 'education_associate_cbsa', level: 'Associate Degree' },
+    { key: 'education_some_college_cbsa', level: 'Some College' },
+    { key: 'education_bachelors_cbsa', level: "Bachelor's Degree" },
+    { key: 'education_graduate_cbsa', level: 'Graduate Degree' },
+  ];
+  const eduIdx = findMedianBracketIndex(eduBrackets);
+  const education = eduBrackets[eduIdx].level;
+
+  // Most common ethnicity
+  const ethEntries = [
+    { key: 'ethnicity_white_cbsa', val: 'White' },
+    { key: 'ethnicity_hispanic_cbsa', val: 'Hispanic/Latino' },
+    { key: 'ethnicity_black_cbsa', val: 'Black' },
+    { key: 'ethnicity_asian_cbsa', val: 'Asian' },
+  ];
+  let ethnicity = 'White';
+  let maxEthPct = 0;
+  for (const e of ethEntries) {
+    if ((cbsa[e.key] || 0) > maxEthPct) { ethnicity = e.val; maxEthPct = cbsa[e.key]; }
+  }
+
+  // Median body type
+  const bmiOrder = [
+    { key: 'bmi_obesity_cbsa', type: 'Obese' },
+    { key: 'bmi_overweight_cbsa', type: 'Overweight' },
+    { key: 'bmi_normal_cbsa', type: 'Average' },
+    { key: 'bmi_elite_cbsa', type: 'Lean or Fit' },
+  ];
+  const bmiIdx = findMedianBracketIndex(bmiOrder);
+  const bodyType = bmiOrder[bmiIdx].type;
+
+  // Median height (for men only — women have 0 weight)
+  let height = null;
+  if (gender === 'Man') {
+    const htBrackets = HEIGHT_BRACKETS;
+    let cum = 0;
+    for (const b of htBrackets) {
+      cum += cbsa[b.key] || 0;
+      if (cum >= 50) {
+        // Convert to feet-inches string
+        const inches = b.max === Infinity ? 73 : Math.round((b.max + b.max - 2) / 2);
+        const ft = Math.floor(inches / 12);
+        const rem = inches % 12;
+        height = `${ft}'${rem}"`;
+        break;
+      }
+    }
+  }
+
+  // Most common political view
+  const polEntries = [
+    { key: 'political_conservative_cbsa', val: 'Conservative' },
+    { key: 'political_moderate_cbsa', val: 'Moderate' },
+    { key: 'political_liberal_cbsa', val: 'Liberal' },
+  ];
+  let political = 'Moderate';
+  let maxPolPct = 0;
+  for (const p of polEntries) {
+    if ((cbsa[p.key] || 0) > maxPolPct) { political = p.val; maxPolPct = cbsa[p.key]; }
+  }
+
+  // Majority values
+  const smoking = (cbsa.smoking_no_cbsa || 80) >= 50 ? 'No' : 'Yes';
+  const hasKids = (cbsa.have_kids_no_cbsa || 50) >= 50 ? 'No' : 'Yes';
+
+  const wantYes = cbsa.want_kids_yes_cbsa || 40;
+  const wantNo = cbsa.want_kids_no_cbsa || 30;
+  const wantMaybe = cbsa.want_kids_maybe_cbsa || 30;
+  const wantKids = wantYes >= wantNo && wantYes >= wantMaybe ? 'Yes' : wantNo >= wantMaybe ? 'No' : 'Not sure';
+
+  const activity = cbsa.activity_cbsa || 70;
+  const fitness = activity >= 80 ? '4 or more days a week' : activity >= 60 ? '2 to 3 days a week' : '1 day a week';
+
+  return {
+    gender,
+    age,
+    income,
+    education,
+    ethnicity,
+    height,
+    bodyType,
+    fitness,
+    political,
+    smoking,
+    hasKids,
+    wantKids,
+    orientation: 'Straight',
+    relationshipStatus: 'Single',
+  };
+}
+
+/**
+ * Calculate reciprocal match probability using market-based integration.
+ *
+ * Scores the median opposite-gender profile in this CBSA, then integrates
+ * across the estimated opposite-gender score distribution. For each slice
+ * of the distribution, computes the probability that person would reciprocate
+ * based on the gap between the user's score and their inflation-adjusted score.
+ *
+ * The match rate is NOT a fixed curve — it emerges from the market data.
+ * The same user score produces different rates in different CBSAs because
+ * the opposite-gender distribution shifts.
+ */
+function getMatchProbability(relateScore, userGender, cbsa) {
+  const medianProfile = buildMedianOppositeProfile(cbsa, userGender);
+  const medianResult = calculateDesirabilityScore(medianProfile, cbsa);
+  const medianOpp = medianResult.score;
+  const sd = RECIPROCAL_MATCH_CONFIG.distributionSD;
+
+  const isMan = (userGender === 'Man' || userGender === 'M');
+  const config = isMan ? RECIPROCAL_MATCH_CONFIG.man : RECIPROCAL_MATCH_CONFIG.woman;
+
+  // Integrate over the opposite-gender distribution (21 sample points, z = -3 to +3)
+  let weightedProbSum = 0;
+  let densitySum = 0;
+
+  for (let i = 0; i <= 20; i++) {
+    const z = -3 + (6 * i / 20);
+    const oppScore = medianOpp + z * sd;
+    const density = Math.exp(-z * z / 2);
+
+    // Gap between user's score and this person's inflation-adjusted score.
+    // For men: women's perceived score is inflated by casual attention from
+    // high-scoring men, so the effective gap is smaller.
+    const effectiveOpp = oppScore + config.inflation;
+    const gap = relateScore - effectiveOpp;
+
+    // Probability of reciprocal interest: logistic of (gap - sweetSpot)
+    // No artificial ceiling — the logistic naturally saturates at 1.0.
+    // The inflation, sweetSpot, and steepness shape the curve.
+    const pMatch = 1 / (1 + Math.exp(-config.steepness * (gap - config.sweetSpot)));
+
+    weightedProbSum += density * pMatch;
+    densitySum += density;
+  }
+
+  return Math.max(0.005, weightedProbSum / densitySum);
 }
 
 /**
@@ -1764,8 +1954,8 @@ async function processDemographics(userInputs) {
   // Calculate Match Pool
   const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
 
-  // Calculate match probability
-  const matchProbability = getMatchProbability(relateScore.score);
+  // Calculate match probability using reciprocal market model
+  const matchProbability = getMatchProbability(relateScore.score, userProfile.gender, cbsa);
 
   // Calculate final match count
   const matchCount = Math.round(matchPool.idealPool * matchProbability);
@@ -1784,7 +1974,7 @@ async function processDemographics(userInputs) {
     if (stateAgg) {
       const statePool = calculateMatchPool(userProfile, preferences, stateAgg);
       const stateScore = calculateDesirabilityScore(userProfile, stateAgg);
-      const stateProb = getMatchProbability(stateScore.score);
+      const stateProb = getMatchProbability(stateScore.score, userProfile.gender, stateAgg);
       stateComparison = {
         label: stateAbbr,
         population: stateAgg.cbsa_population,
@@ -1800,7 +1990,7 @@ async function processDemographics(userInputs) {
     if (nationalAgg) {
       const natPool = calculateMatchPool(userProfile, preferences, nationalAgg);
       const natScore = calculateDesirabilityScore(userProfile, nationalAgg);
-      const natProb = getMatchProbability(natScore.score);
+      const natProb = getMatchProbability(natScore.score, userProfile.gender, nationalAgg);
       nationalComparison = {
         label: 'National',
         population: nationalAgg.cbsa_population,
@@ -1886,7 +2076,7 @@ async function compareMetros(userProfile, preferences, cbsaCodes) {
     
     const relateScore = calculateDesirabilityScore(userProfile, cbsa);
     const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
-    const matchProbability = getMatchProbability(relateScore.score);
+    const matchProbability = getMatchProbability(relateScore.score, userProfile.gender, cbsa);
     const matchCount = Math.round(matchPool.idealPool * matchProbability);
     
     results.push({
@@ -2015,7 +2205,7 @@ async function findTopMetros(userProfile, preferences, homeScore) {
     const relateScore = calculateDesirabilityScore(userProfile, cbsa);
 
     const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
-    const matchProbability = getMatchProbability(relateScore.score);
+    const matchProbability = getMatchProbability(relateScore.score, userProfile.gender, cbsa);
     const matchCount = Math.round(matchPool.idealPool * matchProbability);
 
     // Income + education composite for tie-breaking
@@ -2046,10 +2236,10 @@ async function findTopMetros(userProfile, preferences, homeScore) {
     return b.incomeEduRank - a.incomeEduRank;
   });
 
-  // Adaptive minScore: start at 75, lower by 5 until we get 20 metros
+  // Adaptive minScore: start at 80, lower by 5 until we get 20 metros
   // with idealPool > 0 (visible on the scatter plot)
   const TARGET = 20;
-  let minScore = 75;
+  let minScore = 80;
   let filtered;
   while (minScore > 0) {
     filtered = all.filter(m => m.relateScore >= minScore && m.idealPool > 0);
@@ -2063,10 +2253,8 @@ async function findTopMetros(userProfile, preferences, homeScore) {
   }
 
   const topMetros = filtered.slice(0, TARGET);
-  // effectiveMinScore: the lowest relateScore actually present in the top 20
-  const effectiveMinScore = topMetros.length > 0
-    ? Math.floor(Math.min(...topMetros.map(m => m.relateScore)))
-    : minScore;
+  // effectiveMinScore: the threshold step used for filtering (80, 75, 70, ...)
+  const effectiveMinScore = minScore;
 
   // allCompetitive uses the same adaptive threshold for consistent ranking
   const allCompetitive = filtered;
@@ -2087,7 +2275,7 @@ async function findWorstMetros(userProfile, preferences) {
   for (const cbsa of largeCBSAs) {
     const relateScore = calculateDesirabilityScore(userProfile, cbsa);
     const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
-    const matchProbability = getMatchProbability(relateScore.score);
+    const matchProbability = getMatchProbability(relateScore.score, userProfile.gender, cbsa);
     const matchCount = Math.round(matchPool.idealPool * matchProbability);
 
     const incomeLocal = relateScore.components.income.local;
@@ -2142,7 +2330,7 @@ module.exports = {
   EDUCATION_FELON_MULTIPLIERS,
   EDUCATION_DRUG_MULTIPLIERS,
   RELATE_SCORE_WEIGHTS,
-  SIGMOID_CONFIG,
+  RECIPROCAL_MATCH_CONFIG,
   INCOME_BRACKETS,
   AGE_BRACKETS,
   HEIGHT_BRACKETS,
