@@ -1332,19 +1332,62 @@ function calculateDesirabilityScore(userProfile, cbsa) {
   let finalScore = totalWeight > 0 ? weightedSum / totalWeight : 50;
   finalScore = clamp(finalScore, bp.GUARDRAILS.globalFloor, bp.GUARDRAILS.globalCeiling);
 
-  // Build components in the shape the results page expects
-  // Each component has { score, weight } — compatible with both old and new display
-  const components = {};
-  for (const [key, t] of Object.entries(traitScores)) {
-    if (t.weight > 0) {
-      components[key] = { score: Math.round(t.score * 10) / 10, local: t.score, weight: t.weight };
-    }
+  // Build components with raw, market, and context data for rich explanations
+  const adjustedIncome = userProfile.income * (100 / rpp);
+  const noKidsPct = cbsa.have_kids_no_cbsa || 50;
+  const eduGradPct = cbsa.education_graduate_cbsa || 10;
+  const activityCbsa = cbsa.activity_cbsa || 70;
+  const smokingNoPct = cbsa.smoking_no_cbsa || 80;
+
+  const components = {
+    income: { score: Math.round(clamp(incBlended) * 10) / 10, local: clamp(incBlended), weight: weights.income / 100,
+      raw: Math.round(incRaw * 10) / 10, market: Math.round(incMkt * 10) / 10,
+      ctx: { nominal: userProfile.income, adjusted: Math.round(adjustedIncome), rpp, percentile: Math.round(incMkt) } },
+    education: { score: Math.round(clamp(eduBlended) * 10) / 10, local: clamp(eduBlended), weight: weights.education / 100,
+      raw: Math.round(eduRaw * 10) / 10, market: Math.round(eduMkt * 10) / 10,
+      ctx: { level: userProfile.education, gradPct: Math.round(eduGradPct), marketPercentile: Math.round(eduMkt) } },
+    age: { score: Math.round(clamp(ageBlended) * 10) / 10, local: clamp(ageBlended), weight: weights.age / 100,
+      raw: Math.round(ageRaw * 10) / 10, market: Math.round(ageMkt * 10) / 10,
+      ctx: { age: userProfile.age, peakRange: genderKey === 'man' ? '34 to 42' : '22 to 28' } },
+    ethnicity: { score: Math.round(clamp(ethBlended) * 10) / 10, local: clamp(ethBlended), weight: weights.ethnicity / 100,
+      raw: Math.round(ethRaw * 10) / 10, market: Math.round(ethMkt * 10) / 10,
+      ctx: { ethnicity: userProfile.ethnicity, ownPct: Math.round(cbsa[bp.ETHNICITY_CBSA_KEYS[userProfile.ethnicity]] || 0) } },
+  };
+
+  if (weights.height > 0) {
+    components.height = { score: Math.round(clamp(htBlended) * 10) / 10, local: clamp(htBlended), weight: weights.height / 100,
+      raw: Math.round(ht.raw * 10) / 10, market: Math.round(ht.market * 10) / 10,
+      ctx: { height: userProfile.height, percentile: Math.round(ht.market) } };
   }
+
+  components.body = { score: Math.round(clamp(bodBlended) * 10) / 10, local: clamp(bodBlended), weight: weights.body / 100,
+    raw: Math.round(bod.raw * 10) / 10, market: Math.round(bod.market * 10) / 10,
+    ctx: { bodyType: userProfile.bodyType, fitness: userProfile.fitness, bmiMarket: Math.round(bod.market), activityCbsa: Math.round(activityCbsa) } };
+
+  components.politics = { score: Math.round(clamp(polScore) * 10) / 10, local: clamp(polScore), weight: (weights.politics * politicsWeightMult) / 100,
+    raw: Math.round(polScore * 10) / 10, market: Math.round(polScore * 10) / 10,
+    ctx: { political: userProfile.political, conPct: Math.round(conPct), modPct: Math.round(modPct), libPct: Math.round(libPct), weightMult: politicsWeightMult } };
+
+  components.smoking = { score: Math.round(clamp(smkBlended) * 10) / 10, local: clamp(smkBlended), weight: weights.smoking / 100,
+    raw: Math.round(smk.raw * 10) / 10, market: Math.round(smk.market * 10) / 10,
+    ctx: { isSmoker: userProfile.smoking === 'Yes', nonSmokerPct: Math.round(smokingNoPct) } };
+
+  components.hasKids = { score: Math.round(clamp(kidsBlended) * 10) / 10, local: clamp(kidsBlended), weight: weights.hasKids / 100,
+    raw: Math.round(kids.raw * 10) / 10, market: Math.round(kids.market * 10) / 10,
+    ctx: { hasKids: userProfile.hasKids === 'Yes', noKidsPct: Math.round(noKidsPct), wantKidsYesPct: Math.round(wantKidsYes) } };
+
+  components.wantKids = { score: Math.round(clamp(wkScore) * 10) / 10, local: clamp(wkScore), weight: weights.wantKids / 100,
+    raw: Math.round(wkScore * 10) / 10, market: Math.round(wkScore * 10) / 10,
+    ctx: { wantKids: userProfile.wantKids, wantKidsYesPct: Math.round(wantKidsYes) } };
+
+  components.costOfLiving = { score: Math.round(clamp(colScore) * 10) / 10, local: clamp(colScore), weight: weights.costOfLiving / 100,
+    raw: Math.round(colScore * 10) / 10, market: Math.round(colScore * 10) / 10,
+    ctx: { rpp, sourceTraitLabel: genderKey === 'man' ? 'income' : 'body' } };
 
   return {
     score: Math.round(finalScore * 10) / 10,
     components,
-    marriagePremium: 1.0 // no longer used as separate multiplier
+    marriagePremium: 1.0
   };
 }
 
