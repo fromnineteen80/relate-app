@@ -2028,7 +2028,7 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
         {/* ── Explainer paragraph ── */}
         {topMetrosInfo?.homeMetroRank != null && marketData?.location && (
           <p className="text-[11px] text-secondary mt-3 mb-0">
-            The {(marketData.location.cbsaLabel || marketData.location.cbsaName || 'your area').split(',')[0]} metro area ranks #{topMetrosInfo.homeMetroRank} nationally among metro areas where you are competitive amongst other local single {userGender} (at least a 75 score). If your ideal match pool and the number of {datingGender} feels small, consider how and where you are looking for love. Are dating apps working? Are they worth the investment? Are there things you can do to improve your desirability to {datingGender} in your ideal match pool? Do you need to adjust your expectations? Could you expand your search to other metro areas where you have better chances of matching?
+            The {(marketData.location.cbsaLabel || marketData.location.cbsaName || 'your area').split(',')[0]} metro area ranks #{topMetrosInfo.homeMetroRank} out of {topMetrosInfo.totalCompetitive} metro areas nationally by ideal match pool size. If your ideal match pool and the number of {datingGender} feels small, consider how and where you are looking for love. Are dating apps working? Are they worth the investment? Are there things you can do to improve your desirability to {datingGender} in your ideal match pool? Do you need to adjust your expectations? Could you expand your search to other metro areas where you have better chances of matching?
           </p>
         )}
       </div>

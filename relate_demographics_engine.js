@@ -1626,14 +1626,8 @@ async function findTopMetros(userProfile, preferences, homeScore) {
   const allCBSAs = Object.values(cbsas).filter(c => c.cbsa_population > 0);
   const results = [];
 
-  // Minimum competition score: must be at least 75
-  const minScore = 75;
-
   for (const cbsa of allCBSAs) {
     const relateScore = calculateRelateScore(userProfile, cbsa);
-
-    // Skip metros where user's competition score is below 75
-    if (relateScore.score < minScore) continue;
 
     const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
     const matchProbability = getMatchProbability(relateScore.score);
