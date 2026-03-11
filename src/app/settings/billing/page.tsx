@@ -310,21 +310,37 @@ export default function BillingPage() {
         </div>
 
         {/* ── Partner Connection ── */}
-        {tier === 'couples' && partner && (
+        {partner && (
           <div className="card mb-4">
-            <h3 className="font-serif font-semibold mb-3">Couples Partner</h3>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-accent/10 text-accent flex items-center justify-center text-sm font-medium flex-shrink-0">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-serif font-semibold">Partner</h3>
+              <Link href="/invite" className="text-xs text-accent hover:underline">Manage</Link>
+            </div>
+            <div className="flex items-center gap-4 p-3 bg-success/5 border border-success/20 rounded-md">
+              <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center text-lg font-medium flex-shrink-0">
                 {partner.firstName ? partner.firstName.charAt(0).toUpperCase() : partner.email.charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">
-                  {partner.firstName ? `${partner.firstName}${partner.lastName ? ` ${partner.lastName}` : ''}` : partner.email}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium truncate">
+                    {partner.firstName ? `${partner.firstName}${partner.lastName ? ` ${partner.lastName}` : ''}` : partner.email}
+                  </p>
+                  <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
+                </div>
                 {partner.firstName && <p className="text-xs text-secondary truncate">{partner.email}</p>}
               </div>
-              <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
             </div>
+            {tier !== 'couples' && (
+              <div className="mt-3">
+                <p className="text-xs text-secondary mb-2">Upgrade to Couples tier to unlock your compatibility report.</p>
+                <a href={`/api/checkout?product=couples&email=${encodeURIComponent(user?.email || '')}`} className="btn-primary text-xs w-full text-center block">
+                  Upgrade to Couples
+                </a>
+              </div>
+            )}
+            {tier === 'couples' && (
+              <Link href="/results/compare" className="btn-secondary text-xs w-full text-center block mt-3">View Couples Results</Link>
+            )}
           </div>
         )}
 
