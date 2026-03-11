@@ -1624,7 +1624,7 @@ function findQuestionByKey(key) {
 async function findTopMetros(userProfile, preferences, homeScore) {
   const cbsas = await loadCBSAData();
   const allCBSAs = Object.values(cbsas).filter(c => c.cbsa_population > 0);
-  const results = [];
+  const all = [];
 
   for (const cbsa of allCBSAs) {
     const relateScore = calculateRelateScore(userProfile, cbsa);
@@ -1638,7 +1638,7 @@ async function findTopMetros(userProfile, preferences, homeScore) {
     const eduLocal = relateScore.components.education.local;
     const incomeEduRank = (incomeLocal + eduLocal) / 2;
 
-    results.push({
+    all.push({
       cbsa: cbsa.cbsa,
       cbsaName: cbsa.cbsa_name || cbsa.cbsa_label,
       cbsaLabel: cbsa.cbsa_label,
@@ -1655,13 +1655,38 @@ async function findTopMetros(userProfile, preferences, homeScore) {
   }
 
   // Sort: 1) idealPool desc, 2) matchProbability desc, 3) incomeEduRank desc
-  results.sort((a, b) => {
+  all.sort((a, b) => {
     if (b.idealPool !== a.idealPool) return b.idealPool - a.idealPool;
     if (b.matchProbability !== a.matchProbability) return b.matchProbability - a.matchProbability;
     return b.incomeEduRank - a.incomeEduRank;
   });
 
-  return { topMetros: results.slice(0, 20), totalCompetitive: results.length, allCompetitive: results };
+  // Adaptive minScore: start at 75, lower by 5 until we get 20 metros
+  // with idealPool > 0 (visible on the scatter plot)
+  const TARGET = 20;
+  let minScore = 75;
+  let filtered;
+  while (minScore > 0) {
+    filtered = all.filter(m => m.relateScore >= minScore && m.idealPool > 0);
+    if (filtered.length >= TARGET) break;
+    minScore -= 5;
+  }
+  // If still under 20, take whatever we have (sorted by idealPool desc)
+  if (!filtered || filtered.length < TARGET) {
+    filtered = all.filter(m => m.idealPool > 0);
+    minScore = 0;
+  }
+
+  const topMetros = filtered.slice(0, TARGET);
+  // effectiveMinScore: the lowest relateScore actually present in the top 20
+  const effectiveMinScore = topMetros.length > 0
+    ? Math.floor(Math.min(...topMetros.map(m => m.relateScore)))
+    : minScore;
+
+  // allCompetitive uses the same adaptive threshold for consistent ranking
+  const allCompetitive = filtered;
+
+  return { topMetros, totalCompetitive: allCompetitive.length, allCompetitive, effectiveMinScore };
 }
 
 /**

@@ -133,7 +133,7 @@ function ResultsDashboard() {
   const [userFullName, setUserFullName] = useState<string | null>(null);
   const marketFetchedRef = useRef(false);
   const [topMetros, setTopMetros] = useState<any[] | null>(null);
-  const [topMetrosInfo, setTopMetrosInfo] = useState<{ totalCompetitive: number; homeMetroRank: number | null; homeCbsa: string | null } | null>(null);
+  const [topMetrosInfo, setTopMetrosInfo] = useState<{ totalCompetitive: number; homeMetroRank: number | null; homeCbsa: string | null; effectiveMinScore: number } | null>(null);
   const topMetrosFetchedRef = useRef(false);
   const [worstMetros, setWorstMetros] = useState<any[] | null>(null);
   const worstMetrosFetchedRef = useRef(false);
@@ -268,7 +268,7 @@ function ResultsDashboard() {
       .then(data => {
         if (data.success) {
           setTopMetros(data.topMetros);
-          setTopMetrosInfo({ totalCompetitive: data.totalCompetitive, homeMetroRank: data.homeMetroRank, homeCbsa: data.homeCbsa });
+          setTopMetrosInfo({ totalCompetitive: data.totalCompetitive, homeMetroRank: data.homeMetroRank, homeCbsa: data.homeCbsa, effectiveMinScore: data.effectiveMinScore });
         }
       })
       .catch(() => { });
@@ -1798,7 +1798,7 @@ function nextMultipleOf10(n: number) {
   return Math.ceil(n / 10) * 10;
 }
 
-function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, topMetrosInfo }: { metros: any[]; worstMetros?: any[] | null; demographics?: any; marketData?: any; topMetrosInfo?: { totalCompetitive: number; homeMetroRank: number | null; homeCbsa: string | null } | null }) {
+function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, topMetrosInfo }: { metros: any[]; worstMetros?: any[] | null; demographics?: any; marketData?: any; topMetrosInfo?: { totalCompetitive: number; homeMetroRank: number | null; homeCbsa: string | null; effectiveMinScore: number } | null }) {
   const [tooltip, setTooltip] = useState<{ metro: any; x: number; y: number } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -2026,9 +2026,13 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
         })()}
 
         {/* ── Explainer paragraph ── */}
-        {topMetrosInfo?.homeMetroRank != null && marketData?.location && (
+        {marketData?.location && (
           <p className="text-[11px] text-secondary mt-3 mb-0">
-            The {(marketData.location.cbsaLabel || marketData.location.cbsaName || 'your area').split(',')[0]} metro area ranks #{topMetrosInfo.homeMetroRank} out of {topMetrosInfo.totalCompetitive} metro areas nationally by ideal match pool size. If your ideal match pool and the number of {datingGender} feels small, consider how and where you are looking for love. Are dating apps working? Are they worth the investment? Are there things you can do to improve your desirability to {datingGender} in your ideal match pool? Do you need to adjust your expectations? Could you expand your search to other metro areas where you have better chances of matching?
+            {topMetrosInfo?.homeMetroRank != null
+              ? `The ${(marketData.location.cbsaLabel || marketData.location.cbsaName || 'your area').split(',')[0]} metro area ranks #${topMetrosInfo.homeMetroRank} out of ${topMetrosInfo.totalCompetitive} metro areas nationally where you have at least a ${topMetrosInfo.effectiveMinScore} competition score. `
+              : ''
+            }
+            If your ideal match pool and the number of {datingGender} feels small, consider how and where you are looking for love. Are dating apps working? Are they worth the investment? Are there things you can do to improve your desirability to {datingGender} in your ideal match pool? Do you need to adjust your expectations? Could you expand your search to other metro areas where you have better chances of matching?
           </p>
         )}
       </div>
