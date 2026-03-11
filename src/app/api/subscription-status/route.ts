@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ tier: 'free', subscription: null });
   }
 
+  // Try Stripe first for active subscriptions
   try {
     const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -93,8 +94,12 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json({ tier: product as PricingTier, subscription });
     }
+  } catch (err) {
+    console.error('Stripe lookup error (falling back to Supabase):', err);
+  }
 
-    // Fall back to checking Supabase payments (legacy one-time purchases & discount codes)
+  // Fall back to checking Supabase payments (legacy one-time purchases, discount codes, test access)
+  try {
     const supabase = createServerClient();
     const { data: payments } = await supabase
       .from('payments')
@@ -122,10 +127,9 @@ export async function GET(request: NextRequest) {
         discountCode,
       });
     }
-
-    return NextResponse.json({ tier: 'free', subscription: null });
   } catch (err) {
-    console.error('Subscription status error:', err);
-    return NextResponse.json({ tier: 'free', subscription: null });
+    console.error('Supabase payment lookup error:', err);
   }
+
+  return NextResponse.json({ tier: 'free', subscription: null });
 }

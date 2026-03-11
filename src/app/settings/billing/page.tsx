@@ -90,6 +90,9 @@ export default function BillingPage() {
       // Fall back to simple tier check
       const { tier: t } = await fetchPaymentTier(user.email);
       setTier(t);
+      const bp = await fetchBlueprintAccess(user.email);
+      setBlueprintPurchased(bp.purchased);
+      setBlueprintProduct(bp.product);
     } finally {
       setLoading(false);
     }
