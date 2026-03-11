@@ -2046,10 +2046,10 @@ async function findTopMetros(userProfile, preferences, homeScore) {
     return b.incomeEduRank - a.incomeEduRank;
   });
 
-  // Adaptive minScore: start at 75, lower by 5 until we get 20 metros
+  // Adaptive minScore: start at 80, lower by 5 until we get 20 metros
   // with idealPool > 0 (visible on the scatter plot)
   const TARGET = 20;
-  let minScore = 75;
+  let minScore = 80;
   let filtered;
   while (minScore > 0) {
     filtered = all.filter(m => m.relateScore >= minScore && m.idealPool > 0);
@@ -2063,10 +2063,8 @@ async function findTopMetros(userProfile, preferences, homeScore) {
   }
 
   const topMetros = filtered.slice(0, TARGET);
-  // effectiveMinScore: the lowest relateScore actually present in the top 20
-  const effectiveMinScore = topMetros.length > 0
-    ? Math.floor(Math.min(...topMetros.map(m => m.relateScore)))
-    : minScore;
+  // effectiveMinScore: the threshold step used for filtering (80, 75, 70, ...)
+  const effectiveMinScore = minScore;
 
   // allCompetitive uses the same adaptive threshold for consistent ranking
   const allCompetitive = filtered;
