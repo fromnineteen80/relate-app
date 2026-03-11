@@ -471,29 +471,34 @@ const RELATE_SCORE_WEIGHTS = {
 // Based on Bruch & Newman (2018): people pursue partners ~25% more desirable
 // than themselves. Gender asymmetry: men are far less selective than women.
 //
-// The system scores the opposite-gender median in each CBSA and computes
-// how far the user sits above/below that median (in standard deviations).
-// That z-score feeds a gender-specific sigmoid to produce the match rate.
+// For each CBSA, score the median opposite-gender profile to get the market
+// center. Then for each "slice" of the opposite-gender distribution, compute
+// the probability of reciprocal interest using a logistic function of the gap
+// between the user's score and that person's (inflation-adjusted) score.
+// Integrate over the distribution to get the overall match rate.
 //
-// A man with a high z (well above the median female) gets a higher match rate
-// because more women see him as attainable-and-attractive. The same man in
-// a market where women score higher gets a lower z and a lower match rate.
+// No arbitrary floors or ceilings — the numbers emerge from the market data
+// and the shape of the opposite-gender distribution in each CBSA.
 const RECIPROCAL_MATCH_CONFIG = {
-  // For men: women are selective. High scores earn disproportionate returns.
   man: {
-    floor: 0.005,
-    ceiling: 0.35,
-    midpoint: 0.5,
-    steepness: 2.0
+    // Women are selective. A man needs to be meaningfully above a woman's
+    // perceived score for her to reciprocate. Women's perceived score is
+    // inflated ~12 points by casual attention from high-scoring men.
+    maxResponseRate: 0.40,  // max P any individual woman responds
+    steepness: 0.12,        // logistic steepness
+    sweetSpot: 8,           // gap above her inflated score where P = 50% of max
+    inflation: 12,          // women's self-assessed market inflation
   },
-  // For women: men cast wider nets. Even average women get meaningful interest.
   woman: {
-    floor: 0.08,
-    ceiling: 0.70,
-    midpoint: 0.0,
-    steepness: 1.5
+    // Men cast wider nets and are less selective. They commit near parity
+    // or even slightly above. No inflation adjustment — men operating from
+    // scarcity are more realistic about their market position.
+    maxResponseRate: 0.75,  // max P any individual man commits
+    steepness: 0.10,
+    sweetSpot: -5,          // negative: men commit to women slightly above them
+    inflation: 0,
   },
-  distributionSD: 15
+  distributionSD: 13,       // assumed SD of opposite-gender composite scores
 };
 
 // Representative income values for each bracket (used in median profile construction)
@@ -1504,22 +1509,49 @@ function buildMedianOppositeProfile(cbsa, userGender) {
 }
 
 /**
- * Calculate reciprocal match probability.
- * Scores the median opposite-gender profile in this CBSA, computes how far
- * the user sits above/below that median (z-score), then applies a
- * gender-specific sigmoid. Markets with stronger opposite-gender competition
- * produce lower match rates for the same user score.
+ * Calculate reciprocal match probability using market-based integration.
+ *
+ * Scores the median opposite-gender profile in this CBSA, then integrates
+ * across the estimated opposite-gender score distribution. For each slice
+ * of the distribution, computes the probability that person would reciprocate
+ * based on the gap between the user's score and their inflation-adjusted score.
+ *
+ * The match rate is NOT a fixed curve — it emerges from the market data.
+ * The same user score produces different rates in different CBSAs because
+ * the opposite-gender distribution shifts.
  */
 function getMatchProbability(relateScore, userGender, cbsa) {
   const medianProfile = buildMedianOppositeProfile(cbsa, userGender);
   const medianResult = calculateDesirabilityScore(medianProfile, cbsa);
-  const medianOppScore = medianResult.score;
+  const medianOpp = medianResult.score;
+  const sd = RECIPROCAL_MATCH_CONFIG.distributionSD;
 
-  const z = (relateScore - medianOppScore) / RECIPROCAL_MATCH_CONFIG.distributionSD;
-  const genderKey = (userGender === 'Woman' || userGender === 'W') ? 'woman' : 'man';
-  const { floor, ceiling, midpoint, steepness } = RECIPROCAL_MATCH_CONFIG[genderKey];
-  const sigmoid = 1 / (1 + Math.exp(-steepness * (z - midpoint)));
-  return Math.max(0.005, Math.min(0.80, floor + (ceiling - floor) * sigmoid));
+  const isMan = (userGender === 'Man' || userGender === 'M');
+  const config = isMan ? RECIPROCAL_MATCH_CONFIG.man : RECIPROCAL_MATCH_CONFIG.woman;
+
+  // Integrate over the opposite-gender distribution (21 sample points, z = -3 to +3)
+  let weightedProbSum = 0;
+  let densitySum = 0;
+
+  for (let i = 0; i <= 20; i++) {
+    const z = -3 + (6 * i / 20);
+    const oppScore = medianOpp + z * sd;
+    const density = Math.exp(-z * z / 2);
+
+    // Gap between user's score and this person's inflation-adjusted score.
+    // For men: women's perceived score is inflated by casual attention from
+    // high-scoring men, so the effective gap is smaller.
+    const effectiveOpp = oppScore + config.inflation;
+    const gap = relateScore - effectiveOpp;
+
+    // Probability of reciprocal interest: logistic of (gap - sweetSpot)
+    const pMatch = config.maxResponseRate / (1 + Math.exp(-config.steepness * (gap - config.sweetSpot)));
+
+    weightedProbSum += density * pMatch;
+    densitySum += density;
+  }
+
+  return Math.max(0.005, weightedProbSum / densitySum);
 }
 
 /**
