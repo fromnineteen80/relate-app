@@ -453,7 +453,7 @@ export default function LandingPage() {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-              <Link href="/blueprint" className="btn-secondary w-full text-center">Add Attachment Style</Link>
+              <Link href="/settings/billing" className="btn-secondary w-full text-center">Add Attachment Style</Link>
             </div>
           </div>
         </div>

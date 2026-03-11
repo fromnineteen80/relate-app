@@ -10,7 +10,7 @@ import { SiteFooter } from '@/components/SiteFooter';
 import { SubNav } from '@/components/SubNav';
 import { Icon } from '@/components/Icon';
 import { loadAndHydrateProgress, loadProfileFromDb, clearAllProgress } from '@/lib/supabase/progress';
-import { fetchPaymentTier } from '@/lib/payments';
+import { fetchPaymentTier, fetchBlueprintAccess } from '@/lib/payments';
 
 type ModuleStatus = { completed: boolean; questionIndex: number; total: number };
 
@@ -28,6 +28,8 @@ export default function AssessmentHub() {
   const [statuses, setStatuses] = useState<Record<number, ModuleStatus>>({});
   const [gender, setGender] = useState<string | null>(null);
   const [canRetake, setCanRetake] = useState(false);
+  const [blueprintPurchased, setBlueprintPurchased] = useState(false);
+  const [blueprintHasResults, setBlueprintHasResults] = useState(false);
 
   useEffect(() => {
     if (authLoading) return;
@@ -60,6 +62,11 @@ export default function AssessmentHub() {
       if (tier === 'premium' || tier === 'pro' || tier === 'couples') {
         setCanRetake(true);
       }
+
+      // Check Blueprint access and results
+      const bp = await fetchBlueprintAccess();
+      setBlueprintPurchased(bp.purchased);
+      setBlueprintHasResults(!!localStorage.getItem('relate_blueprint_results'));
     }
 
     loadProgress();
@@ -143,6 +150,27 @@ export default function AssessmentHub() {
               </div>
             );
           })}
+          {/* Attachment Style — shown when assessment is complete and user has purchased */}
+          {allCompleted && blueprintPurchased && (
+            <div className={`card flex items-center justify-between`}>
+              <div className="flex items-center gap-4">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-serif font-semibold ${
+                  blueprintHasResults ? 'bg-success text-white' :  'bg-accent text-white'
+                }`}>
+                  A
+                </div>
+                <div>
+                  <h3 className="font-serif font-semibold">Attachment Style</h3>
+                  <p className="text-xs text-secondary">Deep attachment assessment · ~30 min</p>
+                </div>
+              </div>
+              {blueprintHasResults ? (
+                <Link href="/results/attachment" className="text-xs font-mono text-success">Complete</Link>
+              ) : (
+                <Link href="/blueprint" className="btn-primary text-sm">Start</Link>
+              )}
+            </div>
+          )}
         </div>
 
         {allCompleted && (
