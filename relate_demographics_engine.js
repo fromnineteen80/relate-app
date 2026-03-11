@@ -449,7 +449,7 @@ const EDUCATION_DRUG_MULTIPLIERS = {
   'Graduate Degree': 0.60
 };
 
-// Relate Score weights by gender
+// Legacy Relate Score weights (kept for export compatibility)
 const RELATE_SCORE_WEIGHTS = {
   male: {
     income: 0.35,
@@ -465,6 +465,181 @@ const RELATE_SCORE_WEIGHTS = {
     ethnicity: 0.15,
     children: 0.15
   }
+};
+
+// ============================================================================
+// DESIRABILITY SCORING (11-trait, raw+market 50/50 blend)
+// ============================================================================
+
+// Full trait weights from blueprint (sum to 100 per gender)
+const DESIRABILITY_WEIGHTS = {
+  man: { age: 9, ethnicity: 11, income: 15, education: 9, height: 11, body: 10, politics: 9, smoking: 5, hasKids: 9, wantKids: 5, costOfLiving: 7 },
+  woman: { age: 17, ethnicity: 11, income: 5, education: 8, height: 0, body: 20, politics: 9, smoking: 5, hasKids: 10, wantKids: 5, costOfLiving: 10 }
+};
+
+// Age raw curves (from blueprint)
+const DESIRABILITY_AGE_CURVES = {
+  man: [
+    { min: 18, max: 24, scoreLow: 55, scoreHigh: 65 },
+    { min: 25, max: 30, scoreLow: 70, scoreHigh: 80 },
+    { min: 31, max: 33, scoreLow: 80, scoreHigh: 90 },
+    { min: 34, max: 42, scoreLow: 90, scoreHigh: 100 },
+    { min: 43, max: 50, scoreLow: 75, scoreHigh: 85 },
+    { min: 51, max: 60, scoreLow: 55, scoreHigh: 70 },
+    { min: 61, max: 100, scoreLow: 30, scoreHigh: 50 }
+  ],
+  woman: [
+    { min: 18, max: 21, scoreLow: 60, scoreHigh: 70 },
+    { min: 22, max: 28, scoreLow: 90, scoreHigh: 100 },
+    { min: 29, max: 32, scoreLow: 80, scoreHigh: 90 },
+    { min: 33, max: 38, scoreLow: 65, scoreHigh: 78 },
+    { min: 39, max: 45, scoreLow: 48, scoreHigh: 62 },
+    { min: 46, max: 55, scoreLow: 28, scoreHigh: 45 },
+    { min: 56, max: 100, scoreLow: 15, scoreHigh: 28 }
+  ]
+};
+
+// Income raw curves (from blueprint)
+const DESIRABILITY_INCOME_CURVES = {
+  man: [
+    { max: 35000,    scoreLow: 15, scoreHigh: 25 },
+    { max: 50000,    scoreLow: 30, scoreHigh: 42 },
+    { max: 75000,    scoreLow: 45, scoreHigh: 58 },
+    { max: 100000,   scoreLow: 60, scoreHigh: 72 },
+    { max: 150000,   scoreLow: 74, scoreHigh: 83 },
+    { max: 200000,   scoreLow: 84, scoreHigh: 90 },
+    { max: 300000,   scoreLow: 90, scoreHigh: 95 },
+    { max: 500000,   scoreLow: 95, scoreHigh: 98 },
+    { max: 750000,   scoreLow: 98, scoreHigh: 99 },
+    { max: Infinity, scoreLow: 99, scoreHigh: 100 }
+  ],
+  woman: [
+    { max: 35000,    scoreLow: 40, scoreHigh: 50 },
+    { max: 75000,    scoreLow: 55, scoreHigh: 65 },
+    { max: 150000,   scoreLow: 65, scoreHigh: 72 },
+    { max: Infinity, scoreLow: 72, scoreHigh: 78 }
+  ]
+};
+
+// Education raw scores (from blueprint)
+const DESIRABILITY_EDUCATION_SCORES = {
+  man: {
+    'Less than High School': { scoreLow: 15, scoreHigh: 25 },
+    'High School Graduate':  { scoreLow: 30, scoreHigh: 42 },
+    'Trade/Vocational':      { scoreLow: 38, scoreHigh: 48 },
+    'Associate Degree':      { scoreLow: 45, scoreHigh: 55 },
+    'Some College':          { scoreLow: 50, scoreHigh: 60 },
+    'Bachelor\'s Degree':    { scoreLow: 70, scoreHigh: 82 },
+    'Graduate Degree':       { scoreLow: 85, scoreHigh: 100 }
+  },
+  woman: {
+    'Less than High School': { scoreLow: 30, scoreHigh: 40 },
+    'High School Graduate':  { scoreLow: 42, scoreHigh: 52 },
+    'Trade/Vocational':      { scoreLow: 45, scoreHigh: 55 },
+    'Associate Degree':      { scoreLow: 52, scoreHigh: 62 },
+    'Some College':          { scoreLow: 60, scoreHigh: 70 },
+    'Bachelor\'s Degree':    { scoreLow: 85, scoreHigh: 100 },
+    'Graduate Degree':       { scoreLow: 72, scoreHigh: 82 }
+  }
+};
+
+// Height raw scores (men only, from blueprint)
+const DESIRABILITY_HEIGHT_SCORES = {
+  'height_under_60':  { scoreLow: 10, scoreHigh: 20 },
+  'height_60_62':     { scoreLow: 20, scoreHigh: 35 },
+  'height_63_65':     { scoreLow: 40, scoreHigh: 55 },
+  'height_66_68':     { scoreLow: 62, scoreHigh: 75 },
+  'height_69_71':     { scoreLow: 83, scoreHigh: 93 },
+  'height_72plus':    { scoreLow: 88, scoreHigh: 100 }
+};
+
+const HEIGHT_INCH_BRACKETS = [
+  { maxInches: 59,       bracketKey: 'height_under_60',  cbsaKey: 'height_under_60_cbsa' },
+  { maxInches: 62,       bracketKey: 'height_60_62',     cbsaKey: 'height_60_62_cbsa' },
+  { maxInches: 65,       bracketKey: 'height_63_65',     cbsaKey: 'height_63_65_cbsa' },
+  { maxInches: 68,       bracketKey: 'height_66_68',     cbsaKey: 'height_66_68_cbsa' },
+  { maxInches: 71,       bracketKey: 'height_69_71',     cbsaKey: 'height_69_71_cbsa' },
+  { maxInches: Infinity, bracketKey: 'height_72plus',    cbsaKey: 'height_72plus_cbsa' }
+];
+
+// BMI raw scores (from blueprint)
+const DESIRABILITY_BMI_SCORES = {
+  man:   { 'Lean or Fit': 95, 'Average': 87, 'Overweight': 80, 'Obese': 45 },
+  woman: { 'Lean or Fit': 96, 'Average': 90, 'Overweight': 60, 'Obese': 30 }
+};
+
+const DESIRABILITY_FITNESS_MODIFIERS = {
+  'Never': -5, '1 day a week': 0, '2 to 3 days a week': 3, '4 to 6 days a week': 7, 'Every day': 8
+};
+
+// BMI percentile order (worst to best)
+const BMI_PERCENTILE_ORDER = [
+  { bodyType: 'Obese',       key: 'bmi_obesity_cbsa' },
+  { bodyType: 'Overweight',  key: 'bmi_overweight_cbsa' },
+  { bodyType: 'Average',     key: 'bmi_normal_cbsa' },
+  { bodyType: 'Lean or Fit', key: 'bmi_elite_cbsa' }
+];
+
+// Fitness percentile order (worst to best)
+const FITNESS_PERCENTILE_ORDER = [
+  { level: 'Never',               key: 'fitness_never_cbsa' },
+  { level: '1 day a week',        key: 'fitness_1_day_cbsa' },
+  { level: '2 to 3 days a week',  key: 'fitness_2_3_days_cbsa' },
+  { level: '4 to 6 days a week',  key: 'fitness_4_6_days_cbsa' },
+  { level: 'Every day',           key: 'fitness_daily_cbsa' }
+];
+
+// Politics alignment weights (from blueprint)
+const POLITICS_ALIGNMENT = {
+  'Conservative': { 'political_conservative_cbsa': 1.0, 'political_moderate_cbsa': 0.55, 'political_liberal_cbsa': 0.05, 'political_apolitical_cbsa': 0.30 },
+  'Liberal':      { 'political_conservative_cbsa': 0.05, 'political_moderate_cbsa': 0.55, 'political_liberal_cbsa': 1.0, 'political_apolitical_cbsa': 0.30 },
+  'Moderate':     { 'political_conservative_cbsa': 0.60, 'political_moderate_cbsa': 1.0, 'political_liberal_cbsa': 0.60, 'political_apolitical_cbsa': 0.50 },
+  'Apolitical':   { 'political_conservative_cbsa': 0.40, 'political_moderate_cbsa': 0.50, 'political_liberal_cbsa': 0.40, 'political_apolitical_cbsa': 0.70 }
+};
+
+// Smoking raw scores (from blueprint)
+const DESIRABILITY_SMOKING_SCORES = {
+  man:   { nonSmoker: 92, smokerVsNonSmokerPool: 35, smokerVsSmokerPool: 75 },
+  woman: { nonSmoker: 92, smokerVsNonSmokerPool: 30, smokerVsSmokerPool: 68 }
+};
+
+// Has kids raw scores (from blueprint)
+const DESIRABILITY_KIDS_SCORES = {
+  man:   { noKids: 92, hasKids: 52 },
+  woman: { noKids: 92, hasKids: 39 }
+};
+
+// Ethnicity preference matrix (from blueprint)
+const ETHNICITY_PREFERENCE_MATRIX = {
+  womenEvaluating: {
+    'White':          { 'White': 88, 'Hispanic/Latino': 58, 'Black': 48, 'Asian': 42, 'Native American': 40, 'Pacific Islander': 45, 'Other': 50 },
+    'Hispanic/Latino':{ 'White': 72, 'Hispanic/Latino': 80, 'Black': 52, 'Asian': 44, 'Native American': 45, 'Pacific Islander': 48, 'Other': 50 },
+    'Black':          { 'White': 60, 'Hispanic/Latino': 48, 'Black': 82, 'Asian': 38, 'Native American': 40, 'Pacific Islander': 42, 'Other': 45 },
+    'Asian':          { 'White': 74, 'Hispanic/Latino': 50, 'Black': 40, 'Asian': 78, 'Native American': 38, 'Pacific Islander': 52, 'Other': 48 },
+    'Native American':{ 'White': 68, 'Hispanic/Latino': 55, 'Black': 48, 'Asian': 42, 'Native American': 75, 'Pacific Islander': 45, 'Other': 50 },
+    'Pacific Islander':{ 'White': 65, 'Hispanic/Latino': 55, 'Black': 48, 'Asian': 58, 'Native American': 45, 'Pacific Islander': 78, 'Other': 50 },
+    'Other':          { 'White': 70, 'Hispanic/Latino': 55, 'Black': 50, 'Asian': 48, 'Native American': 45, 'Pacific Islander': 48, 'Other': 65 }
+  },
+  menEvaluating: {
+    'White':          { 'White': 85, 'Hispanic/Latino': 68, 'Black': 42, 'Asian': 72, 'Native American': 42, 'Pacific Islander': 50, 'Other': 52 },
+    'Hispanic/Latino':{ 'White': 70, 'Hispanic/Latino': 82, 'Black': 45, 'Asian': 60, 'Native American': 45, 'Pacific Islander': 52, 'Other': 50 },
+    'Black':          { 'White': 58, 'Hispanic/Latino': 52, 'Black': 80, 'Asian': 48, 'Native American': 42, 'Pacific Islander': 45, 'Other': 48 },
+    'Asian':          { 'White': 62, 'Hispanic/Latino': 50, 'Black': 38, 'Asian': 82, 'Native American': 38, 'Pacific Islander': 55, 'Other': 45 },
+    'Native American':{ 'White': 65, 'Hispanic/Latino': 55, 'Black': 42, 'Asian': 48, 'Native American': 78, 'Pacific Islander': 45, 'Other': 48 },
+    'Pacific Islander':{ 'White': 62, 'Hispanic/Latino': 55, 'Black': 42, 'Asian': 60, 'Native American': 42, 'Pacific Islander': 80, 'Other': 48 },
+    'Other':          { 'White': 68, 'Hispanic/Latino': 55, 'Black': 45, 'Asian': 55, 'Native American': 42, 'Pacific Islander': 48, 'Other': 62 }
+  }
+};
+
+const ETHNICITY_CBSA_KEYS = {
+  'White': 'ethnicity_white_cbsa',
+  'Hispanic/Latino': 'ethnicity_hispanic_cbsa',
+  'Black': 'ethnicity_black_cbsa',
+  'Asian': 'ethnicity_asian_cbsa',
+  'Native American': 'ethnicity_native_cbsa',
+  'Pacific Islander': 'ethnicity_pacific_cbsa',
+  'Other': 'ethnicity_other_cbsa',
+  'Other/Mixed': 'ethnicity_other_cbsa'
 };
 
 // Sigmoid configuration for match probability
@@ -885,60 +1060,296 @@ function calculateMarriagePremium(income, incomePercentile, status, rpp) {
 }
 
 /**
- * Calculate full Relate Score
+ * Interpolate age within a min/max bracket curve (with scoreLow/scoreHigh).
+ */
+function interpolateAgeCurve(age, curve) {
+  for (const b of curve) {
+    if (age >= b.min && age <= b.max) {
+      if (b.max === b.min) return b.scoreLow;
+      const pos = (age - b.min) / (b.max - b.min);
+      return b.scoreLow + pos * (b.scoreHigh - b.scoreLow);
+    }
+  }
+  return curve[curve.length - 1].scoreLow;
+}
+
+/**
+ * Interpolate income within bracket curve.
+ */
+function interpolateIncomeCurve(income, curve) {
+  for (let i = 0; i < curve.length; i++) {
+    if (income <= curve[i].max || i === curve.length - 1) {
+      const prevMax = i > 0 ? curve[i - 1].max : 0;
+      if (curve[i].max === Infinity || curve[i].max === prevMax) return curve[i].scoreLow;
+      const pos = Math.max(0, Math.min(1, (income - prevMax) / (curve[i].max - prevMax)));
+      return curve[i].scoreLow + pos * (curve[i].scoreHigh - curve[i].scoreLow);
+    }
+  }
+  return 50;
+}
+
+/**
+ * Calculate cumulative percentile rank within a CBSA distribution.
+ * bracketOrder: array of { key } ordered worst-to-best.
+ * targetKey: the CBSA field key for the target's bracket.
+ */
+function calcPercentileRank(targetKey, bracketOrder, cbsa) {
+  let cumulative = 0;
+  for (const bracket of bracketOrder) {
+    if (bracket.key === targetKey) {
+      cumulative += (cbsa[bracket.key] || 0) / 2;
+      break;
+    }
+    cumulative += cbsa[bracket.key] || 0;
+  }
+  return Math.min(100, cumulative);
+}
+
+/**
+ * Calculate full Relate Score using the 11-trait desirability system.
+ * Returns the same shape as the old 5-trait version for frontend compatibility:
+ *   { score, components: { income, education, age, ethnicity, children }, marriagePremium, weights }
  */
 function calculateRelateScore(userProfile, cbsa) {
   const gender = userProfile.gender;
-  const weights = RELATE_SCORE_WEIGHTS[gender === 'Man' ? 'male' : 'female'];
-  
-  // Income score (locally adjusted)
-  let incomeNational = getIncomePercentileNational(userProfile.income, cbsa);
-  // Safety floor: very high incomes should never show as low percentile
-  if (userProfile.income >= 500000 && incomeNational < 95) incomeNational = 95;
-  else if (userProfile.income >= 200000 && incomeNational < 85) incomeNational = 85;
-  else if (userProfile.income >= 100000 && incomeNational < 60) incomeNational = 60;
-  const incomeLocal = applyLocalAdjustment(incomeNational, cbsa.income_cbsa);
-  
-  // Education score (locally adjusted)
-  const eduNational = getEducationPercentile(userProfile.education, cbsa);
-  const eduLocal = applyLocalAdjustment(eduNational, cbsa.bachelors_cbsa);
-  
-  // Age score
-  const ageScore = getAgeScore(userProfile.age, gender);
-  
-  // Ethnicity score
-  const ethnicityScore = getEthnicityScore(userProfile.ethnicity, cbsa);
-  
-  // Children score
-  const childrenScore = getChildrenScore(userProfile.hasKids, userProfile.age, gender);
-  
-  // Base score (weighted sum)
-  let baseScore = 
-    (incomeLocal * weights.income) +
-    (eduLocal * weights.education) +
-    (ageScore * weights.age) +
-    (ethnicityScore * weights.ethnicity) +
-    (childrenScore * weights.children);
-  
+  const genderKey = gender === 'Man' ? 'man' : 'woman';
+  const weights = DESIRABILITY_WEIGHTS[genderKey];
+  const cl = (v) => Math.max(0, Math.min(100, v));
+
+  // ── TRAIT 1: AGE ──
+  let ageRaw = interpolateAgeCurve(userProfile.age, DESIRABILITY_AGE_CURVES[genderKey]);
+  const wantKidsYesCbsa = cbsa.want_kids_yes_cbsa || 0;
+  if (wantKidsYesCbsa > 40) ageRaw *= 1.15;
+  else if (wantKidsYesCbsa <= 30) ageRaw *= 0.90;
+  if (genderKey === 'woman') {
+    const peakAgePct = (cbsa.age_25_29_cbsa || 0) + (cbsa.age_30_34_cbsa || 0) +
+                       (cbsa.age_35_39_cbsa || 0) + (cbsa.age_40_44_cbsa || 0);
+    if (peakAgePct > 40) ageRaw = ageRaw * 0.75 + 65 * 0.25;
+  }
+  ageRaw = cl(ageRaw);
+  // Age market: sum brackets OLDER than user → how many the user is younger than
+  const ageMarketOrder = [
+    { min: 60, max: 64, key: 'age_60_64_cbsa' },
+    { min: 55, max: 59, key: 'age_55_59_cbsa' },
+    { min: 50, max: 54, key: 'age_50_54_cbsa' },
+    { min: 45, max: 49, key: 'age_45_49_cbsa' },
+    { min: 40, max: 44, key: 'age_40_44_cbsa' },
+    { min: 35, max: 39, key: 'age_35_39_cbsa' },
+    { min: 30, max: 34, key: 'age_30_34_cbsa' },
+    { min: 25, max: 29, key: 'age_25_29_cbsa' },
+    { min: 20, max: 24, key: 'age_20_24_cbsa' },
+    { min: 18, max: 19, key: 'age_18_19_cbsa' }
+  ];
+  let ageMarket = 0;
+  let foundAge = false;
+  for (const ab of ageMarketOrder) {
+    if (userProfile.age >= ab.min && userProfile.age <= ab.max) {
+      ageMarket += (cbsa[ab.key] || 0) / 2;
+      foundAge = true;
+      break;
+    }
+    ageMarket += cbsa[ab.key] || 0;
+  }
+  if (!foundAge) ageMarket = 50;
+  ageMarket = cl(ageMarket);
+  let ageBlended = 0.5 * ageRaw + 0.5 * ageMarket;
+
+  // ── TRAIT 2: ETHNICITY ──
+  const evalMatrix = genderKey === 'man'
+    ? ETHNICITY_PREFERENCE_MATRIX.womenEvaluating
+    : ETHNICITY_PREFERENCE_MATRIX.menEvaluating;
+  const targetEth = userProfile.ethnicity === 'Other/Mixed' ? 'Other' : userProfile.ethnicity;
+  let ethRaw = 0, totalEthPct = 0;
+  for (const [evalGroup, prefs] of Object.entries(evalMatrix)) {
+    const pct = cbsa[ETHNICITY_CBSA_KEYS[evalGroup]] || 0;
+    ethRaw += pct * (prefs[targetEth] || 50);
+    totalEthPct += pct;
+  }
+  ethRaw = totalEthPct > 0 ? ethRaw / totalEthPct : 50;
+  const ownRacePct = cbsa[ETHNICITY_CBSA_KEYS[userProfile.ethnicity]] || 0;
+  const ethMarket = cl(ownRacePct);
+  let ethBlended = 0.5 * ethRaw + 0.5 * ethMarket;
+
+  // ── TRAIT 3: INCOME ──
+  const rpp = cbsa.rpp || 100;
+  const adjustedIncome = userProfile.income * (100 / rpp);
+  let incRaw = interpolateIncomeCurve(adjustedIncome, DESIRABILITY_INCOME_CURVES[genderKey]);
+  if (userProfile.income >= 500000 && incRaw < 95) incRaw = 95;
+  else if (userProfile.income >= 200000 && incRaw < 85) incRaw = 85;
+  else if (userProfile.income >= 100000 && incRaw < 60) incRaw = 60;
+  incRaw = cl(incRaw);
+  let incMarket = getIncomePercentileNational(userProfile.income, cbsa);
+  if (userProfile.income >= 500000 && incMarket < 95) incMarket = 95;
+  else if (userProfile.income >= 200000 && incMarket < 85) incMarket = 85;
+  else if (userProfile.income >= 100000 && incMarket < 60) incMarket = 60;
+  incMarket = cl(applyLocalAdjustment(incMarket, cbsa.income_cbsa));
+  if (genderKey === 'woman') incMarket = cl(incMarket * 0.4 + 30);
+  let incBlended = 0.5 * incRaw + 0.5 * incMarket;
+
+  // ── TRAIT 4: EDUCATION ──
+  const eduScores = DESIRABILITY_EDUCATION_SCORES[genderKey];
+  const eduEntry = eduScores[userProfile.education] || { scoreLow: 50, scoreHigh: 60 };
+  let eduRaw = (eduEntry.scoreLow + eduEntry.scoreHigh) / 2;
+  if (genderKey === 'woman' && userProfile.education === 'Graduate Degree') {
+    const highEduPct = (cbsa.education_bachelors_cbsa || 0) + (cbsa.education_graduate_cbsa || 0);
+    if (highEduPct > 40) {
+      const baMid = (eduScores['Bachelor\'s Degree'].scoreLow + eduScores['Bachelor\'s Degree'].scoreHigh) / 2;
+      eduRaw = eduRaw * 0.70 + baMid * 0.30;
+    }
+  }
+  eduRaw = cl(eduRaw);
+  const eduBrackets = [
+    { key: 'education_less_hs_cbsa' }, { key: 'education_hs_grad_cbsa' },
+    { key: 'education_trade_cbsa' }, { key: 'education_associate_cbsa' },
+    { key: 'education_some_college_cbsa' }, { key: 'education_bachelors_cbsa' },
+    { key: 'education_graduate_cbsa' }
+  ];
+  const eduLevels = ['Less than High School','High School Graduate','Trade/Vocational',
+    'Associate Degree','Some College','Bachelor\'s Degree','Graduate Degree'];
+  const eduIdx = eduLevels.indexOf(userProfile.education);
+  const eduTargetKey = eduIdx >= 0 ? eduBrackets[eduIdx].key : null;
+  const eduMarket = eduTargetKey ? cl(calcPercentileRank(eduTargetKey, eduBrackets, cbsa)) : 50;
+  let eduBlended = 0.5 * eduRaw + 0.5 * eduMarket;
+
+  // ── TRAIT 5: HEIGHT (men only, weight=0 for women) ──
+  let heightBlended = 50, heightRaw = 50, heightMarket = 50;
+  if (genderKey === 'man' && userProfile.height) {
+    const inches = heightToInches(userProfile.height);
+    if (inches) {
+      const hb = HEIGHT_INCH_BRACKETS.find(b => inches <= b.maxInches);
+      if (hb) {
+        const hs = DESIRABILITY_HEIGHT_SCORES[hb.bracketKey];
+        const hbIdx = HEIGHT_INCH_BRACKETS.indexOf(hb);
+        const prevMax = hbIdx > 0 ? HEIGHT_INCH_BRACKETS[hbIdx - 1].maxInches : 56;
+        const bMin = prevMax + 1;
+        const bMax = hb.maxInches === Infinity ? 80 : hb.maxInches;
+        const pos = bMax > bMin ? Math.max(0, Math.min(1, (inches - bMin) / (bMax - bMin))) : 0.5;
+        heightRaw = cl(hs.scoreLow + pos * (hs.scoreHigh - hs.scoreLow));
+        const hPerc = HEIGHT_INCH_BRACKETS.map(b => ({ key: b.cbsaKey }));
+        heightMarket = cl(calcPercentileRank(hb.cbsaKey, hPerc, cbsa));
+      }
+      heightBlended = 0.5 * heightRaw + 0.5 * heightMarket;
+    }
+  }
+
+  // ── TRAIT 6+7: BODY (BMI + fitness) ──
+  const bmiRaw = DESIRABILITY_BMI_SCORES[genderKey][userProfile.bodyType] || 50;
+  let fitMod = DESIRABILITY_FITNESS_MODIFIERS[userProfile.fitness] || 0;
+  const actCbsa = cbsa.activity_cbsa || 70;
+  if (actCbsa > 75) fitMod *= 0.7;
+  else if (actCbsa < 65) fitMod *= 1.3;
+  const bodyRaw = cl(bmiRaw + fitMod);
+  const bmiCbsaKey = ({ 'Lean or Fit':'bmi_elite_cbsa','Average':'bmi_normal_cbsa',
+    'Overweight':'bmi_overweight_cbsa','Obese':'bmi_obesity_cbsa' })[userProfile.bodyType];
+  const bmiMarket = bmiCbsaKey ? calcPercentileRank(bmiCbsaKey, BMI_PERCENTILE_ORDER, cbsa) : 50;
+  const fitKey = ({ 'Never':'fitness_never_cbsa','1 day a week':'fitness_1_day_cbsa',
+    '2 to 3 days a week':'fitness_2_3_days_cbsa','4 to 6 days a week':'fitness_4_6_days_cbsa',
+    'Every day':'fitness_daily_cbsa' })[userProfile.fitness];
+  const fitMarket = fitKey ? calcPercentileRank(fitKey, FITNESS_PERCENTILE_ORDER, cbsa) : 50;
+  const bodyMarket = cl(bmiMarket + (fitMarket - 50) * 0.3);
+  let bodyBlended = 0.5 * bodyRaw + 0.5 * bodyMarket;
+
+  // ── TRAIT 8: POLITICS (IS the market signal, no raw/market split) ──
+  const polWeights = POLITICS_ALIGNMENT[userProfile.political] || POLITICS_ALIGNMENT['Moderate'];
+  let polScore = 0;
+  for (const [field, w] of Object.entries(polWeights)) polScore += (cbsa[field] || 0) * w;
+  polScore = cl(polScore);
+  let polWeightMult = 1.0;
+  if (Math.abs((cbsa.political_conservative_cbsa||0) - (cbsa.political_liberal_cbsa||0)) > 20) polWeightMult = 1.5;
+  else if ((cbsa.political_moderate_cbsa||0) > 50) polWeightMult = 0.7;
+
+  // ── TRAIT 9: SMOKING ──
+  const smokScores = DESIRABILITY_SMOKING_SCORES[genderKey];
+  const isSmoker = userProfile.smoking === 'Yes';
+  let smokRaw, smokMarket;
+  if (!isSmoker) {
+    smokRaw = smokScores.nonSmoker;
+    smokMarket = cl(cbsa.smoking_no_cbsa || 80);
+  } else {
+    const sPct = (cbsa.smoking_yes_cbsa || 20) / 100;
+    const nPct = (cbsa.smoking_no_cbsa || 80) / 100;
+    smokRaw = nPct * smokScores.smokerVsNonSmokerPool + sPct * smokScores.smokerVsSmokerPool;
+    const tot = (cbsa.smoking_yes_cbsa||0) + (cbsa.smoking_no_cbsa||0);
+    smokMarket = tot > 0 ? cl(100 * (cbsa.smoking_yes_cbsa||0) / tot) : 20;
+  }
+  let smokBlended = 0.5 * cl(smokRaw) + 0.5 * smokMarket;
+
+  // ── TRAIT 10: HAS KIDS ──
+  const kidScores = DESIRABILITY_KIDS_SCORES[genderKey];
+  const hasKidsVal = userProfile.hasKids === 'Yes';
+  let kidRaw, kidMarket;
+  if (!hasKidsVal) {
+    kidRaw = kidScores.noKids;
+    kidMarket = cl(50 + (cbsa.have_kids_no_cbsa || 61) / 2);
+  } else {
+    kidRaw = kidScores.hasKids;
+    if (wantKidsYesCbsa > 40) kidRaw -= 8;
+    else if (wantKidsYesCbsa <= 25) kidRaw += 5;
+    kidRaw = cl(kidRaw);
+    const hkYes = cbsa.have_kids_yes_cbsa || 39;
+    kidMarket = Math.min(70, hkYes * (1 + hkYes / 200));
+  }
+  let kidBlended = 0.5 * cl(kidRaw) + 0.5 * cl(kidMarket);
+
+  // ── TRAIT 11: WANT KIDS (compatibility) ──
+  let wkScore;
+  if (userProfile.wantKids === 'Yes') {
+    wkScore = cl(Math.min(100, ((cbsa.want_kids_yes_cbsa||0) + 0.5*(cbsa.want_kids_maybe_cbsa||0)) * 1.2));
+  } else if (userProfile.wantKids === 'No') {
+    wkScore = cl(Math.min(100, ((cbsa.want_kids_no_cbsa||0) + 0.5*(cbsa.want_kids_maybe_cbsa||0)) * 1.2));
+  } else {
+    wkScore = 60;
+  }
+
+  // ── COST OF LIVING ──
+  const colAmp = rpp / 100;
+  const colScore = genderKey === 'man'
+    ? cl(incMarket * colAmp)   // men: amplifies income market
+    : cl(bodyMarket * colAmp); // women: amplifies body market
+
+  // ── INTERACTION: Provider premium (man + wants kids + market wantKids > 38%) ──
+  if (genderKey === 'man' && userProfile.wantKids === 'Yes' && wantKidsYesCbsa > 38) {
+    incBlended = cl(incBlended * 1.12);
+    ageBlended = cl(ageBlended * 1.08);
+  }
+
+  // ── FINAL COMPOSITE ──
+  const adjPolWeight = weights.politics * polWeightMult;
+  const totalW = weights.age + weights.ethnicity + weights.income + weights.education +
+    weights.height + weights.body + adjPolWeight + weights.smoking +
+    weights.hasKids + weights.wantKids + weights.costOfLiving;
+
+  const wSum =
+    ageBlended * weights.age +
+    ethBlended * weights.ethnicity +
+    incBlended * weights.income +
+    eduBlended * weights.education +
+    heightBlended * weights.height +
+    bodyBlended * weights.body +
+    polScore * adjPolWeight +
+    smokBlended * weights.smoking +
+    kidBlended * weights.hasKids +
+    wkScore * weights.wantKids +
+    colScore * weights.costOfLiving;
+
+  let finalScore = cl(wSum / totalW);
+  finalScore = Math.max(5, Math.min(99, finalScore));
+
   // Marriage premium
   const marriagePremium = calculateMarriagePremium(
-    userProfile.income,
-    incomeLocal,
-    userProfile.relationshipStatus,
-    cbsa.rpp
+    userProfile.income, incMarket, userProfile.relationshipStatus, rpp
   );
-  
-  // Final score
-  const finalScore = Math.min(100, baseScore * marriagePremium);
-  
+  finalScore = Math.min(99, finalScore * marriagePremium);
+
+  // ── RETURN (same shape for frontend compatibility) ──
   return {
     score: Math.round(finalScore * 10) / 10,
     components: {
-      income: { national: incomeNational, local: incomeLocal, weight: weights.income },
-      education: { national: eduNational, local: eduLocal, weight: weights.education },
-      age: { score: ageScore, weight: weights.age },
-      ethnicity: { score: ethnicityScore, weight: weights.ethnicity },
-      children: { score: childrenScore, weight: weights.children }
+      income: { national: cl(incRaw), local: cl(incBlended), weight: weights.income / 100 },
+      education: { national: cl(eduRaw), local: cl(eduBlended), weight: weights.education / 100 },
+      age: { score: cl(ageBlended), weight: weights.age / 100 },
+      ethnicity: { score: cl(ethBlended), weight: weights.ethnicity / 100 },
+      children: { score: cl(kidBlended), weight: weights.hasKids / 100 }
     },
     marriagePremium,
     weights
