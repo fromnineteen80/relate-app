@@ -1,4 +1,4 @@
-# RELATE DATING BLUEPRINT
+# RELATE DATING ATTACHMENT STYLE
 ## Technical and Clinical Specification
 ### Section 7: The Couples Overlay Architecture and Growth System
 
@@ -6,7 +6,7 @@
 
 ## The Couples Overlay
 
-The couples overlay is not a compatibility report. Compatibility reports produce scores and rankings and verdicts about whether two people should be together. The Blueprint couples overlay produces something fundamentally different: a portrait of the specific relational system two people have built together, with enough precision that both people can see it from the outside simultaneously for the first time.
+The couples overlay is not a compatibility report. Compatibility reports produce scores and rankings and verdicts about whether two people should be together. The Attachment Style couples overlay produces something fundamentally different: a portrait of the specific relational system two people have built together, with enough precision that both people can see it from the outside simultaneously for the first time.
 
 That simultaneity is the value. Most couples have had versions of the same conversation about their recurring pattern many times. Each person has a private theory about what is happening and why. Those theories are usually both accurate and incomplete, because each person can only see the pattern from inside their own experience of it. The couples overlay places both people outside the pattern at the same time, looking at the same portrait of what they produce together. That shared external perspective is the precondition for change that neither individual insight nor couples conversation alone can reliably produce.
 
@@ -14,9 +14,9 @@ That simultaneity is the value. Most couples have had versions of the same conve
 
 ## Eligibility and Access
 
-The couples overlay is generated when both partners have completed both the RELATE assessment and the Blueprint. The order in which they complete does not matter. The overlay is generated fresh from both complete result sets when the second partner's Blueprint is finalized.
+The couples overlay is generated when both partners have completed both the RELATE assessment and the Attachment Style. The order in which they complete does not matter. The overlay is generated fresh from both complete result sets when the second partner's Attachment Style is finalized.
 
-Partner linking uses the existing RELATE account architecture. Each partner accesses their individual Blueprint report independently before the overlay is available. This sequencing is deliberate. Each person should encounter their own portrait first, without the frame of the relationship. The individual report is about who they are. The overlay is about what they make together. Reading them in that order prevents the individual report from being filtered through the lens of the relationship before it has had a chance to land on its own terms.
+Partner linking uses the existing RELATE account architecture. Each partner accesses their individual Attachment Style report independently before the overlay is available. This sequencing is deliberate. Each person should encounter their own portrait first, without the frame of the relationship. The individual report is about who they are. The overlay is about what they make together. Reading them in that order prevents the individual report from being filtered through the lens of the relationship before it has had a chance to land on its own terms.
 
 The overlay report is accessible to both partners simultaneously once generated. Neither partner has primary ownership of it. It is a shared document about a shared system.
 
@@ -99,7 +99,7 @@ Intellectualization meeting Consensus Seeking produces a relationship where one 
 
 ## The Growth System
 
-The Blueprint report is the beginning of a process, not the end of one. The growth system is the architecture that makes the insight the report produces actionable over time, connecting the Blueprint findings back into the full RELATE persona framework and creating a structured pathway for the user to move, develop, and potentially arrive at a different understanding of who they are as a partner than the one they began with.
+The Attachment Style report is the beginning of a process, not the end of one. The growth system is the architecture that makes the insight the report produces actionable over time, connecting the Attachment Style findings back into the full RELATE persona framework and creating a structured pathway for the user to move, develop, and potentially arrive at a different understanding of who they are as a partner than the one they began with.
 
 The growth system is built on three components that work together as an integrated experience.
 
@@ -107,47 +107,47 @@ The growth system is built on three components that work together as an integrat
 
 ## Component One: The Personalized Growth Plan
 
-When the individual Blueprint report is finalized, the report generation engine spawns a separate growth plan document as a companion to the report. This is a distinct output, not an additional section of the report itself. The growth plan is longer, more structured, and more explicitly reflective in its format than the report narrative.
+When the individual Attachment Style report is finalized, the report generation engine spawns a separate growth plan document as a companion to the report. This is a distinct output, not an additional section of the report itself. The growth plan is longer, more structured, and more explicitly reflective in its format than the report narrative.
 
-The growth plan is generated by a separate engine call that receives the full Blueprint report as context along with the complete RELATE assessment results including all four persona dimensions, the attachment type, the compatibility tier results, and any prior assessment history available in the user's account. The growth plan synthesizes across the entire RELATE ecosystem rather than drawing only on the Blueprint findings. It is the document that connects the Blueprint's depth findings back to the broader portrait the RELATE assessment established.
+The growth plan is generated by a separate engine call that receives the full Attachment Style report as context along with the complete RELATE assessment results including all four persona dimensions, the attachment type, the compatibility tier results, and any prior assessment history available in the user's account. The growth plan synthesizes across the entire RELATE ecosystem rather than drawing only on the Attachment Style findings. It is the document that connects the Attachment Style's depth findings back to the broader portrait the RELATE assessment established.
 
 The growth plan contains four parts.
 
-**Part One: What the Blueprint Adds to Your RELATE Portrait**
-This section draws explicit connections between the Blueprint Quadrant results and the existing RELATE persona dimensions. It tells the user specifically how the Blueprint findings explain or deepen what the RELATE assessment found. If the RELATE assessment identified a Leadership persona with a Stability lifestyle dimension, and the Blueprint found a shame trigger emotion with a silence and withdrawal decision mode, the growth plan names the specific connection: the leadership and stability presentation is partly doing the work of managing the shame architecture by ensuring the person is always the competent, reliable one in the room rather than the uncertain one. The Blueprint finding does not replace the RELATE finding. It explains it at a level of depth the RELATE assessment was not designed to reach.
+**Part One: What the Attachment Style Adds to Your RELATE Portrait**
+This section draws explicit connections between the Attachment Style Quadrant results and the existing RELATE persona dimensions. It tells the user specifically how the Attachment Style findings explain or deepen what the RELATE assessment found. If the RELATE assessment identified a Leadership persona with a Stability lifestyle dimension, and the Attachment Style found a shame trigger emotion with a silence and withdrawal decision mode, the growth plan names the specific connection: the leadership and stability presentation is partly doing the work of managing the shame architecture by ensuring the person is always the competent, reliable one in the room rather than the uncertain one. The Attachment Style finding does not replace the RELATE finding. It explains it at a level of depth the RELATE assessment was not designed to reach.
 
 **Part Two: Reflection Prompts**
 A structured set of twelve to fifteen journaling prompts derived specifically from this user's four Quadrant Profiles and their interaction with the RELATE persona. These are not generic self-reflection questions. Each prompt is generated from the specific combination of findings and is designed to take the user into territory the report identified as significant but could not fully explore within its narrative format.
 
-The prompts are organized in three groups. The first group asks the user to explore the Quadrant findings through specific memories, going back to the moments the report referenced and spending more time in them. The second group asks the user to examine the gap between their RELATE persona presentation and what the Blueprint found underneath it, using specific relational situations as anchors. The third group asks the user to imagine forward, not catastrophically but with genuine curiosity, describing what a relationship might look and feel like from the inside if the patterns the Blueprint named were operating at reduced intensity.
+The prompts are organized in three groups. The first group asks the user to explore the Quadrant findings through specific memories, going back to the moments the report referenced and spending more time in them. The second group asks the user to examine the gap between their RELATE persona presentation and what the Attachment Style found underneath it, using specific relational situations as anchors. The third group asks the user to imagine forward, not catastrophically but with genuine curiosity, describing what a relationship might look and feel like from the inside if the patterns the Attachment Style named were operating at reduced intensity.
 
 The reflection prompts are designed to be returned to over weeks rather than completed in a single session. The growth plan notes this explicitly and encourages the user to treat the prompts as an ongoing practice rather than a task to complete.
 
 **Part Three: The Specific Work**
-This section names two or three very specific behavioral or relational experiments derived from the Blueprint findings. These are not general recommendations such as practice vulnerability or communicate more openly. They are specific enough that the user knows exactly what to do, when to do it, and what to notice when they do. An experiment for a person with a catastrophic forward projection decision mode and a shame trigger might be: the next time you notice the projection running, write down the specific endpoint it is moving toward before you act. Notice whether the endpoint is about being found out or about being left. You do not need to do anything with the answer. Just notice which one it is.
+This section names two or three very specific behavioral or relational experiments derived from the Attachment Style findings. These are not general recommendations such as practice vulnerability or communicate more openly. They are specific enough that the user knows exactly what to do, when to do it, and what to notice when they do. An experiment for a person with a catastrophic forward projection decision mode and a shame trigger might be: the next time you notice the projection running, write down the specific endpoint it is moving toward before you act. Notice whether the endpoint is about being found out or about being left. You do not need to do anything with the answer. Just notice which one it is.
 
-The specificity of the work section is what distinguishes it from generic wellness advice. It is derived from the exact findings of this person's Blueprint and cannot be copy-pasted into a different person's growth plan without losing its meaning.
+The specificity of the work section is what distinguishes it from generic wellness advice. It is derived from the exact findings of this person's Attachment Style and cannot be copy-pasted into a different person's growth plan without losing its meaning.
 
 **Part Four: What to Watch For**
-This section names the specific early signals that indicate the patterns the Blueprint identified are activating in a current or developing relationship. It is a personalized early warning system derived from the Quadrant Three decision mode and the Quadrant Two trigger emotion. It tells the user not how to stop the pattern but how to recognize it earlier in its sequence, because earlier recognition is the only reliable entry point for any voluntary interruption. It is written without alarm and without the implication that the pattern activating is a failure. The pattern activating is information. The growth plan tells the user what that information means and what to do with it.
+This section names the specific early signals that indicate the patterns the Attachment Style identified are activating in a current or developing relationship. It is a personalized early warning system derived from the Quadrant Three decision mode and the Quadrant Two trigger emotion. It tells the user not how to stop the pattern but how to recognize it earlier in its sequence, because earlier recognition is the only reliable entry point for any voluntary interruption. It is written without alarm and without the implication that the pattern activating is a failure. The pattern activating is information. The growth plan tells the user what that information means and what to do with it.
 
 ---
 
 ## Component Two: The Gamified Persona Development Track
 
-The RELATE assessment establishes the user's persona at a point in time. The Blueprint deepens the understanding of that persona. The gamified development track creates a structured pathway for the persona to evolve as the user does the work the growth plan invites.
+The RELATE assessment establishes the user's persona at a point in time. The Attachment Style deepens the understanding of that persona. The gamified development track creates a structured pathway for the persona to evolve as the user does the work the growth plan invites.
 
-This component connects directly to the existing RELATE gamification architecture. Claude Code has access to the full gamification system and should implement the Blueprint growth track as an extension of that system rather than as a parallel structure.
+This component connects directly to the existing RELATE gamification architecture. Claude Code has access to the full gamification system and should implement the Attachment Style growth track as an extension of that system rather than as a parallel structure.
 
-The Blueprint growth track works as follows.
+The Attachment Style growth track works as follows.
 
-The user's current persona code is the starting coordinate. The growth plan identifies which of the four RELATE dimensions are most implicated in the Blueprint findings. A shame trigger emotion in a Leadership persona is most implicated in the Social dimension, specifically in the question of whether Leadership is being expressed as genuine social competence or as a defense against the shame of not leading. The growth track focuses the user's development work on the dimension most implicated by their Blueprint findings.
+The user's current persona code is the starting coordinate. The growth plan identifies which of the four RELATE dimensions are most implicated in the Attachment Style findings. A shame trigger emotion in a Leadership persona is most implicated in the Social dimension, specifically in the question of whether Leadership is being expressed as genuine social competence or as a defense against the shame of not leading. The growth track focuses the user's development work on the dimension most implicated by their Attachment Style findings.
 
 As the user completes reflection prompts, logs relational experiments, and engages with the growth plan material over time, the system tracks evidence of movement along the implicated dimension. This tracking is not automatic. The user self-reports their reflections and the system responds to the content rather than to the completion of tasks. The gamification rewards genuine engagement with the material rather than checkbox completion.
 
 Movement along a dimension is not scored numerically. It is described qualitatively through a series of named developmental positions between the current persona code and adjacent codes on the same dimension. Each developmental position has a description of what it looks and feels like from the inside, what has shifted, what has become easier, and what new territory has opened. The user recognizes themselves in a developmental position rather than being assigned to it by a scoring algorithm.
 
-When the user's self-reported reflections and relational experiences indicate consistent movement across a dimension, the system surfaces the possibility of a persona reassessment. This is not automatic reassignment. It is an invitation to revisit the RELATE assessment with the awareness the Blueprint and the growth track have built. The reassessment uses the existing RELATE question engine but the user arrives at it with a different quality of self-knowledge than they had the first time, which often produces a different result.
+When the user's self-reported reflections and relational experiences indicate consistent movement across a dimension, the system surfaces the possibility of a persona reassessment. This is not automatic reassignment. It is an invitation to revisit the RELATE assessment with the awareness the Attachment Style and the growth track have built. The reassessment uses the existing RELATE question engine but the user arrives at it with a different quality of self-knowledge than they had the first time, which often produces a different result.
 
 A user who arrives at a new persona code through this pathway has not been reclassified by an algorithm. They have grown into a different position and the assessment has confirmed what they already know about themselves. That sequence, growth preceding recognition, is the correct order and is the only sequence that makes a persona change feel true rather than arbitrary.
 
@@ -157,7 +157,7 @@ The system marks the journey from the original persona to the new one in the use
 
 ## Component Three: Couples Growth Integration
 
-When both partners have completed the Blueprint and the couples overlay has been generated, the growth system extends into a shared couples development track.
+When both partners have completed the Attachment Style and the couples overlay has been generated, the growth system extends into a shared couples development track.
 
 Each partner receives their individual growth plan as documented above. The couples development track is a third document generated from both growth plans together. It identifies the two to three areas where the individual growth work of each person is most likely to affect the shared relational dynamic documented in the couples overlay. It gives both people a way to understand how their individual development work connects to the pattern they share, without requiring them to coordinate their growth or hold each other accountable for it.
 
@@ -175,11 +175,11 @@ The growth system described in this section requires the following integration p
 
 The growth plan generation engine connects to the existing report generation infrastructure and uses the same section-by-section call architecture specified in Section 6, with a separate prompt set built for the four growth plan parts rather than the six report sections.
 
-The gamified development track connects to the existing RELATE gamification system. The specific integration points, event triggers, reward logic, and progress tracking architecture should be implemented within the existing gamification framework. The Blueprint growth track is a new track within that framework, not a new framework.
+The gamified development track connects to the existing RELATE gamification system. The specific integration points, event triggers, reward logic, and progress tracking architecture should be implemented within the existing gamification framework. The Attachment Style growth track is a new track within that framework, not a new framework.
 
 The persona reassessment pathway connects to the existing RELATE question engine. The reassessment is a full re-administration of the relevant RELATE assessment sections rather than a partial update. The user's history of persona codes is stored in their profile and accessible to the reporting and gamification systems.
 
-The couples growth track connects to the existing partner linking architecture. Both partners must have active accounts with completed Blueprint results for the couples track to be generated or updated.
+The couples growth track connects to the existing partner linking architecture. Both partners must have active accounts with completed Attachment Style results for the couples track to be generated or updated.
 
 ---
 

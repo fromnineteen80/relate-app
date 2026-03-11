@@ -3,8 +3,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
-import { PRICING, BLUEPRINT_PRICING, type PricingTier, config } from '@/lib/config';
-import { fetchPaymentTier, fetchBlueprintAccess } from '@/lib/payments';
+import { PRICING, ATTACHMENT_PRICING, type PricingTier, config } from '@/lib/config';
+import { fetchPaymentTier, fetchAttachmentAccess } from '@/lib/payments';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
 import { SiteFooter } from '@/components/SiteFooter';
@@ -53,8 +53,8 @@ export default function BillingPage() {
   const [portalLoading, setPortalLoading] = useState(false);
   const [isTestMode, setIsTestMode] = useState(false);
   const [partner, setPartner] = useState<PartnerInfo | null>(null);
-  const [blueprintPurchased, setBlueprintPurchased] = useState(false);
-  const [blueprintProduct, setBlueprintProduct] = useState<string | null>(null);
+  const [attachmentPurchased, setAttachmentPurchased] = useState(false);
+  const [attachmentProduct, setAttachmentProduct] = useState<string | null>(null);
 
   const loadSubscription = useCallback(async () => {
     if (!user?.email) return;
@@ -74,10 +74,10 @@ export default function BillingPage() {
       setSubscription(data.subscription || null);
       setLegacyPayment(data.legacyPayment || false);
       setDiscountCode(data.discountCode || null);
-      // Check Blueprint access
-      const bp = await fetchBlueprintAccess(user.email);
-      setBlueprintPurchased(bp.purchased);
-      setBlueprintProduct(bp.product);
+      // Check attachment style access
+      const bp = await fetchAttachmentAccess(user.email);
+      setAttachmentPurchased(bp.purchased);
+      setAttachmentProduct(bp.product);
       // Load partner info
       try {
         const partnerRes = await fetch(`/api/partner-lookup?userId=${user.id}`);
@@ -95,9 +95,9 @@ export default function BillingPage() {
       // Fall back to simple tier check
       const { tier: t } = await fetchPaymentTier(user.email);
       setTier(t);
-      const bp = await fetchBlueprintAccess(user.email);
-      setBlueprintPurchased(bp.purchased);
-      setBlueprintProduct(bp.product);
+      const bp = await fetchAttachmentAccess(user.email);
+      setAttachmentPurchased(bp.purchased);
+      setAttachmentProduct(bp.product);
     } finally {
       setLoading(false);
     }
@@ -340,17 +340,17 @@ export default function BillingPage() {
             )}
 
             {/* Attachment Style */}
-            {blueprintPurchased ? (
+            {attachmentPurchased ? (
               <div className="flex items-center gap-3 p-3 rounded-md border bg-stone-50 border-stone-300">
                 <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm flex-shrink-0 bg-accent/10 text-accent">
                   <Icon name="check" size={18} />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium">{blueprintProduct === 'blueprint_couples' ? 'Attachment Style Couples' : 'Attachment Style'}: Active</p>
+                  <p className="text-sm font-medium">{attachmentProduct === 'attachment_style_couples' ? 'Attachment Style Couples' : 'Attachment Style'}: Active</p>
                   <p className="text-xs text-secondary">Deep attachment style session, personalized report, and growth plan.</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-serif text-lg font-semibold">{blueprintProduct === 'blueprint_couples' ? BLUEPRINT_PRICING.blueprint_couples.priceDisplay : BLUEPRINT_PRICING.blueprint.priceDisplay}</p>
+                  <p className="font-serif text-lg font-semibold">{attachmentProduct === 'attachment_style_couples' ? ATTACHMENT_PRICING.attachment_style_couples.priceDisplay : ATTACHMENT_PRICING.attachment_style.priceDisplay}</p>
                   <p className="text-[10px] text-secondary">one-time</p>
                 </div>
               </div>
@@ -359,10 +359,10 @@ export default function BillingPage() {
                 <div className="p-3 border rounded-md border-accent">
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-sm font-medium">Attachment Style</p>
-                    <p className="font-mono text-sm">{BLUEPRINT_PRICING.blueprint.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
+                    <p className="font-mono text-sm">{ATTACHMENT_PRICING.attachment_style.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
                   </div>
                   <p className="text-xs text-secondary mb-3">A 30-minute deep session revealing the psychology underneath your persona. 3,000-word personalized report and growth plan.</p>
-                  <a href={`/api/blueprint/checkout?product=blueprint&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-primary">
+                  <a href={`/api/attachment-style/checkout?product=attachment_style&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-primary">
                     Add Attachment Style
                   </a>
                 </div>
@@ -370,10 +370,10 @@ export default function BillingPage() {
                   <div className="p-3 border rounded-md border-border">
                     <div className="flex items-center justify-between mb-1">
                       <p className="text-sm font-medium">Attachment Style Couples</p>
-                      <p className="font-mono text-sm">{BLUEPRINT_PRICING.blueprint_couples.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
+                      <p className="font-mono text-sm">{ATTACHMENT_PRICING.attachment_style_couples.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
                     </div>
                     <p className="text-xs text-secondary mb-3">Both partners get the full session plus a couples overlay report analyzing your dynamic together.</p>
-                    <a href={`/api/blueprint/checkout?product=blueprint_couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
+                    <a href={`/api/attachment-style/checkout?product=attachment_style_couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
                       Add Attachment Style Couples
                     </a>
                   </div>

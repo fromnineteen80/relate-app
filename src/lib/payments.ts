@@ -73,22 +73,22 @@ export function higherTier(a: PricingTier, b: PricingTier): PricingTier {
 }
 
 /**
- * Checks if the user has purchased the Blueprint add-on.
- * Returns { purchased: boolean, product: 'blueprint' | 'blueprint_couples' | null }
+ * Checks if the user has purchased the Attachment Style add-on.
+ * Returns { purchased: boolean, product: 'attachment_style' | 'attachment_style_couples' | null }
  */
-export async function fetchBlueprintAccess(email?: string): Promise<{ purchased: boolean; product: 'blueprint' | 'blueprint_couples' | null }> {
-  if (config.testFullAccess || (config as any).testBlueprintAccess) {
-    return { purchased: true, product: 'blueprint' };
+export async function fetchAttachmentAccess(email?: string): Promise<{ purchased: boolean; product: 'attachment_style' | 'attachment_style_couples' | null }> {
+  if (config.testFullAccess || (config as any).testAttachmentAccess) {
+    return { purchased: true, product: 'attachment_style' };
   }
 
   if (config.useMockPayments) {
-    const stored = localStorage.getItem('relate_blueprint_purchased');
+    const stored = localStorage.getItem('relate_attachment_purchased');
     if (stored) return JSON.parse(stored);
     return { purchased: false, product: null };
   }
 
   // Check localStorage cache
-  const cached = localStorage.getItem('relate_blueprint_access');
+  const cached = localStorage.getItem('relate_attachment_access');
   if (cached) {
     try {
       const parsed = JSON.parse(cached);
@@ -101,11 +101,11 @@ export async function fetchBlueprintAccess(email?: string): Promise<{ purchased:
   if (!email) return { purchased: false, product: null };
 
   try {
-    const res = await fetch(`/api/payment-status?email=${encodeURIComponent(email)}&check=blueprint`);
+    const res = await fetch(`/api/payment-status?email=${encodeURIComponent(email)}&check=attachment`);
     if (!res.ok) return { purchased: false, product: null };
     const data = await res.json();
-    const result = { purchased: !!data.blueprintProduct, product: data.blueprintProduct || null };
-    localStorage.setItem('relate_blueprint_access', JSON.stringify({ ...result, timestamp: Date.now() }));
+    const result = { purchased: !!data.attachmentProduct, product: data.attachmentProduct || null };
+    localStorage.setItem('relate_attachment_access', JSON.stringify({ ...result, timestamp: Date.now() }));
     return result;
   } catch {
     return { purchased: false, product: null };

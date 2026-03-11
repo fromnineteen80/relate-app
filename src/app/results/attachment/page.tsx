@@ -120,7 +120,7 @@ function growthContent(growth: any, key: string): string | null {
 }
 
 // ── Main page component ─────────────────────────────────────────────
-export default function BlueprintResultsPage() {
+export default function AttachmentResultsPage() {
   const [results, setResults] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
   const [growth, setGrowth] = useState<any>(null);
@@ -129,9 +129,9 @@ export default function BlueprintResultsPage() {
   const [genError, setGenError] = useState<string | null>(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem('relate_blueprint_results');
-    const storedReport = localStorage.getItem('relate_blueprint_report');
-    const storedGrowth = localStorage.getItem('relate_blueprint_growth');
+    const stored = localStorage.getItem('relate_attachment_results');
+    const storedReport = localStorage.getItem('relate_attachment_report');
+    const storedGrowth = localStorage.getItem('relate_attachment_growth');
     const base = localStorage.getItem('relate_results');
 
     if (stored) { try { setResults(JSON.parse(stored)); } catch { /* */ } }
@@ -148,11 +148,11 @@ export default function BlueprintResultsPage() {
 
     try {
       const persona = baseResults.persona;
-      const res = await fetch('/api/blueprint/report', {
+      const res = await fetch('/api/attachment-style/report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          blueprintResults: results,
+          attachmentResults: results,
           assessmentResults: baseResults,
           personaMetadata: {
             name: persona?.name,
@@ -164,7 +164,7 @@ export default function BlueprintResultsPage() {
       const data = await res.json();
       if (data.success && data.report) {
         setReport(data.report);
-        localStorage.setItem('relate_blueprint_report', JSON.stringify(data.report));
+        localStorage.setItem('relate_attachment_report', JSON.stringify(data.report));
       } else {
         setGenError(data.error || 'Report generation failed.');
       }
@@ -183,7 +183,7 @@ export default function BlueprintResultsPage() {
     { id: 'bp-growth', label: 'Growth', href: '#growth', show: !!growth },
   ];
 
-  // ── No blueprint results: empty state ──
+  // ── No attachment style results: empty state ──
   if (!results) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -195,7 +195,7 @@ export default function BlueprintResultsPage() {
             <p className="text-sm text-secondary max-w-lg mx-auto mb-6">
               Complete the Attachment Style assessment to see your results here.
             </p>
-            <Link href="/blueprint" className="btn-primary text-sm">
+            <Link href="/attachment-style" className="btn-primary text-sm">
               Go to Attachment Style
             </Link>
           </div>

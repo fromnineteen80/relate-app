@@ -35,21 +35,22 @@ export async function GET(request: NextRequest) {
 
     // Find the highest tier among all completed payments
     let highestTier: PricingTier = 'free';
-    let blueprintProduct: string | null = null;
+    let attachmentProduct: string | null = null;
     for (const payment of payments) {
       const product = payment.product as string;
       if (product in TIER_PRIORITY && TIER_PRIORITY[product] > TIER_PRIORITY[highestTier]) {
         highestTier = product as PricingTier;
       }
-      // Track Blueprint add-on purchases (blueprint_couples supersedes blueprint)
-      if (product === 'blueprint_couples') {
-        blueprintProduct = 'blueprint_couples';
-      } else if (product === 'blueprint' && blueprintProduct !== 'blueprint_couples') {
-        blueprintProduct = 'blueprint';
+      // Track attachment style add-on purchases (couples supersedes individual)
+      // Supports both legacy 'blueprint' and current 'attachment_style' product names
+      if (product === 'attachment_style_couples' || product === 'blueprint_couples') {
+        attachmentProduct = 'attachment_style_couples';
+      } else if ((product === 'attachment_style' || product === 'blueprint') && attachmentProduct !== 'attachment_style_couples') {
+        attachmentProduct = 'attachment_style';
       }
     }
 
-    return NextResponse.json({ tier: highestTier, blueprintProduct });
+    return NextResponse.json({ tier: highestTier, attachmentProduct });
   } catch (err) {
     console.error('Payment status error:', err);
     return NextResponse.json({ tier: 'free' });

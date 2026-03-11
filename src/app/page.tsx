@@ -39,7 +39,7 @@ const MODULES = [
   },
 ];
 
-const BLUEPRINT_FEATURES = [
+const ATTACHMENT_FEATURES = [
   {
     num: '01',
     title: 'Relational History',
@@ -230,7 +230,7 @@ export default function LandingPage() {
           </div>
 
           <div className="space-y-4">
-            {BLUEPRINT_FEATURES.map((f) => (
+            {ATTACHMENT_FEATURES.map((f) => (
               <div key={f.num} className="card flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
                 <div className="flex items-center gap-4 md:w-48 flex-shrink-0">
                   <span className="font-mono text-3xl font-light text-stone-300">{f.num}</span>
@@ -242,7 +242,7 @@ export default function LandingPage() {
           </div>
 
           <div className="text-center mt-10">
-            <Link href="/blueprint" className="btn-primary text-base px-8 py-3">
+            <Link href="/attachment-style" className="btn-primary text-base px-8 py-3">
               Explore Attachment Style
             </Link>
             <p className="text-xs text-secondary mt-3">$49 one-time add-on</p>

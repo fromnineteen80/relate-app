@@ -5,8 +5,8 @@ import type { PricingTier } from '@/lib/config';
 /**
  * Discount code format: {PERCENT}-{TIER}-{MONTH}-{YEAR}
  * Examples: 100-PRO-MARCH-2026, 50-PREMIUM-MARCH-2026, 100-PLUS-APRIL-2026, 100-COUPLES-MARCH-2026
- *           100-ATTACH-MARCH-2026 (Blueprint attachment style add-on)
- *           100-ATTACHCOUPLES-MARCH-2026 (Blueprint couples add-on)
+ *           100-ATTACH-MARCH-2026 (Attachment style add-on)
+ *           100-ATTACHCOUPLES-MARCH-2026 (Attachment style couples add-on)
  *
  * - PERCENT: 100 = fully free, 50 = half price, etc.
  * - TIER: PLUS, PREMIUM, PRO, COUPLES, ATTACH, ATTACHCOUPLES
@@ -17,15 +17,15 @@ import type { PricingTier } from '@/lib/config';
  * Codes are valid only during the specified month+year.
  */
 
-type ProductKey = PricingTier | 'blueprint' | 'blueprint_couples';
+type ProductKey = PricingTier | 'attachment_style' | 'attachment_style_couples';
 
 const VALID_TIERS: Record<string, ProductKey> = {
   PLUS: 'plus',
   PREMIUM: 'premium',
   PRO: 'pro',
   COUPLES: 'couples',
-  ATTACH: 'blueprint',
-  ATTACHCOUPLES: 'blueprint_couples',
+  ATTACH: 'attachment_style',
+  ATTACHCOUPLES: 'attachment_style_couples',
 };
 
 const MONTHS = [
@@ -90,8 +90,8 @@ export async function POST(request: NextRequest) {
         status: 'completed',
       });
 
-      // For couples tier or blueprint_couples, also grant access to partner if provided
-      if ((parsed.tier === 'couples' || parsed.tier === 'blueprint_couples') && partnerEmail) {
+      // For couples tier or attachment_style_couples, also grant access to partner if provided
+      if ((parsed.tier === 'couples' || parsed.tier === 'attachment_style_couples') && partnerEmail) {
         await supabase.from('payments').insert({
           customer_email: partnerEmail,
           product: parsed.tier,

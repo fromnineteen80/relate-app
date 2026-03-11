@@ -1,4 +1,4 @@
-# RELATE DATING BLUEPRINT
+# RELATE DATING ATTACHMENT STYLE
 ## Technical and Clinical Specification
 ### Section 4: The Question Engine Specification
 
@@ -10,17 +10,17 @@ The question engine does two things simultaneously. It generates the data needed
 
 These two functions are not separate. The same question that produces a scoring signal also produces a fragment of lived experience that the report can reflect back. A question that asks the user to describe what happened in their body the last time someone they were dating went quiet does not just measure trigger emotion. It gives the report generation engine a texture, a specific kind of fear or numbness or controlled calm, that the report can use to demonstrate it understands this person's interior before it names what is underneath. The question engine is therefore not just a scoring instrument. It is the first act of the report.
 
-This dual function has a direct implication for question design. Every question must be worth asking on both dimensions. A question that produces a clean scoring signal but no experiential material is a clinical survey question and does not belong in the Blueprint. A question that produces rich experiential material but no scoring signal is a journaling prompt and does not belong either. Every question earns its place by doing both.
+This dual function has a direct implication for question design. Every question must be worth asking on both dimensions. A question that produces a clean scoring signal but no experiential material is a clinical survey question and does not belong in the Attachment Style. A question that produces rich experiential material but no scoring signal is a journaling prompt and does not belong either. Every question earns its place by doing both.
 
 ---
 
 ## The Dynamic Structure: How RELATE Results Shape the Question Engine
 
-This is the architectural feature that distinguishes the Blueprint question engine from a static assessment instrument. The question engine is not the same for every user. It is personalized before the first question is asked, because every user arrives with two fixed inputs from the RELATE assessment that change what the Blueprint needs to ask and how it needs to ask it.
+This is the architectural feature that distinguishes the Attachment Style question engine from a static assessment instrument. The question engine is not the same for every user. It is personalized before the first question is asked, because every user arrives with two fixed inputs from the RELATE assessment that change what the Attachment Style needs to ask and how it needs to ask it.
 
 **Fixed Input One: Attachment Type**
 
-The user's attachment type is known before the Blueprint begins. This matters to the question engine in two specific ways.
+The user's attachment type is known before the Attachment Style begins. This matters to the question engine in two specific ways.
 
 First, certain Quadrant One questions can be refined based on attachment type. An Anchored attachment type arriving at Quadrant One questions about disruption character and repair history needs different question framing than an Oscillating type arriving at the same territory. The Anchored user's disruption is more likely to be subtle and harder to name. The Oscillating user's disruption is more likely to be visible but inconsistently processed. The question engine uses attachment type to weight which experiential anchors it emphasizes, which specific memories it asks the user to access, and which follow-up probes it deploys when a response is ambiguous.
 
@@ -36,7 +36,7 @@ The first source is the persona's struggles field. These are the shadow expressi
 
 The second source is the persona's disappointments field. These describe the moments when the persona's relational strategy fails, when partners reach a limit, when the cost of the persona becomes visible. The question engine uses these as the target territory for Axis Two questions, asking about what partners have said, what criticism tends to repeat across relationships, and what the user has come to understand about how they are experienced from the outside.
 
-The third source is the persona's dating-specific behavioral metadata. The datingBehavior and inRelationships fields describe how the persona operates in the specific context the Blueprint is measuring. The question engine uses these as reference points for Axis Three questions, asking about whether the user recognizes the described behaviors in themselves equally across casual and serious relationships or whether something changes when the stakes rise.
+The third source is the persona's dating-specific behavioral metadata. The datingBehavior and inRelationships fields describe how the persona operates in the specific context the Attachment Style is measuring. The question engine uses these as reference points for Axis Three questions, asking about whether the user recognizes the described behaviors in themselves equally across casual and serious relationships or whether something changes when the stakes rise.
 
 This means a user who arrives with the ACEG persona code receives a materially different set of Quadrant Four questions than a user who arrives with the BDFH persona code. The scoring axes are universal. The questions that measure them are specific to the persona. This is the dynamic structure. The axes are the constant. The persona is the variable that shapes how the axes are probed.
 
@@ -72,7 +72,7 @@ Where possible, questions ask about somatic experience before they ask about act
 
 **Past Tense Over Present Tense**
 
-Questions about past relationships and past moments produce more accurate responses than questions about current states or general tendencies. The user has more distance from past experiences and therefore more access to what actually happened rather than what they want to believe happened. The Blueprint uses present tense only for questions about the user's current understanding of themselves, not for questions designed to produce scoring signals.
+Questions about past relationships and past moments produce more accurate responses than questions about current states or general tendencies. The user has more distance from past experiences and therefore more access to what actually happened rather than what they want to believe happened. The Attachment Style uses present tense only for questions about the user's current understanding of themselves, not for questions designed to produce scoring signals.
 
 **Repetition Across Angles**
 
@@ -94,7 +94,7 @@ Each Quadrant includes at least one question that specifically asks about the ga
 
 ## Question Format
 
-The Blueprint uses two question formats. Both serve the dual function of producing scoring signals and experiential material for the report.
+The Attachment Style uses two question formats. Both serve the dual function of producing scoring signals and experiential material for the report.
 
 **Narrative Response Questions**
 
@@ -106,17 +106,17 @@ Narrative response questions require a minimum response length to be enforced by
 
 These are Likert-format questions scored on a five-point scale from strongly disagree to strongly agree, or from never to always, depending on the construct being measured. They are used for Quadrant Four and for the behavioral and somatic confirmation questions in Quadrants Two and Three. Scaled responses produce cleaner scoring signals for the axes that require numerical modifier values rather than categorical Profile assignments.
 
-The Blueprint does not use forced-choice binary questions. Research on question design in deep personality assessment demonstrates that forced-choice formats produce higher rates of response abandonment on emotionally sensitive topics. The Blueprint's question content is frequently emotionally sensitive, and preserving the user's sense of agency and comfort throughout the experience is a product requirement as well as a design preference.
+The Attachment Style does not use forced-choice binary questions. Research on question design in deep personality assessment demonstrates that forced-choice formats produce higher rates of response abandonment on emotionally sensitive topics. The Attachment Style's question content is frequently emotionally sensitive, and preserving the user's sense of agency and comfort throughout the experience is a product requirement as well as a design preference.
 
 ---
 
 ## Question Count and Session Architecture
 
-The Blueprint question bank contains between 80 and 100 questions across the four Quadrants. Not all questions are served to every user. The dynamic structure of Quadrant Four means the total question count varies by persona code. The attachment-type-weighted variations in Quadrants One and Two also produce small variations in question count across users.
+The Attachment Style question bank contains between 80 and 100 questions across the four Quadrants. Not all questions are served to every user. The dynamic structure of Quadrant Four means the total question count varies by persona code. The attachment-type-weighted variations in Quadrants One and Two also produce small variations in question count across users.
 
-The target completion time is 25 to 35 minutes. This is longer than most dating assessment experiences and shorter than a therapy intake. The length is deliberate. The Blueprint is positioned as a serious instrument that requires genuine reflection, and the time commitment signals that seriousness to the user before they begin. The question experience should feel like it is taking the user somewhere rather than processing them through a survey.
+The target completion time is 25 to 35 minutes. This is longer than most dating assessment experiences and shorter than a therapy intake. The length is deliberate. The Attachment Style is positioned as a serious instrument that requires genuine reflection, and the time commitment signals that seriousness to the user before they begin. The question experience should feel like it is taking the user somewhere rather than processing them through a survey.
 
-The question engine uses the existing RELATE checkpoint architecture extended with a Blueprint-specific session configuration. The user's responses are saved at each Quadrant boundary so that an incomplete session can be resumed without loss of progress. The Blueprint does not require completion in a single session, but the question engine should note the time elapsed since the previous session when the user resumes, because responses to emotionally sensitive questions are more consistent when the user is in a similar emotional state across sessions. If more than 72 hours have elapsed since the previous session, the interface should gently note that the user may want to re-read their previous responses before continuing.
+The question engine uses the existing RELATE checkpoint architecture extended with a Attachment Style-specific session configuration. The user's responses are saved at each Quadrant boundary so that an incomplete session can be resumed without loss of progress. The Attachment Style does not require completion in a single session, but the question engine should note the time elapsed since the previous session when the user resumes, because responses to emotionally sensitive questions are more consistent when the user is in a similar emotional state across sessions. If more than 72 hours have elapsed since the previous session, the interface should gently note that the user may want to re-read their previous responses before continuing.
 
 ---
 

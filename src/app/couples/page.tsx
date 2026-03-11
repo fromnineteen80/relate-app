@@ -145,8 +145,8 @@ export default function CouplesDashboard() {
           </Link>
         </div>
 
-        {/* Blueprint Status */}
-        <BlueprintStatusCard />
+        {/* Attachment Style Status */}
+        <AttachmentStatusCard />
 
         {/* Active Challenge */}
         {activeChallenge && (
@@ -397,17 +397,17 @@ function SliderField({ label, value, onChange }: { label: string; value: number;
   );
 }
 
-function BlueprintStatusCard() {
+function AttachmentStatusCard() {
   const [status, setStatus] = useState<'none' | 'one' | 'both' | 'overlay'>('none');
 
   useEffect(() => {
-    const overlay = localStorage.getItem('relate_blueprint_couples');
+    const overlay = localStorage.getItem('relate_attachment_couples');
     if (overlay) {
       setStatus('overlay');
       return;
     }
-    const bp1 = localStorage.getItem('relate_blueprint_results');
-    const bp2 = localStorage.getItem('relate_partner_blueprint_results');
+    const bp1 = localStorage.getItem('relate_attachment_results');
+    const bp2 = localStorage.getItem('relate_partner_attachment_results');
     if (bp1 && bp2) {
       setStatus('both');
     } else if (bp1 || bp2) {
@@ -447,7 +447,7 @@ function BlueprintStatusCard() {
   }
 
   return (
-    <Link href="/blueprint" className="card flex items-center gap-3 bg-stone-50 hover:border-accent transition-colors">
+    <Link href="/attachment-style" className="card flex items-center gap-3 bg-stone-50 hover:border-accent transition-colors">
       <Icon name="diamond" size={20} className="text-accent" />
       <div className="flex-1">
         <p className="text-sm font-medium">Unlock deeper couple insights</p>

@@ -8,11 +8,11 @@ export const PRICING: Record<PricingTier, { label: string; price: number; priceD
   couples: { label: 'Couples', price: 119, priceDisplay: '$119', stripeCents: 11900 },
 };
 
-export type BlueprintProduct = 'blueprint' | 'blueprint_couples';
+export type AttachmentProduct = 'attachment_style' | 'attachment_style_couples';
 
-export const BLUEPRINT_PRICING: Record<BlueprintProduct, { label: string; price: number; priceDisplay: string; stripeCents: number }> = {
-  blueprint: { label: 'Attachment Style', price: 49, priceDisplay: '$49', stripeCents: 4900 },
-  blueprint_couples: { label: 'Attachment Style Couples', price: 79, priceDisplay: '$79', stripeCents: 7900 },
+export const ATTACHMENT_PRICING: Record<AttachmentProduct, { label: string; price: number; priceDisplay: string; stripeCents: number }> = {
+  attachment_style: { label: 'Attachment Style', price: 49, priceDisplay: '$49', stripeCents: 4900 },
+  attachment_style_couples: { label: 'Attachment Style Couples', price: 79, priceDisplay: '$79', stripeCents: 7900 },
 };
 
 export const config = {
@@ -21,6 +21,6 @@ export const config = {
   useMockAdvisor: process.env.NEXT_PUBLIC_MOCK_ADVISOR === 'true',
   /** Grants full (premium) access without paying. Stripe checkout still works if used. */
   testFullAccess: process.env.NEXT_PUBLIC_TEST_FULL_ACCESS === 'true',
-  testBlueprintAccess: process.env.NEXT_PUBLIC_TEST_BLUEPRINT_ACCESS === 'true',
+  testAttachmentAccess: process.env.NEXT_PUBLIC_TEST_ATTACHMENT_ACCESS === 'true',
   appUrl: process.env.NEXT_PUBLIC_URL || 'http://localhost:3000',
 };

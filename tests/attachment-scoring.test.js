@@ -1,5 +1,5 @@
 /**
- * Tests for Blueprint (attachment style) scoring engine.
+ * Tests for Attachment style scoring engine.
  * Validates pattern routing, axis calculations, and emergent pattern detection.
  */
 import { describe, it, expect } from 'vitest';
@@ -18,7 +18,7 @@ const TEST_NAME = personaDefs.getPersonaName(TEST_CODE, TEST_GENDER);
 
 // ── Exports ──
 
-describe('Blueprint scoring exports', () => {
+describe('Attachment style scoring exports', () => {
   it('exports all required functions', () => {
     expect(typeof scoring.scoreQuadrantOne).toBe('function');
     expect(typeof scoring.scoreQuadrantTwo).toBe('function');
@@ -41,14 +41,14 @@ describe('Blueprint scoring exports', () => {
 
   it('exports storage keys', () => {
     expect(scoring.STORAGE_KEYS).toBeDefined();
-    expect(scoring.STORAGE_KEYS.checkpoint).toBe('relate_blueprint_checkpoint');
-    expect(scoring.STORAGE_KEYS.results).toBe('relate_blueprint_results');
+    expect(scoring.STORAGE_KEYS.checkpoint).toBe('relate_attachment_checkpoint');
+    expect(scoring.STORAGE_KEYS.results).toBe('relate_attachment_results');
   });
 });
 
 // ── Question bank ──
 
-describe('Blueprint question bank', () => {
+describe('Attachment style question bank', () => {
   it('exports question banks for Q1-Q3', () => {
     expect(questions.QUADRANT_ONE_QUESTIONS).toBeDefined();
     expect(questions.QUADRANT_TWO_QUESTIONS).toBeDefined();

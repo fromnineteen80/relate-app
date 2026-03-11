@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * DESIRABILITY SCORING BLUEPRINT — IMPLEMENTATION SPEC
+ * DESIRABILITY SCORING ATTACHMENT — IMPLEMENTATION SPEC
  * ============================================================================
  *
  * Scoring: Raw Score (0–100) + Market Score (0–100) → Final = 50/50 blend

@@ -1,6 +1,6 @@
 /**
  * Safety tests for original RELATE assessment scoring.
- * These ensure the Blueprint build does not break existing scoring logic.
+ * These ensure the Attachment style build does not break existing scoring logic.
  */
 import { describe, it, expect } from 'vitest';
 import { createRequire } from 'module';

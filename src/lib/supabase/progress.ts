@@ -76,13 +76,13 @@ export function saveResults(userId: string, results: any) {
 }
 
 /**
- * Save blueprint (attachment style) data to Supabase (fire-and-forget).
+ * Save attachment style data to Supabase (fire-and-forget).
  */
-export function saveBlueprintData(
+export function saveAttachmentData(
   userId: string,
-  blueprintResults: any,
-  blueprintReport: any,
-  blueprintGrowth: any,
+  attachmentResults: any,
+  attachmentReport: any,
+  attachmentGrowth: any,
 ) {
   if (config.useMockAuth) return;
   const supabase = getSupabase();
@@ -90,12 +90,12 @@ export function saveBlueprintData(
 
   supabase.from('user_progress').upsert({
     user_id: userId,
-    blueprint_results: blueprintResults,
-    blueprint_report: blueprintReport,
-    blueprint_growth: blueprintGrowth,
+    attachment_results: attachmentResults,
+    attachment_report: attachmentReport,
+    attachment_growth: attachmentGrowth,
     updated_at: new Date().toISOString(),
   }, { onConflict: 'user_id' }).then(({ error }) => {
-    if (error) console.warn('Failed to save blueprint data to DB:', error.message);
+    if (error) console.warn('Failed to save attachment data to DB:', error.message);
   });
 }
 
@@ -134,15 +134,15 @@ export async function loadAndHydrateProgress(userId: string): Promise<any | null
     localStorage.setItem('relate_results', JSON.stringify(data.results));
   }
 
-  // Hydrate blueprint data if present
-  if (data.blueprint_results) {
-    localStorage.setItem('relate_blueprint_results', JSON.stringify(data.blueprint_results));
+  // Hydrate attachment style data if present
+  if (data.attachment_results) {
+    localStorage.setItem('relate_attachment_results', JSON.stringify(data.attachment_results));
   }
-  if (data.blueprint_report) {
-    localStorage.setItem('relate_blueprint_report', JSON.stringify(data.blueprint_report));
+  if (data.attachment_report) {
+    localStorage.setItem('relate_attachment_report', JSON.stringify(data.attachment_report));
   }
-  if (data.blueprint_growth) {
-    localStorage.setItem('relate_blueprint_growth', JSON.stringify(data.blueprint_growth));
+  if (data.attachment_growth) {
+    localStorage.setItem('relate_attachment_growth', JSON.stringify(data.attachment_growth));
   }
 
   // Hydrate growth data if present

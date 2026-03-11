@@ -71,10 +71,10 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
   const hasCouplesAccess = typeof window !== 'undefined'
     ? !!(localStorage.getItem('relate_couples_discount') || localStorage.getItem('relate_payment_tier')?.includes('couples'))
     : false;
-  const hasBlueprint = typeof window !== 'undefined'
-    ? !!(localStorage.getItem('relate_blueprint_results') || localStorage.getItem('relate_blueprint_purchased') || localStorage.getItem('relate_blueprint_access')?.includes('"purchased":true'))
+  const hasAttachment = typeof window !== 'undefined'
+    ? !!(localStorage.getItem('relate_attachment_results') || localStorage.getItem('relate_attachment_purchased') || localStorage.getItem('relate_attachment_access')?.includes('"purchased":true'))
     : false;
-  const blueprintHasResults = typeof window !== 'undefined' ? !!localStorage.getItem('relate_blueprint_results') : false;
+  const attachmentHasResults = typeof window !== 'undefined' ? !!localStorage.getItem('relate_attachment_results') : false;
   const isWoman = typeof window !== 'undefined'
     ? (() => {
         const g = localStorage.getItem('relate_gender');
@@ -161,8 +161,8 @@ export function SiteHeader({ variant = 'default', onSave, saveState }: SiteHeade
                   onSignOut={handleSignOut}
                   hasPartner={hasPartner}
                   hasCouplesAccess={hasCouplesAccess}
-                  hasBlueprint={hasBlueprint}
-                  blueprintHasResults={blueprintHasResults}
+                  hasAttachment={hasAttachment}
+                  attachmentHasResults={attachmentHasResults}
                   isWoman={isWoman}
                   hasAstrology={hasAstrology}
                 />
@@ -274,8 +274,8 @@ function ProfileAvatar({
   onSignOut,
   hasPartner,
   hasCouplesAccess,
-  hasBlueprint,
-  blueprintHasResults,
+  hasAttachment,
+  attachmentHasResults,
   isWoman,
   hasAstrology,
 }: {
@@ -287,8 +287,8 @@ function ProfileAvatar({
   onSignOut: () => void;
   hasPartner: boolean;
   hasCouplesAccess: boolean;
-  hasBlueprint: boolean;
-  blueprintHasResults: boolean;
+  hasAttachment: boolean;
+  attachmentHasResults: boolean;
   isWoman: boolean;
   hasAstrology: boolean;
 }) {
@@ -316,7 +316,7 @@ function ProfileAvatar({
             { href: '/assessment', label: 'Assessment' },
             { href: '/results', label: 'Your Results' },
             ...(hasPartner ? [{ href: hasCouplesAccess ? '/results/compare' : '/invite', label: 'Couples Results' }] : []),
-            ...(hasBlueprint ? [{ href: blueprintHasResults ? '/results/attachment' : '/blueprint', label: 'Attachment Style' }] : []),
+            ...(hasAttachment ? [{ href: attachmentHasResults ? '/results/attachment' : '/attachment-style', label: 'Attachment Style' }] : []),
             ...(hasAstrology ? [{ href: '/results/astrology', label: 'Sun, Moon & Rise' }] : []),
           ].map(item => (
             <Link

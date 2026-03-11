@@ -20,8 +20,8 @@ export default function ComparePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeSection, setActiveSection] = useState(0);
-  const [blueprintOverlay, setBlueprintOverlay] = useState<any>(null);
-  const [blueprintStatus, setBlueprintStatus] = useState<'none' | 'one' | 'both' | 'overlay'>('none');
+  const [attachmentOverlay, setAttachmentOverlay] = useState<any>(null);
+  const [attachmentStatus, setAttachmentStatus] = useState<'none' | 'one' | 'both' | 'overlay'>('none');
   const [overlayGenerating, setOverlayGenerating] = useState(false);
 
   // Enrich report with actual first names from localStorage so all sections show real names
@@ -89,47 +89,47 @@ export default function ComparePage() {
       });
   }, [user]);
 
-  // Load Blueprint couples overlay state from localStorage
+  // Load attachment style couples overlay state from localStorage
   useEffect(() => {
-    const storedOverlay = localStorage.getItem('relate_blueprint_couples');
+    const storedOverlay = localStorage.getItem('relate_attachment_couples');
     if (storedOverlay) {
-      setBlueprintOverlay(JSON.parse(storedOverlay));
-      setBlueprintStatus('overlay');
+      setAttachmentOverlay(JSON.parse(storedOverlay));
+      setAttachmentStatus('overlay');
       return;
     }
-    const bp1 = localStorage.getItem('relate_blueprint_results');
-    const bp2 = localStorage.getItem('relate_partner_blueprint_results');
+    const bp1 = localStorage.getItem('relate_attachment_results');
+    const bp2 = localStorage.getItem('relate_partner_attachment_results');
     if (bp1 && bp2) {
-      setBlueprintStatus('both');
+      setAttachmentStatus('both');
     } else if (bp1 || bp2) {
-      setBlueprintStatus('one');
+      setAttachmentStatus('one');
     } else {
-      setBlueprintStatus('none');
+      setAttachmentStatus('none');
     }
   }, []);
 
-  const generateBlueprintOverlay = useCallback(async () => {
+  const generateAttachmentOverlay = useCallback(async () => {
     setOverlayGenerating(true);
     try {
-      const bp1 = JSON.parse(localStorage.getItem('relate_blueprint_results') || '{}');
-      const bp2 = JSON.parse(localStorage.getItem('relate_partner_blueprint_results') || '{}');
+      const bp1 = JSON.parse(localStorage.getItem('relate_attachment_results') || '{}');
+      const bp2 = JSON.parse(localStorage.getItem('relate_partner_attachment_results') || '{}');
       const a1 = JSON.parse(localStorage.getItem('relate_results') || '{}');
       const a2 = JSON.parse(localStorage.getItem('relate_partner_results') || '{}');
-      const res = await fetch('/api/blueprint/couples-overlay', {
+      const res = await fetch('/api/attachment-style/couples-overlay', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          partner1BlueprintResults: bp1,
-          partner2BlueprintResults: bp2,
+          partner1AttachmentResults: bp1,
+          partner2AttachmentResults: bp2,
           partner1AssessmentResults: a1,
           partner2AssessmentResults: a2,
         }),
       });
       const data = await res.json();
       if (data.success) {
-        localStorage.setItem('relate_blueprint_couples', JSON.stringify(data.overlay));
-        setBlueprintOverlay(data.overlay);
-        setBlueprintStatus('overlay');
+        localStorage.setItem('relate_attachment_couples', JSON.stringify(data.overlay));
+        setAttachmentOverlay(data.overlay);
+        setAttachmentStatus('overlay');
       }
     } catch {
       // silently fail
@@ -287,17 +287,17 @@ export default function ComparePage() {
 
         {/* Attachment Style Couples Overlay */}
         <div id="attachment-overlay" className="mt-12 pt-8 border-t border-border">
-          {blueprintStatus === 'overlay' && blueprintOverlay && (
-            <BlueprintOverlaySection overlay={blueprintOverlay} />
+          {attachmentStatus === 'overlay' && attachmentOverlay && (
+            <AttachmentOverlaySection overlay={attachmentOverlay} />
           )}
-          {blueprintStatus === 'both' && (
+          {attachmentStatus === 'both' && (
             <div className="card text-center">
               <h3 className="font-serif text-lg font-semibold mb-2">Attachment Style Couples Overlay</h3>
               <p className="text-sm text-secondary mb-4">
                 Both partners have completed the Attachment Style assessment. Generate the couples overlay for a deeper understanding of your relational dynamic.
               </p>
               <button
-                onClick={generateBlueprintOverlay}
+                onClick={generateAttachmentOverlay}
                 disabled={overlayGenerating}
                 className="btn-primary text-sm"
               >
@@ -305,19 +305,19 @@ export default function ComparePage() {
               </button>
             </div>
           )}
-          {blueprintStatus === 'one' && (
+          {attachmentStatus === 'one' && (
             <div className="card text-center">
               <p className="text-sm text-secondary">
                 Both partners need to complete the Attachment Style assessment for the couples overlay.
               </p>
             </div>
           )}
-          {blueprintStatus === 'none' && (
+          {attachmentStatus === 'none' && (
             <div className="card bg-stone-50 text-center">
               <p className="text-sm text-secondary mb-3">
                 Add the Attachment Style Couples add-on for a deeper understanding of your dynamic together
               </p>
-              <Link href="/blueprint" className="text-sm text-accent hover:underline">
+              <Link href="/attachment-style" className="text-sm text-accent hover:underline">
                 Learn about Attachment Style →
               </Link>
             </div>
@@ -329,7 +329,7 @@ export default function ComparePage() {
   );
 }
 
-function BlueprintOverlaySection({ overlay }: { overlay: any }) {
+function AttachmentOverlaySection({ overlay }: { overlay: any }) {
   const sections = overlay?.sections || {};
   const sectionConfig = [
     { key: 'systemYouHaveBuilt', title: 'The System You Have Built' },
