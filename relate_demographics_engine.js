@@ -467,12 +467,22 @@ const RELATE_SCORE_WEIGHTS = {
   }
 };
 
-// Sigmoid configuration for match probability
-const SIGMOID_CONFIG = {
-  floor: 0.005,      // 0.5% minimum
-  ceiling: 0.30,     // 30% maximum
-  midpoint: 65,      // Score where probability = ~15%
-  steepness: 0.08    // How sharply probability changes
+// Reciprocal match probability by gender
+// Based on Bruch & Newman (2018): men are far less selective than women,
+// producing higher match rates for women at every score level.
+const RECIPROCAL_MATCH_CONFIG = {
+  man: {
+    floor: 0.005,
+    ceiling: 0.35,
+    midpoint: 65,
+    steepness: 0.10
+  },
+  woman: {
+    floor: 0.08,
+    ceiling: 0.70,
+    midpoint: 50,
+    steepness: 0.07
+  }
 };
 
 // Income brackets and their CBSA keys
@@ -1357,10 +1367,12 @@ function getDrugRate(targetGender, ethnicity, education) {
 }
 
 /**
- * Calculate match probability from Relate Score using sigmoid
+ * Calculate reciprocal match probability from desirability score.
+ * Gender-specific: women get higher rates because men are less selective.
  */
-function getMatchProbability(relateScore) {
-  const { floor, ceiling, midpoint, steepness } = SIGMOID_CONFIG;
+function getMatchProbability(relateScore, userGender) {
+  const genderKey = (userGender === 'Woman' || userGender === 'W') ? 'woman' : 'man';
+  const { floor, ceiling, midpoint, steepness } = RECIPROCAL_MATCH_CONFIG[genderKey];
   const sigmoid = 1 / (1 + Math.exp(-steepness * (relateScore - midpoint)));
   return floor + (ceiling - floor) * sigmoid;
 }
@@ -1765,7 +1777,7 @@ async function processDemographics(userInputs) {
   const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
 
   // Calculate match probability
-  const matchProbability = getMatchProbability(relateScore.score);
+  const matchProbability = getMatchProbability(relateScore.score, userProfile.gender);
 
   // Calculate final match count
   const matchCount = Math.round(matchPool.idealPool * matchProbability);
@@ -1784,7 +1796,7 @@ async function processDemographics(userInputs) {
     if (stateAgg) {
       const statePool = calculateMatchPool(userProfile, preferences, stateAgg);
       const stateScore = calculateDesirabilityScore(userProfile, stateAgg);
-      const stateProb = getMatchProbability(stateScore.score);
+      const stateProb = getMatchProbability(stateScore.score, userProfile.gender);
       stateComparison = {
         label: stateAbbr,
         population: stateAgg.cbsa_population,
@@ -1800,7 +1812,7 @@ async function processDemographics(userInputs) {
     if (nationalAgg) {
       const natPool = calculateMatchPool(userProfile, preferences, nationalAgg);
       const natScore = calculateDesirabilityScore(userProfile, nationalAgg);
-      const natProb = getMatchProbability(natScore.score);
+      const natProb = getMatchProbability(natScore.score, userProfile.gender);
       nationalComparison = {
         label: 'National',
         population: nationalAgg.cbsa_population,
@@ -1886,7 +1898,7 @@ async function compareMetros(userProfile, preferences, cbsaCodes) {
     
     const relateScore = calculateDesirabilityScore(userProfile, cbsa);
     const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
-    const matchProbability = getMatchProbability(relateScore.score);
+    const matchProbability = getMatchProbability(relateScore.score, userProfile.gender);
     const matchCount = Math.round(matchPool.idealPool * matchProbability);
     
     results.push({
@@ -2015,7 +2027,7 @@ async function findTopMetros(userProfile, preferences, homeScore) {
     const relateScore = calculateDesirabilityScore(userProfile, cbsa);
 
     const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
-    const matchProbability = getMatchProbability(relateScore.score);
+    const matchProbability = getMatchProbability(relateScore.score, userProfile.gender);
     const matchCount = Math.round(matchPool.idealPool * matchProbability);
 
     // Income + education composite for tie-breaking
@@ -2085,7 +2097,7 @@ async function findWorstMetros(userProfile, preferences) {
   for (const cbsa of largeCBSAs) {
     const relateScore = calculateDesirabilityScore(userProfile, cbsa);
     const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
-    const matchProbability = getMatchProbability(relateScore.score);
+    const matchProbability = getMatchProbability(relateScore.score, userProfile.gender);
     const matchCount = Math.round(matchPool.idealPool * matchProbability);
 
     const incomeLocal = relateScore.components.income.local;
@@ -2140,7 +2152,7 @@ module.exports = {
   EDUCATION_FELON_MULTIPLIERS,
   EDUCATION_DRUG_MULTIPLIERS,
   RELATE_SCORE_WEIGHTS,
-  SIGMOID_CONFIG,
+  RECIPROCAL_MATCH_CONFIG,
   INCOME_BRACKETS,
   AGE_BRACKETS,
   HEIGHT_BRACKETS,
