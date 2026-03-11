@@ -86,7 +86,7 @@ export default function LoginPage() {
 
           <div className="mt-8 pt-6 border-t border-border text-center">
             <p className="text-xs text-secondary">
-              386 questions. 32 personas. Your relationship intelligence awaits.
+              336 questions. 32 personas. Your relationship intelligence awaits.
             </p>
           </div>
         </div>

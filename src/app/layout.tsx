@@ -8,7 +8,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "RELATE | Relationship Intelligence",
-  description: "A 386-question relationship assessment. Discover your persona, compatibility rankings, and personalized coaching.",
+  description: "A 336-question relationship assessment. Discover your persona, compatibility rankings, and personalized coaching.",
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },

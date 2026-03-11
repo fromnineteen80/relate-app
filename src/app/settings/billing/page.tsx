@@ -162,21 +162,13 @@ export default function BillingPage() {
       <main className="max-w-3xl mx-auto px-6 py-8 w-full">
         <h2 className="font-serif text-2xl font-semibold mb-6">Billing</h2>
 
-        {/* Test mode notice */}
-        {isTestMode && (
-          <div className="card mb-4 border-warning bg-warning/5">
-            <p className="text-sm font-medium">Test Mode Active</p>
-            <p className="text-xs text-secondary mt-1">
-              You have full Pro access via test mode. Stripe billing is bypassed. This does not affect real subscriptions.
-            </p>
-          </div>
-        )}
-
         {/* ── Current Plan ── */}
         <div className="card mb-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-serif font-semibold">Current Plan</h3>
-            {subscription && (
+            {isTestMode ? (
+              <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-100 text-emerald-700">Test</span>
+            ) : subscription ? (
               <span className={`text-xs font-mono px-2 py-0.5 rounded ${
                 subscription.status === 'active' ? 'bg-success/10 text-success' :
                 subscription.status === 'past_due' ? 'bg-warning/10 text-warning' :
@@ -185,7 +177,9 @@ export default function BillingPage() {
               }`}>
                 {subscription.cancelAtPeriodEnd ? 'Canceling' : subscription.status}
               </span>
-            )}
+            ) : paid ? (
+              <span className="text-xs font-mono px-2 py-0.5 rounded bg-success/10 text-success">active</span>
+            ) : null}
           </div>
 
           <div className="flex items-center gap-4 mb-3">
@@ -309,22 +303,106 @@ export default function BillingPage() {
           )}
         </div>
 
-        {/* ── Partner Connection ── */}
-        {tier === 'couples' && partner && (
+        {/* ── Add-Ons ── */}
+        <div className="card mb-4">
+          <h3 className="font-serif font-semibold mb-3">Add-Ons</h3>
+          <div className="space-y-3">
+            {/* Couples */}
+            {tier === 'couples' ? (
+              <div className="flex items-center gap-3 p-3 rounded-md border bg-stone-50 border-stone-300">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm flex-shrink-0 bg-accent/10 text-accent">
+                  <Icon name="check" size={18} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Couples: Active</p>
+                  <p className="text-xs text-secondary">Full compatibility report, shared advisor, conversation cards.</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-serif text-lg font-semibold">{PRICING.couples.priceDisplay}</p>
+                  <p className="text-[10px] text-secondary">per month</p>
+                </div>
+              </div>
+            ) : (
+              <div className="p-3 border rounded-md border-border">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-sm font-medium">Couples</p>
+                  <p className="font-mono text-sm">{PRICING.couples.priceDisplay}<span className="text-[10px] text-secondary">/mo</span></p>
+                </div>
+                <p className="text-xs text-secondary mb-3">Add your partner for a couples compatibility report, shared advisor, and conversation cards.</p>
+                <a href={`/api/checkout?product=couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
+                  Add Couples
+                </a>
+              </div>
+            )}
+
+            {/* Attachment Style */}
+            {blueprintPurchased ? (
+              <div className="flex items-center gap-3 p-3 rounded-md border bg-stone-50 border-stone-300">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm flex-shrink-0 bg-accent/10 text-accent">
+                  <Icon name="check" size={18} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{blueprintProduct === 'blueprint_couples' ? 'Attachment Style Couples' : 'Attachment Style'}: Active</p>
+                  <p className="text-xs text-secondary">Deep attachment style session, personalized report, and growth plan.</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-serif text-lg font-semibold">{blueprintProduct === 'blueprint_couples' ? BLUEPRINT_PRICING.blueprint_couples.priceDisplay : BLUEPRINT_PRICING.blueprint.priceDisplay}</p>
+                  <p className="text-[10px] text-secondary">one-time</p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="p-3 border rounded-md border-accent">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-sm font-medium">Attachment Style</p>
+                    <p className="font-mono text-sm">{BLUEPRINT_PRICING.blueprint.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
+                  </div>
+                  <p className="text-xs text-secondary mb-3">A 30-minute deep session revealing the psychology underneath your persona. 3,000-word personalized report and growth plan.</p>
+                  <a href={`/api/blueprint/checkout?product=blueprint&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-primary">
+                    Add Attachment Style
+                  </a>
+                </div>
+                {partner && (
+                  <div className="p-3 border rounded-md border-border">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-sm font-medium">Attachment Style Couples</p>
+                      <p className="font-mono text-sm">{BLUEPRINT_PRICING.blueprint_couples.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
+                    </div>
+                    <p className="text-xs text-secondary mb-3">Both partners get the full session plus a couples overlay report analyzing your dynamic together.</p>
+                    <a href={`/api/blueprint/checkout?product=blueprint_couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
+                      Add Attachment Style Couples
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ── Partner ── */}
+        {partner && (
           <div className="card mb-4">
-            <h3 className="font-serif font-semibold mb-3">Couples Partner</h3>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-accent/10 text-accent flex items-center justify-center text-sm font-medium flex-shrink-0">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-serif font-semibold">Partner</h3>
+              <Link href="/invite" className="text-xs text-accent hover:underline">Manage</Link>
+            </div>
+            <div className="flex items-center gap-4 p-3 bg-success/5 border border-success/20 rounded-md">
+              <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center text-lg font-medium flex-shrink-0">
                 {partner.firstName ? partner.firstName.charAt(0).toUpperCase() : partner.email.charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">
-                  {partner.firstName ? `${partner.firstName}${partner.lastName ? ` ${partner.lastName}` : ''}` : partner.email}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium truncate">
+                    {partner.firstName ? `${partner.firstName}${partner.lastName ? ` ${partner.lastName}` : ''}` : partner.email}
+                  </p>
+                  <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
+                </div>
                 {partner.firstName && <p className="text-xs text-secondary truncate">{partner.email}</p>}
               </div>
-              <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
             </div>
+            {tier === 'couples' && (
+              <Link href="/results/compare" className="btn-secondary text-xs w-full text-center block mt-3">View Couples Results</Link>
+            )}
           </div>
         )}
 
@@ -442,52 +520,7 @@ export default function BillingPage() {
           </div>
         )}
 
-        {/* ── Attachment Style Add-On ── */}
-        {!isTestMode && (
-          <div className="card mb-4">
-            <h3 className="font-serif font-semibold mb-3">Add-Ons</h3>
-            {blueprintPurchased ? (
-              <div className="flex items-center gap-3 p-3 rounded-md border bg-stone-50 border-stone-300">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm flex-shrink-0 bg-accent/10 text-accent">
-                  <Icon name="check" size={18} />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">{blueprintProduct === 'blueprint_couples' ? 'Attachment Style Couples' : 'Attachment Style'}: Active</p>
-                  <p className="text-xs text-secondary">Deep attachment style assessment, personalized report, and growth plan.</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-serif text-lg font-semibold">{blueprintProduct === 'blueprint_couples' ? BLUEPRINT_PRICING.blueprint_couples.priceDisplay : BLUEPRINT_PRICING.blueprint.priceDisplay}</p>
-                  <p className="text-[10px] text-secondary">one-time</p>
-                </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="p-3 border rounded-md border-accent">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-medium">Attachment Style</p>
-                    <p className="font-mono text-sm">{BLUEPRINT_PRICING.blueprint.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
-                  </div>
-                  <p className="text-xs text-secondary mb-3">A 30-minute deep assessment revealing the psychology underneath your persona. 3,000-word personalized report and growth plan.</p>
-                  <a href={`/api/blueprint/checkout?product=blueprint&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-primary">
-                    Add Attachment Style
-                  </a>
-                </div>
-                {partner && (
-                  <div className="p-3 border rounded-md border-border">
-                    <div className="flex items-center justify-between mb-1">
-                      <p className="text-sm font-medium">Attachment Style Couples</p>
-                      <p className="font-mono text-sm">{BLUEPRINT_PRICING.blueprint_couples.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
-                    </div>
-                    <p className="text-xs text-secondary mb-3">Both partners get the full assessment plus a couples overlay report analyzing your dynamic together.</p>
-                    <a href={`/api/blueprint/checkout?product=blueprint_couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
-                      Add Attachment Style Couples
-                    </a>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
+        {/* Add-Ons section is now above, combined with Couples */}
 
         {/* ── Upgrade CTA for free users ── */}
         {!paid && !isTestMode && (

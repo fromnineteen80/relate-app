@@ -40,7 +40,7 @@ export default function AdvisorHeader() {
             onClick={close}
             aria-label="Close sidebar"
             title="Close sidebar"
-            className="group relative text-secondary hover:text-foreground transition-colors p-1"
+            className="group relative w-8 h-8 flex items-center justify-center text-secondary hover:text-foreground transition-colors"
           >
             <Icon name="thumbnail_bar" size={19} fill={false} weight={300} />
             {/* Tooltip */}

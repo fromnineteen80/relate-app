@@ -25,7 +25,7 @@ export default function AdvisorToggle() {
           onClick={open}
           aria-label="Open sidebar"
           title="Open sidebar"
-          className="text-secondary"
+          className="w-8 h-8 flex items-center justify-center text-secondary hover:text-foreground transition-colors"
         >
           <Icon name="thumbnail_bar" size={19} fill={false} weight={300} />
         </button>
