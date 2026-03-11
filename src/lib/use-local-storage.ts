@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
+import { useCallback, useRef, useSyncExternalStore } from 'react';
 
 /**
  * Lightweight localStorage cache that deduplicates reads within the same render cycle.
@@ -37,48 +37,38 @@ export function setLocalStorageValue(key: string, value: string | null) {
 
 /**
  * Read multiple localStorage keys at once, returned as a Record.
- * Avoids N individual getItem calls scattered through component body.
+ * Uses useSyncExternalStore with a ref-cached snapshot to avoid
+ * creating new object references when values haven't changed.
  */
 export function useLocalStorageBatch<K extends string>(keys: readonly K[]): Record<K, string | null> {
+  const cacheRef = useRef<Record<K, string | null> | null>(null);
+
   const getSnapshot = useCallback(() => {
-    const result = {} as Record<K, string | null>;
-    for (const key of keys) {
-      try { result[key] = localStorage.getItem(key); } catch { result[key] = null; }
+    const prev = cacheRef.current;
+    let changed = prev === null;
+    if (!changed) {
+      for (const key of keys) {
+        let val: string | null = null;
+        try { val = localStorage.getItem(key); } catch { /* */ }
+        if (val !== prev![key]) { changed = true; break; }
+      }
     }
-    return result;
+    if (!changed) return prev!;
+    const next = {} as Record<K, string | null>;
+    for (const key of keys) {
+      try { next[key] = localStorage.getItem(key); } catch { next[key] = null; }
+    }
+    cacheRef.current = next;
+    return next;
   }, [keys]);
 
   const getServerSnapshot = useCallback(() => {
+    if (cacheRef.current) return cacheRef.current;
     const result = {} as Record<K, string | null>;
     for (const key of keys) result[key] = null;
+    cacheRef.current = result;
     return result;
   }, [keys]);
 
-  // We need stable snapshots for useSyncExternalStore — serialize to compare
-  const [cache, setCache] = useState<Record<K, string | null>>(() => {
-    if (typeof window === 'undefined') return getServerSnapshot();
-    return getSnapshot();
-  });
-
-  useEffect(() => {
-    const handler = () => {
-      const next = getSnapshot();
-      setCache(prev => {
-        for (const key of keys) {
-          if (prev[key] !== next[key]) return next;
-        }
-        return prev;
-      });
-    };
-    window.addEventListener(STORAGE_EVENT, handler);
-    window.addEventListener('storage', handler);
-    // Sync on mount in case values changed between SSR and hydration
-    handler();
-    return () => {
-      window.removeEventListener(STORAGE_EVENT, handler);
-      window.removeEventListener('storage', handler);
-    };
-  }, [getSnapshot, keys]);
-
-  return cache;
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
