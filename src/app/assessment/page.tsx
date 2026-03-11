@@ -167,7 +167,7 @@ export default function AssessmentHub() {
               {blueprintHasResults ? (
                 <Link href="/results/attachment" className="text-xs font-mono text-success flex-shrink-0">Complete</Link>
               ) : (
-                <Link href="/blueprint" className="btn-primary text-sm flex-shrink-0">Start</Link>
+                <Link href="/attachment-style" className="btn-primary text-sm flex-shrink-0">Start</Link>
               )}
             </div>
           )}

@@ -9,11 +9,11 @@ export async function GET(request: NextRequest) {
   const origin = process.env.NEXT_PUBLIC_URL || new URL(request.url).origin;
 
   if (!BLUEPRINT_PRICING[product]) {
-    return NextResponse.redirect(new URL('/blueprint?error=invalid_product', origin));
+    return NextResponse.redirect(new URL('/attachment-style?error=invalid_product', origin));
   }
 
   if (useMockPayments) {
-    return NextResponse.redirect(new URL(`/blueprint?success=true&product=${product}`, origin));
+    return NextResponse.redirect(new URL(`/attachment-style?success=true&product=${product}`, origin));
   }
 
   try {
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       ? 'RELATE Blueprint Couples'
       : 'RELATE Blueprint';
 
-    const successUrl = `${origin}/blueprint?success=true&product=${product}`;
+    const successUrl = `${origin}/attachment-style?success=true&product=${product}`;
     const cancelUrl = `${origin}/results?canceled=true`;
 
     // Find or create a Stripe customer for this email
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
     const session = await stripe.checkout.sessions.create(sessionConfig);
 
     if (!session.url) {
-      return NextResponse.redirect(new URL('/blueprint?error=checkout_no_url', origin));
+      return NextResponse.redirect(new URL('/attachment-style?error=checkout_no_url', origin));
     }
 
     // Use 303 See Other for the redirect to Stripe
@@ -72,6 +72,6 @@ export async function GET(request: NextRequest) {
   } catch (error: unknown) {
     console.error('Blueprint checkout error:', error);
     // Never return raw JSON — redirect back with error flag
-    return NextResponse.redirect(new URL('/blueprint?error=checkout_failed', origin));
+    return NextResponse.redirect(new URL('/attachment-style?error=checkout_failed', origin));
   }
 }

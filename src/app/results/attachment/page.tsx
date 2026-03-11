@@ -148,7 +148,7 @@ export default function BlueprintResultsPage() {
 
     try {
       const persona = baseResults.persona;
-      const res = await fetch('/api/blueprint/report', {
+      const res = await fetch('/api/attachment-style/report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -195,7 +195,7 @@ export default function BlueprintResultsPage() {
             <p className="text-sm text-secondary max-w-lg mx-auto mb-6">
               Complete the Attachment Style assessment to see your results here.
             </p>
-            <Link href="/blueprint" className="btn-primary text-sm">
+            <Link href="/attachment-style" className="btn-primary text-sm">
               Go to Attachment Style
             </Link>
           </div>

@@ -115,7 +115,7 @@ export default function ComparePage() {
       const bp2 = JSON.parse(localStorage.getItem('relate_partner_blueprint_results') || '{}');
       const a1 = JSON.parse(localStorage.getItem('relate_results') || '{}');
       const a2 = JSON.parse(localStorage.getItem('relate_partner_results') || '{}');
-      const res = await fetch('/api/blueprint/couples-overlay', {
+      const res = await fetch('/api/attachment-style/couples-overlay', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -317,7 +317,7 @@ export default function ComparePage() {
               <p className="text-sm text-secondary mb-3">
                 Add the Attachment Style Couples add-on for a deeper understanding of your dynamic together
               </p>
-              <Link href="/blueprint" className="text-sm text-accent hover:underline">
+              <Link href="/attachment-style" className="text-sm text-accent hover:underline">
                 Learn about Attachment Style →
               </Link>
             </div>

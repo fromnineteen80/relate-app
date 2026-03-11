@@ -137,7 +137,7 @@ export default function BlueprintPage() {
 
     try {
       const gender = localStorage.getItem('relate_gender') || results.demographics?.gender || '';
-      const res = await fetch('/api/blueprint/initialize', {
+      const res = await fetch('/api/attachment-style/initialize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -196,7 +196,7 @@ export default function BlueprintPage() {
     const results = relateResultsRef.current;
     if (results && sessionConfig) {
       try {
-        await fetch('/api/blueprint/score', {
+        await fetch('/api/attachment-style/score', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -282,7 +282,7 @@ export default function BlueprintPage() {
     try {
       // Step 1: Score
       setProcessingStep('Scoring your responses...');
-      const scoreRes = await fetch('/api/blueprint/score', {
+      const scoreRes = await fetch('/api/attachment-style/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -301,7 +301,7 @@ export default function BlueprintPage() {
 
       // Step 2: Report
       setProcessingStep('Generating your report...');
-      const reportRes = await fetch('/api/blueprint/report', {
+      const reportRes = await fetch('/api/attachment-style/report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -317,7 +317,7 @@ export default function BlueprintPage() {
 
       // Step 3: Growth plan
       setProcessingStep('Building your growth plan...');
-      const growthRes = await fetch('/api/blueprint/growth', {
+      const growthRes = await fetch('/api/attachment-style/growth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -387,7 +387,7 @@ export default function BlueprintPage() {
                 Includes full session, personalized report, and growth plan.
               </p>
               <Link
-                href="/api/blueprint/checkout"
+                href="/api/attachment-style/checkout"
                 className="btn-primary inline-block px-8 py-3"
               >
                 Purchase Attachment Style

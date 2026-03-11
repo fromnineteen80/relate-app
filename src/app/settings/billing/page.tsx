@@ -362,7 +362,7 @@ export default function BillingPage() {
                     <p className="font-mono text-sm">{BLUEPRINT_PRICING.blueprint.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
                   </div>
                   <p className="text-xs text-secondary mb-3">A 30-minute deep session revealing the psychology underneath your persona. 3,000-word personalized report and growth plan.</p>
-                  <a href={`/api/blueprint/checkout?product=blueprint&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-primary">
+                  <a href={`/api/attachment-style/checkout?product=blueprint&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-primary">
                     Add Attachment Style
                   </a>
                 </div>
@@ -373,7 +373,7 @@ export default function BillingPage() {
                       <p className="font-mono text-sm">{BLUEPRINT_PRICING.blueprint_couples.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
                     </div>
                     <p className="text-xs text-secondary mb-3">Both partners get the full session plus a couples overlay report analyzing your dynamic together.</p>
-                    <a href={`/api/blueprint/checkout?product=blueprint_couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
+                    <a href={`/api/attachment-style/checkout?product=blueprint_couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
                       Add Attachment Style Couples
                     </a>
                   </div>

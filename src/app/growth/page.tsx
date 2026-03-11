@@ -450,7 +450,7 @@ export default function GrowthPage() {
                   <Icon name="psychology" size={32} className="text-accent mx-auto mb-3" />
                   <p className="text-sm font-medium mb-2">Your Attachment Style growth plan hasn&apos;t been generated yet</p>
                   <p className="text-xs text-secondary mb-4">Complete the Attachment Style assessment to unlock personalized growth exercises.</p>
-                  <Link href="/blueprint" className="btn-primary text-xs">Complete Attachment Style</Link>
+                  <Link href="/attachment-style" className="btn-primary text-xs">Complete Attachment Style</Link>
                 </div>
               </div>
             );
@@ -462,7 +462,7 @@ export default function GrowthPage() {
                 <Icon name="lock" size={28} className="text-secondary mx-auto mb-3" />
                 <p className="text-sm font-medium mb-1">Unlock deeper growth insights with the Attachment Style assessment</p>
                 <p className="text-xs text-secondary mb-4">Attachment-based growth exercises tailored to your unique patterns.</p>
-                <Link href="/blueprint" className="text-xs text-accent hover:underline font-medium">
+                <Link href="/attachment-style" className="text-xs text-accent hover:underline font-medium">
                   Learn More <Icon name="arrow_forward" size={12} />
                 </Link>
               </div>

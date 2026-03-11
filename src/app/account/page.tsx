@@ -949,7 +949,7 @@ function AccountPage() {
                 {blueprintHasResults ? (
                   <span className="text-xs text-success font-mono">Complete</span>
                 ) : (
-                  <Link href="/blueprint" className="text-xs text-accent hover:underline">Start</Link>
+                  <Link href="/attachment-style" className="text-xs text-accent hover:underline">Start</Link>
                 )}
               </div>
             )}

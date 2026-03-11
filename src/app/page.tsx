@@ -242,7 +242,7 @@ export default function LandingPage() {
           </div>
 
           <div className="text-center mt-10">
-            <Link href="/blueprint" className="btn-primary text-base px-8 py-3">
+            <Link href="/attachment-style" className="btn-primary text-base px-8 py-3">
               Explore Attachment Style
             </Link>
             <p className="text-xs text-secondary mt-3">$49 one-time add-on</p>

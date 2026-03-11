@@ -316,7 +316,7 @@ function ProfileAvatar({
             { href: '/assessment', label: 'Assessment' },
             { href: '/results', label: 'Your Results' },
             ...(hasPartner ? [{ href: hasCouplesAccess ? '/results/compare' : '/invite', label: 'Couples Results' }] : []),
-            ...(hasBlueprint ? [{ href: blueprintHasResults ? '/results/attachment' : '/blueprint', label: 'Attachment Style' }] : []),
+            ...(hasBlueprint ? [{ href: blueprintHasResults ? '/results/attachment' : '/attachment-style', label: 'Attachment Style' }] : []),
             ...(hasAstrology ? [{ href: '/results/astrology', label: 'Sun, Moon & Rise' }] : []),
           ].map(item => (
             <Link

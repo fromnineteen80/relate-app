@@ -447,7 +447,7 @@ function BlueprintStatusCard() {
   }
 
   return (
-    <Link href="/blueprint" className="card flex items-center gap-3 bg-stone-50 hover:border-accent transition-colors">
+    <Link href="/attachment-style" className="card flex items-center gap-3 bg-stone-50 hover:border-accent transition-colors">
       <Icon name="diamond" size={20} className="text-accent" />
       <div className="flex-1">
         <p className="text-sm font-medium">Unlock deeper couple insights</p>

@@ -1077,7 +1077,7 @@ function ResultsDashboard() {
                     View Full Report <Icon name="arrow_forward" size={12} />
                   </Link>
                 ) : (
-                  <Link href="/blueprint" className="text-xs text-secondary hover:text-accent transition-colors whitespace-nowrap">
+                  <Link href="/attachment-style" className="text-xs text-secondary hover:text-accent transition-colors whitespace-nowrap">
                     Go deeper <Icon name="arrow_forward" size={12} />
                   </Link>
                 );
