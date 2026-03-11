@@ -1832,8 +1832,8 @@ function TopMetrosScatterPlot({ metros, worstMetros, demographics, marketData, t
   const yStep = maxMatch / 5;
   for (let i = 0; i <= 5; i++) yTicks.push(Math.round(yStep * i));
 
-  const compOrder = ['income', 'education', 'age', 'ethnicity', 'children'];
-  const compLabels: Record<string, string> = { income: 'Income', education: 'Education', age: 'Age', ethnicity: 'Ethnicity', children: 'Children' };
+  const compOrder = ['income', 'age', 'ethnicity', 'education', 'height', 'body', 'politics', 'smoking', 'hasKids', 'wantKids', 'costOfLiving'];
+  const compLabels: Record<string, string> = { income: 'Income', age: 'Age', ethnicity: 'Ethnicity', education: 'Education', height: 'Height', body: 'Body & Fitness', politics: 'Politics', smoking: 'Smoking', hasKids: 'Children', wantKids: 'Wants Kids', costOfLiving: 'Cost of Living' };
 
   function scoreTier(s: number) {
     if (s >= 80) return { label: 'Exceptional', color: '#16a34a' };
@@ -2177,8 +2177,8 @@ function DatingMarketViz({ data, loading, onRelaxPreference, demographics }: { d
 
   const tier = scoreTier(score);
   const components = data.relateScore?.components || {};
-  const compOrder = ['income', 'education', 'age', 'ethnicity', 'children'];
-  const compLabels: Record<string, string> = { income: 'Income', education: 'Education', age: 'Age', ethnicity: 'Ethnicity', children: 'Children' };
+  const compOrder = ['income', 'age', 'ethnicity', 'education', 'height', 'body', 'politics', 'smoking', 'hasKids', 'wantKids', 'costOfLiving'];
+  const compLabels: Record<string, string> = { income: 'Income', age: 'Age', ethnicity: 'Ethnicity', education: 'Education', height: 'Height', body: 'Body & Fitness', politics: 'Politics', smoking: 'Smoking', hasKids: 'Children', wantKids: 'Wants Kids', costOfLiving: 'Cost of Living' };
 
   const metroShort = metro.includes(',') ? metro.split(',')[0] : metro;
 
