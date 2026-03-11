@@ -6,7 +6,7 @@ import { useAuth } from '@/lib/auth-context';
 import { fetchBlueprintAccess } from '@/lib/payments';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SubNav } from '@/components/SubNav';
-import { saveBlueprintData } from '@/lib/supabase/progress';
+import { saveAttachmentData } from '@/lib/supabase/progress';
 import Link from 'next/link';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -334,7 +334,7 @@ export default function BlueprintPage() {
 
       // Persist to Supabase
       if (user) {
-        saveBlueprintData(user.id, blueprintResults, reportData.report, growthData.growthPlan);
+        saveAttachmentData(user.id, blueprintResults, reportData.report, growthData.growthPlan);
       }
 
       // Clear checkpoint
