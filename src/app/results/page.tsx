@@ -418,25 +418,7 @@ function ResultsDashboard() {
     finally { setDownloadingCoach(false); }
   }, [marketData]);
 
-  if (!loaded) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
-
-  // Derived data, memoized to avoid recalculation on every render
-  const hasPaid = pricingTier !== 'free';
-  const canDownload = hasPaid;
-  const persona = report?.persona;
-  const dimensions = report?.dimensions || {};
-  const hasDimensions = Object.keys(dimensions).length > 0;
-  const m3 = report?.m3;
-  const m4 = report?.m4;
-  const m4Summary = m4?.summary;
-  const matches = report?.matches || [];
-  const freeMatchLimit = 3;
-  const visibleMatches = hasPaid ? matches : matches.slice(0, freeMatchLimit);
   const ic = report?.individualCompatibility;
-  const hasMarket = !!(marketData || marketLoading);
-  const tensionStacks = report?.tensionStacks;
-  const modifiers = report?.modifiers;
-  const gottman = m4?.gottmanScreener || m4?.gottmanScores;
 
   const sortedAttachmentMatches = useMemo(() => {
     if (!ic?.attachmentTiers) return [];
@@ -470,6 +452,25 @@ function ResultsDashboard() {
     });
     return all.sort((a, b) => b.score - a.score);
   }, [ic?.driverTiers]);
+
+  if (!loaded) return <div className="min-h-screen flex items-center justify-center text-secondary">Loading...</div>;
+
+  // Derived data
+  const hasPaid = pricingTier !== 'free';
+  const canDownload = hasPaid;
+  const persona = report?.persona;
+  const dimensions = report?.dimensions || {};
+  const hasDimensions = Object.keys(dimensions).length > 0;
+  const m3 = report?.m3;
+  const m4 = report?.m4;
+  const m4Summary = m4?.summary;
+  const matches = report?.matches || [];
+  const freeMatchLimit = 3;
+  const visibleMatches = hasPaid ? matches : matches.slice(0, freeMatchLimit);
+  const hasMarket = !!(marketData || marketLoading);
+  const tensionStacks = report?.tensionStacks;
+  const modifiers = report?.modifiers;
+  const gottman = m4?.gottmanScreener || m4?.gottmanScores;
 
   let fullM3: any = null;
   let fullM4: any = null;
