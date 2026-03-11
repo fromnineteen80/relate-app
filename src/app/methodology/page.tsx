@@ -75,7 +75,7 @@ export default function MethodologyPage() {
       <section className="px-6 py-16 bg-stone-50 border-b border-border">
         <div className="max-w-3xl mx-auto">
           <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">The Assessment</p>
-          <h2 className="font-serif text-3xl font-semibold mb-3">Five Modules, 386 Questions</h2>
+          <h2 className="font-serif text-3xl font-semibold mb-3">Five Modules, 336 Questions</h2>
           <p className="text-secondary mb-10">
             The assessment takes approximately 80 minutes across five modules. Each module measures a distinct aspect of your relationship profile, and results build progressively as you complete each one.
           </p>
