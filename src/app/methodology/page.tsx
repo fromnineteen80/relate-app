@@ -464,7 +464,7 @@ export default function MethodologyPage() {
             <div>
               <h3 className="font-serif font-semibold mb-2">Limitations</h3>
               <p className="explainer leading-relaxed">
-                These are estimates, not counts of real individuals. The model assumes statistical independence between filters (for example, that income and fitness level are uncorrelated), which is a simplification. Some preferences like body type and fitness level rely on national survey distributions rather than local data. The funnel does not account for whether someone is actively dating, on a dating app, or open to meeting new people. It estimates the theoretical pool. Actual availability will be smaller. The model is designed to give you a realistic order-of-magnitude sense of your dating market, not a precise headcount.
+                These are estimates, not counts of real individuals. The model assumes statistical independence between filters (for example, that income and fitness level are uncorrelated), which is a simplification. The model is designed to give you a realistic order-of-magnitude sense of your dating market, not a precise headcount.
               </p>
             </div>
           </div>

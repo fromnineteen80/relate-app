@@ -887,7 +887,7 @@ function calculateMarriagePremium(income, incomePercentile, status, rpp) {
 /**
  * Calculate full Relate Score
  */
-function calculateRelateScore(userProfile, cbsa) {
+function calculateDesirabilityScore(userProfile, cbsa) {
   const gender = userProfile.gender;
   const weights = RELATE_SCORE_WEIGHTS[gender === 'Man' ? 'male' : 'female'];
   
@@ -942,6 +942,452 @@ function calculateRelateScore(userProfile, cbsa) {
     },
     marriagePremium,
     weights
+  };
+}
+
+// ============================================================================
+// DESIRABILITY SCORING (replaces legacy calculateRelateScore)
+// ============================================================================
+
+const desirabilityBlueprint = require('./desirability_scoring_blueprint.js');
+
+/**
+ * Calculate full desirability score using the 11-trait blueprint.
+ * Drop-in replacement for calculateRelateScore — same output shape.
+ */
+function calculateDesirabilityScore(userProfile, cbsa) {
+  const bp = desirabilityBlueprint;
+  const gender = userProfile.gender; // 'Man' or 'Woman'
+  const genderKey = gender === 'Man' ? 'man' : 'woman';
+  const weights = bp.DESIRABILITY_WEIGHTS[genderKey];
+  const rpp = cbsa.rpp || 100;
+
+  const clamp = (v, lo = 0, hi = 100) => Math.max(lo, Math.min(hi, v));
+
+  // Helper: find age raw score with interpolation
+  function ageRawScore(age) {
+    const curve = bp.AGE_RAW_CURVES[genderKey];
+    for (const b of curve) {
+      if (age >= b.min && age <= b.max) {
+        return bp.interpolateRawScore(age, b.min, b.max, b.scoreLow, b.scoreHigh);
+      }
+    }
+    return 30;
+  }
+
+  // Helper: age market score (percentile of being younger than competitors)
+  function ageMarketScore(age) {
+    let cumBelow = 0;
+    let ownBracketPct = 0;
+    for (const b of bp.AGE_MARKET_BRACKETS) {
+      if (age > b.max) {
+        cumBelow += cbsa[b.key] || 0;
+      } else if (age >= b.min && age <= b.max) {
+        ownBracketPct = cbsa[b.key] || 0;
+        cumBelow += ownBracketPct / 2;
+        break;
+      }
+    }
+    // For desirability, younger = better (especially women). Invert: % older than you = your advantage.
+    // Actually: percentile = how many are BELOW you (less desirable). For age desirability,
+    // being in the peak range matters more. Use cumulative from worst age bracket.
+    // Re-interpret: sum brackets from oldest to target = % of pool you're younger than
+    let cumulativeOlder = 0;
+    for (let i = bp.AGE_MARKET_BRACKETS.length - 1; i >= 0; i--) {
+      const b = bp.AGE_MARKET_BRACKETS[i];
+      if (age < b.min) {
+        cumulativeOlder += cbsa[b.key] || 0;
+      } else if (age >= b.min && age <= b.max) {
+        cumulativeOlder += (cbsa[b.key] || 0) / 2;
+        break;
+      }
+    }
+    return clamp(cumulativeOlder);
+  }
+
+  // Helper: ethnicity raw score (weighted average across evaluator groups)
+  function ethnicityRawScore(ethnicity) {
+    const matrix = genderKey === 'man' ? bp.ETHNICITY_PREFERENCE_MATRIX.womenEvaluating
+                                       : bp.ETHNICITY_PREFERENCE_MATRIX.menEvaluating;
+    let weightedSum = 0;
+    let totalWeight = 0;
+    for (const [evalEth, prefs] of Object.entries(matrix)) {
+      const cbsaKey = bp.ETHNICITY_CBSA_KEYS[evalEth];
+      const pct = (cbsa[cbsaKey] || 0) / 100;
+      if (pct > 0 && prefs[ethnicity] !== undefined) {
+        weightedSum += pct * prefs[ethnicity];
+        totalWeight += pct;
+      }
+    }
+    return totalWeight > 0 ? weightedSum / totalWeight : 50;
+  }
+
+  // Helper: ethnicity market score
+  function ethnicityMarketScore(ethnicity) {
+    const ownKey = bp.ETHNICITY_CBSA_KEYS[ethnicity];
+    const ownPct = (cbsa[ownKey] || 10);
+    // Own-race pool size + cross-group appeal bonus
+    const ownWeight = 0.6;
+    const crossWeight = 0.4;
+    const crossAppeal = ethnicityRawScore(ethnicity); // reuse raw as cross signal
+    return clamp(ownPct * ownWeight + crossAppeal * crossWeight);
+  }
+
+  // Helper: income raw score with RPP adjustment
+  function incomeRawScore(income) {
+    const adjusted = income * (100 / rpp);
+    const curve = bp.INCOME_RAW_CURVES[genderKey];
+    let prevMax = 0;
+    for (const b of curve) {
+      if (adjusted <= b.max) {
+        return bp.interpolateRawScore(adjusted, prevMax, b.max === Infinity ? prevMax + 100000 : b.max, b.scoreLow, b.scoreHigh);
+      }
+      prevMax = b.max;
+    }
+    return 99;
+  }
+
+  // Helper: income market score (cumulative percentile)
+  function incomeMarketScore(income) {
+    const adjusted = income * (100 / rpp);
+    let cumBelow = 0;
+    for (const b of INCOME_BRACKETS) {
+      if (adjusted <= b.max) {
+        cumBelow += (cbsa[b.key] || 0) / 2;
+        break;
+      }
+      cumBelow += cbsa[b.key] || 0;
+    }
+    let score = clamp(cumBelow);
+    // Safety floors
+    if (income >= 500000 && score < 95) score = 95;
+    else if (income >= 200000 && score < 85) score = 85;
+    else if (income >= 100000 && score < 60) score = 60;
+    // Women's income market weight reduction
+    if (genderKey === 'woman') score = score * bp.INCOME_MARKET_WEIGHT_WOMAN;
+    return score;
+  }
+
+  // Helper: education raw score
+  function educationRawScore(education) {
+    const scores = bp.EDUCATION_RAW_SCORES[genderKey];
+    const entry = scores[education];
+    if (!entry) return 50;
+    return (entry.scoreLow + entry.scoreHigh) / 2; // midpoint
+  }
+
+  // Helper: education market score (cumulative percentile)
+  function educationMarketScore(education) {
+    let cum = 0;
+    for (const b of bp.EDUCATION_BRACKETS) {
+      if (b.level === education) {
+        cum += (cbsa[b.key] || 0) / 2;
+        break;
+      }
+      cum += cbsa[b.key] || 0;
+    }
+    return clamp(cum);
+  }
+
+  // Helper: height raw + market (men only)
+  function heightScores(heightStr) {
+    if (genderKey === 'woman' || !heightStr) return { raw: 50, market: 50 };
+    const inches = heightToInches(heightStr);
+    if (!inches) return { raw: 50, market: 50 };
+
+    // Find bracket
+    let bracketKey = 'height_72plus';
+    let cbsaKey = 'height_72plus_cbsa';
+    for (const b of bp.HEIGHT_INCH_BRACKETS) {
+      if (inches <= b.maxInches) {
+        bracketKey = b.bracketKey;
+        cbsaKey = b.cbsaKey;
+        break;
+      }
+    }
+    const rawEntry = bp.HEIGHT_RAW_SCORES_MAN[bracketKey];
+    const raw = rawEntry ? (rawEntry.scoreLow + rawEntry.scoreHigh) / 2 : 50;
+
+    // Market: cumulative percentile (shorter = worse)
+    const market = bp.calculatePercentileRank(cbsaKey, bp.HEIGHT_INCH_BRACKETS.map(b => ({ key: b.cbsaKey })), cbsa);
+
+    return { raw, market };
+  }
+
+  // Helper: body (BMI + fitness) scores
+  function bodyScores(bodyType, fitness) {
+    const bmiRaw = bp.BMI_RAW_SCORES[genderKey][bodyType] || 50;
+    let fitMod = bp.FITNESS_MODIFIERS[fitness] || 0;
+
+    // Activity scaling
+    const activity = cbsa.activity_cbsa || 70;
+    if (activity > bp.BODY_ACTIVITY_MODIFIERS.highActivityThreshold) {
+      fitMod = fitMod * bp.BODY_ACTIVITY_MODIFIERS.highActivityFitnessScale;
+    } else if (activity < bp.BODY_ACTIVITY_MODIFIERS.lowActivityThreshold) {
+      fitMod = fitMod * bp.BODY_ACTIVITY_MODIFIERS.lowActivityFitnessScale;
+    }
+
+    const raw = clamp(bmiRaw + fitMod);
+
+    // BMI market percentile
+    const bmiOrder = genderKey === 'man' ? bp.BMI_PERCENTILE_ORDER_MAN : bp.BMI_PERCENTILE_ORDER_WOMAN;
+    const bmiCbsaKey = bp.BMI_CBSA_KEYS[bodyType];
+    const bmiMarket = bp.calculatePercentileRank(bmiCbsaKey, bmiOrder.map(b => ({ key: b.key })), cbsa);
+
+    // Fitness market percentile
+    const fitCbsaKey = bp.FITNESS_CBSA_BRACKETS.find(b => b.level === fitness)?.key || 'fitness_2_3_days_cbsa';
+    const fitnessMarket = bp.calculatePercentileRank(fitCbsaKey, bp.FITNESS_CBSA_BRACKETS.map(b => ({ key: b.key })), cbsa);
+
+    const market = clamp(bmiMarket + (fitnessMarket - 50) * 0.3);
+
+    return { raw, market };
+  }
+
+  // Helper: politics score (raw IS the market signal)
+  function politicsScore(political) {
+    const alignment = bp.POLITICS_COMPATIBILITY.alignmentWeights[political];
+    if (!alignment) return 50;
+    let raw = 0;
+    for (const [cbsaKey, weight] of Object.entries(alignment)) {
+      raw += (cbsa[cbsaKey] || 0) * weight;
+    }
+    return clamp(raw);
+  }
+
+  // Helper: smoking scores
+  function smokingScores(smoking) {
+    const isSmoker = smoking === 'Yes';
+    const scores = bp.SMOKING_RAW_SCORES[genderKey];
+    if (!isSmoker) {
+      const raw = scores.nonSmoker;
+      const market = clamp((cbsa.smoking_no_cbsa || 80));
+      return { raw, market };
+    }
+    // Smoker: weighted by pool composition
+    const smokerPct = (cbsa.smoking_yes_cbsa || 20) / 100;
+    const nonSmokerPct = (cbsa.smoking_no_cbsa || 80) / 100;
+    const raw = nonSmokerPct * scores.smokerVsNonSmokerPool + smokerPct * scores.smokerVsSmokerPool;
+    const market = clamp(100 * smokerPct);
+    return { raw, market };
+  }
+
+  // Helper: hasKids scores
+  function hasKidsScores(hasKids) {
+    const has = hasKids === 'Yes';
+    const scores = bp.HAS_KIDS_RAW_SCORES[genderKey];
+    let raw = has ? scores.hasKids : scores.noKids;
+
+    // want_kids interaction on raw
+    if (has) {
+      const wantKidsYes = cbsa.want_kids_yes_cbsa || 0;
+      if (wantKidsYes > bp.HAS_KIDS_MODIFIERS.wantKidsHighThreshold) {
+        raw += bp.HAS_KIDS_MODIFIERS.wantKidsHighPenalty;
+      } else if (wantKidsYes <= bp.HAS_KIDS_MODIFIERS.wantKidsLowThreshold) {
+        raw += bp.HAS_KIDS_MODIFIERS.wantKidsLowBonus;
+      }
+    }
+    raw = clamp(raw);
+
+    // Market score
+    let market;
+    if (!has) {
+      market = 50 + (cbsa.have_kids_no_cbsa || 50) / 2;
+    } else {
+      const haveYes = cbsa.have_kids_yes_cbsa || 40;
+      market = Math.min(bp.HAS_KIDS_MODIFIERS.marketScoreCap, haveYes * (1 + haveYes / 200));
+    }
+    return { raw, market: clamp(market) };
+  }
+
+  // Helper: wantKids score
+  function wantKidsScore(wantKids) {
+    const fn = bp.WANT_KIDS_COMPATIBILITY.scoring[wantKids];
+    return fn ? fn(cbsa) : 60;
+  }
+
+  // ======================== CALCULATE ALL TRAITS ========================
+
+  // 1. Age
+  let ageRaw = ageRawScore(userProfile.age);
+  // Age modifier: want_kids amplification
+  const wantKidsYes = cbsa.want_kids_yes_cbsa || 0;
+  if (wantKidsYes > bp.AGE_MODIFIERS.wantKidsHighThreshold) {
+    ageRaw = clamp(ageRaw * bp.AGE_MODIFIERS.wantKidsHighMultiplier);
+  } else if (wantKidsYes <= bp.AGE_MODIFIERS.wantKidsLowThreshold) {
+    ageRaw = clamp(ageRaw * bp.AGE_MODIFIERS.wantKidsLowMultiplier);
+  }
+  // Women age compression in high peak-age markets
+  if (genderKey === 'woman') {
+    const peakAgePct = (cbsa.age_25_29_cbsa || 0) + (cbsa.age_30_34_cbsa || 0) +
+                       (cbsa.age_35_39_cbsa || 0) + (cbsa.age_40_44_cbsa || 0);
+    if (peakAgePct > bp.AGE_MODIFIERS.womanCompressionThreshold) {
+      ageRaw = ageRaw * (1 - bp.AGE_MODIFIERS.womanCompressionStrength) +
+               bp.AGE_MODIFIERS.womanCompressionTarget * bp.AGE_MODIFIERS.womanCompressionStrength;
+    }
+  }
+  const ageMkt = ageMarketScore(userProfile.age);
+  let ageBlended = 0.5 * ageRaw + 0.5 * ageMkt;
+
+  // 2. Ethnicity
+  const ethRaw = ethnicityRawScore(userProfile.ethnicity);
+  const ethMkt = ethnicityMarketScore(userProfile.ethnicity);
+  const ethBlended = 0.5 * ethRaw + 0.5 * ethMkt;
+
+  // 3. Income
+  const incRaw = incomeRawScore(userProfile.income);
+  const incMkt = incomeMarketScore(userProfile.income);
+  let incBlended = 0.5 * incRaw + 0.5 * incMkt;
+
+  // 4. Education
+  let eduRaw = educationRawScore(userProfile.education);
+  const eduMkt = educationMarketScore(userProfile.education);
+  // Graduate penalty compression for women
+  if (genderKey === 'woman' && userProfile.education === 'Graduate Degree') {
+    const highEduPct = (cbsa.education_bachelors_cbsa || 0) + (cbsa.education_graduate_cbsa || 0);
+    if (highEduPct > bp.EDUCATION_MODIFIERS.graduatePenaltyCompressionThreshold) {
+      const baScore = (bp.EDUCATION_RAW_SCORES.woman["Bachelor's Degree"].scoreLow +
+                       bp.EDUCATION_RAW_SCORES.woman["Bachelor's Degree"].scoreHigh) / 2;
+      eduRaw = eduRaw * (1 - bp.EDUCATION_MODIFIERS.graduatePenaltyCompressionBlend) +
+               baScore * bp.EDUCATION_MODIFIERS.graduatePenaltyCompressionBlend;
+    }
+  }
+  const eduBlended = 0.5 * eduRaw + 0.5 * eduMkt;
+
+  // 5. Height (men only)
+  const ht = heightScores(userProfile.height);
+  const htBlended = genderKey === 'man' ? 0.5 * ht.raw + 0.5 * ht.market : 0;
+
+  // 6. Body (BMI + fitness)
+  const bod = bodyScores(userProfile.bodyType, userProfile.fitness);
+  const bodBlended = 0.5 * bod.raw + 0.5 * bod.market;
+
+  // 7. Politics (raw IS market)
+  const polScore = politicsScore(userProfile.political);
+
+  // 8. Smoking
+  const smk = smokingScores(userProfile.smoking);
+  const smkBlended = 0.5 * smk.raw + 0.5 * smk.market;
+
+  // 9. Has Kids
+  const kids = hasKidsScores(userProfile.hasKids);
+  const kidsBlended = 0.5 * kids.raw + 0.5 * kids.market;
+
+  // 10. Want Kids
+  const wkScore = wantKidsScore(userProfile.wantKids);
+
+  // 11. Cost of Living
+  let colScore;
+  if (genderKey === 'man') {
+    colScore = bp.COST_OF_LIVING_AMPLIFIER.man.formula(incMkt, rpp);
+  } else {
+    colScore = bp.COST_OF_LIVING_AMPLIFIER.woman.formula(bod.market, rpp);
+  }
+
+  // ======================== INTERACTION EFFECTS ========================
+
+  // Provider premium (men who want kids in family-oriented markets)
+  const pp = bp.WANT_KIDS_COMPATIBILITY.interactions.providerPremium;
+  if (genderKey === 'man' && userProfile.wantKids === 'Yes' && wantKidsYes > pp.wantKidsThreshold) {
+    incBlended = clamp(incBlended * pp.incomeAmplifier);
+    ageBlended = clamp(ageBlended * pp.ageAmplifier);
+  }
+
+  // Politics weight modulation
+  let politicsWeightMult = 1.0;
+  const conPct = cbsa.political_conservative_cbsa || 0;
+  const libPct = cbsa.political_liberal_cbsa || 0;
+  const modPct = cbsa.political_moderate_cbsa || 0;
+  if (Math.abs(conPct - libPct) > bp.POLITICS_MODIFIERS.polarizationThreshold) {
+    politicsWeightMult = bp.POLITICS_MODIFIERS.polarizationMultiplier;
+  } else if (modPct > bp.POLITICS_MODIFIERS.centristThreshold) {
+    politicsWeightMult = bp.POLITICS_MODIFIERS.centristMultiplier;
+  }
+
+  // ======================== COMPUTE FINAL ========================
+
+  const traitScores = {
+    income:      { score: clamp(incBlended), weight: weights.income / 100 },
+    education:   { score: clamp(eduBlended), weight: weights.education / 100 },
+    age:         { score: clamp(ageBlended), weight: weights.age / 100 },
+    ethnicity:   { score: clamp(ethBlended), weight: weights.ethnicity / 100 },
+    height:      { score: clamp(htBlended),  weight: weights.height / 100 },
+    body:        { score: clamp(bodBlended), weight: weights.body / 100 },
+    politics:    { score: clamp(polScore),   weight: (weights.politics * politicsWeightMult) / 100 },
+    smoking:     { score: clamp(smkBlended), weight: weights.smoking / 100 },
+    hasKids:     { score: clamp(kidsBlended), weight: weights.hasKids / 100 },
+    wantKids:    { score: clamp(wkScore),    weight: weights.wantKids / 100 },
+    costOfLiving:{ score: clamp(colScore),   weight: weights.costOfLiving / 100 },
+  };
+
+  // Weighted sum
+  let weightedSum = 0;
+  let totalWeight = 0;
+  for (const [, t] of Object.entries(traitScores)) {
+    if (t.weight > 0) {
+      weightedSum += t.score * t.weight;
+      totalWeight += t.weight;
+    }
+  }
+
+  let finalScore = totalWeight > 0 ? weightedSum / totalWeight : 50;
+  finalScore = clamp(finalScore, bp.GUARDRAILS.globalFloor, bp.GUARDRAILS.globalCeiling);
+
+  // Build components with raw, market, and context data for rich explanations
+  const adjustedIncome = userProfile.income * (100 / rpp);
+  const noKidsPct = cbsa.have_kids_no_cbsa || 50;
+  const eduGradPct = cbsa.education_graduate_cbsa || 10;
+  const activityCbsa = cbsa.activity_cbsa || 70;
+  const smokingNoPct = cbsa.smoking_no_cbsa || 80;
+
+  const components = {
+    income: { score: Math.round(clamp(incBlended) * 10) / 10, local: clamp(incBlended), weight: weights.income / 100,
+      raw: Math.round(incRaw * 10) / 10, market: Math.round(incMkt * 10) / 10,
+      ctx: { nominal: userProfile.income, adjusted: Math.round(adjustedIncome), rpp, percentile: Math.round(incMkt) } },
+    education: { score: Math.round(clamp(eduBlended) * 10) / 10, local: clamp(eduBlended), weight: weights.education / 100,
+      raw: Math.round(eduRaw * 10) / 10, market: Math.round(eduMkt * 10) / 10,
+      ctx: { level: userProfile.education, gradPct: Math.round(eduGradPct), marketPercentile: Math.round(eduMkt) } },
+    age: { score: Math.round(clamp(ageBlended) * 10) / 10, local: clamp(ageBlended), weight: weights.age / 100,
+      raw: Math.round(ageRaw * 10) / 10, market: Math.round(ageMkt * 10) / 10,
+      ctx: { age: userProfile.age, peakRange: genderKey === 'man' ? '34 to 42' : '22 to 28' } },
+    ethnicity: { score: Math.round(clamp(ethBlended) * 10) / 10, local: clamp(ethBlended), weight: weights.ethnicity / 100,
+      raw: Math.round(ethRaw * 10) / 10, market: Math.round(ethMkt * 10) / 10,
+      ctx: { ethnicity: userProfile.ethnicity, ownPct: Math.round(cbsa[bp.ETHNICITY_CBSA_KEYS[userProfile.ethnicity]] || 0) } },
+  };
+
+  if (weights.height > 0) {
+    components.height = { score: Math.round(clamp(htBlended) * 10) / 10, local: clamp(htBlended), weight: weights.height / 100,
+      raw: Math.round(ht.raw * 10) / 10, market: Math.round(ht.market * 10) / 10,
+      ctx: { height: userProfile.height, percentile: Math.round(ht.market) } };
+  }
+
+  components.body = { score: Math.round(clamp(bodBlended) * 10) / 10, local: clamp(bodBlended), weight: weights.body / 100,
+    raw: Math.round(bod.raw * 10) / 10, market: Math.round(bod.market * 10) / 10,
+    ctx: { bodyType: userProfile.bodyType, fitness: userProfile.fitness, bmiMarket: Math.round(bod.market), activityCbsa: Math.round(activityCbsa) } };
+
+  components.politics = { score: Math.round(clamp(polScore) * 10) / 10, local: clamp(polScore), weight: (weights.politics * politicsWeightMult) / 100,
+    raw: Math.round(polScore * 10) / 10, market: Math.round(polScore * 10) / 10,
+    ctx: { political: userProfile.political, conPct: Math.round(conPct), modPct: Math.round(modPct), libPct: Math.round(libPct), weightMult: politicsWeightMult } };
+
+  components.smoking = { score: Math.round(clamp(smkBlended) * 10) / 10, local: clamp(smkBlended), weight: weights.smoking / 100,
+    raw: Math.round(smk.raw * 10) / 10, market: Math.round(smk.market * 10) / 10,
+    ctx: { isSmoker: userProfile.smoking === 'Yes', nonSmokerPct: Math.round(smokingNoPct) } };
+
+  components.hasKids = { score: Math.round(clamp(kidsBlended) * 10) / 10, local: clamp(kidsBlended), weight: weights.hasKids / 100,
+    raw: Math.round(kids.raw * 10) / 10, market: Math.round(kids.market * 10) / 10,
+    ctx: { hasKids: userProfile.hasKids === 'Yes', noKidsPct: Math.round(noKidsPct), wantKidsYesPct: Math.round(wantKidsYes) } };
+
+  components.wantKids = { score: Math.round(clamp(wkScore) * 10) / 10, local: clamp(wkScore), weight: weights.wantKids / 100,
+    raw: Math.round(wkScore * 10) / 10, market: Math.round(wkScore * 10) / 10,
+    ctx: { wantKids: userProfile.wantKids, wantKidsYesPct: Math.round(wantKidsYes) } };
+
+  components.costOfLiving = { score: Math.round(clamp(colScore) * 10) / 10, local: clamp(colScore), weight: weights.costOfLiving / 100,
+    raw: Math.round(colScore * 10) / 10, market: Math.round(colScore * 10) / 10,
+    ctx: { rpp, sourceTraitLabel: genderKey === 'man' ? 'income' : 'body' } };
+
+  return {
+    score: Math.round(finalScore * 10) / 10,
+    components,
+    marriagePremium: 1.0
   };
 }
 
@@ -1374,7 +1820,7 @@ async function processDemographics(userInputs) {
   };
   
   // Calculate Relate Score
-  const relateScore = calculateRelateScore(userProfile, cbsa);
+  const relateScore = calculateDesirabilityScore(userProfile, cbsa);
 
   // Calculate Match Pool
   const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
@@ -1398,7 +1844,7 @@ async function processDemographics(userInputs) {
 
     if (stateAgg) {
       const statePool = calculateMatchPool(userProfile, preferences, stateAgg);
-      const stateScore = calculateRelateScore(userProfile, stateAgg);
+      const stateScore = calculateDesirabilityScore(userProfile, stateAgg);
       const stateProb = getMatchProbability(stateScore.score);
       stateComparison = {
         label: stateAbbr,
@@ -1414,7 +1860,7 @@ async function processDemographics(userInputs) {
 
     if (nationalAgg) {
       const natPool = calculateMatchPool(userProfile, preferences, nationalAgg);
-      const natScore = calculateRelateScore(userProfile, nationalAgg);
+      const natScore = calculateDesirabilityScore(userProfile, nationalAgg);
       const natProb = getMatchProbability(natScore.score);
       nationalComparison = {
         label: 'National',
@@ -1499,7 +1945,7 @@ async function compareMetros(userProfile, preferences, cbsaCodes) {
     const cbsa = Object.values(cbsas).find(c => c.cbsa === code || c.cbsa === String(code));
     if (!cbsa) continue;
     
-    const relateScore = calculateRelateScore(userProfile, cbsa);
+    const relateScore = calculateDesirabilityScore(userProfile, cbsa);
     const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
     const matchProbability = getMatchProbability(relateScore.score);
     const matchCount = Math.round(matchPool.idealPool * matchProbability);
@@ -1627,7 +2073,7 @@ async function findTopMetros(userProfile, preferences, homeScore) {
   const all = [];
 
   for (const cbsa of allCBSAs) {
-    const relateScore = calculateRelateScore(userProfile, cbsa);
+    const relateScore = calculateDesirabilityScore(userProfile, cbsa);
 
     const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
     const matchProbability = getMatchProbability(relateScore.score);
@@ -1700,7 +2146,7 @@ async function findWorstMetros(userProfile, preferences) {
   const results = [];
 
   for (const cbsa of largeCBSAs) {
-    const relateScore = calculateRelateScore(userProfile, cbsa);
+    const relateScore = calculateDesirabilityScore(userProfile, cbsa);
     const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
     const matchProbability = getMatchProbability(relateScore.score);
     const matchCount = Math.round(matchPool.idealPool * matchProbability);
@@ -1778,7 +2224,7 @@ module.exports = {
   extractState,
   
   // Calculations
-  calculateRelateScore,
+  calculateDesirabilityScore,
   calculateMatchPool,
   getMatchProbability,
   getIncomePercentileNational,
