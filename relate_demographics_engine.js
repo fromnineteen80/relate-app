@@ -467,23 +467,37 @@ const RELATE_SCORE_WEIGHTS = {
   }
 };
 
-// Reciprocal match probability by gender
-// Based on Bruch & Newman (2018): men are far less selective than women,
-// producing higher match rates for women at every score level.
+// Reciprocal match likelihood configuration
+// Based on Bruch & Newman (2018): people pursue partners ~25% more desirable
+// than themselves. Gender asymmetry: men are far less selective than women.
+//
+// The system scores the opposite-gender median in each CBSA and computes
+// how far the user sits above/below that median (in standard deviations).
+// That z-score feeds a gender-specific sigmoid to produce the match rate.
+//
+// A man with a high z (well above the median female) gets a higher match rate
+// because more women see him as attainable-and-attractive. The same man in
+// a market where women score higher gets a lower z and a lower match rate.
 const RECIPROCAL_MATCH_CONFIG = {
+  // For men: women are selective. High scores earn disproportionate returns.
   man: {
     floor: 0.005,
     ceiling: 0.35,
-    midpoint: 65,
-    steepness: 0.10
+    midpoint: 0.5,
+    steepness: 2.0
   },
+  // For women: men cast wider nets. Even average women get meaningful interest.
   woman: {
     floor: 0.08,
     ceiling: 0.70,
-    midpoint: 50,
-    steepness: 0.07
-  }
+    midpoint: 0.0,
+    steepness: 1.5
+  },
+  distributionSD: 15
 };
+
+// Representative income values for each bracket (used in median profile construction)
+const INCOME_BRACKET_MIDPOINTS = [25000, 42500, 62500, 87500, 125000, 175000, 250000, 400000, 625000, 900000];
 
 // Income brackets and their CBSA keys
 const INCOME_BRACKETS = [
@@ -1367,14 +1381,145 @@ function getDrugRate(targetGender, ethnicity, education) {
 }
 
 /**
- * Calculate reciprocal match probability from desirability score.
- * Gender-specific: women get higher rates because men are less selective.
+ * Build a median opposite-gender profile from CBSA demographic distributions.
+ * Used to estimate the competitive landscape of the opposite gender in each market.
  */
-function getMatchProbability(relateScore, userGender) {
+function buildMedianOppositeProfile(cbsa, userGender) {
+  const gender = (userGender === 'Man' || userGender === 'M') ? 'Woman' : 'Man';
+
+  // Find the value where cumulative % crosses 50
+  function findMedianBracketIndex(brackets) {
+    let cum = 0;
+    for (let i = 0; i < brackets.length; i++) {
+      cum += cbsa[brackets[i].key] || 0;
+      if (cum >= 50) return i;
+    }
+    return Math.floor(brackets.length / 2);
+  }
+
+  // Median age (18-64 singles)
+  const ageBrackets = AGE_BRACKETS.filter(b => b.max <= 64);
+  const ageIdx = findMedianBracketIndex(ageBrackets);
+  const ageBracket = ageBrackets[ageIdx];
+  const age = Math.round((ageBracket.min + ageBracket.max) / 2);
+
+  // Median income
+  const incIdx = findMedianBracketIndex(INCOME_BRACKETS);
+  const income = INCOME_BRACKET_MIDPOINTS[incIdx] || 50000;
+
+  // Median education
+  const eduBrackets = [
+    { key: 'education_less_hs_cbsa', level: 'Less than High School' },
+    { key: 'education_hs_grad_cbsa', level: 'High School Graduate' },
+    { key: 'education_trade_cbsa', level: 'Trade/Vocational' },
+    { key: 'education_associate_cbsa', level: 'Associate Degree' },
+    { key: 'education_some_college_cbsa', level: 'Some College' },
+    { key: 'education_bachelors_cbsa', level: "Bachelor's Degree" },
+    { key: 'education_graduate_cbsa', level: 'Graduate Degree' },
+  ];
+  const eduIdx = findMedianBracketIndex(eduBrackets);
+  const education = eduBrackets[eduIdx].level;
+
+  // Most common ethnicity
+  const ethEntries = [
+    { key: 'ethnicity_white_cbsa', val: 'White' },
+    { key: 'ethnicity_hispanic_cbsa', val: 'Hispanic/Latino' },
+    { key: 'ethnicity_black_cbsa', val: 'Black' },
+    { key: 'ethnicity_asian_cbsa', val: 'Asian' },
+  ];
+  let ethnicity = 'White';
+  let maxEthPct = 0;
+  for (const e of ethEntries) {
+    if ((cbsa[e.key] || 0) > maxEthPct) { ethnicity = e.val; maxEthPct = cbsa[e.key]; }
+  }
+
+  // Median body type
+  const bmiOrder = [
+    { key: 'bmi_obesity_cbsa', type: 'Obese' },
+    { key: 'bmi_overweight_cbsa', type: 'Overweight' },
+    { key: 'bmi_normal_cbsa', type: 'Average' },
+    { key: 'bmi_elite_cbsa', type: 'Lean or Fit' },
+  ];
+  const bmiIdx = findMedianBracketIndex(bmiOrder);
+  const bodyType = bmiOrder[bmiIdx].type;
+
+  // Median height (for men only — women have 0 weight)
+  let height = null;
+  if (gender === 'Man') {
+    const htBrackets = HEIGHT_BRACKETS;
+    let cum = 0;
+    for (const b of htBrackets) {
+      cum += cbsa[b.key] || 0;
+      if (cum >= 50) {
+        // Convert to feet-inches string
+        const inches = b.max === Infinity ? 73 : Math.round((b.max + b.max - 2) / 2);
+        const ft = Math.floor(inches / 12);
+        const rem = inches % 12;
+        height = `${ft}'${rem}"`;
+        break;
+      }
+    }
+  }
+
+  // Most common political view
+  const polEntries = [
+    { key: 'political_conservative_cbsa', val: 'Conservative' },
+    { key: 'political_moderate_cbsa', val: 'Moderate' },
+    { key: 'political_liberal_cbsa', val: 'Liberal' },
+  ];
+  let political = 'Moderate';
+  let maxPolPct = 0;
+  for (const p of polEntries) {
+    if ((cbsa[p.key] || 0) > maxPolPct) { political = p.val; maxPolPct = cbsa[p.key]; }
+  }
+
+  // Majority values
+  const smoking = (cbsa.smoking_no_cbsa || 80) >= 50 ? 'No' : 'Yes';
+  const hasKids = (cbsa.have_kids_no_cbsa || 50) >= 50 ? 'No' : 'Yes';
+
+  const wantYes = cbsa.want_kids_yes_cbsa || 40;
+  const wantNo = cbsa.want_kids_no_cbsa || 30;
+  const wantMaybe = cbsa.want_kids_maybe_cbsa || 30;
+  const wantKids = wantYes >= wantNo && wantYes >= wantMaybe ? 'Yes' : wantNo >= wantMaybe ? 'No' : 'Not sure';
+
+  const activity = cbsa.activity_cbsa || 70;
+  const fitness = activity >= 80 ? '4 or more days a week' : activity >= 60 ? '2 to 3 days a week' : '1 day a week';
+
+  return {
+    gender,
+    age,
+    income,
+    education,
+    ethnicity,
+    height,
+    bodyType,
+    fitness,
+    political,
+    smoking,
+    hasKids,
+    wantKids,
+    orientation: 'Straight',
+    relationshipStatus: 'Single',
+  };
+}
+
+/**
+ * Calculate reciprocal match probability.
+ * Scores the median opposite-gender profile in this CBSA, computes how far
+ * the user sits above/below that median (z-score), then applies a
+ * gender-specific sigmoid. Markets with stronger opposite-gender competition
+ * produce lower match rates for the same user score.
+ */
+function getMatchProbability(relateScore, userGender, cbsa) {
+  const medianProfile = buildMedianOppositeProfile(cbsa, userGender);
+  const medianResult = calculateDesirabilityScore(medianProfile, cbsa);
+  const medianOppScore = medianResult.score;
+
+  const z = (relateScore - medianOppScore) / RECIPROCAL_MATCH_CONFIG.distributionSD;
   const genderKey = (userGender === 'Woman' || userGender === 'W') ? 'woman' : 'man';
   const { floor, ceiling, midpoint, steepness } = RECIPROCAL_MATCH_CONFIG[genderKey];
-  const sigmoid = 1 / (1 + Math.exp(-steepness * (relateScore - midpoint)));
-  return floor + (ceiling - floor) * sigmoid;
+  const sigmoid = 1 / (1 + Math.exp(-steepness * (z - midpoint)));
+  return Math.max(0.005, Math.min(0.80, floor + (ceiling - floor) * sigmoid));
 }
 
 /**
@@ -1776,8 +1921,8 @@ async function processDemographics(userInputs) {
   // Calculate Match Pool
   const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
 
-  // Calculate match probability
-  const matchProbability = getMatchProbability(relateScore.score, userProfile.gender);
+  // Calculate match probability using reciprocal market model
+  const matchProbability = getMatchProbability(relateScore.score, userProfile.gender, cbsa);
 
   // Calculate final match count
   const matchCount = Math.round(matchPool.idealPool * matchProbability);
@@ -1796,7 +1941,7 @@ async function processDemographics(userInputs) {
     if (stateAgg) {
       const statePool = calculateMatchPool(userProfile, preferences, stateAgg);
       const stateScore = calculateDesirabilityScore(userProfile, stateAgg);
-      const stateProb = getMatchProbability(stateScore.score, userProfile.gender);
+      const stateProb = getMatchProbability(stateScore.score, userProfile.gender, stateAgg);
       stateComparison = {
         label: stateAbbr,
         population: stateAgg.cbsa_population,
@@ -1812,7 +1957,7 @@ async function processDemographics(userInputs) {
     if (nationalAgg) {
       const natPool = calculateMatchPool(userProfile, preferences, nationalAgg);
       const natScore = calculateDesirabilityScore(userProfile, nationalAgg);
-      const natProb = getMatchProbability(natScore.score, userProfile.gender);
+      const natProb = getMatchProbability(natScore.score, userProfile.gender, nationalAgg);
       nationalComparison = {
         label: 'National',
         population: nationalAgg.cbsa_population,
@@ -1898,7 +2043,7 @@ async function compareMetros(userProfile, preferences, cbsaCodes) {
     
     const relateScore = calculateDesirabilityScore(userProfile, cbsa);
     const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
-    const matchProbability = getMatchProbability(relateScore.score, userProfile.gender);
+    const matchProbability = getMatchProbability(relateScore.score, userProfile.gender, cbsa);
     const matchCount = Math.round(matchPool.idealPool * matchProbability);
     
     results.push({
@@ -2027,7 +2172,7 @@ async function findTopMetros(userProfile, preferences, homeScore) {
     const relateScore = calculateDesirabilityScore(userProfile, cbsa);
 
     const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
-    const matchProbability = getMatchProbability(relateScore.score, userProfile.gender);
+    const matchProbability = getMatchProbability(relateScore.score, userProfile.gender, cbsa);
     const matchCount = Math.round(matchPool.idealPool * matchProbability);
 
     // Income + education composite for tie-breaking
@@ -2097,7 +2242,7 @@ async function findWorstMetros(userProfile, preferences) {
   for (const cbsa of largeCBSAs) {
     const relateScore = calculateDesirabilityScore(userProfile, cbsa);
     const matchPool = calculateMatchPool(userProfile, preferences, cbsa);
-    const matchProbability = getMatchProbability(relateScore.score, userProfile.gender);
+    const matchProbability = getMatchProbability(relateScore.score, userProfile.gender, cbsa);
     const matchCount = Math.round(matchPool.idealPool * matchProbability);
 
     const incomeLocal = relateScore.components.income.local;
