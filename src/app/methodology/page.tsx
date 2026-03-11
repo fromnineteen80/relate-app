@@ -471,6 +471,54 @@ export default function MethodologyPage() {
         </div>
       </section>
 
+      {/* Market Competition Curve */}
+      <section className="px-6 py-16 border-b border-border">
+        <div className="max-w-3xl mx-auto">
+          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Market Competition</p>
+          <h2 className="font-serif text-3xl font-semibold mb-3">Designing the Market Competition Curve</h2>
+          <p className="text-secondary mb-8">
+            The desirability scoring system combines two distinct inputs for each trait: a raw score derived from research-calibrated preference curves, and a market score derived from the individual&apos;s percentile rank within the local single adult population of the same gender in their CBSA.
+          </p>
+
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Primary Sources</h3>
+              <p className="explainer leading-relaxed">
+                The desirability curve architecture draws from four foundational studies. The first is Bruch and Newman&apos;s 2018 analysis published in <span className="italic">Science Advances</span>, &quot;Aspirational Pursuit of Mates in Online Dating Markets,&quot; which examined messaging behavior across four major U.S. cities using data from a large free dating platform. That study is the source for the operational definition of desirability as a function of behavioral outcome rather than stated preference, the finding that education functions as a vertical preference for men but peaks at the bachelor&apos;s level for women, and the core methodology of treating desirability as a hierarchy derived from who pursues whom and who responds. The second is Horta&ccedil;su and Ariely&apos;s &quot;What Makes You Click? Mate Preferences and Matching,&quot; a University of Chicago working paper analyzing actual messaging data from a major dating site across Boston and San Diego, which produced the most behaviorally grounded estimates of optimal BMI by gender, the quantified height penalty curves for men, and the income preference gradients that distinguish men as targets from women as targets. The third is Buss&apos;s 2019 <span className="italic">Annual Review of Psychology</span> piece, &quot;Mate Preferences and Their Behavioral Manifestations,&quot; a meta-synthesis of decades of evolutionary and behavioral research that grounds the gender asymmetries in income sensitivity, physical attractiveness weighting, and age preference. That study is the source for the finding that women are roughly one thousand times more sensitive to salary information than men when rating partners across cultures. The fourth is the OKCupid behavioral dataset published by Christian Rudder and analyzed across the 2009 to 2014 period, covering more than 25 million user interactions, which provides the most granular cross-tabulated evidence on racial preference hierarchies by gender and the homophilous structure of smoking and political preferences. That dataset also produced the notable finding that stated racial attitudes became less biased over time while behavioral patterns remained stable across the same period.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Raw Score</h3>
+              <p className="explainer leading-relaxed">
+                The raw score translates a specific trait value, whether an age, an income bracket, or a BMI category, into a score from 0 to 100 using curves whose shape was determined by the behavioral literature. Curves are not assumed to be linear or uniform across traits or genders. Some traits produce monotonically increasing scores where more is always better, such as income for men as targets. Others produce peaked curves where both extremes are penalized and a mid-range value is optimal, such as age for both genders or education for women. Others produce threshold or step-function scores, such as smoking status and existing children, where the effect is not gradual but behaves more like an eligibility filter that sharply reduces the effective dating pool.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Market Score</h3>
+              <p className="explainer leading-relaxed">
+                The market score answers a different question. Given the distribution of a particular trait among same-gender single adults in a specific CBSA, where does this individual rank relative to the local competition? This is calculated by identifying the individual&apos;s trait value or bracket, summing the cumulative share of the local single adult population of the same gender at or below that value using the CBSA&apos;s bracket distributions, and expressing that result as a percentile from 0 to 100. A woman who is 28 years old in a CBSA where the single female population is concentrated in the 38 to 50 age range will carry a high market score on age even if her raw score is only moderate by national standards. The same woman in a metro where single women cluster in the 22 to 30 range will receive a lower market score because she faces a younger competitive pool. The logic holds across every trait: scarcity relative to local competition elevates a market score independent of the absolute value of the trait itself.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Final Composite</h3>
+              <p className="explainer leading-relaxed">
+                The final trait score blends both inputs at a 50/50 weight by default, though that blend can be adjusted based on how market-sensitive a given trait is. Traits where local context substantially changes the desirability signal, including BMI in high-obesity markets, income in low-wage markets, and age in markets with skewed single adult age distributions, are weighted toward the market score. Traits where the raw preference curve is strong and consistent regardless of local context, such as height and smoking status, carry more weight in the raw score component. The final composite score is a weighted average of all trait scores, with weights reflecting the relative magnitude of each trait&apos;s effect on behavioral outcomes in the literature.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif font-semibold mb-2">Gender Asymmetry</h3>
+              <p className="explainer leading-relaxed">
+                Because the gender of the target substantially changes both the curve shape and the trait weight, income matters roughly three times more for men as targets than for women while body composition matters roughly twice as much for women as targets, all scoring is computed separately for men seeking women and women seeking men. Results should never be aggregated across target genders without flagging the asymmetry, as doing so would obscure the most consequential finding the research produces: that the traits driving desirability are not the same across genders, and in several cases they point in opposite directions entirely.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Attachment Style */}
       <section className="px-6 py-16 border-b border-border">
         <div className="max-w-3xl mx-auto">

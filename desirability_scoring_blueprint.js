@@ -756,7 +756,7 @@ const HAS_KIDS_MODIFIERS = {
 // CBSA Fields: want_kids_yes_cbsa, want_kids_no_cbsa, want_kids_maybe_cbsa
 //
 // Implementation: Applied as a post-composite modifier, not as a scored trait.
-// The weight of 3 (in DESIRABILITY_WEIGHTS) is allocated to this modifier.
+// The weight of 5 (in DESIRABILITY_WEIGHTS) is allocated to this modifier.
 //
 // want_kids_maybe_cbsa is treated as 50% compatible with BOTH yes and no.
 
