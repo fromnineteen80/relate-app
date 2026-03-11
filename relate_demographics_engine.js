@@ -884,69 +884,8 @@ function calculateMarriagePremium(income, incomePercentile, status, rpp) {
   return 1 + (premiumBase * colAdjustment);
 }
 
-/**
- * Calculate full Relate Score
- */
-function calculateDesirabilityScore(userProfile, cbsa) {
-  const gender = userProfile.gender;
-  const weights = RELATE_SCORE_WEIGHTS[gender === 'Man' ? 'male' : 'female'];
-  
-  // Income score (locally adjusted)
-  let incomeNational = getIncomePercentileNational(userProfile.income, cbsa);
-  // Safety floor: very high incomes should never show as low percentile
-  if (userProfile.income >= 500000 && incomeNational < 95) incomeNational = 95;
-  else if (userProfile.income >= 200000 && incomeNational < 85) incomeNational = 85;
-  else if (userProfile.income >= 100000 && incomeNational < 60) incomeNational = 60;
-  const incomeLocal = applyLocalAdjustment(incomeNational, cbsa.income_cbsa);
-  
-  // Education score (locally adjusted)
-  const eduNational = getEducationPercentile(userProfile.education, cbsa);
-  const eduLocal = applyLocalAdjustment(eduNational, cbsa.bachelors_cbsa);
-  
-  // Age score
-  const ageScore = getAgeScore(userProfile.age, gender);
-  
-  // Ethnicity score
-  const ethnicityScore = getEthnicityScore(userProfile.ethnicity, cbsa);
-  
-  // Children score
-  const childrenScore = getChildrenScore(userProfile.hasKids, userProfile.age, gender);
-  
-  // Base score (weighted sum)
-  let baseScore = 
-    (incomeLocal * weights.income) +
-    (eduLocal * weights.education) +
-    (ageScore * weights.age) +
-    (ethnicityScore * weights.ethnicity) +
-    (childrenScore * weights.children);
-  
-  // Marriage premium
-  const marriagePremium = calculateMarriagePremium(
-    userProfile.income,
-    incomeLocal,
-    userProfile.relationshipStatus,
-    cbsa.rpp
-  );
-  
-  // Final score
-  const finalScore = Math.min(100, baseScore * marriagePremium);
-  
-  return {
-    score: Math.round(finalScore * 10) / 10,
-    components: {
-      income: { national: incomeNational, local: incomeLocal, weight: weights.income },
-      education: { national: eduNational, local: eduLocal, weight: weights.education },
-      age: { score: ageScore, weight: weights.age },
-      ethnicity: { score: ethnicityScore, weight: weights.ethnicity },
-      children: { score: childrenScore, weight: weights.children }
-    },
-    marriagePremium,
-    weights
-  };
-}
-
 // ============================================================================
-// DESIRABILITY SCORING (replaces legacy calculateRelateScore)
+// DESIRABILITY SCORING
 // ============================================================================
 
 const desirabilityBlueprint = require('./desirability_scoring_blueprint.js');
