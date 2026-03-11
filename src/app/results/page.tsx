@@ -2630,84 +2630,86 @@ function CompetitivenessBreakdown({ marketData, demographics }: { marketData: Ma
 
   const fmt$ = (n: number) => n >= 1000000 ? `$${(n / 1000000).toFixed(1)}M` : n >= 1000 ? `$${Math.round(n / 1000)}K` : `$${n}`;
 
-  // Generate rich, data-driven explanations per trait
+  // Generate rich, plain-English explanations per trait
   function explain(key: string, comp: any): string {
     const c = comp.ctx || {};
-    const raw = comp.raw ?? 50;
-    const mkt = comp.market ?? 50;
 
     switch (key) {
       case 'income': {
         const nom = fmt$(c.nominal || 0);
         const adj = fmt$(c.adjusted || 0);
-        const pct = c.percentile || 0;
-        if (comp.score >= 80) return `${nom} RPP-adjusted to ${adj} in ${metroShort}. ${Math.round(100 - pct)}th percentile. Raw ${raw}, market ${mkt}. One of the strongest signals in the dating market.`;
-        if (comp.score >= 50) return `${nom} (${adj} adjusted for local cost of living). Above the local median for ${ownGender} in ${metroShort}, but not yet a standout differentiator. Raw ${raw}, market ${mkt}.`;
-        return `${nom} (${adj} adjusted for cost of living) falls in the bottom half of ${ownGender} in ${metroShort}. For men, income is the single highest-weighted factor. Raw ${raw}, market ${mkt}.`;
+        if (comp.score >= 80) return `${nom} goes even further in ${metroShort}, where the cost of living stretches it to about ${adj} in purchasing power. You out-earn virtually every other single ${ownGenderSingular} in this market. Income is the single most important trait ${datingGender} evaluate in ${ownGender}.`;
+        if (comp.score >= 50) return `${nom} puts you above the local median for ${ownGender} in ${metroShort}. After adjusting for cost of living (about ${adj} in real purchasing power), you are in a solid position, though not yet a standout.`;
+        return `At ${nom}, your income falls in the bottom half of ${ownGender} in ${metroShort}. After adjusting for cost of living, your real purchasing power is about ${adj}. For men, this is the most heavily weighted factor in the dating market.`;
       }
       case 'education': {
         const pct = c.marketPercentile || 0;
-        if (comp.score >= 80) return `${c.level || 'Your degree'}. Top ${Math.max(1, Math.round(100 - pct))}% of ${ownGender} in the market. Signals long-term earning potential and opens doors with credential-conscious partners.`;
-        if (comp.score >= 50) return `${c.level || 'Your education'} is above the local median in ${metroShort}. A moderate advantage that reinforces your other strengths.`;
-        return `${c.level || 'Your education level'} is below the local average in ${metroShort}. This limits your competitive position, especially in markets where partners filter on credentials.`;
+        if (comp.score >= 80) return `A ${(c.level || 'graduate degree').toLowerCase()} puts you ahead of ${pct}% of ${ownGender} in ${metroShort}. Only about ${Math.max(1, Math.round(100 - pct))}% of single ${ownGender} here have the same level of education or higher.`;
+        if (comp.score >= 50) return `Your education level is above the local average in ${metroShort}. It reinforces your other strengths but is not a major differentiator on its own.`;
+        return `Your education level is below the local average in ${metroShort}. Many ${datingGender} here filter on credentials, which limits your competitive position.`;
       }
       case 'age': {
         const peak = c.peakRange || '34 to 42';
-        if (comp.score >= 70) return `${c.age} falls squarely in the most desirable range (${peak}) for ${ownGender}. A structural advantage you do not have to work for. Raw ${raw}, market ${mkt}.`;
-        if (comp.score >= 50) return `${c.age} is ${c.age > 42 ? `${c.age - 42} years past` : 'near'} the ${ownGenderSingular} peak (${peak}). Raw curve still scores you decently (${raw}) but your market percentile is ${mkt}, meaning over half of single ${ownGender} in ${metroShort} are in a more preferred bracket.`;
-        return `${c.age} is working against you. The ${ownGenderSingular} peak is ${peak} and your market percentile is only ${mkt}. Over half of single ${ownGender} in ${metroShort} are younger than you.`;
+        const age = c.age || 0;
+        if (comp.score >= 70) return `At ${age}, you are right in the sweet spot. The most desirable age range for ${ownGender} is ${peak}, and you are squarely in it. This is a structural advantage you do not have to work for.`;
+        if (comp.score >= 50) {
+          const pastPeak = age > 42;
+          return pastPeak
+            ? `At ${age}, you are ${age - 42} years past the peak desirability range for ${ownGender} (${peak}). You are still in a range that most ${datingGender} find acceptable, but more than half of single ${ownGender} in ${metroShort} are younger than you.`
+            : `At ${age}, you are near the peak desirability range for ${ownGender} (${peak}). A solid position, though not the absolute sweet spot.`;
+        }
+        return `At ${age}, age is working against you. The peak for ${ownGender} is ${peak}, and the majority of single ${ownGender} in ${metroShort} are younger. This is a dimension you cannot change, but understanding it helps you focus on what you can.`;
       }
       case 'ethnicity': {
         const own = c.ownPct || 0;
-        if (comp.score >= 70) return `${c.ethnicity || 'Your'} demographic profile aligns well with preference patterns in ${metroShort} (${own}% of singles share your background). Weighted cross-group appeal score: ${raw}.`;
-        if (comp.score >= 50) return `${c.ethnicity || 'Your'} demographic compatibility is moderate in ${metroShort} (${own}% of the local singles pool). Cross-group appeal score: ${raw}.`;
-        return `The local composition in ${metroShort} creates a more competitive environment for your profile. Only ${own}% of singles share your background, and cross-group preference patterns favor other groups more heavily. Appeal score: ${raw}.`;
+        const eth = c.ethnicity || 'Your background';
+        if (comp.score >= 70) return `${eth} aligns well with the dating preferences of ${datingGender} in ${metroShort}. About ${own}% of singles here share your background, and cross-group interest patterns also work in your favor.`;
+        if (comp.score >= 50) return `${eth} has moderate appeal in ${metroShort}, where about ${own}% of singles share your background. Not a strong tailwind, but not a headwind either.`;
+        return `The demographic makeup of ${metroShort} creates a tougher environment for your profile. Only ${own}% of singles share your background, and dating preference patterns in this market favor other groups more heavily.`;
       }
       case 'height': {
-        const pct = c.percentile || 0;
-        if (comp.score >= 80) return `${c.height || 'Your height'} puts you in the plateau zone. Top ${Math.max(1, Math.round(100 - pct))}% of ${ownGender} in the market. Above 6 feet, additional height adds minimal premium.`;
-        if (comp.score >= 60) return `${c.height || 'Your height'} is above average and competitive in ${metroShort}. Market percentile: ${pct}. A modest but real advantage.`;
-        return `${c.height || 'Your height'} is below the local average. Market percentile: ${pct}. This creates a structural disadvantage that is difficult to offset through other traits.`;
+        if (comp.score >= 80) return `At ${c.height || 'your height'}, you are taller than the vast majority of ${ownGender} in ${metroShort}. Above about 6 feet, additional inches add very little, but being in this range is a clear advantage that most ${ownGender} cannot match.`;
+        if (comp.score >= 60) return `${c.height || 'Your height'} is above average for ${ownGender} in ${metroShort}. A modest but real advantage.`;
+        return `${c.height || 'Your height'} is below the average for ${ownGender} in ${metroShort}. Height is one of the hardest traits to compensate for in the dating market, because ${datingGender} often filter on it before anything else.`;
       }
       case 'body': {
-        const act = c.activityCbsa || 70;
-        const actLabel = act > 75 ? 'high-activity' : act < 65 ? 'low-activity' : 'moderate-activity';
-        if (comp.score >= 75) return `"${c.bodyType || 'Fit'}" body type + "${c.fitness || 'active'}" fitness = ${raw} raw score, ${mkt} market percentile. In a ${actLabel} market (activity index ${act}), your physical profile ranks among the top tier of ${ownGender}.`;
-        if (comp.score >= 50) return `"${c.bodyType || 'Average'}" body type with "${c.fitness || 'moderate'}" fitness. Raw ${raw}, market percentile ${mkt}. Competitive but not yet a standout differentiator in this ${actLabel} market.`;
-        return `"${c.bodyType || 'Your body type'}" scores ${raw} raw, with a market percentile of ${mkt}. In ${metroShort}'s ${actLabel} market, this is one of the most changeable factors on the list. Fitness and body composition are within your direct control.`;
+        const bt = c.bodyType || 'your body type';
+        const fit = c.fitness || 'your fitness level';
+        if (comp.score >= 75) return `Being ${bt.toLowerCase()} and working out ${fit.toLowerCase()} puts your physical profile near the top of ${ownGender} in ${metroShort}. Physical fitness is one of the most visible signals in the dating market, and yours is strong.`;
+        if (comp.score >= 50) return `Your body type (${bt.toLowerCase()}) and fitness level (${fit.toLowerCase()}) are above average in ${metroShort}. Competitive, but not yet a standout. This is one of the most improvable factors on the list.`;
+        return `Your body type (${bt.toLowerCase()}) and fitness level (${fit.toLowerCase()}) are below the competitive threshold in ${metroShort}. The good news: this is one of the most changeable factors. Fitness and body composition are entirely within your control.`;
       }
       case 'politics': {
-        const pol = c.political || 'Your views';
+        const pol = c.political || 'your political views';
         const con = c.conPct || 0;
         const mod = c.modPct || 0;
         const lib = c.libPct || 0;
-        const wm = c.weightMult || 1;
-        const wmLabel = wm > 1.2 ? 'polarized (weight amplified 1.5x)' : wm < 0.8 ? 'centrist-leaning (weight dampened 0.7x)' : 'balanced';
-        if (comp.score >= 70) return `${pol} in a market that is ${con}% conservative, ${mod}% moderate, ${lib}% liberal. Strong alignment. The market is ${wmLabel}.`;
-        if (comp.score >= 50) return `${pol} in a ${wmLabel} market (${con}% conservative, ${mod}% moderate, ${lib}% liberal). Moderate alignment, partial tolerance from adjacent groups pushes your score to ${Math.round(comp.score)}.`;
-        return `${pol} is misaligned with the ${metroShort} singles pool (${con}% conservative, ${mod}% moderate, ${lib}% liberal). This is a ${wmLabel} market, which limits your compatible pool before any other filter is applied.`;
+        if (comp.score >= 70) return `${pol} aligns well with the singles pool in ${metroShort}, which is about ${con}% conservative, ${mod}% moderate, and ${lib}% liberal. Political alignment removes one of the most common dealbreakers.`;
+        if (comp.score >= 50) return `${pol} in a market that is ${con}% conservative, ${mod}% moderate, and ${lib}% liberal. You have moderate alignment. Moderates and adjacent groups provide some tolerance, but it is not a strong tailwind.`;
+        return `${pol} is out of step with the ${metroShort} singles pool (${con}% conservative, ${mod}% moderate, ${lib}% liberal). Political mismatch is one of the hardest dealbreakers to overcome, and it shrinks your compatible pool before any other filter is applied.`;
       }
       case 'smoking': {
         const nonPct = c.nonSmokerPct || 80;
-        if (!c.isSmoker) return `Non-smoker. Aligned with ${nonPct}% of the searcher pool in ${metroShort}. One less barrier between you and a match.`;
-        return `Smoker. ${nonPct}% of singles in ${metroShort} are non-smokers, and most list non-smoking as a requirement. This creates a hard filter that excludes you from the majority of potential matches.`;
+        if (!c.isSmoker) return `Not smoking puts you in alignment with ${nonPct}% of singles in ${metroShort}. One less barrier between you and a match.`;
+        return `Smoking is a hard filter for most ${datingGender}. ${nonPct}% of singles in ${metroShort} do not smoke, and most of them will not consider a partner who does. This single trait can exclude you from the majority of potential matches.`;
       }
       case 'hasKids': {
         const noKids = c.noKidsPct || 50;
         const wantYes = c.wantKidsYesPct || 0;
-        if (!c.hasKids) return `No children. ${noKids}% of single ${ownGender} in ${metroShort} also have no kids. Being childless is a significant competitive advantage in this market.`;
-        return `Having children puts you at a disadvantage against ${noKids}% of single ${ownGender} who do not have kids. In a market where ${wantYes}% want kids, existing children create friction. Raw ${raw}, market ${mkt}.`;
+        if (!c.hasKids) return `Not having children gives you a clear edge. ${noKids}% of single ${ownGender} in ${metroShort} are also childless, and most ${datingGender} prefer partners without existing kids.`;
+        return `Having children puts you at a disadvantage against the ${noKids}% of single ${ownGender} who do not have kids. In a market where ${wantYes}% of ${datingGender} say they want children, having them already creates friction. Many ${datingGender} want to start fresh.`;
       }
       case 'wantKids': {
         const wantYes = c.wantKidsYesPct || 0;
-        if (comp.score >= 60) return `Wanting ${c.wantKids === 'Yes' ? 'kids' : c.wantKids === 'No' ? 'no kids' : 'to keep options open'} aligns with the local singles pool (${wantYes}% want kids). This removes friction in compatibility matching.`;
-        return `Your fertility preference creates friction with the local market. ${wantYes}% of singles want kids, and misalignment here is a quiet dealbreaker for many.`;
+        const wants = c.wantKids === 'Yes' ? 'wanting kids' : c.wantKids === 'No' ? 'not wanting kids' : 'being open either way';
+        if (comp.score >= 60) return `${wants.charAt(0).toUpperCase() + wants.slice(1)} is in sync with the local singles pool, where ${wantYes}% also want children. Alignment here removes a quiet but common dealbreaker.`;
+        return `${wants.charAt(0).toUpperCase() + wants.slice(1)} puts you out of step with the local market, where ${wantYes}% of singles want kids. Misalignment on children is a dealbreaker for many ${datingGender}, even if they do not say it out loud.`;
       }
       case 'costOfLiving': {
-        const src = c.sourceTraitLabel === 'income' ? 'income' : 'body';
-        if (comp.score >= 80) return `RPP ${c.rpp || 100} amplifies your ${src} competitiveness. Your purchasing power stands out relative to peers in ${metroShort}.`;
-        if (comp.score >= 50) return `RPP ${c.rpp || 100} has a moderate effect on your competitive position. Your ${src} signal is near the national average when adjusted for local cost of living.`;
-        return `High cost of living (RPP ${c.rpp || 100}) in ${metroShort} diminishes your ${src} advantage. The same profile would score higher in a more affordable metro.`;
+        const src = c.sourceTraitLabel === 'income' ? 'earning power' : 'physical profile';
+        if (comp.score >= 80) return `${metroShort} is more affordable than average, which makes your ${src} go further. The same profile would score lower in a more expensive city where everyone earns more or fitness culture is more intense.`;
+        if (comp.score >= 50) return `The cost of living in ${metroShort} is close to the national average. Your ${src} is neither amplified nor diminished by where you live.`;
+        return `${metroShort} is expensive, and that works against you. Your ${src} does not stretch as far here as it would in a more affordable city. The same profile would score noticeably higher somewhere with a lower cost of living.`;
       }
       default: return '';
     }
@@ -2753,12 +2755,12 @@ function CompetitivenessBreakdown({ marketData, demographics }: { marketData: Ma
 
       {strengths.length > 0 && (
         <div className="mb-5">
-          <span className="text-xs font-mono text-success uppercase tracking-wider">Pulling You Up</span>
+          <span className="text-[11px] font-semibold text-success uppercase tracking-wider">Pulling You Up</span>
           <div className="mt-2 space-y-0 divide-y divide-border">
             {strengths.map(s => (
               <div key={s.key} className="py-3 flex gap-3">
-                <div className="flex-shrink-0 w-16 text-right pt-0.5">
-                  <span className="font-mono text-lg font-semibold text-success">{Math.round(s.val)}</span>
+                <div className="flex-shrink-0 w-12 text-right pt-0.5">
+                  <span className="text-lg font-bold text-success">{Math.round(s.val)}</span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <span className="text-sm font-semibold text-foreground">{s.label}</span>
@@ -2772,12 +2774,12 @@ function CompetitivenessBreakdown({ marketData, demographics }: { marketData: Ma
 
       {weaknesses.length > 0 && (
         <div className="mb-3">
-          <span className="text-xs font-mono text-danger uppercase tracking-wider">Pulling You Down</span>
+          <span className="text-[11px] font-semibold text-danger uppercase tracking-wider">Pulling You Down</span>
           <div className="mt-2 space-y-0 divide-y divide-border">
             {weaknesses.map(w => (
               <div key={w.key} className="py-3 flex gap-3">
-                <div className="flex-shrink-0 w-16 text-right pt-0.5">
-                  <span className="font-mono text-lg font-semibold text-danger">{Math.round(w.val)}</span>
+                <div className="flex-shrink-0 w-12 text-right pt-0.5">
+                  <span className="text-lg font-bold text-danger">{Math.round(w.val)}</span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <span className="text-sm font-semibold text-foreground">{w.label}</span>
