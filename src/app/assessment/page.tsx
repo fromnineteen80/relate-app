@@ -64,7 +64,7 @@ export default function AssessmentHub() {
       }
 
       // Check Blueprint access and results
-      const bp = await fetchBlueprintAccess();
+      const bp = await fetchBlueprintAccess(user?.email);
       setBlueprintPurchased(bp.purchased);
       setBlueprintHasResults(!!localStorage.getItem('relate_blueprint_results'));
     }
@@ -125,49 +125,49 @@ export default function AssessmentHub() {
           {MODULES.map((mod) => {
             const state = getModuleState(mod.id);
             return (
-              <div key={mod.id} className={`card flex items-center justify-between ${state === 'locked' ? 'opacity-50' : ''}`}>
-                <div className="flex items-center gap-4">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-mono ${
+              <div key={mod.id} className={`card flex items-center justify-between gap-4 ${state === 'locked' ? 'opacity-50' : ''}`}>
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className={`w-8 h-8 min-w-[2rem] rounded-full flex items-center justify-center text-sm font-mono ${
                     state === 'completed' ? 'bg-success text-white' :
                     state === 'active' ? 'bg-accent text-white' :
                     'bg-stone-200 text-secondary'
                   }`}>
                     {state === 'completed' ? <Icon name="check" size={14} /> : mod.id}
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h3 className="font-serif font-semibold">{mod.title}</h3>
                     <p className="text-xs text-secondary">{mod.desc} · {mod.time}</p>
                   </div>
                 </div>
                 {state === 'active' && (
-                  <Link href={mod.path} className="btn-primary text-sm">
+                  <Link href={mod.path} className="btn-primary text-sm flex-shrink-0">
                     {statuses[mod.id]?.questionIndex > 0 ? 'Resume' : 'Start'}
                   </Link>
                 )}
                 {state === 'completed' && (
-                  <span className="text-xs font-mono text-success">Complete</span>
+                  <span className="text-xs font-mono text-success flex-shrink-0">Complete</span>
                 )}
               </div>
             );
           })}
           {/* Attachment Style — shown when assessment is complete and user has purchased */}
-          {allCompleted && blueprintPurchased && (
-            <div className={`card flex items-center justify-between`}>
-              <div className="flex items-center gap-4">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-serif font-semibold ${
-                  blueprintHasResults ? 'bg-success text-white' :  'bg-accent text-white'
+          {blueprintPurchased && (
+            <div className="card flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4 min-w-0">
+                <div className={`w-8 h-8 min-w-[2rem] rounded-full flex items-center justify-center text-sm font-serif font-semibold ${
+                  blueprintHasResults ? 'bg-success text-white' : 'bg-accent text-white'
                 }`}>
                   A
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h3 className="font-serif font-semibold">Attachment Style</h3>
                   <p className="text-xs text-secondary">Deep attachment assessment · ~30 min</p>
                 </div>
               </div>
               {blueprintHasResults ? (
-                <Link href="/results/attachment" className="text-xs font-mono text-success">Complete</Link>
+                <Link href="/results/attachment" className="text-xs font-mono text-success flex-shrink-0">Complete</Link>
               ) : (
-                <Link href="/blueprint" className="btn-primary text-sm">Start</Link>
+                <Link href="/blueprint" className="btn-primary text-sm flex-shrink-0">Start</Link>
               )}
             </div>
           )}
