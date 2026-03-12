@@ -563,7 +563,7 @@ function ResultsDashboard() {
               {stack.armorName && <h4 className="text-sm font-semibold mt-1">{stack.armorName}</h4>}
             </div>
             {stack.vulnerabilityLevel && (
-              <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+              <span className={`text-xs px-2 py-0.5 rounded ${
                 stack.vulnerabilityLevel === 'high' ? 'bg-success/10 text-success' :
                 stack.vulnerabilityLevel === 'moderate' ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
               }`}>
@@ -628,7 +628,7 @@ function ResultsDashboard() {
             {stack.patternName && <h4 className="text-sm font-semibold mt-1">{stack.patternName}</h4>}
           </div>
           {tensionLevel !== undefined && (
-            <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+            <span className={`text-xs px-2 py-0.5 rounded ${
               tensionLevel === 'high' ? 'bg-danger/10 text-danger' :
               tensionLevel === 'medium' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
             }`}>
@@ -767,8 +767,8 @@ function ResultsDashboard() {
         {(persona || hasDimensions || m4Summary || tensionStacks) && (
           <div id="persona" className="scroll-mt-32 mb-2 lg:[column-span:all]">
             <div className="flex items-baseline gap-3 mb-4 mt-6">
-              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">01</span>
-              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Your Persona</span>
+              <span className="text-[10px] text-secondary uppercase tracking-widest">01</span>
+              <span className="text-xs text-secondary uppercase tracking-widest">Your Persona</span>
             </div>
           </div>
         )}
@@ -777,7 +777,7 @@ function ResultsDashboard() {
         {persona && (
           <section className="card mb-4 scroll-mt-32">
             <div className="flex items-center justify-between mb-1">
-              <h3 className="font-serif text-lg font-semibold flex items-center gap-2">{persona.code && <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-accent text-white text-[7px] font-mono font-bold leading-none shrink-0"><span className="flex flex-col items-center gap-px"><span>{persona.code.slice(0,2)}</span><span>{persona.code.slice(2,4)}</span></span></span>}{persona.name}</h3>
+              <h3 className="font-serif text-lg font-semibold flex items-center gap-2">{persona.code && <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-accent text-white text-[7px] font-serif font-bold leading-none shrink-0"><span className="flex flex-col items-center gap-px"><span>{persona.code.slice(0,2)}</span><span>{persona.code.slice(2,4)}</span></span></span>}{persona.name}</h3>
               <Link href="/results/persona" className="text-xs text-accent hover:underline">View Details</Link>
             </div>
             {persona.traits && <p className="card-summary mb-4">{persona.traits}</p>}
@@ -907,7 +907,7 @@ function ResultsDashboard() {
                       <div className="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
                         <div className={`h-full ${dimBarColor[dim]} rounded-full transition-all`} style={{ width: `${Math.min(100, strength)}%` }} />
                       </div>
-                      <span className="font-mono text-xs text-secondary w-8 text-right">{Math.round(strength)}</span>
+                      <span className="font-serif text-xs text-secondary w-8 text-right">{Math.round(strength)}</span>
                     </div>
                     <p className="definition mt-1 ml-[92px] leading-snug">{desc}</p>
                   </div>
@@ -1036,8 +1036,8 @@ function ResultsDashboard() {
         {hasMarket && (
           <div id="know-your-market" className="scroll-mt-32 mb-2 lg:[column-span:all]">
             <div className="flex items-baseline gap-3 mb-4 mt-10">
-              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">02</span>
-              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Dating Market</span>
+              <span className="text-[10px] text-secondary uppercase tracking-widest">02</span>
+              <span className="text-xs text-secondary uppercase tracking-widest">Dating Market</span>
             </div>
           </div>
         )}
@@ -1091,8 +1091,8 @@ function ResultsDashboard() {
         {ic?.attachment && (
           <div id="attachment" className="scroll-mt-32 mb-2 lg:[column-span:all]">
             <div className="flex items-baseline gap-3 mb-4 mt-10">
-              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">03</span>
-              <span className="font-mono text-xs text-secondary uppercase tracking-widest">Attachment Style</span>
+              <span className="text-[10px] text-secondary uppercase tracking-widest">03</span>
+              <span className="text-xs text-secondary uppercase tracking-widest">Attachment Style</span>
             </div>
 
           <section className="card mb-4 scroll-mt-32">
@@ -1113,7 +1113,7 @@ function ResultsDashboard() {
             </div>
             <p className="card-summary mb-4">How you connect, protect, and respond in close relationships</p>
             <div className="flex items-center gap-3 mb-4">
-              <span className="font-mono text-lg font-semibold capitalize">{ic.attachment.style}</span>
+              <span className="font-serif text-lg font-semibold capitalize">{ic.attachment.style}</span>
               {ic.attachment.subtype && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded capitalize">{ic.attachment.subtype}</span>}
               {ic.attachment.leaningToward && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded">leaning {ic.attachment.leaningToward}</span>}
               <span className="text-xs font-mono text-secondary ml-auto">{Math.round((ic.attachment.confidence ?? 0) * 100)}% confidence</span>
