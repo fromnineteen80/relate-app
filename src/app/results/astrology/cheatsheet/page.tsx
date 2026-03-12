@@ -100,7 +100,7 @@ export default function CheatSheetPage() {
       <SiteHeader />
       <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
         <Link href="/results/astrology" className="text-xs text-secondary hover:text-foreground mb-4 inline-block">&larr; Back to Profile</Link>
-        <span className="font-mono text-xs text-secondary uppercase tracking-wider block">Sun, Moon &amp; Rise</span>
+        <span className="text-xs text-secondary uppercase tracking-wider block">Sun, Moon &amp; Rise</span>
         <h1 className="font-serif text-2xl font-semibold mt-1 mb-2">Your 12 Sign Cheat Sheet</h1>
         <p className="explainer mb-6">
           These reads are personalized to your <span className="font-medium text-foreground">{userSunSign} Sun</span>, <span className="font-medium text-foreground">{chart.moon.sign} Moon</span>, and <span className="font-medium text-foreground">{chart.rising.sign} Rising</span>. Tap any sign to see how that type of {partnerLabelLower} connects with your specific chart.
@@ -130,7 +130,7 @@ export default function CheatSheetPage() {
                     <span className="text-xl">{sign.symbol}</span>
                     <div>
                       <span className="font-serif font-semibold text-sm">{sign.name} {partnerLabel}</span>
-                      {isSameSun && <span className="ml-2 text-xs font-mono text-accent">Same Sun</span>}
+                      {isSameSun && <span className="ml-2 text-xs text-accent">Same Sun</span>}
                       <span className="block text-xs text-secondary">{sign.dateRange} · {sign.element} · {sign.rulingPlanet}</span>
                     </div>
                   </div>
@@ -151,7 +151,7 @@ export default function CheatSheetPage() {
                       <>
                         <div className="border-t border-accent/20 pt-3 mt-1" />
                         <div>
-                          <span className="font-mono text-[10px] text-accent uppercase tracking-wider">Alignment</span>
+                          <span className="text-[10px] text-accent uppercase tracking-wider">Alignment</span>
                         </div>
                         <CheatRow label="Where You Connect" content={personaReads[signName].alignment} icon={<Icon name="link" size={16} className="text-accent" />} />
                         <CheatRow label="Where You Differ" content={personaReads[signName].tension} icon={<Icon name="spa" size={16} className="text-secondary" />} />
@@ -176,7 +176,7 @@ export default function CheatSheetPage() {
 function CheatRow({ label, content, icon }: { label: string; content: string; icon?: React.ReactNode }) {
   return (
     <div>
-      <span className="font-mono text-xs text-secondary uppercase tracking-wider">{label}</span>
+      <span className="text-xs text-secondary uppercase tracking-wider">{label}</span>
       <p className="text-sm mt-0.5 flex gap-2">
         {icon && <span className="mt-0.5">{icon}</span>}
         <span>{content}</span>

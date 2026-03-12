@@ -135,7 +135,7 @@ export default function AstrologyPage() {
         <SubNav />
         <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
           <Link href="/results" className="text-xs text-secondary hover:text-foreground mb-4 inline-block">&larr; Back to Results</Link>
-          <span className="font-mono text-xs text-secondary uppercase tracking-wider block">Sun, Moon &amp; Rise</span>
+          <span className="text-xs text-secondary uppercase tracking-wider block">Sun, Moon &amp; Rise</span>
           <h1 className="font-serif text-2xl font-semibold mt-1 mb-2">Your Cosmic Blueprint</h1>
           <div className="card text-center py-8">
             <Icon name="stars" size={40} className="text-accent mx-auto mb-3" />
@@ -170,7 +170,7 @@ export default function AstrologyPage() {
       <SubNav />
       <main className="flex-1 max-w-3xl mx-auto px-6 py-8 w-full">
         <div className="mb-6">
-          <span className="font-mono text-xs text-secondary uppercase tracking-wider">Sun, Moon &amp; Rise</span>
+          <span className="text-xs text-secondary uppercase tracking-wider">Sun, Moon &amp; Rise</span>
           <div className="flex items-baseline justify-between gap-4 mt-1">
             <h1 className="font-serif text-2xl font-semibold">Your Cosmic Blueprint</h1>
             <Link href="/results/astrology/cheatsheet" className="text-sm text-accent hover:underline shrink-0">
@@ -187,7 +187,7 @@ export default function AstrologyPage() {
                 ✦
               </div>
               <div>
-                <span className="font-mono text-xs text-accent uppercase tracking-wider">
+                <span className="text-xs text-accent uppercase tracking-wider">
                   {personaName} + Your Stars
                 </span>
                 <h3 className="font-serif text-lg font-semibold mt-0.5">Persona Alignment</h3>
@@ -235,7 +235,7 @@ export default function AstrologyPage() {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-baseline gap-2 mb-1">
-                      <span className="font-mono text-xs text-secondary uppercase tracking-wider">{c.label}</span>
+                      <span className="text-xs text-secondary uppercase tracking-wider">{c.label}</span>
                       <span className={`text-xs font-medium ${colors.text}`}>
                         {c.data.element} · {c.data.modality}
                       </span>
@@ -244,7 +244,7 @@ export default function AstrologyPage() {
                       <span className="text-lg">{c.data.symbol}</span>
                       {c.placement.sign}
                     </h2>
-                    <span className="font-mono text-xs text-secondary">{c.placement.formatted}</span>
+                    <span className="text-xs text-secondary">{c.placement.formatted}</span>
                     <p className="text-sm text-secondary mt-2">{c.description}</p>
                   </div>
                 </div>
@@ -279,7 +279,7 @@ export default function AstrologyPage() {
 
           return (
             <div className="card border border-border mb-6">
-              <span className="font-mono text-xs text-secondary uppercase tracking-wider">Your Element Balance</span>
+              <span className="text-xs text-secondary uppercase tracking-wider">Your Element Balance</span>
               {balanceSummary && (
                 <p className="text-sm text-secondary mt-2 mb-4">{balanceSummary}</p>
               )}

@@ -121,7 +121,7 @@ export default function LandingPage() {
       {/* ── Hero ── */}
       <section className="relative pt-16 pb-20 px-6 bg-gradient-to-b from-stone-100 to-background">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-4">
+          <p className="text-xs tracking-widest text-accent uppercase mb-4">
             Fixing the match to partner journey<br className="sm:hidden" /> for 112 million U.S. singles
           </p>
           <h1 className="font-serif text-4xl md:text-5xl font-semibold leading-[1.1] mb-6">
@@ -165,7 +165,7 @@ export default function LandingPage() {
       <section id="how-it-works" className="px-6 py-20">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
-            <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">The Assessment</p>
+            <p className="text-xs tracking-widest text-accent uppercase mb-3">The Assessment</p>
             <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">Five modules. One complete profile.</h2>
             <p className="text-secondary max-w-lg mx-auto">
               Each module measures a different dimension of how you relate. Together, they build the most detailed relationship profile you&apos;ll ever receive.
@@ -176,10 +176,10 @@ export default function LandingPage() {
             {MODULES.map((m) => (
               <div key={m.num} className="card flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
                 <div className="flex items-center gap-4 md:w-48 flex-shrink-0">
-                  <span className="font-mono text-3xl font-light text-stone-300">{m.num}</span>
+                  <span className="font-serif text-3xl font-light text-stone-300">{m.num}</span>
                   <div>
                     <h3 className="font-serif text-lg font-semibold">{m.title}</h3>
-                    <p className="text-xs text-secondary font-mono">{m.time}</p>
+                    <p className="text-xs text-secondary">{m.time}</p>
                   </div>
                 </div>
                 <p className="text-sm text-secondary leading-relaxed">{m.desc}</p>
@@ -193,7 +193,7 @@ export default function LandingPage() {
       <section className="px-6 py-20 bg-stone-50 border-y border-border">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
-            <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Your Results</p>
+            <p className="text-xs tracking-widest text-accent uppercase mb-3">Your Results</p>
             <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">Not a one-dimensional personality test.</h2>
             <p className="text-secondary max-w-lg mx-auto">
               You don&apos;t get a label. You get a complete relational profile with actionable insight.
@@ -222,7 +222,7 @@ export default function LandingPage() {
       <section className="px-6 py-20">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
-            <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Attachment Style</p>
+            <p className="text-xs tracking-widest text-accent uppercase mb-3">Attachment Style</p>
             <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">Go deeper than your persona.</h2>
             <p className="text-secondary max-w-lg mx-auto">
               The Attachment Style assessment is a 30-minute deep dive that reveals the four psychological layers underneath your RELATE results. Your history. The emotion driving your behavior. How you make decisions under pressure. And where your persona is working for you versus quietly working against you. The result is a 3,000-word portrait of how you specifically love, not how people like you tend to love.
@@ -233,7 +233,7 @@ export default function LandingPage() {
             {ATTACHMENT_FEATURES.map((f) => (
               <div key={f.num} className="card flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
                 <div className="flex items-center gap-4 md:w-48 flex-shrink-0">
-                  <span className="font-mono text-3xl font-light text-stone-300">{f.num}</span>
+                  <span className="font-serif text-3xl font-light text-stone-300">{f.num}</span>
                   <h3 className="font-serif text-lg font-semibold">{f.title}</h3>
                 </div>
                 <p className="text-sm text-secondary leading-relaxed">{f.desc}</p>
@@ -254,7 +254,7 @@ export default function LandingPage() {
       <section className="px-6 py-20">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
-            <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">32 Personas</p>
+            <p className="text-xs tracking-widest text-accent uppercase mb-3">32 Personas</p>
             <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">Which one are you?</h2>
             <p className="text-secondary max-w-lg mx-auto">
               Your 4-letter code maps to one of 32 relationship personas, 16 male and 16 female. Each has distinct traits, dating behaviors, strengths, and shadows.
@@ -282,7 +282,7 @@ export default function LandingPage() {
       <section className="px-6 py-20 bg-stone-50 border-y border-border">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
-            <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Dating Economy</p>
+            <p className="text-xs tracking-widest text-accent uppercase mb-3">Dating Economy</p>
             <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">Finding Your Ideal Partner</h2>
             <p className="text-secondary max-w-lg mx-auto">
               Pinpoint value in your local dating market and identify the likelihood of finding your ideal match.
@@ -310,7 +310,7 @@ export default function LandingPage() {
       <section className="px-6 py-20">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
-            <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">The Science</p>
+            <p className="text-xs tracking-widest text-accent uppercase mb-3">The Science</p>
             <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">Built on clinical frameworks.</h2>
             <p className="text-secondary max-w-lg mx-auto">
               RELATE isn&apos;t an internet quiz. Every module maps onto established therapeutic and research frameworks.
@@ -332,7 +332,7 @@ export default function LandingPage() {
       <section id="pricing" className="px-6 py-20">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Pricing</p>
+            <p className="text-xs tracking-widest text-accent uppercase mb-3">Pricing</p>
             <h2 className="font-serif text-3xl md:text-4xl font-semibold mb-4">Start free. Go deeper if you want.</h2>
             <p className="text-secondary max-w-lg mx-auto">
               The assessment is free. Your persona and top matches are free. Everything beyond that is a one-time purchase.
@@ -346,7 +346,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* Free */}
             <div className="card flex flex-col">
-              <span className="font-mono text-xs text-secondary tracking-wider">FREE</span>
+              <span className="text-xs text-secondary tracking-wider">FREE</span>
               <p className="font-serif text-4xl font-semibold mt-2">$0</p>
               <p className="text-sm text-secondary mt-3 mb-6">Discover your persona.</p>
               <ul className="bullet-list mb-8 flex-1">

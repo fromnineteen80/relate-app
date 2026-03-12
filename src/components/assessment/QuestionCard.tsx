@@ -56,7 +56,7 @@ export default function QuestionCard({ question, value, onAnswer }: Props) {
               value === v ? 'border-accent bg-accent/5 text-accent font-medium' : 'border-border hover:border-accent text-secondary'
             }`}
           >
-            <span className="font-mono text-base">{v}</span>
+            <span className="font-serif text-base">{v}</span>
             <span className="text-center leading-tight text-[10px] sm:text-xs">{label}</span>
           </button>
         ))}

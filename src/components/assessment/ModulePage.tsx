@@ -144,7 +144,7 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
         <SiteHeader />
         <main className="flex-1 flex items-center justify-center px-6">
           <div className="max-w-md text-center">
-            <span className="font-mono text-xs text-secondary">Module {moduleNumber} of 5</span>
+            <span className="text-xs text-secondary">Module {moduleNumber} of 5</span>
             <h2 className="font-serif text-3xl font-semibold mt-2 mb-4">{title}</h2>
             <p className="text-secondary mb-8">
               {questions.length} questions · Answer honestly, there are no right or wrong answers.
@@ -222,7 +222,7 @@ export default function ModulePage({ moduleNumber, title, questions, nextPath, r
           <div className="flex-1 h-1 bg-stone-200 rounded-full overflow-hidden">
             <div className="h-full bg-accent rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
           </div>
-          <span className="font-mono text-xs text-secondary whitespace-nowrap">
+          <span className="font-serif text-xs text-secondary whitespace-nowrap">
             {safeIndex + 1} / {questions.length}
           </span>
         </div>

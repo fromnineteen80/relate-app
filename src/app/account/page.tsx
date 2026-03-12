@@ -1346,7 +1346,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
                       style={{ width: `${Math.min(100, Math.max(0, val))}%` }}
                     />
                   </div>
-                  <span className="text-xs font-mono w-8 text-right">{Math.round(val)}</span>
+                  <span className="text-xs font-serif w-8 text-right">{Math.round(val)}</span>
                 </div>
               );
             })}
@@ -1360,7 +1360,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
       {/* Match Pool Funnel */}
       {pool && (
         <div className="mb-6">
-          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Pool Funnel</span>
+          <span className="text-xs text-secondary uppercase tracking-wider">Match Pool Funnel</span>
           <div className="mt-3 space-y-1">
             {milestones.map((m, i) => {
               const maxVal = milestones[0].value || 1;
@@ -1382,7 +1382,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
                 <div key={m.label}>
                   <div className="flex items-center justify-between mb-0.5">
                     <span className={`text-xs ${isLast ? 'font-medium' : 'text-secondary'}`}>{m.label}</span>
-                    <span className={`text-xs font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{m.value.toLocaleString()}{pctOfSingles ? ` (${pctOfSingles})` : ''}</span>
+                    <span className={`text-xs font-serif ${isLast ? 'font-semibold' : 'text-secondary'}`}>{m.value.toLocaleString()}{pctOfSingles ? ` (${pctOfSingles})` : ''}</span>
                   </div>
                   <div className="relative h-2 bg-stone-100 rounded-full overflow-hidden">
                     <div
@@ -1407,15 +1407,15 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
       {/* Match Probability & Count */}
       <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
         <div className="text-center">
-          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Probability</span>
-          <p className="font-mono text-2xl font-semibold mt-1">{prob?.percentage || 'N/A'}</p>
+          <span className="text-xs text-secondary uppercase tracking-wider">Match Probability</span>
+          <p className="font-serif text-2xl font-semibold mt-1">{prob?.percentage || 'N/A'}</p>
           <p className="text-xs text-secondary mt-1">
             Chance of matching with someone from your ideal pool
           </p>
         </div>
         <div className="text-center">
-          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Estimated Matches</span>
-          <p className="font-mono text-2xl font-semibold mt-1">{matchCount.toLocaleString()}</p>
+          <span className="text-xs text-secondary uppercase tracking-wider">Estimated Matches</span>
+          <p className="font-serif text-2xl font-semibold mt-1">{matchCount.toLocaleString()}</p>
           <p className="text-xs text-secondary mt-1">
             Number of Singles from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats
           </p>
@@ -1429,7 +1429,7 @@ function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between py-1.5 border-b border-border last:border-0">
       <span className="text-sm text-secondary">{label}</span>
-      <span className="text-sm font-mono">{value}</span>
+      <span className="text-sm font-serif">{value}</span>
     </div>
   );
 }
