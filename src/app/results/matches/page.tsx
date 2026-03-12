@@ -74,7 +74,7 @@ export default function MatchesPage() {
       <SubNav />
 
       <main className="max-w-3xl mx-auto px-6 py-8 w-full flex-1 flex flex-col">
-        <p className="text-xs text-secondary mb-1">Click on each persona to read the full match experience</p>
+        <p className="card-summary mb-1">Click on each persona to read the full match experience</p>
         <h2 className="font-serif text-2xl font-semibold mb-2">All Compatibility Rankings</h2>
         {persona && (
           <p className="explainer mb-6">
@@ -119,8 +119,8 @@ export default function MatchesPage() {
                         <span className="font-serif text-lg text-secondary w-8 shrink-0 text-center">{match.rank}</span>
                         <div className="min-w-0">
                           <h3 className="font-serif font-semibold">{match.name}</h3>
-                          <span className="text-xs text-secondary">{match.code}</span>
-                          {match.traits && <p className="text-xs text-secondary mt-0.5">{match.traits}</p>}
+                          <span className="card-summary">{match.code}</span>
+                          {match.traits && <p className="card-summary mt-0.5">{match.traits}</p>}
                         </div>
                       </div>
                       <div className="text-right shrink-0">

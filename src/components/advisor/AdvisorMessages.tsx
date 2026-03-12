@@ -52,7 +52,7 @@ export default function AdvisorMessages({ hideStarters }: AdvisorMessagesProps) 
       {/* Rate limit info (shown when approaching limit but not yet hit) */}
       {!isLimited && messageCount > 0 && messageLimit !== Infinity && (
         <div className="text-center py-1">
-          <p className="text-[10px] text-secondary">
+          <p className="explainer">
             {messageCount}/{messageLimit} messages used this session
           </p>
         </div>
@@ -61,13 +61,13 @@ export default function AdvisorMessages({ hideStarters }: AdvisorMessagesProps) 
       {isLimited && (
         <div className="text-center py-4 px-2">
           <div className="p-4 bg-stone-50 border border-border rounded-md">
-            <p className="text-sm font-medium mb-1">Message limit reached</p>
-            <p className="text-xs text-secondary mb-3">
+            <p className="data-label mb-1">Message limit reached</p>
+            <p className="card-summary mb-3">
               You&apos;ve used all {messageLimit} messages included with your {paymentTier === 'free' ? 'Free' : paymentTier === 'premium' ? 'Premium' : 'current'} plan.
             </p>
             {paymentTier === 'premium' ? (
               <>
-                <p className="text-xs text-secondary mb-3">
+                <p className="card-summary mb-3">
                   Pro ($69.99) includes <strong>unlimited</strong> AI advisor messages.
                 </p>
                 <a href="/account" className="inline-block bg-accent text-white px-4 py-2 rounded-md text-xs font-medium hover:bg-accent-hover">
@@ -76,7 +76,7 @@ export default function AdvisorMessages({ hideStarters }: AdvisorMessagesProps) 
               </>
             ) : paymentTier === 'plus' ? (
               <>
-                <p className="text-xs text-secondary mb-3">
+                <p className="card-summary mb-3">
                   Premium ($49.99) includes 25 messages per session. Pro ($69.99) is unlimited.
                 </p>
                 <a href="/account" className="inline-block bg-accent text-white px-4 py-2 rounded-md text-xs font-medium hover:bg-accent-hover">
@@ -85,10 +85,10 @@ export default function AdvisorMessages({ hideStarters }: AdvisorMessagesProps) 
               </>
             ) : (
               <>
-                <p className="text-xs text-secondary mb-3">
+                <p className="card-summary mb-3">
                   Free includes 3 messages per session. Upgrade for more:
                 </p>
-                <div className="space-y-1 text-xs text-secondary mb-3 text-left max-w-[260px] mx-auto">
+                <div className="space-y-1 card-summary mb-3 text-left max-w-[260px] mx-auto">
                   <div className="flex justify-between"><span>Premium</span><span>25 msgs/session, $49.99</span></div>
                   <div className="flex justify-between"><span>Pro</span><span>Unlimited, $69.99</span></div>
                   <div className="flex justify-between"><span>Couples</span><span>Unlimited, $119</span></div>

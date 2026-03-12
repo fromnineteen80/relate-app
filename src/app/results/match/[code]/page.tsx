@@ -108,13 +108,13 @@ function ScoreBar({ label, value, description, barColor }: { label: string; valu
   return (
     <div>
       <div className="flex items-center gap-3">
-        <span className="text-xs text-secondary w-20 shrink-0">{label}</span>
+        <span className="card-summary w-20 shrink-0">{label}</span>
         <div className="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
           <div className={`h-full ${barColor || 'bg-accent'} rounded-full transition-all`} style={{ width: `${Math.min(100, value)}%` }} />
         </div>
         <span className="font-serif text-xs text-secondary w-8 text-right">{Math.round(value)}</span>
       </div>
-      {description && <p className="text-[11px] text-secondary/70 mt-1 ml-[92px] leading-snug">{description}</p>}
+      {description && <p className="definition mt-1 ml-[92px] leading-snug">{description}</p>}
     </div>
   );
 }
@@ -191,7 +191,7 @@ export default function MatchDetailPage() {
         {/* Header: name/code on left, score/tier on right, vertically centered */}
         <div className="flex items-center justify-between gap-6 mb-6">
           <div className="min-w-0">
-            <span className="text-xs text-secondary">Match #{match.rank}</span>
+            <span className="card-summary">Match #{match.rank}</span>
             <h2 className="font-serif text-3xl font-semibold">{match.name}</h2>
             <span className="text-sm text-accent">{match.code}</span>
           </div>
@@ -252,7 +252,7 @@ export default function MatchDetailPage() {
         {/* Persona insight cards */}
         <div className="mt-8 mb-2">
           <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="person" size={20} className={genderColor} />About {match.name}</h3>
-          <p className="text-xs text-secondary mt-1">What to expect from this persona</p>
+          <p className="card-summary mt-1">What to expect from this persona</p>
         </div>
 
         <InsightCard

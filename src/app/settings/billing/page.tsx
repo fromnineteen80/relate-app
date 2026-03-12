@@ -183,8 +183,8 @@ export default function BillingPage() {
               {paid ? <Icon name="check" size={18} /> : '-'}
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium">{tierLabel}</p>
-              <p className="text-xs text-secondary">
+              <p className="data-label">{tierLabel}</p>
+              <p className="card-summary">
                 {tier === 'free' && 'Persona code, top 3 matches, 3 advisor messages.'}
                 {tier === 'plus' && 'Full report, all 16 matches, PDF download.'}
                 {tier === 'premium' && 'Plus features + rate-limited AI advisor + retake assessment.'}
@@ -194,8 +194,8 @@ export default function BillingPage() {
             </div>
             <div className="text-right">
               <p className="font-serif text-xl font-semibold">{tierPrice}</p>
-              {paid && !legacyPayment && <p className="text-[10px] text-secondary">per month</p>}
-              {legacyPayment && <p className="text-[10px] text-secondary">one-time</p>}
+              {paid && !legacyPayment && <p className="explainer">per month</p>}
+              {legacyPayment && <p className="explainer">one-time</p>}
             </div>
           </div>
 
@@ -230,7 +230,7 @@ export default function BillingPage() {
                 <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded">Discount Active</span>
                 <span className="text-xs font-medium">{subscription.discount.name}</span>
               </div>
-              <p className="text-xs text-secondary">
+              <p className="card-summary">
                 {subscription.discount.percentOff && `${subscription.discount.percentOff}% off`}
                 {subscription.discount.amountOff && `$${(subscription.discount.amountOff / 100).toFixed(2)} off`}
                 {discountEnd && `, expires ${discountEnd}`}
@@ -254,7 +254,7 @@ export default function BillingPage() {
             <div className="mt-3 pt-3 border-t border-border">
               <div className="flex items-center gap-2">
                 <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">Test Account</span>
-                <span className="text-xs text-secondary">Full Pro access enabled for testing</span>
+                <span className="card-summary">Full Pro access enabled for testing</span>
               </div>
             </div>
           )}
@@ -262,7 +262,7 @@ export default function BillingPage() {
           {/* Discount code input — show when no active discount and not test mode */}
           {!isTestMode && !subscription?.discount && !discountCode && (
             <div className="mt-3 pt-3 border-t border-border">
-              <p className="text-xs text-secondary mb-2">Have a discount code?</p>
+              <p className="card-summary mb-2">Have a discount code?</p>
               <form onSubmit={async (e) => {
                 e.preventDefault();
                 const input = (e.target as HTMLFormElement).elements.namedItem('code') as HTMLInputElement;
@@ -318,21 +318,21 @@ export default function BillingPage() {
                   <Icon name="check" size={18} />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium">Couples: Active</p>
-                  <p className="text-xs text-secondary">Full compatibility report, shared advisor, conversation cards.</p>
+                  <p className="data-label">Couples: Active</p>
+                  <p className="card-summary">Full compatibility report, shared advisor, conversation cards.</p>
                 </div>
                 <div className="text-right">
                   <p className="font-serif text-lg font-semibold">{PRICING.couples.priceDisplay}</p>
-                  <p className="text-[10px] text-secondary">per month</p>
+                  <p className="explainer">per month</p>
                 </div>
               </div>
             ) : (
               <div className="p-3 border rounded-md border-border">
                 <div className="flex items-center justify-between mb-1">
-                  <p className="text-sm font-medium">Couples</p>
-                  <p className="font-serif text-sm">{PRICING.couples.priceDisplay}<span className="text-[10px] text-secondary">/mo</span></p>
+                  <p className="data-label">Couples</p>
+                  <p className="font-serif text-sm">{PRICING.couples.priceDisplay}<span className="explainer">/mo</span></p>
                 </div>
-                <p className="text-xs text-secondary mb-3">Add your partner for a couples compatibility report, shared advisor, and conversation cards.</p>
+                <p className="card-summary mb-3">Add your partner for a couples compatibility report, shared advisor, and conversation cards.</p>
                 <a href={`/api/checkout?product=couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
                   Add Couples
                 </a>
@@ -346,22 +346,22 @@ export default function BillingPage() {
                   <Icon name="check" size={18} />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium">{attachmentProduct === 'attachment_style_couples' ? 'Attachment Style Couples' : 'Attachment Style'}: Active</p>
-                  <p className="text-xs text-secondary">Deep attachment style session, personalized report, and growth plan.</p>
+                  <p className="data-label">{attachmentProduct === 'attachment_style_couples' ? 'Attachment Style Couples' : 'Attachment Style'}: Active</p>
+                  <p className="card-summary">Deep attachment style session, personalized report, and growth plan.</p>
                 </div>
                 <div className="text-right">
                   <p className="font-serif text-lg font-semibold">{attachmentProduct === 'attachment_style_couples' ? ATTACHMENT_PRICING.attachment_style_couples.priceDisplay : ATTACHMENT_PRICING.attachment_style.priceDisplay}</p>
-                  <p className="text-[10px] text-secondary">one-time</p>
+                  <p className="explainer">one-time</p>
                 </div>
               </div>
             ) : (
               <div className="space-y-3">
                 <div className="p-3 border rounded-md border-accent">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-medium">Attachment Style</p>
-                    <p className="font-serif text-sm">{ATTACHMENT_PRICING.attachment_style.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
+                    <p className="data-label">Attachment Style</p>
+                    <p className="font-serif text-sm">{ATTACHMENT_PRICING.attachment_style.priceDisplay}<span className="explainer ml-1">one-time</span></p>
                   </div>
-                  <p className="text-xs text-secondary mb-3">A 30-minute deep session revealing the psychology underneath your persona. 3,000-word personalized report and growth plan.</p>
+                  <p className="card-summary mb-3">A 30-minute deep session revealing the psychology underneath your persona. 3,000-word personalized report and growth plan.</p>
                   <a href={`/api/attachment-style/checkout?product=attachment_style&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-primary">
                     Add Attachment Style
                   </a>
@@ -369,10 +369,10 @@ export default function BillingPage() {
                 {partner && (
                   <div className="p-3 border rounded-md border-border">
                     <div className="flex items-center justify-between mb-1">
-                      <p className="text-sm font-medium">Attachment Style Couples</p>
-                      <p className="font-serif text-sm">{ATTACHMENT_PRICING.attachment_style_couples.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
+                      <p className="data-label">Attachment Style Couples</p>
+                      <p className="font-serif text-sm">{ATTACHMENT_PRICING.attachment_style_couples.priceDisplay}<span className="explainer ml-1">one-time</span></p>
                     </div>
-                    <p className="text-xs text-secondary mb-3">Both partners get the full session plus a couples overlay report analyzing your dynamic together.</p>
+                    <p className="card-summary mb-3">Both partners get the full session plus a couples overlay report analyzing your dynamic together.</p>
                     <a href={`/api/attachment-style/checkout?product=attachment_style_couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
                       Add Attachment Style Couples
                     </a>
@@ -404,12 +404,12 @@ export default function BillingPage() {
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium truncate">
+                  <p className="data-label truncate">
                     {partner.firstName ? `${partner.firstName}${partner.lastName ? ` ${partner.lastName}` : ''}` : partner.email}
                   </p>
                   <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
                 </div>
-                {partner.firstName && <p className="text-xs text-secondary truncate">{partner.email}</p>}
+                {partner.firstName && <p className="card-summary truncate">{partner.email}</p>}
                 {partner.personaName && (
                   <p className="text-xs text-accent mt-0.5">{partner.personaName}{partner.personaCode ? ` (${partner.personaCode})` : ''}</p>
                 )}
@@ -436,7 +436,7 @@ export default function BillingPage() {
               </div>
               <div>
                 <p className="text-sm">**** **** **** {subscription.paymentMethod.last4}</p>
-                <p className="text-xs text-secondary">
+                <p className="card-summary">
                   Expires {subscription.paymentMethod.expMonth.toString().padStart(2, '0')}/{subscription.paymentMethod.expYear}
                 </p>
               </div>
@@ -452,17 +452,17 @@ export default function BillingPage() {
             {/* Change plan */}
             {tier !== 'couples' && (
               <div className="mb-4">
-                <p className="text-xs text-secondary mb-3">Change your plan. Upgrades take effect immediately. Downgrades take effect at the start of your next billing period.</p>
+                <p className="card-summary mb-3">Change your plan. Upgrades take effect immediately. Downgrades take effect at the start of your next billing period.</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {TIER_ORDER.filter(t => t !== 'free' && t !== tier).map(t => {
                     const isUpgrade = tierIndex(t) > tierIndex(tier);
                     return (
                       <div key={t} className={`p-3 border rounded-md ${isUpgrade ? 'border-border' : 'border-border opacity-80'}`}>
                         <div className="flex items-center justify-between mb-1">
-                          <p className="text-sm font-medium">{PRICING[t]?.label}</p>
-                          <p className="font-serif text-sm">{PRICING[t]?.priceDisplay}<span className="text-[10px] text-secondary">/mo</span></p>
+                          <p className="data-label">{PRICING[t]?.label}</p>
+                          <p className="font-serif text-sm">{PRICING[t]?.priceDisplay}<span className="explainer">/mo</span></p>
                         </div>
-                        <p className="text-xs text-secondary mb-3">
+                        <p className="card-summary mb-3">
                           {t === 'plus' && 'All 16 matches, conflict analysis, growth path, PDF report.'}
                           {t === 'premium' && 'Plus features + rate-limited AI advisor + retake.'}
                           {t === 'pro' && 'Everything in Premium + unlimited AI advisor.'}
@@ -475,7 +475,7 @@ export default function BillingPage() {
                           {isUpgrade ? `Upgrade to ${PRICING[t]?.label}` : `Downgrade to ${PRICING[t]?.label}`}
                         </a>
                         {!isUpgrade && (
-                          <p className="text-[10px] text-secondary mt-2 text-center">Takes effect at the start of your next billing period.</p>
+                          <p className="explainer mt-2 text-center">Takes effect at the start of your next billing period.</p>
                         )}
                       </div>
                     );
@@ -488,8 +488,8 @@ export default function BillingPage() {
             <div className="pt-3 border-t border-border space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium">Update payment method</p>
-                  <p className="text-xs text-secondary">Change your card or payment details</p>
+                  <p className="data-label">Update payment method</p>
+                  <p className="card-summary">Change your card or payment details</p>
                 </div>
                 <button onClick={openPortal} disabled={portalLoading} className="btn-secondary text-xs">
                   {portalLoading ? 'Loading...' : 'Update'}
@@ -498,8 +498,8 @@ export default function BillingPage() {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium">View billing history</p>
-                  <p className="text-xs text-secondary">Download invoices and view past charges</p>
+                  <p className="data-label">View billing history</p>
+                  <p className="card-summary">Download invoices and view past charges</p>
                 </div>
                 <button onClick={openPortal} disabled={portalLoading} className="btn-secondary text-xs">
                   {portalLoading ? 'Loading...' : 'View'}
@@ -509,8 +509,8 @@ export default function BillingPage() {
               {!subscription?.cancelAtPeriodEnd && (
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium">Cancel subscription</p>
-                    <p className="text-xs text-secondary">
+                    <p className="data-label">Cancel subscription</p>
+                    <p className="card-summary">
                       {renewalDate ? `You'll keep access until ${renewalDate}` : 'Cancel your monthly subscription'}
                     </p>
                   </div>
@@ -523,7 +523,7 @@ export default function BillingPage() {
               {subscription?.cancelAtPeriodEnd && (
                 <div className="p-3 bg-warning/5 border border-warning/20 rounded">
                   <p className="text-sm font-medium text-warning">Subscription canceling</p>
-                  <p className="text-xs text-secondary mt-1">
+                  <p className="card-summary mt-1">
                     Your subscription will end on {renewalDate}. You can resubscribe anytime before then to keep your access.
                   </p>
                   <button onClick={openPortal} disabled={portalLoading} className="btn-secondary text-xs mt-2">
@@ -541,15 +541,15 @@ export default function BillingPage() {
         {!paid && !isTestMode && (
           <div className="card mb-4">
             <h3 className="font-serif font-semibold mb-3">Upgrade Your Plan</h3>
-            <p className="text-xs text-secondary mb-4">Unlock your full results, all matches, and AI coaching.</p>
+            <p className="card-summary mb-4">Unlock your full results, all matches, and AI coaching.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {TIER_ORDER.filter(t => t !== 'free').map(t => (
                 <div key={t} className={`p-3 border rounded-md ${t === 'premium' ? 'border-accent' : 'border-border'}`}>
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-medium">{PRICING[t]?.label}</p>
-                    <p className="font-serif text-sm">{PRICING[t]?.priceDisplay}<span className="text-[10px] text-secondary">/mo</span></p>
+                    <p className="data-label">{PRICING[t]?.label}</p>
+                    <p className="font-serif text-sm">{PRICING[t]?.priceDisplay}<span className="explainer">/mo</span></p>
                   </div>
-                  <p className="text-xs text-secondary mb-3">
+                  <p className="card-summary mb-3">
                     {t === 'plus' && 'All 16 matches, conflict analysis, growth path, PDF report.'}
                     {t === 'premium' && 'Plus features + rate-limited AI advisor + retake.'}
                     {t === 'pro' && 'Everything in Premium + unlimited AI advisor.'}
