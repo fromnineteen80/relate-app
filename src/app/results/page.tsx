@@ -496,7 +496,7 @@ function ResultsDashboard() {
         <section key={key} className="card mb-4">
           <div className="flex items-start justify-between gap-4 flex-wrap mb-2">
             <div className="min-w-0">
-              <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
+              <span className="subsection-label">{label}</span>
               <h4 className="text-sm font-semibold mt-1">
                 {stack.interpretation === 'coherent' ? 'Your conflict patterns are aligned' :
                  stack.interpretation === 'mostly-coherent' ? 'Mostly aligned with minor friction' :
@@ -522,7 +522,7 @@ function ResultsDashboard() {
           {stack.summary && <p className="text-sm text-secondary mb-3">{stack.summary}</p>}
           {Array.isArray(stack.incoherences) && stack.incoherences.length > 0 && (
             <div className="mb-3">
-              <span className="text-xs font-mono text-warning uppercase tracking-wider">Internal Friction</span>
+              <span className="subsection-label text-warning">Internal Friction</span>
               <div className="mt-2 space-y-3">
                 {stack.incoherences.map((inc: any, i: number) => (
                   <div key={i} className="p-3 bg-warning/5 border border-warning/20 rounded">
@@ -539,7 +539,7 @@ function ResultsDashboard() {
           )}
           {Array.isArray(stack.coherences) && stack.coherences.length > 0 && (
             <div>
-              <span className="text-xs font-mono text-success uppercase tracking-wider">Healthy Alignments</span>
+              <span className="subsection-label text-success">Healthy Alignments</span>
               <ul className="bullet-list mt-2">
                 {stack.coherences.map((coh: any, i: number) => (
                   <li key={i}>
@@ -559,7 +559,7 @@ function ResultsDashboard() {
         <section key={key} className="card mb-4">
           <div className="flex items-start justify-between mb-2">
             <div>
-              <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
+              <span className="subsection-label">{label}</span>
               {stack.armorName && <h4 className="text-sm font-semibold mt-1">{stack.armorName}</h4>}
             </div>
             {stack.vulnerabilityLevel && (
@@ -575,7 +575,7 @@ function ResultsDashboard() {
           {stack.starterNarrative && <p className="text-sm mb-3">{stack.starterNarrative}</p>}
           {Array.isArray(stack.customizations) && stack.customizations.length > 0 && (
             <div className="mb-3">
-              <span className="text-xs font-mono text-secondary uppercase tracking-wider">Key Patterns</span>
+              <span className="subsection-label">Key Patterns</span>
               <ul className="bullet-list mt-1.5">
                 {stack.customizations.map((c: string, i: number) => (
                   <li key={i}>{c}</li>
@@ -587,7 +587,7 @@ function ResultsDashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {Array.isArray(stack.inRelationship.costs) && stack.inRelationship.costs.length > 0 && (
                 <div>
-                  <span className="text-xs font-mono text-secondary uppercase tracking-wider">Risks</span>
+                  <span className="subsection-label">Risks</span>
                   <ul className="bullet-list mt-1.5">
                     {stack.inRelationship.costs.map((r: string, i: number) => (
                       <li key={i}>{r}</li>
@@ -597,7 +597,7 @@ function ResultsDashboard() {
               )}
               {stack.repairPath && (
                 <div>
-                  <span className="text-xs font-mono text-secondary uppercase tracking-wider">Growth Path</span>
+                  <span className="subsection-label">Growth Path</span>
                   <ul className="bullet-list mt-1.5"><li>{stack.repairPath}</li></ul>
                 </div>
               )}
@@ -605,7 +605,7 @@ function ResultsDashboard() {
           )}
           {stack.shamePattern && (
             <div className="mt-3 pt-3 border-t border-border">
-              <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
+              <span className="subsection-label">Watch For</span>
               <ul className="bullet-list mt-1.5">
                 <li><span className="font-medium">Trigger:</span> {stack.shamePattern.trigger}</li>
                 <li><span className="font-medium">Internal message:</span> {stack.shamePattern.shameMessage}</li>
@@ -624,7 +624,7 @@ function ResultsDashboard() {
       <section key={key} className="card mb-4">
         <div className="flex items-start justify-between mb-2">
           <div>
-            <span className="text-xs font-mono text-secondary uppercase tracking-wider">{label}</span>
+            <span className="subsection-label">{label}</span>
             {stack.patternName && <h4 className="text-sm font-semibold mt-1">{stack.patternName}</h4>}
           </div>
           {tensionLevel !== undefined && (
@@ -640,7 +640,7 @@ function ResultsDashboard() {
         {stack.starterNarrative && <p className="text-sm mb-3">{stack.starterNarrative}</p>}
         {Array.isArray(stack.customizations) && stack.customizations.length > 0 && (
           <div className="mb-3">
-            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Key Patterns</span>
+            <span className="subsection-label">Key Patterns</span>
             <ul className="bullet-list mt-1.5">
               {stack.customizations.map((c: string, i: number) => (
                 <li key={i}>{c}</li>
@@ -651,7 +651,7 @@ function ResultsDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {Array.isArray(stack.risks) && stack.risks.length > 0 && (
             <div>
-              <span className="text-xs font-mono text-secondary uppercase tracking-wider">Risks</span>
+              <span className="subsection-label">Risks</span>
               <ul className="bullet-list mt-1.5">
                 {stack.risks.map((r: string, i: number) => (
                   <li key={i}>{r}</li>
@@ -661,7 +661,7 @@ function ResultsDashboard() {
           )}
           {stack.growthPath && (
             <div>
-              <span className="text-xs font-mono text-secondary uppercase tracking-wider">Growth Path</span>
+              <span className="subsection-label">Growth Path</span>
               {Array.isArray(stack.growthPath) ? (
                 <ul className="bullet-list mt-1.5">
                   {stack.growthPath.map((g: string, i: number) => (
@@ -679,7 +679,7 @@ function ResultsDashboard() {
         </div>
         {stack.signals && typeof stack.signals === 'object' && !Array.isArray(stack.signals) && (
           <div className="mt-3 pt-3 border-t border-border">
-            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
+            <span className="subsection-label">Watch For</span>
             <ul className="bullet-list mt-1.5">
               {Object.entries(stack.signals).map(([k, v]: [string, any]) => {
                 if (v && typeof v === 'object' && v.interpretation) {
@@ -704,7 +704,7 @@ function ResultsDashboard() {
         )}
         {Array.isArray(stack.signals) && stack.signals.length > 0 && (
           <div className="mt-3 pt-3 border-t border-border">
-            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Watch For</span>
+            <span className="subsection-label">Watch For</span>
             <ul className="bullet-list mt-1.5">
               {stack.signals.map((s: string, i: number) => (
                 <li key={i}>{s}</li>
@@ -784,7 +784,7 @@ function ResultsDashboard() {
             {/* Dating Behavior */}
             {persona.datingBehavior?.length > 0 && (
               <div>
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Dating Behavior</span>
+                <span className="subsection-label">Dating Behavior</span>
                 <ul className="bullet-list mt-2">
                   {persona.datingBehavior.map((b: string, i: number) => (
                     <li key={i}>{b}</li>
@@ -798,7 +798,7 @@ function ResultsDashboard() {
               <div className="mt-4 pt-4 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {persona.mostAttractive?.length > 0 && (
                   <div>
-                    <span className="text-xs font-mono text-success uppercase tracking-wider">Most Attractive Qualities</span>
+                    <span className="subsection-label text-success">Most Attractive Qualities</span>
                     <ul className="bullet-list mt-2">
                       {persona.mostAttractive.map((item: string, i: number) => (
                         <li key={i}>{item}</li>
@@ -808,7 +808,7 @@ function ResultsDashboard() {
                 )}
                 {persona.leastAttractive?.length > 0 && (
                   <div>
-                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Growth Areas</span>
+                    <span className="subsection-label text-warning">Growth Areas</span>
                     <ul className="bullet-list mt-2">
                       {persona.leastAttractive.map((item: string, i: number) => (
                         <li key={i}>{item}</li>
@@ -824,7 +824,7 @@ function ResultsDashboard() {
               <div className="mt-4 pt-4 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {persona.inRelationships?.length > 0 && (
                   <div>
-                    <span className="text-xs font-mono text-secondary uppercase tracking-wider">In Relationships</span>
+                    <span className="subsection-label">In Relationships</span>
                     <ul className="bullet-list mt-2">
                       {persona.inRelationships.map((b: string, i: number) => (
                         <li key={i}>{b}</li>
@@ -834,7 +834,7 @@ function ResultsDashboard() {
                 )}
                 {persona.struggles?.length > 0 && (
                   <div>
-                    <span className="text-xs font-mono text-secondary uppercase tracking-wider">Shadow Side</span>
+                    <span className="subsection-label">Shadow Side</span>
                     <ul className="bullet-list mt-2">
                       {persona.struggles.map((b: string, i: number) => (
                         <li key={i}>{b}</li>
@@ -928,7 +928,7 @@ function ResultsDashboard() {
         {m4Summary && (
           <section className="card mb-4 scroll-mt-32">
             <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="bolt" size={20} className="text-accent" />Conflict Profile</h3>
-            <p className="text-sm text-secondary mb-5">How you engage in conflict, what drives your emotional reactions, and how you recover afterward.</p>
+            <p className="card-summary mb-5">How you engage in conflict, what drives your emotional reactions, and how you recover afterward.</p>
             <div className="space-y-4 mb-4">
               {(() => {
                 const CONFLICT_DESCRIPTIONS: Record<string, Record<string, string>> = {
@@ -966,10 +966,10 @@ function ResultsDashboard() {
                 return items.map(([label, val, desc]) => (
                   <div key={label}>
                     <div className="flex items-baseline justify-between gap-4 mb-1">
-                      <span className="text-sm font-medium">{label}</span>
-                      <span className="text-xs font-semibold capitalize">{(val as string) || '-'}</span>
+                      <span className="data-label">{label}</span>
+                      <span className="data-value">{(val as string) || '-'}</span>
                     </div>
-                    {desc && <p className="text-xs text-secondary mb-2">{desc}</p>}
+                    {desc && <p className="definition mb-2">{desc}</p>}
                   </div>
                 ));
               })()}
@@ -1122,7 +1122,7 @@ function ResultsDashboard() {
             {ic.attachment.strengths && Array.isArray(ic.attachment.strengths) && ic.attachment.strengths.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
                 <div>
-                  <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
+                  <span className="subsection-label text-success">Strengths</span>
                   <ul className="bullet-list mt-2">
                     {ic.attachment.strengths.map((s: string, i: number) => (
                       <li key={i}>{s}</li>
@@ -1131,7 +1131,7 @@ function ResultsDashboard() {
                 </div>
                 {ic.attachment.challenges && Array.isArray(ic.attachment.challenges) && ic.attachment.challenges.length > 0 && (
                   <div>
-                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
+                    <span className="subsection-label text-warning">Challenges</span>
                     <ul className="bullet-list mt-2">
                       {ic.attachment.challenges.map((c: string, i: number) => (
                         <li key={i}>{c}</li>
@@ -1143,13 +1143,13 @@ function ResultsDashboard() {
             )}
             {ic.attachment.inRelationships && (
               <div className="mt-4 pt-4 border-t border-border">
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">In Relationships</span>
+                <span className="subsection-label">In Relationships</span>
                 <p className="text-sm text-secondary mt-2">{ic.attachment.inRelationships}</p>
               </div>
             )}
             {ic.attachment.underStress && (
               <div className="mt-4 pt-4 border-t border-border">
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Under Stress</span>
+                <span className="subsection-label">Under Stress</span>
                 <p className="text-sm text-secondary mt-2">{ic.attachment.underStress}</p>
               </div>
             )}
@@ -1263,7 +1263,7 @@ function ResultsDashboard() {
 
             {/* Attachment Style */}
             <div className="mb-4">
-              <span className="text-xs font-mono text-secondary uppercase tracking-wider">Partner Attachment Style</span>
+              <span className="subsection-label">Partner Attachment Style</span>
               <div className="flex flex-wrap gap-2 mt-3">
                 {sortedAttachmentMatches.map((m, i) => (
                     <div key={i} className={`text-center px-3 py-2 rounded-lg border ${m.bg}`}>
@@ -1278,7 +1278,7 @@ function ResultsDashboard() {
             {/* Emotional Driver */}
             {ic.driverTiers && (
               <div className="mb-4 pt-4 border-t border-border">
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Partner Emotional Driver</span>
+                <span className="subsection-label">Partner Emotional Driver</span>
                 <p className="text-xs text-secondary mt-1 mb-3">Your primary: <span className="font-mono capitalize text-foreground">{ic.driverTiers.yourDriver?.primary || '-'}</span></p>
                 <div className="flex flex-wrap gap-2">
                   {sortedDriverMatches.map((m, i) => (
@@ -1295,13 +1295,13 @@ function ResultsDashboard() {
             {/* Conflict Behavior */}
             {(ic.horsemenInsights || gottman) && (
               <div className="pt-4 border-t border-border">
-                <span className="text-xs font-mono text-secondary uppercase tracking-wider">Partner Conflict Behavior</span>
+                <span className="subsection-label">Partner Conflict Behavior</span>
                 {ic.horsemenInsights?.urgent && (
                   <div className="mt-2 p-2 bg-danger/5 border border-danger/20 rounded text-xs text-danger">{ic.horsemenInsights.urgent}</div>
                 )}
                 {Array.isArray(ic.horsemenInsights?.lookFor) && ic.horsemenInsights.lookFor.length > 0 && (
                   <div className="mt-3">
-                    <span className="text-xs font-mono text-success uppercase tracking-wider">Look for in a partner</span>
+                    <span className="subsection-label text-success">Look for in a partner</span>
                     <ul className="bullet-list mt-2">
                       {ic.horsemenInsights.lookFor.map((item: any, i: number) => (
                         <li key={i}><span><span className="font-medium text-foreground">{item.partnerTrait}</span>: {item.reason}</span></li>
@@ -1311,7 +1311,7 @@ function ResultsDashboard() {
                 )}
                 {Array.isArray(ic.horsemenInsights?.avoid) && ic.horsemenInsights.avoid.length > 0 && (
                   <div className="mt-3">
-                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Be cautious of</span>
+                    <span className="subsection-label text-warning">Be cautious of</span>
                     <ul className="bullet-list mt-2">
                       {ic.horsemenInsights.avoid.map((item: any, i: number) => (
                         <li key={i}><span><span className="font-medium text-foreground">{item.partnerTrait}</span>: {item.reason}</span></li>
@@ -1364,7 +1364,7 @@ function ResultsDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
                 {m3.typeDetails.strengths?.length > 0 && (
                   <div>
-                    <span className="text-xs font-mono text-success uppercase tracking-wider">Strengths</span>
+                    <span className="subsection-label text-success">Strengths</span>
                     <ul className="bullet-list mt-2">
                       {m3.typeDetails.strengths.map((s: string, i: number) => (
                         <li key={i}>{s}</li>
@@ -1374,7 +1374,7 @@ function ResultsDashboard() {
                 )}
                 {m3.typeDetails.challenges?.length > 0 && (
                   <div>
-                    <span className="text-xs font-mono text-warning uppercase tracking-wider">Challenges</span>
+                    <span className="subsection-label text-warning">Challenges</span>
                     <ul className="bullet-list mt-2">
                       {m3.typeDetails.challenges.map((c: string, i: number) => (
                         <li key={i}>{c}</li>
@@ -1506,7 +1506,7 @@ function ResultsDashboard() {
 
               {(bridge.withSameType || bridge.withOpposite) && (
                 <div className="mt-3 pt-3 border-t border-border space-y-3">
-                  <span className="text-xs font-mono text-secondary uppercase tracking-wider">With Partners</span>
+                  <span className="subsection-label">With Partners</span>
                   {bridge.withSameType && (
                     <div>
                       <p className="text-xs font-medium mb-1">With a similar pattern</p>
@@ -1524,7 +1524,7 @@ function ResultsDashboard() {
 
               {bridge.growthPath && (
                 <div className="mt-3 pt-3 border-t border-border">
-                  <span className="text-xs font-mono text-secondary uppercase tracking-wider">Growth Path</span>
+                  <span className="subsection-label">Growth Path</span>
                   {Array.isArray(bridge.growthPath) ? (
                     <ul className="bullet-list mt-1.5">
                       {bridge.growthPath.map((g: string, i: number) => (
