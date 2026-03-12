@@ -257,7 +257,7 @@ export default function PersonasPage() {
                           <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-full">You</span>
                         )}
                         {isBestMatch && (
-                          <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded-full font-mono">Best Match</span>
+                          <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded-full">Best Match</span>
                         )}
                       </div>
                       <p className="text-xs text-secondary">{dims.join(' + ')}</p>
@@ -277,7 +277,7 @@ export default function PersonasPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {persona.datingBehavior.length > 0 && (
                         <div>
-                          <h4 className="text-xs font-mono text-secondary uppercase tracking-wider mb-2">Dating Behavior</h4>
+                          <h4 className="text-xs text-secondary uppercase tracking-wider mb-2">Dating Behavior</h4>
                           <ul className="bullet-list">
                             {persona.datingBehavior.map((item, i) => (
                               <li key={i}>{item}</li>
@@ -288,7 +288,7 @@ export default function PersonasPage() {
 
                       {persona.inRelationships.length > 0 && (
                         <div>
-                          <h4 className="text-xs font-mono text-secondary uppercase tracking-wider mb-2">In Relationships</h4>
+                          <h4 className="text-xs text-secondary uppercase tracking-wider mb-2">In Relationships</h4>
                           <ul className="bullet-list">
                             {persona.inRelationships.map((item, i) => (
                               <li key={i}>{item}</li>
@@ -302,7 +302,7 @@ export default function PersonasPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {persona.mostAttractive.length > 0 && (
                         <div>
-                          <h4 className="text-xs font-mono text-success uppercase tracking-wider mb-2">Strengths</h4>
+                          <h4 className="text-xs text-success uppercase tracking-wider mb-2">Strengths</h4>
                           <ul className="bullet-list">
                             {persona.mostAttractive.map((item, i) => (
                               <li key={i}>{item}</li>
@@ -313,7 +313,7 @@ export default function PersonasPage() {
 
                       {persona.leastAttractive.length > 0 && (
                         <div>
-                          <h4 className="text-xs font-mono text-warning uppercase tracking-wider mb-2">Growth Areas</h4>
+                          <h4 className="text-xs text-warning uppercase tracking-wider mb-2">Growth Areas</h4>
                           <ul className="bullet-list">
                             {persona.leastAttractive.map((item, i) => (
                               <li key={i}>{item}</li>
@@ -326,7 +326,7 @@ export default function PersonasPage() {
                     {/* Row 3: Shadow Side (centered) */}
                     {persona.struggles.length > 0 && (
                       <div className="md:w-1/2 md:mx-auto">
-                        <h4 className="text-xs font-mono text-secondary uppercase tracking-wider mb-2">Shadow Side</h4>
+                        <h4 className="text-xs text-secondary uppercase tracking-wider mb-2">Shadow Side</h4>
                         <ul className="bullet-list">
                           {persona.struggles.map((item, i) => (
                             <li key={i}>{item}</li>
@@ -345,7 +345,7 @@ export default function PersonasPage() {
         {userPersonaCode && userMatches.length > 0 && (
           <div className="mt-10">
             <div className="text-center mb-6">
-              <p className="font-mono text-xs tracking-widest text-accent uppercase mb-2">Your Matches</p>
+              <p className="text-xs tracking-widest text-accent uppercase mb-2">Your Matches</p>
               <h2 className="font-serif text-2xl font-semibold mb-2">
                 How {userPersonaName || 'You'} Matches With {userGender === 'M' ? 'Female' : 'Male'} Personas
               </h2>
@@ -368,7 +368,7 @@ export default function PersonasPage() {
               <div className="space-y-2">
                 {userMatches.map((match) => (
                   <div key={match.code} className="flex items-center gap-3 py-2 border-b border-border last:border-0">
-                    <span className="font-mono text-xs text-secondary w-6 text-right">{match.rank}</span>
+                    <span className="font-serif text-xs text-secondary w-6 text-right">{match.rank}</span>
                     <div className={`w-2 h-2 rounded-full ${tierBgColor(match.tier)} flex-shrink-0`} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
@@ -378,7 +378,7 @@ export default function PersonasPage() {
                     </div>
                     <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>
                     <div className="w-16 text-right">
-                      <span className="font-mono text-sm font-semibold">{match.compatibilityScore}</span>
+                      <span className="font-serif text-sm font-semibold">{match.compatibilityScore}</span>
                     </div>
                   </div>
                 ))}

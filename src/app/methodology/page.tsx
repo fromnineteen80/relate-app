@@ -667,7 +667,7 @@ function DriverCard({ name, fear, experience, behavior, healthy }: { name: strin
   return (
     <div className="card">
       <h3 className="font-serif font-semibold mb-1">{name}</h3>
-      <p className="text-xs text-accent font-mono mb-3">&quot;{fear}&quot;</p>
+      <p className="text-xs text-accent mb-3">&quot;{fear}&quot;</p>
       <div className="space-y-2 text-sm text-secondary">
         <p><span className="font-medium text-foreground">Internal experience:</span> {experience}</p>
         <p><span className="font-medium text-foreground">External behavior:</span> {behavior}</p>

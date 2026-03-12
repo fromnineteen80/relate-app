@@ -205,19 +205,19 @@ export default function BillingPage() {
               {renewalDate && !subscription.cancelAtPeriodEnd && (
                 <div className="flex justify-between text-xs">
                   <span className="text-secondary">Next renewal</span>
-                  <span className="font-mono">{renewalDate}</span>
+                  <span>{renewalDate}</span>
                 </div>
               )}
               {subscription.cancelAtPeriodEnd && renewalDate && (
                 <div className="flex justify-between text-xs">
                   <span className="text-secondary">Access until</span>
-                  <span className="font-mono text-warning">{renewalDate}</span>
+                  <span className="text-warning">{renewalDate}</span>
                 </div>
               )}
               {memberSince && (
                 <div className="flex justify-between text-xs">
                   <span className="text-secondary">Member since</span>
-                  <span className="font-mono">{memberSince}</span>
+                  <span>{memberSince}</span>
                 </div>
               )}
             </div>
@@ -227,7 +227,7 @@ export default function BillingPage() {
           {subscription?.discount && (
             <div className="mt-3 pt-3 border-t border-border">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded">Discount Active</span>
+                <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded">Discount Active</span>
                 <span className="text-xs font-medium">{subscription.discount.name}</span>
               </div>
               <p className="text-xs text-secondary">
@@ -243,7 +243,7 @@ export default function BillingPage() {
           {discountCode && !subscription?.discount && (
             <div className="mt-3 pt-3 border-t border-border">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded">Discount Code</span>
+                <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded">Discount Code</span>
                 <span className="text-xs font-mono">{discountCode}</span>
               </div>
             </div>
@@ -253,7 +253,7 @@ export default function BillingPage() {
           {isTestMode && (
             <div className="mt-3 pt-3 border-t border-border">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">Test Account</span>
+                <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">Test Account</span>
                 <span className="text-xs text-secondary">Full Pro access enabled for testing</span>
               </div>
             </div>
@@ -330,7 +330,7 @@ export default function BillingPage() {
               <div className="p-3 border rounded-md border-border">
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-sm font-medium">Couples</p>
-                  <p className="font-mono text-sm">{PRICING.couples.priceDisplay}<span className="text-[10px] text-secondary">/mo</span></p>
+                  <p className="font-serif text-sm">{PRICING.couples.priceDisplay}<span className="text-[10px] text-secondary">/mo</span></p>
                 </div>
                 <p className="text-xs text-secondary mb-3">Add your partner for a couples compatibility report, shared advisor, and conversation cards.</p>
                 <a href={`/api/checkout?product=couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
@@ -359,7 +359,7 @@ export default function BillingPage() {
                 <div className="p-3 border rounded-md border-accent">
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-sm font-medium">Attachment Style</p>
-                    <p className="font-mono text-sm">{ATTACHMENT_PRICING.attachment_style.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
+                    <p className="font-serif text-sm">{ATTACHMENT_PRICING.attachment_style.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
                   </div>
                   <p className="text-xs text-secondary mb-3">A 30-minute deep session revealing the psychology underneath your persona. 3,000-word personalized report and growth plan.</p>
                   <a href={`/api/attachment-style/checkout?product=attachment_style&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-primary">
@@ -370,7 +370,7 @@ export default function BillingPage() {
                   <div className="p-3 border rounded-md border-border">
                     <div className="flex items-center justify-between mb-1">
                       <p className="text-sm font-medium">Attachment Style Couples</p>
-                      <p className="font-mono text-sm">{ATTACHMENT_PRICING.attachment_style_couples.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
+                      <p className="font-serif text-sm">{ATTACHMENT_PRICING.attachment_style_couples.priceDisplay}<span className="text-[10px] text-secondary ml-1">one-time</span></p>
                     </div>
                     <p className="text-xs text-secondary mb-3">Both partners get the full session plus a couples overlay report analyzing your dynamic together.</p>
                     <a href={`/api/attachment-style/checkout?product=attachment_style_couples&email=${encodeURIComponent(user?.email || '')}`} className="text-xs w-full text-center block btn-secondary">
@@ -407,7 +407,7 @@ export default function BillingPage() {
                   <p className="text-sm font-medium truncate">
                     {partner.firstName ? `${partner.firstName}${partner.lastName ? ` ${partner.lastName}` : ''}` : partner.email}
                   </p>
-                  <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
+                  <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
                 </div>
                 {partner.firstName && <p className="text-xs text-secondary truncate">{partner.email}</p>}
                 {partner.personaName && (
@@ -432,7 +432,7 @@ export default function BillingPage() {
             </div>
             <div className="flex items-center gap-3">
               <div className="w-10 h-7 bg-stone-100 border border-border rounded flex items-center justify-center">
-                <span className="text-[10px] font-mono uppercase text-secondary">{subscription.paymentMethod.brand}</span>
+                <span className="text-[10px] uppercase text-secondary">{subscription.paymentMethod.brand}</span>
               </div>
               <div>
                 <p className="text-sm font-mono">**** **** **** {subscription.paymentMethod.last4}</p>
@@ -460,7 +460,7 @@ export default function BillingPage() {
                       <div key={t} className={`p-3 border rounded-md ${isUpgrade ? 'border-border' : 'border-border opacity-80'}`}>
                         <div className="flex items-center justify-between mb-1">
                           <p className="text-sm font-medium">{PRICING[t]?.label}</p>
-                          <p className="font-mono text-sm">{PRICING[t]?.priceDisplay}<span className="text-[10px] text-secondary">/mo</span></p>
+                          <p className="font-serif text-sm">{PRICING[t]?.priceDisplay}<span className="text-[10px] text-secondary">/mo</span></p>
                         </div>
                         <p className="text-xs text-secondary mb-3">
                           {t === 'plus' && 'All 16 matches, conflict analysis, growth path, PDF report.'}
@@ -547,7 +547,7 @@ export default function BillingPage() {
                 <div key={t} className={`p-3 border rounded-md ${t === 'premium' ? 'border-accent' : 'border-border'}`}>
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-sm font-medium">{PRICING[t]?.label}</p>
-                    <p className="font-mono text-sm">{PRICING[t]?.priceDisplay}<span className="text-[10px] text-secondary">/mo</span></p>
+                    <p className="font-serif text-sm">{PRICING[t]?.priceDisplay}<span className="text-[10px] text-secondary">/mo</span></p>
                   </div>
                   <p className="text-xs text-secondary mb-3">
                     {t === 'plus' && 'All 16 matches, conflict analysis, growth path, PDF report.'}
