@@ -115,7 +115,7 @@ export default function CouplesDashboard() {
               <p className="font-serif text-sm font-semibold">Level {level.level}: {level.name}</p>
               <p className="text-xs text-secondary">{points} points · {level.pointsToNext > 0 ? `${level.pointsToNext} to next level` : 'Max level!'}</p>
             </div>
-            <span className="font-mono text-2xl font-bold text-accent">{level.level}</span>
+            <span className="font-serif text-2xl font-bold text-accent">{level.level}</span>
           </div>
           <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
             <div
@@ -153,10 +153,10 @@ export default function CouplesDashboard() {
           <div className="card border-accent">
             <div className="flex items-start justify-between mb-2">
               <div>
-                <p className="text-xs text-accent font-mono">Active Challenge</p>
+                <p className="text-xs text-accent">Active Challenge</p>
                 <p className="font-serif text-sm font-semibold mt-1">{activeChallenge.title}</p>
               </div>
-              <span className="font-mono text-xs text-secondary">+{activeChallenge.points}pts</span>
+              <span className="font-serif text-xs text-secondary">+{activeChallenge.points}pts</span>
             </div>
             <p className="text-xs text-secondary mb-3">{activeChallenge.description}</p>
             <button onClick={completeChallenge} className="btn-primary text-xs w-full">

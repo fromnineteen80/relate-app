@@ -427,11 +427,11 @@ function OverviewSection({ data }: { data: any }) {
           <p className="text-xs text-secondary mt-1">Value Alignment</p>
         </div>
         <div className="card text-center">
-          <span className="font-mono text-2xl font-semibold">{data.m3Compat}%</span>
+          <span className="font-serif text-2xl font-semibold">{data.m3Compat}%</span>
           <p className="text-xs text-secondary mt-1">Connection Fit</p>
         </div>
         <div className="card text-center">
-          <span className="font-mono text-2xl font-semibold">{data.m4Compat}%</span>
+          <span className="font-serif text-2xl font-semibold">{data.m4Compat}%</span>
           <p className="text-xs text-secondary mt-1">Conflict Fit</p>
         </div>
       </div>
@@ -444,9 +444,9 @@ function OverviewSection({ data }: { data: any }) {
             <div key={dc.dimension} className="flex items-center gap-3">
               <span className="text-xs text-secondary w-16 capitalize">{dc.dimension}</span>
               <div className="flex-1 flex items-center gap-2">
-                <span className="text-xs font-mono w-20 text-right truncate">{dc.user1Pole}</span>
+                <span className="text-xs w-20 text-right truncate">{dc.user1Pole}</span>
                 <div className={`w-3 h-3 rounded-full ${dc.aligned ? 'bg-success' : 'bg-warning'}`} />
-                <span className="text-xs font-mono w-20 truncate">{dc.user2Pole}</span>
+                <span className="text-xs w-20 truncate">{dc.user2Pole}</span>
               </div>
               <span className={`text-xs font-mono ${dc.aligned ? 'text-success' : 'text-warning'}`}>
                 {dc.aligned ? 'Aligned' : 'Differs'}

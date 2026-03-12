@@ -174,7 +174,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
         </div>
 
         <div className="card mb-6">
-          <span className="text-xs font-mono text-secondary">Connection Type</span>
+          <span className="text-xs text-secondary">Connection Type</span>
           <p className="font-serif text-lg font-semibold mt-1">{typeName}</p>
         </div>
 
