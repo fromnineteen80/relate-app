@@ -544,7 +544,7 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
       {idealPool === 0 && relaxableFilters.length > 0 && (
         <div className="mb-6 border-2 border-dashed border-red-400/50 bg-red-50 rounded-lg p-4">
           <span className="font-mono text-xs text-red-600 tracking-wider uppercase">Zero Matches</span>
-          <p className="text-sm font-medium mt-1">Your preferences have filtered your match pool to zero.</p>
+          <p className="data-label mt-1">Your preferences have filtered your match pool to zero.</p>
           <p className="text-sm text-secondary mt-1 mb-3">
             Adjust your preferences below to find matches. Each change updates your profile automatically.
           </p>
@@ -552,7 +552,7 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
             {relaxableFilters.map(f => (
               <div key={f.key} className="bg-white border border-red-200 rounded-md px-3 py-2.5">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium">{f.label}</span>
+                  <span className="data-label">{f.label}</span>
                   <span className="text-xs text-red-500 font-mono">-{Math.round(f.lostPct)}% of pool</span>
                 </div>
                 {f.type === 'income' && (
@@ -570,7 +570,7 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
                       onMouseUp={e => handleRelax('prefIncomeMin', parseInt((e.target as HTMLInputElement).value))}
                       onTouchEnd={e => handleRelax('prefIncomeMin', parseInt((e.target as HTMLInputElement).value))}
                     />
-                    <div className="flex justify-between text-xs text-secondary mt-0.5">
+                    <div className="flex justify-between card-summary mt-0.5">
                       <span>$0</span>
                       <span>{formatCurrencyShort(currentIncomeMin)}</span>
                       <span>$1M+</span>
@@ -642,7 +642,7 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
               const weight = comp.weight ?? 0;
               return (
                 <div key={key} className="flex items-center gap-3">
-                  <span className="text-xs text-secondary w-16">{compLabels[key]}</span>
+                  <span className="card-summary w-16">{compLabels[key]}</span>
                   <div className="flex-1 h-1.5 bg-stone-200 rounded-full overflow-hidden">
                     <div className="h-full bg-accent rounded-full transition-all duration-700" style={{ width: `${Math.min(100, Math.max(0, val))}%` }} />
                   </div>
@@ -1240,7 +1240,7 @@ export function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
               <span className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded flex-shrink-0 ${
                 insight.priority === 'high' ? 'bg-danger/10 text-danger' : insight.priority === 'medium' ? 'bg-warning/10 text-warning' : 'bg-stone-100 text-secondary'
               }`}>{insight.priority}</span>
-              <h3 className="text-sm font-medium leading-tight">{insight.title}</h3>
+              <h3 className="data-label leading-tight">{insight.title}</h3>
             </div>
             <p className="body-paragraph mb-2">{insight.description}</p>
             <div className="bg-stone-50 border border-border rounded p-2">
