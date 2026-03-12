@@ -739,7 +739,7 @@ function ResultsDashboard() {
         {!hasResults && (
           <section className="card mb-6 text-center py-12 lg:[column-span:all]">
             <h3 className="font-serif text-lg font-semibold mb-2">Assessment Not Complete</h3>
-            <p className="explainer mb-6 max-w-md mx-auto">
+            <p className="body-narrative text-secondary mb-6 max-w-md mx-auto">
               Complete all five modules of your RELATE assessment to generate your persona, compatibility rankings, dating market analysis, and personalized coaching.
             </p>
             <Link href="/assessment" className="btn-primary text-sm inline-block">
@@ -780,7 +780,7 @@ function ResultsDashboard() {
               <h3 className="font-serif text-lg font-semibold flex items-center gap-2">{persona.code && <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-accent text-white text-[7px] font-mono font-bold leading-none shrink-0"><span className="flex flex-col items-center gap-px"><span>{persona.code.slice(0,2)}</span><span>{persona.code.slice(2,4)}</span></span></span>}{persona.name}</h3>
               <Link href="/results/persona" className="text-xs text-accent hover:underline">View Details</Link>
             </div>
-            {persona.traits && <p className="explainer mb-4">{persona.traits}</p>}
+            {persona.traits && <p className="body-narrative text-secondary mb-4">{persona.traits}</p>}
             {/* Dating Behavior */}
             {persona.datingBehavior?.length > 0 && (
               <div>
@@ -982,7 +982,7 @@ function ResultsDashboard() {
         {gottman?.horsemen && Object.keys(gottman.horsemen).length > 0 && (
           <section className="card mb-4">
             <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="warning" size={20} className="text-accent" />Gottman Four Horsemen</h3>
-            <p className="explainer mb-4">
+            <p className="body-narrative text-secondary mb-4">
               The four communication patterns researcher John Gottman identified as the strongest predictors of relationship failure. Lower scores are better.
             </p>
             {gottman.overallRisk && (
@@ -1111,14 +1111,14 @@ function ResultsDashboard() {
                 );
               })()}
             </div>
-            <p className="explainer mb-4">How you connect, protect, and respond in close relationships</p>
+            <p className="body-narrative text-secondary mb-4">How you connect, protect, and respond in close relationships</p>
             <div className="flex items-center gap-3 mb-4">
               <span className="font-mono text-lg font-semibold capitalize">{ic.attachment.style}</span>
               {ic.attachment.subtype && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded capitalize">{ic.attachment.subtype}</span>}
               {ic.attachment.leaningToward && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded">leaning {ic.attachment.leaningToward}</span>}
               <span className="text-xs font-mono text-secondary ml-auto">{Math.round((ic.attachment.confidence ?? 0) * 100)}% confidence</span>
             </div>
-            {ic.attachment.description && <p className="explainer mb-4">{ic.attachment.description}</p>}
+            {ic.attachment.description && <p className="body-narrative text-secondary mb-4">{ic.attachment.description}</p>}
             {ic.attachment.strengths && Array.isArray(ic.attachment.strengths) && ic.attachment.strengths.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
                 <div>
@@ -1259,7 +1259,7 @@ function ResultsDashboard() {
         {ic?.attachmentTiers && (
           <section className="card mb-4">
             <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="person_search" size={20} className="text-accent" />Ideal Partner Profile</h3>
-            <p className="explainer mb-4">The attachment styles, emotional drivers, and conflict behaviors that complement yours best</p>
+            <p className="body-narrative text-secondary mb-4">The attachment styles, emotional drivers, and conflict behaviors that complement yours best</p>
 
             {/* Attachment Style */}
             <div className="mb-4">
@@ -1358,7 +1358,7 @@ function ResultsDashboard() {
               </p>
             )}
             {m3.typeDescription && (
-              <p className="explainer mb-4">{m3.typeDescription}</p>
+              <p className="body-narrative text-secondary mb-4">{m3.typeDescription}</p>
             )}
             {m3.typeDetails && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border">
@@ -1394,7 +1394,7 @@ function ResultsDashboard() {
         {ic?.m3States?.states?.normal && (
           <section className="card mb-4">
             <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="local_fire_department" size={20} className="text-accent" />Intimacy Under Stress</h3>
-            <p className="explainer mb-4">How your Want and Offer shift across relationship states</p>
+            <p className="body-narrative text-secondary mb-4">How your Want and Offer shift across relationship states</p>
 
             {/* Legend */}
             <div className="flex items-center gap-6 mb-4 text-xs text-secondary">
@@ -1612,7 +1612,7 @@ function ResultsDashboard() {
               </div>
             ) : (
               <div>
-                <p className="explainer mb-4">
+                <p className="body-narrative text-secondary mb-4">
                   Connect with your partner to unlock your compatibility report, growth plan, and shared advisor.
                 </p>
                 <Link href="/invite" className="btn-primary text-xs">Connect Partner</Link>
@@ -1627,7 +1627,7 @@ function ResultsDashboard() {
         <div id="coaching" className="bg-stone-100 border-t border-border scroll-mt-12">
           <div className="max-w-3xl lg:max-w-6xl mx-auto px-6 py-10">
             <h2 className="font-serif text-2xl font-semibold mb-2">Ongoing Coaching</h2>
-            <p className="explainer mb-6">
+            <p className="body-narrative text-secondary mb-6">
               Take your RELATE results with you. Download a personalized AI coaching prompt built from your assessment data, conflict patterns, dating market analysis, and compatibility profile.
             </p>
 
