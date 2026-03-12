@@ -346,7 +346,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* Free */}
             <div className="card flex flex-col">
-              <span className="text-xs text-secondary tracking-wider">FREE</span>
+              <span className="subsection-label">FREE</span>
               <p className="font-serif text-4xl font-semibold mt-2">$0</p>
               <p className="text-sm text-secondary mt-3 mb-6">Discover your persona.</p>
               <ul className="bullet-list mb-8 flex-1">
@@ -364,7 +364,7 @@ export default function LandingPage() {
 
             {/* Plus */}
             <div className="card flex flex-col">
-              <span className="text-xs text-secondary tracking-wider">PLUS</span>
+              <span className="subsection-label">PLUS</span>
               <p className="font-serif text-4xl font-semibold mt-2">$29.99</p>
               <p className="text-sm text-secondary mt-3 mb-6">The complete picture.</p>
               <ul className="bullet-list mb-8 flex-1">
@@ -404,7 +404,7 @@ export default function LandingPage() {
 
             {/* Pro */}
             <div className="card flex flex-col">
-              <span className="text-xs text-secondary tracking-wider">PRO</span>
+              <span className="subsection-label">PRO</span>
               <p className="font-serif text-4xl font-semibold mt-2">$69.99</p>
               <p className="text-sm text-secondary mt-3 mb-6">Unlimited AI coaching.</p>
               <ul className="bullet-list mb-8 flex-1">
@@ -421,7 +421,7 @@ export default function LandingPage() {
 
             {/* Couples */}
             <div className="card flex flex-col">
-              <span className="text-xs text-secondary tracking-wider">COUPLES</span>
+              <span className="subsection-label">COUPLES</span>
               <p className="font-serif text-4xl font-semibold mt-2">$119</p>
               <p className="text-sm text-secondary mt-3 mb-6">Two partners, full compatibility.</p>
               <ul className="bullet-list mb-8 flex-1">

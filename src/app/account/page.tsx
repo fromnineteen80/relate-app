@@ -1407,14 +1407,14 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
       {/* Match Probability & Count */}
       <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
         <div className="text-center">
-          <span className="text-xs text-secondary uppercase tracking-wider">Match Probability</span>
+          <span className="subsection-label">Match Probability</span>
           <p className="font-serif text-2xl font-semibold mt-1">{prob?.percentage || 'N/A'}</p>
           <p className="text-xs text-secondary mt-1">
             Chance of matching with someone from your ideal pool
           </p>
         </div>
         <div className="text-center">
-          <span className="text-xs text-secondary uppercase tracking-wider">Estimated Matches</span>
+          <span className="subsection-label">Estimated Matches</span>
           <p className="font-serif text-2xl font-semibold mt-1">{matchCount.toLocaleString()}</p>
           <p className="text-xs text-secondary mt-1">
             Number of Singles from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats

@@ -162,16 +162,16 @@ export default function PersonasPage() {
               </div>
               <div>
                 <p className="text-xs text-secondary mb-1">LIFESTYLE</p>
-                <p className="mb-0.5"><span className="text-accent">E</span> = Adventure</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">E</span> = Adventure</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You are energized by novelty, adventure, and spontaneous experiences. A life without surprises feels stagnant to you.</p>
-                <p className="mb-0.5"><span className="text-accent">F</span> = Stability</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">F</span> = Stability</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You are grounded by routine, consistency, and a reliable foundation. You build a life that feels secure and sustainable over time.</p>
               </div>
               <div>
                 <p className="text-xs text-secondary mb-1">VALUES</p>
-                <p className="mb-0.5"><span className="text-accent">G</span> = Traditional</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">G</span> = Traditional</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You value clearly defined roles and responsibilities in a partnership. Structure and tradition give your relationships a reliable foundation.</p>
-                <p className="mb-0.5"><span className="text-accent">H</span> = Egalitarian</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">H</span> = Egalitarian</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You believe partnership roles should be negotiated, not inherited. Shared responsibility and flexibility define how you build a life together.</p>
               </div>
             </div>
@@ -179,16 +179,16 @@ export default function PersonasPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-xs text-secondary mb-1">PHYSICAL</p>
-                <p className="mb-0.5"><span className="text-accent">A</span> = Beauty</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">A</span> = Beauty</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You lead with aesthetic presence and take pride in how you present yourself. Your appearance signals self-care and intentionality.</p>
-                <p className="mb-0.5"><span className="text-accent">B</span> = Confidence</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">B</span> = Confidence</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You lead with self-assurance that transcends appearance. Your confidence in who you are draws people in more than any physical trait.</p>
               </div>
               <div>
                 <p className="text-xs text-secondary mb-1">SOCIAL</p>
-                <p className="mb-0.5"><span className="text-accent">C</span> = Allure</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">C</span> = Allure</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You carry an air of magnetic mystery that makes people want to know more. Your selective attention creates intrigue and desire.</p>
-                <p className="mb-0.5"><span className="text-accent">D</span> = Charm</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">D</span> = Charm</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You connect through warmth, humor, and genuine engagement. People feel instantly comfortable around you because of how present you are.</p>
               </div>
               <div>

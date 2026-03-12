@@ -181,7 +181,7 @@ export default function CouplesDashboard() {
                   </div>
                   <p className="card-summary mb-3">{challenge.description}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-secondary capitalize">{challenge.category} · {challenge.duration}</span>
+                    <span className="explainer capitalize">{challenge.category} · {challenge.duration}</span>
                     <button onClick={() => startChallenge(challenge)} className="text-xs text-accent hover:underline">
                       Start <Icon name="arrow_forward" size={12} />
                     </button>
@@ -202,18 +202,18 @@ export default function CouplesDashboard() {
                   <div className="flex-1 grid grid-cols-3 gap-2 text-center">
                     <div>
                       <span className="font-serif text-sm font-semibold">{ci.satisfaction}</span>
-                      <p className="text-[10px] text-secondary">Satisfaction</p>
+                      <p className="explainer">Satisfaction</p>
                     </div>
                     <div>
                       <span className="font-serif text-sm font-semibold">{ci.communication}</span>
-                      <p className="text-[10px] text-secondary">Communication</p>
+                      <p className="explainer">Communication</p>
                     </div>
                     <div>
                       <span className="font-serif text-sm font-semibold">{ci.connection}</span>
-                      <p className="text-[10px] text-secondary">Connection</p>
+                      <p className="explainer">Connection</p>
                     </div>
                   </div>
-                  <span className="text-[10px] text-secondary whitespace-nowrap">
+                  <span className="explainer whitespace-nowrap">
                     {new Date(ci.date).toLocaleDateString()}
                   </span>
                 </div>
@@ -233,7 +233,7 @@ export default function CouplesDashboard() {
                 <div key={i} className="card flex items-center justify-between opacity-60">
                   <div>
                     <p className="text-xs font-medium">{c.title}</p>
-                    <p className="text-[10px] text-secondary">{new Date(c.completedAt).toLocaleDateString()}</p>
+                    <p className="explainer">{new Date(c.completedAt).toLocaleDateString()}</p>
                   </div>
                   <span className="font-serif text-xs text-success">+{c.points}pts <Icon name="check" size={12} /></span>
                 </div>
