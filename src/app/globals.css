@@ -80,17 +80,49 @@ h1, h2, h3, h4, h5, h6 {
     }
   }
 
-  /* Card subheader (small uppercase label) */
+  /* Card subheader (small uppercase label inside cards) */
   .card-subheader {
     @apply text-[11px] font-semibold uppercase tracking-wider mb-1.5;
   }
 
-  /* Explainer / description text */
-  .explainer {
-    @apply text-sm text-secondary;
+  /* Subsection label — uppercase dividers within cards (12px) */
+  .subsection-label {
+    @apply text-xs text-secondary uppercase tracking-wider;
   }
-  .explainer-xs {
+
+  /* Card summary — overview text under card titles (12px) */
+  .card-summary {
     @apply text-xs text-secondary;
+  }
+
+  /* Data label — attribute name next to a data value (14px) */
+  .data-label {
+    @apply text-sm font-medium;
+  }
+
+  /* Data value — attribute value next to a data label (12px) */
+  .data-value {
+    @apply text-xs font-semibold capitalize;
+  }
+
+  /* Body paragraph — standard body text (11px) */
+  .body-paragraph {
+    @apply text-[11px] text-secondary;
+  }
+
+  /* Definition — describes what a data point means (11px, lighter) */
+  .definition {
+    @apply text-[11px] font-light text-secondary/70;
+  }
+
+  /* Explainer — text explaining data, visualizations, progress bars (10px) */
+  .explainer {
+    @apply text-[10px] text-secondary;
+  }
+
+  /* Fine print — smallest annotations, ranking notes (10px, faded) */
+  .fine-print {
+    @apply text-[10px] text-secondary/60;
   }
 
   /* Bullet list with accent-colored disc markers */

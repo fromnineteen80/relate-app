@@ -162,7 +162,7 @@ export function TopMetrosScatterPlot({ metros, worstMetros, demographics, market
         <Icon name="scatter_plot" size={20} className="text-accent" />
         Your Best Metro Areas
       </h3>
-      <p className="explainer mb-4">Top 20 metro areas where you have the best chance of finding a match.</p>
+      <p className="card-summary mb-4">Top 20 metro areas where you have the best chance of finding a match.</p>
 
       <div className="flex gap-4">
       <div ref={wrapperRef} className="relative flex-1 min-w-0" style={{ overflow: 'visible' }}>
@@ -318,7 +318,7 @@ export function TopMetrosScatterPlot({ metros, worstMetros, demographics, market
 
         {/* ── Explainer paragraph ── */}
         {marketData?.location && (
-          <p className="text-[11px] text-secondary mt-3 mb-0">
+          <p className="explainer mt-3 mb-0">
             {topMetrosInfo?.homeMetroRank != null
               ? `The ${(marketData.location.cbsaLabel || marketData.location.cbsaName || 'your area').split(',')[0]} metro area ranks #${topMetrosInfo.homeMetroRank} out of ${topMetrosInfo.totalCompetitive} metro areas nationally where you have at least a ${topMetrosInfo.effectiveMinScore} competition score. `
               : ''
@@ -368,7 +368,7 @@ export function TopMetrosScatterPlot({ metros, worstMetros, demographics, market
             <Icon name="trending_down" size={20} className="text-accent" />
             Your Worst Large Metro Areas
           </h3>
-          <p className="explainer mb-3">Bottom 10 metros (population set at 750k+) ranked by smallest ideal match pool.</p>
+          <p className="card-summary mb-3">Bottom 10 metros (population set at 750k+) ranked by smallest ideal match pool.</p>
           <div className="space-y-0">
             {/* Column headers */}
             <div className="flex items-end gap-2.5 py-1 px-1.5 border-b border-[#e7e5e4]">
@@ -415,7 +415,7 @@ export function TopMetrosScatterPlot({ metros, worstMetros, demographics, market
               );
             })}
           </div>
-          <p className="text-[10px] text-secondary mt-2">
+          <p className="explainer mt-2">
             per 10k = ideal matches per 10,000 local single {datingGender}
           </p>
         </section>
@@ -611,12 +611,12 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
         </div>
       )}
       <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="trending_up" size={20} className="text-accent" />Your Dating Market</h3>
-      <p className="explainer mb-4">{metro}</p>
+      <p className="card-summary mb-4">{metro}</p>
 
       <div className="mb-6">
         <div className="flex items-end justify-between mb-2">
           <div>
-            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Local Competition</span>
+            <span className="subsection-label">Local Competition</span>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="font-mono text-3xl font-semibold">{score.toFixed(0)}</span>
               <span className={`text-sm font-medium ${tier.color}`}>{tier.label}</span>
@@ -628,12 +628,12 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
           <div className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out" style={{ width: `${score}%`, background: score >= 65 ? 'var(--color-success)' : score >= 50 ? 'var(--color-accent)' : score >= 35 ? 'var(--color-warning)' : 'var(--color-danger)' }} />
           {[25, 50, 75].map(tick => <div key={tick} className="absolute top-0 bottom-0 w-px bg-white/50" style={{ left: `${tick}%` }} />)}
         </div>
-        <p className="text-[11px] text-secondary mt-2">How competitive you are with other {ownGender} in the local dating market based on age, income, education, fitness, height, and other demographic data points.</p>
+        <p className="explainer mt-2">How competitive you are with other {ownGender} in the local dating market based on age, income, education, fitness, height, and other demographic data points.</p>
       </div>
 
       {Object.keys(components).length > 0 && (
         <div className="mt-4 pt-4 border-t border-border">
-          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Your Stats</span>
+          <span className="subsection-label">Your Stats</span>
           <div className="space-y-2 mt-2">
             {compOrder.map(key => {
               const comp = components[key];
@@ -651,18 +651,18 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
               );
             })}
           </div>
-          <p className="text-[10px] text-gray-400 mt-2">Each bar shows your local percentile (0 = bottom, 100 = top).</p>
+          <p className="explainer mt-2">Each bar shows your local percentile (0 = bottom, 100 = top).</p>
         </div>
       )}
     </section>
 
     <section className="card">
       <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="filter_alt" size={20} className="text-accent" />Your Match Funnel</h3>
-      <p className="explainer mb-4">{metro}</p>
+      <p className="card-summary mb-4">{metro}</p>
       {pool && (
         <div className="mb-6">
-          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Finding Your Ideal Match</span>
-          <p className="text-[11px] text-secondary mt-1 mb-3">The {metroShort} metro population is <span className="font-medium">{metroPop.toLocaleString()}</span>.</p>
+          <span className="subsection-label">Finding Your Ideal Match</span>
+          <p className="explainer mt-1 mb-3">The {metroShort} metro population is <span className="font-medium">{metroPop.toLocaleString()}</span>.</p>
           <div className="mt-3 space-y-1">
             {(() => {
               const datingWomenFunnel = demographics?.gender === 'M';
@@ -703,7 +703,7 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
           </div>
           <div className="mt-3 space-y-1">
             {milestones.map(m => (
-              <p key={m.label} className="text-[11px] text-secondary"><span className="font-medium">{m.label}:</span> {m.desc}</p>
+              <p key={m.label} className="definition"><span className="font-medium">{m.label}:</span> {m.desc}</p>
             ))}
           </div>
         </div>
@@ -720,7 +720,7 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
 
         return (
           <div className="mt-4 pt-4 border-t border-border">
-            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Match Likelihood</span>
+            <span className="subsection-label">Match Likelihood</span>
             {/* Rectangle bar — match color fills left-to-right, rest is gray */}
             <div className="relative w-full rounded overflow-hidden mt-3" style={{ height: '48px', backgroundColor: bgColor }}>
               {/* Filled portion */}
@@ -735,10 +735,10 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
               </span>
             </div>
             <div className="flex items-start justify-between mt-1">
-              <p className="text-[11px] text-secondary">Estimated Matches</p>
-              <p className="text-[11px] text-secondary">Ideal Match Pool</p>
+              <p className="explainer">Estimated Matches</p>
+              <p className="explainer">Ideal Match Pool</p>
             </div>
-            <p className="text-[11px] text-secondary mt-2 mb-0">Number of {datingGender} from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats. That is {singlesPool > 0 ? ((matchCount / singlesPool) * 100).toFixed(2) : '0'}% of the Metro Singles Pool, or {(() => {
+            <p className="explainer mt-2 mb-0">Number of {datingGender} from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats. That is {singlesPool > 0 ? ((matchCount / singlesPool) * 100).toFixed(2) : '0'}% of the Metro Singles Pool, or {(() => {
               if (singlesPool <= 0) return '0 out of 1,000';
               // Scale denominator up until we get at least 1 whole person
               let denom = 1000;
@@ -1041,11 +1041,11 @@ export function CompetitivenessBreakdown({ marketData, demographics }: { marketD
         <Icon name="insights" size={20} className="text-accent" />
         What&apos;s Making You Competitive
       </h3>
-      <p className="explainer mb-4">How each trait is affecting your score in {metroShort}</p>
+      <p className="card-summary mb-4">How each trait is affecting your score in {metroShort}</p>
 
       {strengths.length > 0 && (
         <div className="mb-5">
-          <span className="text-[11px] font-semibold text-success uppercase tracking-wider">Pulling You Up</span>
+          <span className="card-subheader text-success">Pulling You Up</span>
           <div className="mt-2 space-y-0 divide-y divide-border">
             {strengths.map(s => (
               <div key={s.key} className="py-3 flex gap-3">
@@ -1054,7 +1054,7 @@ export function CompetitivenessBreakdown({ marketData, demographics }: { marketD
                 </div>
                 <div className="flex-1 min-w-0">
                   <span className="text-sm font-semibold text-foreground">{s.label}</span>
-                  <p className="text-xs text-secondary mt-0.5 leading-relaxed">{cleanProse(explain(s.key, s.comp))}</p>
+                  <p className="body-paragraph mt-0.5 leading-relaxed">{cleanProse(explain(s.key, s.comp))}</p>
                 </div>
               </div>
             ))}
@@ -1064,7 +1064,7 @@ export function CompetitivenessBreakdown({ marketData, demographics }: { marketD
 
       {weaknesses.length > 0 && (
         <div className="mb-3">
-          <span className="text-[11px] font-semibold text-danger uppercase tracking-wider">Pulling You Down</span>
+          <span className="card-subheader text-danger">Pulling You Down</span>
           <div className="mt-2 space-y-0 divide-y divide-border">
             {weaknesses.map(w => (
               <div key={w.key} className="py-3 flex gap-3">
@@ -1073,7 +1073,7 @@ export function CompetitivenessBreakdown({ marketData, demographics }: { marketD
                 </div>
                 <div className="flex-1 min-w-0">
                   <span className="text-sm font-semibold text-foreground">{w.label}</span>
-                  <p className="text-xs text-secondary mt-0.5 leading-relaxed">{cleanProse(explain(w.key, w.comp))}</p>
+                  <p className="body-paragraph mt-0.5 leading-relaxed">{cleanProse(explain(w.key, w.comp))}</p>
                 </div>
               </div>
             ))}
@@ -1083,7 +1083,7 @@ export function CompetitivenessBreakdown({ marketData, demographics }: { marketD
 
       {/* Summary narrative */}
       <div className="border-t border-border pt-3 mt-1">
-        <p className="text-xs text-secondary italic">{cleanProse(buildSummary(strengths, weaknesses))}</p>
+        <p className="body-paragraph italic">{cleanProse(buildSummary(strengths, weaknesses))}</p>
       </div>
     </section>
   );
@@ -1232,7 +1232,7 @@ export function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
   return (
     <section className="card mb-4">
       <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="tips_and_updates" size={20} className="text-accent" />Market Coaching</h3>
-      <p className="explainer mb-4">Actionable insights from your dating market data and assessment results</p>
+      <p className="card-summary mb-4">Actionable insights from your dating market data and assessment results</p>
       <div className="space-y-4">
         {insights.map((insight, i) => (
           <div key={i} className="border border-border rounded-md p-3">
