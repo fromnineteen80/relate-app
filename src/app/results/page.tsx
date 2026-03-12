@@ -42,7 +42,7 @@ class ResultsErrorBoundary extends Component<{ children: ReactNode }, { error: E
       return (
         <div className="min-h-screen flex flex-col">
           <div className="max-w-3xl mx-auto px-6 py-16 w-full text-center">
-            <h1 className="font-serif text-2xl font-semibold mb-4">Something went wrong</h1>
+            <h1 className="section-title mb-4">Something went wrong</h1>
             <p className="explainer mb-4">{this.state.error.message}</p>
             <pre className="text-xs text-left bg-stone-100 p-4 rounded overflow-auto max-h-48 mb-6">{this.state.error.stack}</pre>
             <button onClick={() => this.setState({ error: null })} className="btn-primary text-sm">Try again</button>
@@ -554,7 +554,7 @@ function ResultsDashboard() {
           <div className="flex items-start justify-between gap-4 flex-wrap mb-2">
             <div className="min-w-0">
               <span className="field-label">{label}</span>
-              <h4 className="text-sm font-semibold mt-1">
+              <h4 className="card-subtitle mt-1">
                 {stack.interpretation === 'coherent' ? 'Your conflict patterns are aligned' :
                  stack.interpretation === 'mostly-coherent' ? 'Mostly aligned with minor friction' :
                  stack.interpretation === 'mixed' ? 'Mixed signals in your conflict patterns' :
@@ -566,16 +566,16 @@ function ResultsDashboard() {
               return ratingPill(level, perfect ? 'Fully Aligned' : `${stack.coherenceScore}/100`, perfect);
             })()}
           </div>
-          {stack.summary && <p className="text-sm text-secondary mb-3">{stack.summary}</p>}
+          {stack.summary && <p className="explainer mb-3">{stack.summary}</p>}
           {Array.isArray(stack.incoherences) && stack.incoherences.length > 0 && (
             <div className="mb-3">
               <span className="field-label-warning">Internal Friction</span>
               <div className="mt-2 space-y-3">
                 {stack.incoherences.map((inc: any, i: number) => (
                   <div key={i} className="p-3 bg-warning/5 border border-warning/20 rounded">
-                    <p className="text-sm font-medium mb-1">{inc.name}</p>
-                    <p className="text-xs text-secondary mb-1">{inc.explanation}</p>
-                    {inc.behavioral && <p className="text-xs text-secondary italic">{inc.behavioral}</p>}
+                    <p className="inline-label mb-1">{inc.name}</p>
+                    <p className="explainer mb-1">{inc.explanation}</p>
+                    {inc.behavioral && <p className="explainer italic">{inc.behavioral}</p>}
                     {inc.resolution && (
                       <p className="text-xs text-success mt-1.5"><span className="font-medium">Path forward:</span> {inc.resolution}</p>
                     )}
@@ -604,15 +604,15 @@ function ResultsDashboard() {
     if (key === 'vulnerabilityProfile') {
       return (
         <section key={key} className="card mb-4">
-          <div className="flex items-start justify-between mb-2">
-            <div>
+          <div className="flex items-start justify-between gap-4 mb-2">
+            <div className="min-w-0">
               <span className="field-label">{label}</span>
-              {stack.armorName && <h4 className="text-sm font-semibold mt-1">{stack.armorName}</h4>}
+              {stack.armorName && <h4 className="card-subtitle mt-1">{stack.armorName}</h4>}
             </div>
             {stack.vulnerabilityLevel && ratingPill(positiveToLevel(stack.vulnerabilityLevel), `${stack.vulnerabilityLevel} openness`)}
           </div>
-          {stack.armorCore && <p className="text-sm text-secondary mb-3">{stack.armorCore}</p>}
-          {stack.starterNarrative && <p className="text-sm mb-3">{stack.starterNarrative}</p>}
+          {stack.armorCore && <p className="explainer mb-3">{stack.armorCore}</p>}
+          {stack.starterNarrative && <p className="body-narrative mb-3">{stack.starterNarrative}</p>}
           {Array.isArray(stack.customizations) && stack.customizations.length > 0 && (
             <div className="mb-3">
               <span className="field-label">Key Patterns</span>
@@ -662,15 +662,15 @@ function ResultsDashboard() {
     const tensionLevel = stack.tensionLevel || stack.riskLevel;
     return (
       <section key={key} className="card mb-4">
-        <div className="flex items-start justify-between mb-2">
-          <div>
+        <div className="flex items-start justify-between gap-4 mb-2">
+          <div className="min-w-0">
             <span className="field-label">{label}</span>
-            {stack.patternName && <h4 className="text-sm font-semibold mt-1">{stack.patternName}</h4>}
+            {stack.patternName && <h4 className="card-subtitle mt-1">{stack.patternName}</h4>}
           </div>
           {tensionLevel !== undefined && ratingPill(riskToLevel(tensionLevel), tensionLevel)}
         </div>
-        {stack.patternDescription && <p className="text-sm text-secondary mb-3">{stack.patternDescription}</p>}
-        {stack.starterNarrative && <p className="text-sm mb-3">{stack.starterNarrative}</p>}
+        {stack.patternDescription && <p className="explainer mb-3">{stack.patternDescription}</p>}
+        {stack.starterNarrative && <p className="body-narrative mb-3">{stack.starterNarrative}</p>}
         {Array.isArray(stack.customizations) && stack.customizations.length > 0 && (
           <div className="mb-3">
             <span className="field-label">Key Patterns</span>
@@ -702,9 +702,9 @@ function ResultsDashboard() {
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-secondary mt-1.5">{stack.growthPath}</p>
+                <p className="explainer mt-1.5">{stack.growthPath}</p>
               )}
-              <Link href="/growth" className="text-xs text-accent hover:underline mt-2 inline-block">
+              <Link href="/growth" className="action-link mt-2 inline-block">
                 Start your Growth Plan <Icon name="arrow_forward" size={12} />
               </Link>
             </div>
@@ -759,10 +759,10 @@ function ResultsDashboard() {
       <SubNav items={navItems.map(n => ({ ...n, href: `#${n.id}` }))} />
 
       <main className="flex-1 max-w-3xl lg:max-w-6xl mx-auto px-6 pt-[37px] pb-8 w-full lg:columns-2 lg:gap-x-6 [&>*]:break-inside-avoid">
-        <div className="flex items-baseline justify-between mb-[27px] lg:[column-span:all]">
-          <h1 className="font-serif text-2xl font-semibold">Results</h1>
+        <div className="flex items-baseline justify-between gap-4 mb-[27px] lg:[column-span:all]">
+          <h1 className="section-title">Results</h1>
           {canDownload && (
-            <button onClick={handleDownloadPDF} disabled={downloading} className="text-xs text-accent hover:underline">
+            <button onClick={handleDownloadPDF} disabled={downloading} className="action-link">
               {downloading ? 'Preparing...' : 'Download PDF Report'}
             </button>
           )}
@@ -771,7 +771,7 @@ function ResultsDashboard() {
         {/* ── Assessment Incomplete CTA ── */}
         {!hasResults && (
           <section className="card mb-6 text-center py-12 lg:[column-span:all]">
-            <h3 className="font-serif text-lg font-semibold mb-2">Assessment Not Complete</h3>
+            <h3 className="card-title mb-2">Assessment Not Complete</h3>
             <p className="explainer mb-6 max-w-md mx-auto">
               Complete all five modules of your RELATE assessment to generate your persona, compatibility rankings, dating market analysis, and personalized coaching.
             </p>
@@ -784,8 +784,8 @@ function ResultsDashboard() {
         {/* ── Module 5 Upgrade Banner (for existing users with results but no M5) ── */}
         {hasResults && !report?.m5 && (
           <section className="card border-accent/30 bg-accent/5 mb-4 lg:[column-span:all]">
-            <p className="font-serif font-semibold mb-1">Enhance Your Tension Stacks</p>
-            <p className="text-sm text-secondary mb-3">
+            <p className="card-subtitle mb-1">Enhance Your Tension Stacks</p>
+            <p className="explainer mb-3">
               Complete Module 5 to unlock more accurate vulnerability, desire, and internal alignment profiles. Takes about 5 minutes.
             </p>
             <Link href="/assessment/module-5" className="btn-primary text-sm inline-block">
@@ -809,9 +809,9 @@ function ResultsDashboard() {
         {/* ── Persona ── */}
         {persona && (
           <section className="card mb-4 scroll-mt-32">
-            <div className="flex items-center justify-between mb-1">
-              <h3 className="font-serif text-lg font-semibold flex items-center gap-2">{persona.code && <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-accent text-white text-[7px] font-serif font-bold leading-none shrink-0"><span className="flex flex-col items-center gap-px"><span>{persona.code.slice(0,2)}</span><span>{persona.code.slice(2,4)}</span></span></span>}{persona.name}</h3>
-              <Link href="/results/persona" className="text-xs text-accent hover:underline">View Details</Link>
+            <div className="flex items-center justify-between gap-4 mb-1">
+              <h3 className="card-title flex items-center gap-2">{persona.code && <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-accent text-white text-[7px] font-serif font-bold leading-none shrink-0"><span className="flex flex-col items-center gap-px"><span>{persona.code.slice(0,2)}</span><span>{persona.code.slice(2,4)}</span></span></span>}{persona.name}</h3>
+              <Link href="/results/persona" className="action-link">View Details</Link>
             </div>
             {persona.traits && <p className="explainer mb-4">{persona.traits}</p>}
             {/* Dating Behavior */}
@@ -892,7 +892,7 @@ function ResultsDashboard() {
             : { physical: { A: 'Beauty', B: 'Confidence' }, social: { A: 'Allure', B: 'Charm' }, lifestyle: { A: 'Thrill', B: 'Peace' }, values: { A: 'Traditional', B: 'Egalitarian' } };
           return (
           <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2"><Icon name="bar_chart" size={20} className={isMale ? 'text-rose-400' : 'text-blue-500'} />Persona Signatures</h3>
+            <h3 className="card-title mb-3 flex items-center gap-2"><Icon name="bar_chart" size={20} className={isMale ? 'text-rose-400' : 'text-blue-500'} />Persona Signatures</h3>
             <div className="space-y-3.5">
               {dimOrder.map((dim) => {
                 const data = (dimensions as any)[dim];
@@ -936,13 +936,13 @@ function ResultsDashboard() {
                 return (
                   <div key={dim}>
                     <div className="flex items-center gap-3">
-                      <span className="text-xs text-secondary w-20 shrink-0 capitalize">{dim} <span className="normal-case text-secondary/60">({pair.A} / {pair.B})</span></span>
+                      <span className="explainer w-20 shrink-0 capitalize">{dim} <span className="normal-case text-secondary/60">({pair.A} / {pair.B})</span></span>
                       <div className="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
                         <div className={`h-full ${dimBarColor[dim]} rounded-full transition-all`} style={{ width: `${Math.min(100, strength)}%` }} />
                       </div>
-                      <span className="data-value-xs w-8 text-right">{Math.round(strength)}</span>
+                      <span className="explainer w-8 text-right">{Math.round(strength)}</span>
                     </div>
-                    <p className="text-[11px] text-secondary/70 mt-1 ml-[92px] leading-snug">{desc}</p>
+                    <p className="explainer mt-1 ml-[92px] leading-snug">{desc}</p>
                   </div>
                 );
               })}
@@ -960,8 +960,8 @@ function ResultsDashboard() {
         {/* ── Conflict Profile ── */}
         {m4Summary && (
           <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="bolt" size={20} className="text-accent" />Conflict Profile</h3>
-            <p className="text-sm text-secondary mb-5">How you engage in conflict, what drives your emotional reactions, and how you recover afterward.</p>
+            <h3 className="card-title mb-4 flex items-center gap-2"><Icon name="bolt" size={20} className="text-accent" />Conflict Profile</h3>
+            <p className="explainer mb-5">How you engage in conflict, what drives your emotional reactions, and how you recover afterward.</p>
             <div className="space-y-4 mb-4">
               {(() => {
                 const CONFLICT_DESCRIPTIONS: Record<string, Record<string, string>> = {
@@ -999,10 +999,10 @@ function ResultsDashboard() {
                 return items.map(([label, val, desc]) => (
                   <div key={label}>
                     <div className="flex items-baseline justify-between gap-4 mb-1">
-                      <span className="text-sm font-medium">{label}</span>
-                      <span className="text-xs font-semibold capitalize">{(val as string) || '-'}</span>
+                      <span className="inline-label">{label}</span>
+                      <span className="card-subtitle capitalize">{(val as string) || '-'}</span>
                     </div>
-                    {desc && <p className="text-xs text-secondary mb-2">{desc}</p>}
+                    {desc && <p className="explainer mb-2">{desc}</p>}
                   </div>
                 ));
               })()}
@@ -1014,8 +1014,8 @@ function ResultsDashboard() {
         {/* ── Gottman Four Horsemen ── */}
         {gottman?.horsemen && Object.keys(gottman.horsemen).length > 0 && (
           <section className="card mb-4">
-            <div className="flex items-start justify-between mb-1">
-              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="warning" size={20} className="text-accent" />Gottman Four Horsemen</h3>
+            <div className="flex items-start justify-between gap-4 mb-1">
+              <h3 className="card-title flex items-center gap-2"><Icon name="warning" size={20} className="text-accent" />Gottman Four Horsemen</h3>
               {gottman.overallRisk && ratingPill(riskToLevel(gottman.overallRisk), `${gottman.overallRisk} risk`)}
             </div>
             <p className="explainer mb-4">
@@ -1038,15 +1038,15 @@ function ResultsDashboard() {
                 return (
                   <div key={name}>
                     <div className="flex items-baseline justify-between gap-4 mb-1">
-                      <span className="text-sm font-medium capitalize">{name}</span>
-                      <span className={`text-xs font-semibold ${riskColor}`}>{normalized}/10</span>
+                      <span className="inline-label capitalize">{name}</span>
+                      <span className={`card-subtitle ${riskColor}`}>{normalized}/10</span>
                     </div>
-                    <p className="text-xs text-secondary mb-2">{HORSEMAN_DESC[name] || ''}</p>
+                    <p className="explainer mb-2">{HORSEMAN_DESC[name] || ''}</p>
                     <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden mb-1.5">
                       <div className={`h-full rounded-full transition-all ${barColor}`} style={{ width: `${Math.max(2, pct)}%` }} />
                     </div>
                     {data.antidote && (
-                      <p className="text-xs text-secondary"><span className="font-medium">Antidote:</span> {data.antidote}</p>
+                      <p className="explainer"><span className="font-medium">Antidote:</span> {data.antidote}</p>
                     )}
                   </div>
                 );
@@ -1108,7 +1108,7 @@ function ResultsDashboard() {
 
         {/* ── Market Data Sources Caveat ── */}
         {hasMarket && !marketLoading && marketData && (
-          <p className="text-xs text-secondary text-center max-w-2xl mx-auto mb-6 lg:[column-span:all]">
+          <p className="explainer text-center max-w-2xl mx-auto mb-6 lg:[column-span:all]">
             Demographic data sourced from public datasets provided by the U.S. Census Bureau, Centers for Disease Control and Prevention (CDC), and Pew Research Center. Segments of the population that are homeless or have committed felonies have been automatically excluded using local county and FBI data.
           </p>
         )}
@@ -1125,16 +1125,16 @@ function ResultsDashboard() {
             </div>
 
           <section className="card mb-4 scroll-mt-32">
-            <div className="flex items-center justify-between mb-1">
-              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="shield" size={20} className="text-accent" />Your Attachment Style</h3>
+            <div className="flex items-center justify-between gap-4 mb-1">
+              <h3 className="card-title flex items-center gap-2"><Icon name="shield" size={20} className="text-accent" />Your Attachment Style</h3>
               {(() => {
                 const hasReport = typeof window !== 'undefined' && localStorage.getItem('relate_attachment_results');
                 return hasReport ? (
-                  <Link href="/results/attachment" className="text-xs text-accent hover:underline font-medium whitespace-nowrap">
+                  <Link href="/results/attachment" className="action-link font-medium whitespace-nowrap">
                     View Full Report <Icon name="arrow_forward" size={12} />
                   </Link>
                 ) : (
-                  <Link href="/attachment-style" className="text-xs text-secondary hover:text-accent transition-colors whitespace-nowrap">
+                  <Link href="/attachment-style" className="explainer hover:text-accent transition-colors whitespace-nowrap">
                     Go deeper <Icon name="arrow_forward" size={12} />
                   </Link>
                 );
@@ -1145,7 +1145,7 @@ function ResultsDashboard() {
               <span className="data-value-lg capitalize">{ic.attachment.style}</span>
               {ic.attachment.subtype && <span className="badge-neutral capitalize">{ic.attachment.subtype}</span>}
               {ic.attachment.leaningToward && <span className="badge-neutral">leaning {ic.attachment.leaningToward}</span>}
-              <span className="data-value-xs ml-auto">{Math.round((ic.attachment.confidence ?? 0) * 100)}% confidence</span>
+              <span className="explainer ml-auto">{Math.round((ic.attachment.confidence ?? 0) * 100)}% confidence</span>
             </div>
             {ic.attachment.description && <p className="explainer mb-4">{ic.attachment.description}</p>}
             {ic.attachment.strengths && Array.isArray(ic.attachment.strengths) && ic.attachment.strengths.length > 0 && (
@@ -1173,13 +1173,13 @@ function ResultsDashboard() {
             {ic.attachment.inRelationships && (
               <div className="mt-4 pt-4 border-t border-border">
                 <span className="field-label">In Relationships</span>
-                <p className="text-sm text-secondary mt-2">{ic.attachment.inRelationships}</p>
+                <p className="explainer mt-2">{ic.attachment.inRelationships}</p>
               </div>
             )}
             {ic.attachment.underStress && (
               <div className="mt-4 pt-4 border-t border-border">
                 <span className="field-label">Under Stress</span>
-                <p className="text-sm text-secondary mt-2">{ic.attachment.underStress}</p>
+                <p className="explainer mt-2">{ic.attachment.underStress}</p>
               </div>
             )}
             {/* Attachment Style Insights */}
@@ -1194,14 +1194,14 @@ function ResultsDashboard() {
                       <div className="mt-3 space-y-2">
                         {bp.q2?.patternName && (
                           <div className="flex items-center justify-between">
-                            <span className="text-xs text-secondary">Trigger Emotion</span>
-                            <span className="text-xs font-medium">{bp.q2.patternName}</span>
+                            <span className="explainer">Trigger Emotion</span>
+                            <span className="inline-label">{bp.q2.patternName}</span>
                           </div>
                         )}
                         {bp.q3?.patternName && (
                           <div className="flex items-center justify-between">
-                            <span className="text-xs text-secondary">Decision Mode</span>
-                            <span className="text-xs font-medium">{bp.q3.patternName}</span>
+                            <span className="explainer">Decision Mode</span>
+                            <span className="inline-label">{bp.q3.patternName}</span>
                           </div>
                         )}
                       </div>
@@ -1231,9 +1231,9 @@ function ResultsDashboard() {
         {/* ── Compatibility Rankings ── */}
         {matches.length > 0 && (
           <section className="card mb-4 scroll-mt-32">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="leaderboard" size={20} className="text-accent" />Compatibility Rankings</h3>
-              {hasPaid && <Link href="/results/matches" className="text-xs text-accent hover:underline">View all</Link>}
+            <div className="flex items-center justify-between gap-4 mb-4">
+              <h3 className="card-title flex items-center gap-2"><Icon name="leaderboard" size={20} className="text-accent" />Compatibility Rankings</h3>
+              {hasPaid && <Link href="/results/matches" className="action-link">View all</Link>}
             </div>
             <div className="space-y-3">
               {(matchesExpanded ? visibleMatches : visibleMatches.slice(0, 5)).map((match: any) => (
@@ -1241,40 +1241,40 @@ function ResultsDashboard() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="data-value-xs">#{match.rank}</span>
+                        <span className="explainer">#{match.rank}</span>
                         {hasPaid ? (
-                          <Link href={`/results/match/${match.code}`} className="text-sm font-semibold text-accent hover:underline">{match.name}</Link>
-                        ) : <span className="text-sm font-semibold">{match.name}</span>}
-                        <span className="data-value-xs">{match.code}</span>
+                          <Link href={`/results/match/${match.code}`} className="card-subtitle text-accent hover:underline">{match.name}</Link>
+                        ) : <span className="card-subtitle">{match.name}</span>}
+                        <span className="explainer">{match.code}</span>
                       </div>
-                      {match.traits && <p className="text-xs text-secondary mt-1">{match.traits.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
+                      {match.traits && <p className="explainer mt-1">{match.traits.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
                     </div>
                     <div className="text-right shrink-0">
                       <span className="data-value block">{match.compatibilityScore}</span>
-                      <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>
+                      <span className={`inline-label ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>
                       {(() => {
                         const note = rankingNote(match, visibleMatches);
-                        return note ? <p className="text-[10px] text-secondary/60 mt-0.5 max-w-[120px] leading-tight ml-auto">{note}</p> : null;
+                        return note ? <p className="explainer mt-0.5 max-w-[120px] leading-tight ml-auto">{note}</p> : null;
                       })()}
                     </div>
                   </div>
-                  {match.summary && <p className="text-sm text-secondary mt-2">{match.summary.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
+                  {match.summary && <p className="explainer mt-2">{match.summary.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
                 </div>
               ))}
             </div>
             {visibleMatches.length > 5 && !matchesExpanded && (
-              <button onClick={() => setMatchesExpanded(true)} className="text-xs text-accent hover:underline mt-3">
+              <button onClick={() => setMatchesExpanded(true)} className="action-link mt-3">
                 Show all {visibleMatches.length} matches
               </button>
             )}
             {matchesExpanded && visibleMatches.length > 5 && (
-              <button onClick={() => setMatchesExpanded(false)} className="text-xs text-accent hover:underline mt-3">
+              <button onClick={() => setMatchesExpanded(false)} className="action-link mt-3">
                 Show top 5
               </button>
             )}
             {!hasPaid && matches.length > freeMatchLimit && (
               <div className="mt-4 card border-accent text-center">
-                <p className="text-sm text-secondary mb-3">{matches.length - freeMatchLimit} more matches available with Plus</p>
+                <p className="explainer mb-3">{matches.length - freeMatchLimit} more matches available with Plus</p>
                 <div className="flex gap-2 justify-center">
                   <a href={`/api/checkout?product=plus&email=${encodeURIComponent(user?.email || '')}`} className="btn-secondary inline-block text-sm">Plus ($29.99/mo)</a>
                   <a href={`/api/checkout?product=premium&email=${encodeURIComponent(user?.email || '')}`} className="btn-primary inline-block text-sm">Premium ($49.99/mo)</a>
@@ -1287,7 +1287,7 @@ function ResultsDashboard() {
         {/* ── Ideal Partner Profile ── */}
         {ic?.attachmentTiers && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="person_search" size={20} className="text-accent" />Ideal Partner Profile</h3>
+            <h3 className="card-title mb-1 flex items-center gap-2"><Icon name="person_search" size={20} className="text-accent" />Ideal Partner Profile</h3>
             <p className="explainer mb-4">The attachment styles, emotional drivers, and conflict behaviors that complement yours best</p>
 
             {/* Attachment Style */}
@@ -1296,28 +1296,28 @@ function ResultsDashboard() {
               <div className="flex flex-wrap gap-2 mt-3">
                 {sortedAttachmentMatches.map((m, i) => (
                     <div key={i} className={`text-center px-3 py-2 rounded-lg border ${m.bg}`}>
-                      <p className="text-sm font-medium capitalize">{m.style}</p>
-                      <p className={`data-value-xs ${m.color}`}>{m.score}</p>
+                      <p className="inline-label capitalize">{m.style}</p>
+                      <p className={`explainer ${m.color}`}>{m.score}</p>
                     </div>
                   ))}
               </div>
-              {ic.attachmentTiers.recommendation && <p className="text-sm text-secondary mt-3">{ic.attachmentTiers.recommendation}</p>}
+              {ic.attachmentTiers.recommendation && <p className="explainer mt-3">{ic.attachmentTiers.recommendation}</p>}
             </div>
 
             {/* Emotional Driver */}
             {ic.driverTiers && (
               <div className="mb-4 pt-4 border-t border-border">
                 <span className="field-label">Partner Emotional Driver</span>
-                <p className="text-xs text-secondary mt-1 mb-3">Your primary: <span className="font-serif capitalize text-foreground">{ic.driverTiers.yourDriver?.primary || '-'}</span></p>
+                <p className="explainer mt-1 mb-3">Your primary: <span className="font-serif capitalize text-foreground">{ic.driverTiers.yourDriver?.primary || '-'}</span></p>
                 <div className="flex flex-wrap gap-2">
                   {sortedDriverMatches.map((m, i) => (
                       <div key={i} className={`text-center px-3 py-2 rounded-lg border ${m.bg}`}>
-                        <p className="text-sm font-medium capitalize">{m.driver}</p>
-                        <p className={`data-value-xs ${m.color}`}>{m.score}</p>
+                        <p className="inline-label capitalize">{m.driver}</p>
+                        <p className={`explainer ${m.color}`}>{m.score}</p>
                       </div>
                     ))}
                 </div>
-                {ic.driverTiers.recommendation && <p className="text-sm text-secondary mt-3">{ic.driverTiers.recommendation}</p>}
+                {ic.driverTiers.recommendation && <p className="explainer mt-3">{ic.driverTiers.recommendation}</p>}
               </div>
             )}
 
@@ -1350,7 +1350,7 @@ function ResultsDashboard() {
                 )}
                 {!ic.horsemenInsights && gottman && (
                   <div className="mt-3">
-                    <p className="text-sm text-secondary">
+                    <p className="explainer">
                       Based on your Gottman profile ({gottman.overallRisk || 'moderate'} risk), look for a partner
                       who demonstrates emotional regulation and constructive conflict habits.
                     </p>
@@ -1365,25 +1365,25 @@ function ResultsDashboard() {
         {m3 && (
           <section className="card mb-4 scroll-mt-32">
             <div className="flex items-start justify-between mb-4">
-              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="sync_alt" size={20} className="text-accent" />Connection Style</h3>
+              <h3 className="card-title flex items-center gap-2"><Icon name="sync_alt" size={20} className="text-accent" />Connection Style</h3>
               {m3.wantOfferGap !== undefined && ratingPill(gapToLevel(m3.wantOfferGap), `gap ${m3.wantOfferGap > 0 ? '+' : ''}${m3.wantOfferGap}`)}
             </div>
             <div className="grid grid-cols-3 gap-6 text-center mb-4">
               <div>
                 <span className="data-value-lg">{m3.wantScore ?? '-'}</span>
-                <p className="text-xs text-secondary mt-1">Want Score</p>
+                <p className="explainer mt-1">Want Score</p>
               </div>
               <div>
                 <span className="data-value-lg">{m3.offerScore ?? '-'}</span>
-                <p className="text-xs text-secondary mt-1">Offer Score</p>
+                <p className="explainer mt-1">Offer Score</p>
               </div>
               <div>
                 <span className="data-value-lg">{m3.typeName ?? '-'}</span>
-                <p className="text-xs text-secondary mt-1">Type</p>
+                <p className="explainer mt-1">Type</p>
               </div>
             </div>
             {m3.wantOfferGap !== undefined && (
-              <p className="text-xs text-secondary text-center mb-4">
+              <p className="explainer text-center mb-4">
                 Gap: <span className={`font-serif ${Math.abs(m3.wantOfferGap) <= 5 ? 'text-success' : Math.abs(m3.wantOfferGap) <= 20 ? 'text-warning' : 'text-danger'}`}>
                   {m3.wantOfferGap > 0 ? '+' : ''}{m3.wantOfferGap}
                 </span>
@@ -1425,8 +1425,8 @@ function ResultsDashboard() {
         {/* ── Intimacy Under Stress ── */}
         {ic?.m3States?.states?.normal && (
           <section className="card mb-4">
-            <div className="flex items-start justify-between mb-1">
-              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="local_fire_department" size={20} className="text-accent" />Intimacy Under Stress</h3>
+            <div className="flex items-start justify-between gap-4 mb-1">
+              <h3 className="card-title flex items-center gap-2"><Icon name="local_fire_department" size={20} className="text-accent" />Intimacy Under Stress</h3>
               {ic.m3States.insights?.gapExpansionLevel && ratingPill(
                 riskToLevel(ic.m3States.insights.gapExpansionLevel === 'HIGH' ? 'high' : ic.m3States.insights.gapExpansionLevel === 'MODERATE' ? 'medium' : 'low'),
                 ic.m3States.insights.gapExpansionLevel === 'HIGH' ? 'high strain' : ic.m3States.insights.gapExpansionLevel === 'MODERATE' ? 'moderate' : 'stable'
@@ -1435,7 +1435,7 @@ function ResultsDashboard() {
             <p className="explainer mb-4">How your Want and Offer shift across relationship states</p>
 
             {/* Legend */}
-            <div className="flex items-center gap-6 mb-4 text-xs text-secondary">
+            <div className="flex items-center gap-6 mb-4 explainer">
               <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-sm bg-blue-500 inline-block" /> Offer (what you give)</span>
               <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-sm bg-rose-400 inline-block" /> Want (what you need)</span>
             </div>
@@ -1451,7 +1451,7 @@ function ResultsDashboard() {
                 return (
                   <div key={key}>
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-medium">{data.label || label}</span>
+                      <span className="inline-label">{data.label || label}</span>
                       <span className={`badge ${
                         Math.abs(data.gap) <= 5 ? 'bg-success/10 text-success' :
                         Math.abs(data.gap) <= 15 ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
@@ -1471,7 +1471,7 @@ function ResultsDashboard() {
               })}
             </div>
 
-            <p className="text-xs text-secondary mt-4">
+            <p className="explainer mt-4">
               When Offer and Want overlap in the center, you are giving close to what you need.
               When they pull apart, there is a gap between what you bring to the relationship and what you ask from it.
             </p>
@@ -1479,14 +1479,14 @@ function ResultsDashboard() {
             {ic.m3States.insights && (
               <div className="mt-4 pt-4 border-t border-border space-y-4">
                 <div>
-                  <h4 className="font-serif text-sm font-semibold mb-1">Gap Expansion Under Stress</h4>
+                  <h4 className="card-subtitle mb-1">Gap Expansion Under Stress</h4>
                   <span className={`badge ${
                     ic.m3States.insights.gapExpansionLevel === 'HIGH' ? 'bg-danger/10 text-danger' :
                     ic.m3States.insights.gapExpansionLevel === 'MODERATE' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
                   }`}>
                     {ic.m3States.insights.gapExpansion > 0 ? '+' : ''}{ic.m3States.insights.gapExpansion} pts ({ic.m3States.insights.gapExpansionLevel})
                   </span>
-                  <p className="text-xs text-secondary mt-2">
+                  <p className="explainer mt-2">
                     {ic.m3States.insights.gapExpansionLevel === 'HIGH'
                       ? 'Under stress, the gap between what you need and what you give widens significantly. Conflict amplifies your unmet needs faster than your capacity to offer, which can create a destabilizing spiral if unaddressed.'
                       : ic.m3States.insights.gapExpansionLevel === 'MODERATE'
@@ -1495,11 +1495,11 @@ function ResultsDashboard() {
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-serif text-sm font-semibold mb-1">Repair Effort</h4>
+                  <h4 className="card-subtitle mb-1">Repair Effort</h4>
                   <span className={`badge ${ic.m3States.insights.repairSustainable ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'}`}>
                     {ic.m3States.insights.repairSustainable ? 'Sustainable' : 'High strain'}
                   </span>
-                  <p className="text-xs text-secondary mt-2">
+                  <p className="explainer mt-2">
                     {ic.m3States.insights.repairSustainable
                       ? 'Your repair pattern is sustainable. When you shift into recovery mode, the effort you put in to close the gap does not exceed what you can maintain over time. This means your repair attempts are genuine and repeatable, not performative bursts.'
                       : 'Your repair pattern shows high strain. When you try to recover from conflict, you overextend what you can sustainably offer. This means your repair attempts may feel intense but are difficult to maintain, leading to cycles of over-giving followed by withdrawal.'}
@@ -1516,16 +1516,16 @@ function ResultsDashboard() {
           const riskLevel = bridge.riskLevel || bridge.tensionLevel;
           return (
             <section className="card mb-4">
-              <div className="flex items-start justify-between mb-1">
-                <h3 className="font-serif text-lg font-semibold flex items-center gap-2">
+              <div className="flex items-start justify-between gap-4 mb-1">
+                <h3 className="card-title flex items-center gap-2">
                   <Icon name="sports_mma" size={20} className="text-accent" />Conflict Patterns
                 </h3>
                 {riskLevel && ratingPill(riskToLevel(riskLevel), `${riskLevel} risk`)}
               </div>
-              {bridge.patternName && <p className="text-sm text-secondary mb-4">{bridge.patternName}</p>}
+              {bridge.patternName && <p className="explainer mb-4">{bridge.patternName}</p>}
 
-              {bridge.patternDescription && <p className="text-sm text-secondary mb-3">{bridge.patternDescription}</p>}
-              {bridge.starterNarrative && <p className="text-sm mb-4">{bridge.starterNarrative}</p>}
+              {bridge.patternDescription && <p className="explainer mb-3">{bridge.patternDescription}</p>}
+              {bridge.starterNarrative && <p className="body-narrative mb-4">{bridge.starterNarrative}</p>}
 
               {Array.isArray(bridge.customizations) && bridge.customizations.length > 0 && (
                 <div className="mb-4">
@@ -1542,14 +1542,14 @@ function ResultsDashboard() {
                   <span className="field-label">With Partners</span>
                   {bridge.withSameType && (
                     <div>
-                      <p className="text-xs font-medium mb-1">With a similar pattern</p>
-                      <p className="text-sm text-secondary">{bridge.withSameType}</p>
+                      <p className="inline-label mb-1">With a similar pattern</p>
+                      <p className="explainer">{bridge.withSameType}</p>
                     </div>
                   )}
                   {bridge.withOpposite && (
                     <div>
-                      <p className="text-xs font-medium mb-1">With an opposite pattern</p>
-                      <p className="text-sm text-secondary">{bridge.withOpposite}</p>
+                      <p className="inline-label mb-1">With an opposite pattern</p>
+                      <p className="explainer">{bridge.withOpposite}</p>
                     </div>
                   )}
                 </div>
@@ -1565,7 +1565,7 @@ function ResultsDashboard() {
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-sm text-secondary mt-1.5">{bridge.growthPath}</p>
+                    <p className="explainer mt-1.5">{bridge.growthPath}</p>
                   )}
                 </div>
               )}
@@ -1576,10 +1576,10 @@ function ResultsDashboard() {
         {/* ── Couples Mode ── */}
         {hasResults && (
           <section className="card mb-4 border-accent">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="favorite" size={20} className="text-accent" />Couples Mode</h3>
+            <div className="flex items-center justify-between gap-4 mb-4">
+              <h3 className="card-title flex items-center gap-2"><Icon name="favorite" size={20} className="text-accent" />Couples Mode</h3>
               {hasPartner && hasResults && partnerHasResults && hasCouplesAccess && (
-                <Link href="/results/compare" className="text-xs text-accent hover:underline font-medium whitespace-nowrap">View Your Couples Results</Link>
+                <Link href="/results/compare" className="action-link font-medium whitespace-nowrap">View Your Couples Results</Link>
               )}
             </div>
 
@@ -1593,17 +1593,17 @@ function ResultsDashboard() {
                       {userProfilePhoto ? (
                         <Image src={userProfilePhoto} alt="You" className="object-cover" fill sizes="48px" />
                       ) : (
-                        <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-sm font-medium">
+                        <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent inline-label">
                           {userFullName ? userFullName.charAt(0).toUpperCase() : '?'}
                         </span>
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium truncate">{userFullName || 'You'}</p>
+                      <p className="inline-label truncate">{userFullName || 'You'}</p>
                       {persona?.name ? (
-                        <Link href="/results/persona" className="text-xs text-secondary hover:text-accent truncate block">{persona.name}</Link>
+                        <Link href="/results/persona" className="explainer hover:text-accent truncate block">{persona.name}</Link>
                       ) : (
-                        <Link href="/assessment" className="text-xs text-accent hover:underline">Complete Assessment</Link>
+                        <Link href="/assessment" className="action-link">Complete Assessment</Link>
                       )}
                     </div>
                   </div>
@@ -1617,19 +1617,19 @@ function ResultsDashboard() {
                       {partnerProfilePhoto ? (
                         <Image src={partnerProfilePhoto} alt={partnerName || 'Partner'} className="object-cover" fill sizes="48px" />
                       ) : (
-                        <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent text-sm font-medium">
+                        <span className="w-full h-full flex items-center justify-center bg-accent/10 text-accent inline-label">
                           {partnerName ? partnerName.charAt(0).toUpperCase() : '?'}
                         </span>
                       )}
                     </div>
                     <div className="min-w-0 sm:text-right">
-                      <p className="text-sm font-medium truncate">{partnerName || 'Partner'}</p>
+                      <p className="inline-label truncate">{partnerName || 'Partner'}</p>
                       {partnerPersonaName ? (
-                        <span className="text-xs text-secondary truncate block">{partnerPersonaName}</span>
+                        <span className="explainer truncate block">{partnerPersonaName}</span>
                       ) : partnerAssessmentComplete ? (
-                        <span className="text-xs text-secondary">Results ready</span>
+                        <span className="explainer">Results ready</span>
                       ) : (
-                        <span className="text-xs text-secondary">Complete Assessment</span>
+                        <span className="explainer">Complete Assessment</span>
                       )}
                     </div>
                   </div>
@@ -1638,7 +1638,7 @@ function ResultsDashboard() {
                 {/* Activate prompt (only when not yet unlocked) */}
                 {hasResults && partnerHasResults && !hasCouplesAccess ? (
                   <div className="mt-4">
-                    <p className="text-xs text-secondary mb-2">Both assessments complete. Activate Couples access to unlock your compatibility report.</p>
+                    <p className="explainer mb-2">Both assessments complete. Activate Couples access to unlock your compatibility report.</p>
                     <Link href="/invite" className="btn-secondary text-xs w-full text-center block">Activate Couples</Link>
                   </div>
                 ) : null}
@@ -1659,7 +1659,7 @@ function ResultsDashboard() {
       {hasResults && canDownload && (
         <div id="coaching" className="bg-stone-100 border-t border-border scroll-mt-12">
           <div className="max-w-3xl lg:max-w-6xl mx-auto px-6 py-10">
-            <h2 className="font-serif text-2xl font-semibold mb-2">Ongoing Coaching</h2>
+            <h2 className="section-title mb-2">Ongoing Coaching</h2>
             <p className="explainer mb-6">
               Take your RELATE results with you. Download a personalized AI coaching prompt built from your assessment data, conflict patterns, dating market analysis, and compatibility profile.
             </p>
@@ -1670,9 +1670,9 @@ function ResultsDashboard() {
               <div className="bg-white border border-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="badge-accent font-mono">ZIP</span>
-                  <h3 className="text-sm font-semibold">Claude Skill Package</h3>
+                  <h3 className="card-subtitle">Claude Skill Package</h3>
                 </div>
-                <p className="text-xs text-secondary mb-3">
+                <p className="explainer mb-3">
                   Full skill with coaching workflows, response patterns, report summary, and disclaimer. Upload directly to Claude.ai as a Skill.
                 </p>
                 <div className="mb-3 code-block">
@@ -1693,12 +1693,12 @@ function ResultsDashboard() {
               <div className="bg-white border border-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="badge-neutral font-mono">MD</span>
-                  <h3 className="text-sm font-semibold">Basic Coaching Prompt</h3>
+                  <h3 className="card-subtitle">Basic Coaching Prompt</h3>
                 </div>
-                <p className="text-xs text-secondary mb-3">
+                <p className="explainer mb-3">
                   Single markdown file with your coaching instructions and assessment data combined. Works with any AI. Paste it into a chat or upload as a file.
                 </p>
-                <div className="mb-3 text-[11px] text-secondary bg-stone-50 p-2 rounded border border-border">
+                <div className="mb-3 code-block">
                   <p>A single <code className="bg-stone-100 px-1 rounded">relate-coach.md</code> file containing your coaching prompt, report summary, and full assessment data. No setup required. Just upload or paste.</p>
                 </div>
                 <button onClick={handleDownloadCoachMd} disabled={downloadingCoach} className="btn-secondary text-xs w-full">
@@ -1709,11 +1709,11 @@ function ResultsDashboard() {
 
             {/* Setup Instructions */}
             <div className="bg-white border border-border rounded-lg p-4 mb-6">
-              <h3 className="text-sm font-semibold mb-3">How to Use Your Coach</h3>
+              <h3 className="card-subtitle mb-3">How to Use Your Coach</h3>
               <div className="space-y-4">
                 <div>
                   <p className="card-subheader text-accent">Option 1: Claude.ai Skill (Best experience)</p>
-                  <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
+                  <ol className="explainer space-y-1 list-decimal list-inside">
                     <li>Go to <a href="https://claude.ai/customize/skills" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai/customize/skills</a> (profile icon &rarr; Customize &rarr; Skills)</li>
                     <li>Click <strong>&quot;Add Skill&quot;</strong> and upload <code className="bg-stone-100 px-1 rounded">relate-coach.zip</code></li>
                     <li>Toggle <strong>relate-coach</strong> on. Claude automatically uses your data in any relationship conversation</li>
@@ -1721,7 +1721,7 @@ function ResultsDashboard() {
                 </div>
                 <div>
                   <p className="card-subheader text-accent">Option 2: Claude.ai Project</p>
-                  <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
+                  <ol className="explainer space-y-1 list-decimal list-inside">
                     <li>Unzip the file, then create a new <strong>Project</strong> in <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" className="text-accent underline">claude.ai</a> called &quot;RELATE Coach&quot;</li>
                     <li>Add all files from the <code className="bg-stone-100 px-1 rounded">relate-coach/</code> folder as project knowledge</li>
                     <li>Start conversations within that project for coaching</li>
@@ -1729,7 +1729,7 @@ function ResultsDashboard() {
                 </div>
                 <div>
                   <p className="card-subheader text-accent">Option 3: Any AI (ChatGPT, Gemini, etc.)</p>
-                  <ol className="text-xs text-secondary space-y-1 list-decimal list-inside">
+                  <ol className="explainer space-y-1 list-decimal list-inside">
                     <li>Download the <strong>.md file</strong> above</li>
                     <li>Upload <code className="bg-stone-100 px-1 rounded">relate-coach.md</code> to any AI chat as a file attachment, or paste its contents as a message</li>
                     <li>Say: &quot;Use this as my coaching profile and help me with dating/relationships&quot;</li>
@@ -1751,7 +1751,7 @@ function ResultsDashboard() {
                   'How do I improve my Relate Score?',
                   'Analyze my last date',
                 ].map((q, i) => (
-                  <span key={i} className="text-[11px] text-secondary bg-stone-50 border border-border px-2 py-1 rounded">
+                  <span key={i} className="explainer bg-stone-50 border border-border px-2 py-1 rounded">
                     &quot;{q}&quot;
                   </span>
                 ))}
@@ -1760,7 +1760,7 @@ function ResultsDashboard() {
 
             {/* Disclaimer */}
             <div className="p-3 bg-warning/5 border border-warning/20 rounded-lg">
-              <p className="text-[11px] text-secondary">
+              <p className="explainer">
                 <strong>Not a therapist.</strong> This coaching tool references evidence-based frameworks but is not a substitute for licensed therapy. See DISCLAIMER.md in the download. If you&apos;re in crisis: <strong>988 Suicide &amp; Crisis Lifeline</strong> or <strong>National Domestic Violence Hotline (1-800-799-7233)</strong>.
               </p>
             </div>

@@ -87,20 +87,40 @@ h1, h2, h3, h4, h5, h6 {
     @apply text-[11px] font-semibold uppercase tracking-wider mb-1.5;
   }
 
-  /* Explainer / description text */
-  .explainer {
-    @apply text-sm text-secondary;
+  /* ── Card & section titles ── */
+  .card-title {
+    @apply text-lg font-semibold;
+    font-family: 'Noto Serif', Georgia, serif;
   }
-  .explainer-xs {
+  .section-title {
+    @apply text-2xl font-semibold;
+    font-family: 'Noto Serif', Georgia, serif;
+  }
+
+  /* ── Body text ── */
+  .explainer {
     @apply text-xs text-secondary;
+  }
+  .body-narrative {
+    @apply text-sm;
+  }
+
+  /* ── Inline labels (key-value pairs, emphasized text) ── */
+  .inline-label {
+    @apply text-sm font-medium;
+  }
+  .card-subtitle {
+    @apply text-sm font-semibold;
+  }
+
+  /* ── Action links ── */
+  .action-link {
+    @apply text-xs text-accent hover:underline;
   }
 
   /* Bullet list with accent-colored disc markers */
   .bullet-list {
     @apply list-disc pl-4 space-y-1 text-xs text-secondary marker:text-accent;
-  }
-  .bullet-list-xs {
-    @apply list-disc pl-3 space-y-1 text-[11px] text-secondary marker:text-accent;
   }
 
   /* ── Section group headers (01 Your Persona, 02 Dating Market, etc.) ── */
@@ -127,7 +147,7 @@ h1, h2, h3, h4, h5, h6 {
     @apply text-xs text-danger uppercase tracking-wider;
   }
   .field-label-accent {
-    @apply text-[10px] text-accent uppercase tracking-widest;
+    @apply text-xs text-accent uppercase tracking-wider;
   }
 
   /* ── Badges / status pills ── */
@@ -169,10 +189,6 @@ h1, h2, h3, h4, h5, h6 {
   .data-value-lg {
     @apply text-lg font-semibold;
     font-family: 'Noto Serif', Georgia, serif;
-    font-variant-numeric: tabular-nums;
-  }
-  .data-value-xs {
-    @apply text-xs text-secondary;
     font-variant-numeric: tabular-nums;
   }
 

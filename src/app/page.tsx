@@ -124,10 +124,10 @@ export default function LandingPage() {
           <p className="section-kicker mb-4">
             Fixing the match to partner journey<br className="sm:hidden" /> for 112 million U.S. singles
           </p>
-          <h1 className="font-serif text-2xl md:text-3xl font-semibold leading-[1.1] mb-6">
+          <h1 className="section-title md:text-3xl leading-[1.1] mb-6">
             The First Dating Intelligence Layer
           </h1>
-          <p className="text-lg text-secondary max-w-xl mx-auto mb-10 leading-relaxed">
+          <p className="body-narrative text-lg text-secondary max-w-xl mx-auto mb-10 leading-relaxed">
             The most comprehensive relationship assessment ever built. Discover your persona, understand your dating patterns, and see who you&apos;re actually compatible with. Take meaningful steps with your partner to improve your relationship. All backed by clinical psychology and supported by Claude.ai.
           </p>
           <div className="flex items-center justify-center">
@@ -140,23 +140,23 @@ export default function LandingPage() {
       <section className="border-y border-border bg-white px-6 py-6">
         <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8 text-center">
           <div>
-            <p className="font-serif text-2xl font-semibold">336</p>
-            <p className="text-xs text-secondary">Assessment Questions</p>
+            <p className="data-value-lg text-2xl">336</p>
+            <p className="explainer">Assessment Questions</p>
           </div>
           <div className="w-px h-8 bg-border hidden sm:block" />
           <div>
-            <p className="font-serif text-2xl font-semibold">32</p>
-            <p className="text-xs text-secondary">Unique Personas</p>
+            <p className="data-value-lg text-2xl">32</p>
+            <p className="explainer">Unique Personas</p>
           </div>
           <div className="w-px h-8 bg-border hidden sm:block" />
           <div>
-            <p className="font-serif text-2xl font-semibold">8</p>
-            <p className="text-xs text-secondary">Clinical Frameworks</p>
+            <p className="data-value-lg text-2xl">8</p>
+            <p className="explainer">Clinical Frameworks</p>
           </div>
           <div className="w-px h-8 bg-border hidden sm:block" />
           <div>
-            <p className="font-serif text-2xl font-semibold">16</p>
-            <p className="text-xs text-secondary">Match Rankings</p>
+            <p className="data-value-lg text-2xl">16</p>
+            <p className="explainer">Match Rankings</p>
           </div>
         </div>
       </section>
@@ -166,8 +166,8 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <p className="section-kicker">The Assessment</p>
-            <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-4">Five modules. One complete profile.</h2>
-            <p className="text-secondary max-w-lg mx-auto">
+            <h2 className="section-title md:text-3xl mb-4">Five modules. One complete profile.</h2>
+            <p className="explainer max-w-lg mx-auto">
               Each module measures a different dimension of how you relate. Together, they build the most detailed relationship profile you&apos;ll ever receive.
             </p>
           </div>
@@ -178,11 +178,11 @@ export default function LandingPage() {
                 <div className="flex items-center gap-4 md:w-48 flex-shrink-0">
                   <span className="module-number">{m.num}</span>
                   <div>
-                    <h3 className="font-serif font-semibold">{m.title}</h3>
-                    <p className="data-value-xs">{m.time}</p>
+                    <h3 className="card-title">{m.title}</h3>
+                    <p className="explainer">{m.time}</p>
                   </div>
                 </div>
-                <p className="text-sm text-secondary leading-relaxed">{m.desc}</p>
+                <p className="explainer leading-relaxed">{m.desc}</p>
               </div>
             ))}
           </div>
@@ -194,8 +194,8 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <p className="section-kicker">Your Results</p>
-            <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-4">Not a one-dimensional personality test.</h2>
-            <p className="text-secondary max-w-lg mx-auto">
+            <h2 className="section-title md:text-3xl mb-4">Not a one-dimensional personality test.</h2>
+            <p className="explainer max-w-lg mx-auto">
               You don&apos;t get a label. You get a complete relational profile with actionable insight.
             </p>
           </div>
@@ -210,8 +210,8 @@ export default function LandingPage() {
               { title: 'Couples Report', desc: 'When both partners complete the assessment: a 7-section compatibility analysis, growth challenges, conversation cards, and date ideas.' },
             ].map((item) => (
               <div key={item.title} className="card">
-                <h3 className="font-serif font-semibold mb-2">{item.title}</h3>
-                <p className="text-sm text-secondary leading-relaxed">{item.desc}</p>
+                <h3 className="card-title mb-2">{item.title}</h3>
+                <p className="explainer leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -223,8 +223,8 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <p className="section-kicker">Attachment Style</p>
-            <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-4">Go deeper than your persona.</h2>
-            <p className="text-secondary max-w-lg mx-auto">
+            <h2 className="section-title md:text-3xl mb-4">Go deeper than your persona.</h2>
+            <p className="explainer max-w-lg mx-auto">
               The Attachment Style assessment is a 30-minute deep dive that reveals the four psychological layers underneath your RELATE results. Your history. The emotion driving your behavior. How you make decisions under pressure. And where your persona is working for you versus quietly working against you. The result is a 3,000-word portrait of how you specifically love, not how people like you tend to love.
             </p>
           </div>
@@ -234,9 +234,9 @@ export default function LandingPage() {
               <div key={f.num} className="card flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
                 <div className="flex items-center gap-4 md:w-48 flex-shrink-0">
                   <span className="module-number">{f.num}</span>
-                  <h3 className="font-serif font-semibold">{f.title}</h3>
+                  <h3 className="card-title">{f.title}</h3>
                 </div>
-                <p className="text-sm text-secondary leading-relaxed">{f.desc}</p>
+                <p className="explainer leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -245,7 +245,7 @@ export default function LandingPage() {
             <Link href="/attachment-style" className="btn-primary text-base px-8 py-3">
               Explore Attachment Style
             </Link>
-            <p className="text-xs text-secondary mt-3">$49 one-time add-on</p>
+            <p className="explainer mt-3">$49 one-time add-on</p>
           </div>
         </div>
       </section>
@@ -255,8 +255,8 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <p className="section-kicker">32 Personas</p>
-            <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-4">Which one are you?</h2>
-            <p className="text-secondary max-w-lg mx-auto">
+            <h2 className="section-title md:text-3xl mb-4">Which one are you?</h2>
+            <p className="explainer max-w-lg mx-auto">
               Your 4-letter code maps to one of 32 relationship personas, 16 male and 16 female. Each has distinct traits, dating behaviors, strengths, and shadows.
             </p>
           </div>
@@ -264,14 +264,14 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {PERSONAS_PREVIEW.map((p) => (
               <div key={p.code} className="card text-center py-5">
-                <span className="text-xs text-accent font-serif">{p.code}</span>
-                <h3 className="font-serif text-lg font-semibold mt-1">{p.name}</h3>
-                <p className="text-xs text-secondary mt-1">{p.desc}</p>
+                <span className="field-label-accent">{p.code}</span>
+                <h3 className="card-title mt-1">{p.name}</h3>
+                <p className="explainer mt-1">{p.desc}</p>
               </div>
             ))}
           </div>
           <div className="text-center mt-6">
-            <Link href="/personas" className="text-sm text-accent hover:underline">
+            <Link href="/personas" className="action-link">
               View all 32 personas <Icon name="arrow_forward" size={14} />
             </Link>
           </div>
@@ -283,8 +283,8 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <p className="section-kicker">Dating Economy</p>
-            <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-4">Finding Your Ideal Partner</h2>
-            <p className="text-secondary max-w-lg mx-auto">
+            <h2 className="section-title md:text-3xl mb-4">Finding Your Ideal Partner</h2>
+            <p className="explainer max-w-lg mx-auto">
               Pinpoint value in your local dating market and identify the likelihood of finding your ideal match.
             </p>
           </div>
@@ -300,7 +300,7 @@ export default function LandingPage() {
             />
           </div>
 
-          <p className="text-center text-xs text-secondary mt-6">
+          <p className="text-center explainer mt-6">
             Aggregate persona distribution data across U.S. dating markets. Coming soon.
           </p>
         </div>
@@ -311,8 +311,8 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <p className="section-kicker">The Science</p>
-            <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-4">Built on clinical frameworks.</h2>
-            <p className="text-secondary max-w-lg mx-auto">
+            <h2 className="section-title md:text-3xl mb-4">Built on clinical frameworks.</h2>
+            <p className="explainer max-w-lg mx-auto">
               RELATE isn&apos;t an internet quiz. Every module maps onto established therapeutic and research frameworks.
             </p>
           </div>
@@ -320,8 +320,8 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {FRAMEWORKS.map((f) => (
               <div key={f.name} className="card">
-                <h3 className="font-serif font-semibold mb-1">{f.name}</h3>
-                <p className="text-sm text-secondary">{f.desc}</p>
+                <h3 className="card-title mb-1">{f.name}</h3>
+                <p className="explainer">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -333,8 +333,8 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <p className="section-kicker">Pricing</p>
-            <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-4">Start free. Go deeper if you want.</h2>
-            <p className="text-secondary max-w-lg mx-auto">
+            <h2 className="section-title md:text-3xl mb-4">Start free. Go deeper if you want.</h2>
+            <p className="explainer max-w-lg mx-auto">
               The assessment is free. Your persona and top matches are free. Everything beyond that is a one-time purchase.
             </p>
           </div>
@@ -347,8 +347,8 @@ export default function LandingPage() {
             {/* Free */}
             <div className="card flex flex-col">
               <span className="tier-label">FREE</span>
-              <p className="font-serif text-4xl font-semibold mt-2">$0</p>
-              <p className="text-sm text-secondary mt-3 mb-6">Discover your persona.</p>
+              <p className="data-value-lg text-4xl mt-2">$0</p>
+              <p className="explainer mt-3 mb-6">Discover your persona.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   '336-question assessment',
@@ -365,8 +365,8 @@ export default function LandingPage() {
             {/* Plus */}
             <div className="card flex flex-col">
               <span className="tier-label">PLUS</span>
-              <p className="font-serif text-4xl font-semibold mt-2">$29.99</p>
-              <p className="text-sm text-secondary mt-3 mb-6">The complete picture.</p>
+              <p className="data-value-lg text-4xl mt-2">$29.99</p>
+              <p className="explainer mt-3 mb-6">The complete picture.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   'Everything in Free',
@@ -387,8 +387,8 @@ export default function LandingPage() {
                 Most popular
               </div>
               <span className="tier-label-accent">PREMIUM</span>
-              <p className="font-serif text-4xl font-semibold mt-2">$49.99</p>
-              <p className="text-sm text-secondary mt-3 mb-6">Insight + AI coaching.</p>
+              <p className="data-value-lg text-4xl mt-2">$49.99</p>
+              <p className="explainer mt-3 mb-6">Insight + AI coaching.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   'Everything in Plus',
@@ -405,8 +405,8 @@ export default function LandingPage() {
             {/* Pro */}
             <div className="card flex flex-col">
               <span className="tier-label">PRO</span>
-              <p className="font-serif text-4xl font-semibold mt-2">$69.99</p>
-              <p className="text-sm text-secondary mt-3 mb-6">Unlimited AI coaching.</p>
+              <p className="data-value-lg text-4xl mt-2">$69.99</p>
+              <p className="explainer mt-3 mb-6">Unlimited AI coaching.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   'Everything in Premium',
@@ -422,8 +422,8 @@ export default function LandingPage() {
             {/* Couples */}
             <div className="card flex flex-col">
               <span className="tier-label">COUPLES</span>
-              <p className="font-serif text-4xl font-semibold mt-2">$119</p>
-              <p className="text-sm text-secondary mt-3 mb-6">Two partners, full compatibility.</p>
+              <p className="data-value-lg text-4xl mt-2">$119</p>
+              <p className="explainer mt-3 mb-6">Two partners, full compatibility.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   'Everything in Pro (x2)',
@@ -441,8 +441,8 @@ export default function LandingPage() {
             {/* Attachment Style */}
             <div className="card flex flex-col border-accent/40">
               <span className="tier-label-accent">ATTACHMENT STYLE</span>
-              <p className="font-serif text-4xl font-semibold mt-2">$49</p>
-              <p className="text-sm text-secondary mt-3 mb-6">The psychology underneath your persona.</p>
+              <p className="data-value-lg text-4xl mt-2">$49</p>
+              <p className="explainer mt-3 mb-6">The psychology underneath your persona.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   '30-minute deep assessment',
@@ -463,14 +463,14 @@ export default function LandingPage() {
       <section className="px-6 py-20 bg-stone-50 border-y border-border">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-4">Frequently asked questions</h2>
+            <h2 className="section-title md:text-3xl mb-4">Frequently asked questions</h2>
           </div>
 
           <div className="space-y-6">
             {FAQS.map((faq) => (
               <div key={faq.q}>
-                <h3 className="font-serif font-semibold mb-1">{faq.q}</h3>
-                <p className="text-sm text-secondary leading-relaxed">{faq.a}</p>
+                <h3 className="card-title mb-1">{faq.q}</h3>
+                <p className="explainer leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
@@ -480,10 +480,10 @@ export default function LandingPage() {
       {/* ── Final CTA ── */}
       <section className="px-6 py-24">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-serif text-2xl md:text-3xl font-semibold mb-4">
+          <h2 className="section-title md:text-3xl mb-4">
             Ready to meet yourself?
           </h2>
-          <p className="text-secondary mb-8 max-w-md mx-auto">
+          <p className="explainer mb-8 max-w-md mx-auto">
             The assessment is free, saves your progress, and takes about 80 minutes across 5 modules. Your persona is waiting.
           </p>
           <DynamicCTA fallbackLabel="Begin the Assessment" />
