@@ -78,6 +78,63 @@ function tierLabel(tier: string) {
   return labels[tier] || tier;
 }
 
+// Standardized rating pill for card headers.
+// level: 'danger' | 'moderate-danger' | 'warning' | 'moderate-success' | 'success'
+// Each gets a matching icon: error, warning, trending_flat, trending_up, check_circle (or star for perfect)
+type RatingLevel = 'danger' | 'moderate-danger' | 'warning' | 'moderate-success' | 'success';
+
+function ratingPill(level: RatingLevel, label: string, perfect?: boolean) {
+  const config: Record<RatingLevel, { cls: string; icon: string }> = {
+    danger:             { cls: 'badge-danger', icon: 'error' },
+    'moderate-danger':  { cls: 'badge-moderate-danger', icon: 'warning' },
+    warning:            { cls: 'badge-warning', icon: 'trending_flat' },
+    'moderate-success': { cls: 'badge-moderate-success', icon: 'trending_up' },
+    success:            { cls: 'badge-success', icon: perfect ? 'star' : 'check_circle' },
+  };
+  const c = config[level];
+  return (
+    <span className={`${c.cls} flex items-center gap-1 shrink-0`}>
+      <Icon name={c.icon} size={14} />
+      {label}
+    </span>
+  );
+}
+
+// Map common risk/level strings to our 5-tier rating scale
+function riskToLevel(risk: string): RatingLevel {
+  const r = risk.toLowerCase();
+  if (r === 'high') return 'danger';
+  if (r === 'medium-high') return 'moderate-danger';
+  if (r === 'medium' || r === 'moderate') return 'warning';
+  if (r === 'medium-low' || r === 'low-medium') return 'moderate-success';
+  return 'success'; // low
+}
+
+// Invert for scales where high = good (e.g., openness, coherence)
+function positiveToLevel(value: string): RatingLevel {
+  const v = value.toLowerCase();
+  if (v === 'high') return 'success';
+  if (v === 'moderate') return 'warning';
+  return 'danger'; // low
+}
+
+function scoreToLevel(score: number): { level: RatingLevel; perfect: boolean } {
+  if (score >= 95) return { level: 'success', perfect: true };
+  if (score >= 80) return { level: 'success', perfect: false };
+  if (score >= 60) return { level: 'moderate-success', perfect: false };
+  if (score >= 40) return { level: 'warning', perfect: false };
+  return { level: 'danger', perfect: false };
+}
+
+function gapToLevel(gap: number): RatingLevel {
+  const abs = Math.abs(gap);
+  if (abs <= 5) return 'success';
+  if (abs <= 10) return 'moderate-success';
+  if (abs <= 20) return 'warning';
+  if (abs <= 30) return 'moderate-danger';
+  return 'danger';
+}
+
 // Explain when a match ranks higher/lower than its tier suggests
 function rankingNote(match: any, allMatches: any[]): string | null {
   const TIER_EXPECT: Record<string, number> = { ideal: 1, kismet: 2, effort: 3, longShot: 4, atRisk: 5, incompatible: 6 };
@@ -504,20 +561,10 @@ function ResultsDashboard() {
                  'Your conflict patterns are working against each other'}
               </h4>
             </div>
-            {stack.coherenceScore >= 95 ? (
-              <span className="text-xs px-2 py-0.5 rounded shrink-0 bg-success/10 text-success flex items-center gap-1">
-                <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                Fully Aligned
-              </span>
-            ) : (
-              <span className={`text-xs px-2 py-0.5 rounded shrink-0 ${
-                stack.coherenceScore >= 80 ? 'bg-success/10 text-success' :
-                stack.coherenceScore >= 60 ? 'bg-success/10 text-success' :
-                stack.coherenceScore >= 40 ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
-              }`}>
-                {stack.coherenceScore}/100
-              </span>
-            )}
+            {(() => {
+              const { level, perfect } = scoreToLevel(stack.coherenceScore);
+              return ratingPill(level, perfect ? 'Fully Aligned' : `${stack.coherenceScore}/100`, perfect);
+            })()}
           </div>
           {stack.summary && <p className="text-sm text-secondary mb-3">{stack.summary}</p>}
           {Array.isArray(stack.incoherences) && stack.incoherences.length > 0 && (
@@ -562,14 +609,7 @@ function ResultsDashboard() {
               <span className="field-label">{label}</span>
               {stack.armorName && <h4 className="text-sm font-semibold mt-1">{stack.armorName}</h4>}
             </div>
-            {stack.vulnerabilityLevel && (
-              <span className={`badge ${
-                stack.vulnerabilityLevel === 'high' ? 'bg-success/10 text-success' :
-                stack.vulnerabilityLevel === 'moderate' ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
-              }`}>
-                {stack.vulnerabilityLevel} openness
-              </span>
-            )}
+            {stack.vulnerabilityLevel && ratingPill(positiveToLevel(stack.vulnerabilityLevel), `${stack.vulnerabilityLevel} openness`)}
           </div>
           {stack.armorCore && <p className="text-sm text-secondary mb-3">{stack.armorCore}</p>}
           {stack.starterNarrative && <p className="text-sm mb-3">{stack.starterNarrative}</p>}
@@ -627,14 +667,7 @@ function ResultsDashboard() {
             <span className="field-label">{label}</span>
             {stack.patternName && <h4 className="text-sm font-semibold mt-1">{stack.patternName}</h4>}
           </div>
-          {tensionLevel !== undefined && (
-            <span className={`badge ${
-              tensionLevel === 'high' ? 'bg-danger/10 text-danger' :
-              tensionLevel === 'medium' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
-            }`}>
-              {tensionLevel}
-            </span>
-          )}
+          {tensionLevel !== undefined && ratingPill(riskToLevel(tensionLevel), tensionLevel)}
         </div>
         {stack.patternDescription && <p className="text-sm text-secondary mb-3">{stack.patternDescription}</p>}
         {stack.starterNarrative && <p className="text-sm mb-3">{stack.starterNarrative}</p>}
@@ -981,17 +1014,13 @@ function ResultsDashboard() {
         {/* ── Gottman Four Horsemen ── */}
         {gottman?.horsemen && Object.keys(gottman.horsemen).length > 0 && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="warning" size={20} className="text-accent" />Gottman Four Horsemen</h3>
+            <div className="flex items-start justify-between mb-1">
+              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="warning" size={20} className="text-accent" />Gottman Four Horsemen</h3>
+              {gottman.overallRisk && ratingPill(riskToLevel(gottman.overallRisk), `${gottman.overallRisk} risk`)}
+            </div>
             <p className="explainer mb-4">
               The four communication patterns researcher John Gottman identified as the strongest predictors of relationship failure. Lower scores are better.
             </p>
-            {gottman.overallRisk && (
-              <p className="text-xs text-secondary mb-3">
-                Overall risk: <span className={`font-semibold ${gottman.overallRisk === 'high' ? 'text-danger' : gottman.overallRisk === 'medium' ? 'text-warning' : 'text-success'}`}>
-                  {gottman.overallRisk}
-                </span>
-              </p>
-            )}
             <div className="space-y-4">
               {Object.entries(gottman.horsemen).map(([name, data]: [string, any]) => {
                 if (!data) return null;
@@ -1335,7 +1364,10 @@ function ResultsDashboard() {
         {/* ── Connection Style ── */}
         {m3 && (
           <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="sync_alt" size={20} className="text-accent" />Connection Style</h3>
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="sync_alt" size={20} className="text-accent" />Connection Style</h3>
+              {m3.wantOfferGap !== undefined && ratingPill(gapToLevel(m3.wantOfferGap), `gap ${m3.wantOfferGap > 0 ? '+' : ''}${m3.wantOfferGap}`)}
+            </div>
             <div className="grid grid-cols-3 gap-6 text-center mb-4">
               <div>
                 <span className="data-value-lg">{m3.wantScore ?? '-'}</span>
@@ -1393,7 +1425,13 @@ function ResultsDashboard() {
         {/* ── Intimacy Under Stress ── */}
         {ic?.m3States?.states?.normal && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="local_fire_department" size={20} className="text-accent" />Intimacy Under Stress</h3>
+            <div className="flex items-start justify-between mb-1">
+              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="local_fire_department" size={20} className="text-accent" />Intimacy Under Stress</h3>
+              {ic.m3States.insights?.gapExpansionLevel && ratingPill(
+                riskToLevel(ic.m3States.insights.gapExpansionLevel === 'HIGH' ? 'high' : ic.m3States.insights.gapExpansionLevel === 'MODERATE' ? 'medium' : 'low'),
+                ic.m3States.insights.gapExpansionLevel === 'HIGH' ? 'high strain' : ic.m3States.insights.gapExpansionLevel === 'MODERATE' ? 'moderate' : 'stable'
+              )}
+            </div>
             <p className="explainer mb-4">How your Want and Offer shift across relationship states</p>
 
             {/* Legend */}
@@ -1478,18 +1516,13 @@ function ResultsDashboard() {
           const riskLevel = bridge.riskLevel || bridge.tensionLevel;
           return (
             <section className="card mb-4">
-              <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2">
-                <Icon name="sports_mma" size={20} className="text-accent" />Conflict Patterns
-              </h3>
-              <div className="flex items-center gap-3 mb-4">
-                {bridge.patternName && <span className="text-sm text-secondary">{bridge.patternName}</span>}
-                {riskLevel && (
-                  <span className={`badge ${
-                    riskLevel === 'high' ? 'bg-danger/10 text-danger' :
-                    riskLevel === 'medium' || riskLevel === 'medium-high' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
-                  }`}>{riskLevel} risk</span>
-                )}
+              <div className="flex items-start justify-between mb-1">
+                <h3 className="font-serif text-lg font-semibold flex items-center gap-2">
+                  <Icon name="sports_mma" size={20} className="text-accent" />Conflict Patterns
+                </h3>
+                {riskLevel && ratingPill(riskToLevel(riskLevel), `${riskLevel} risk`)}
               </div>
+              {bridge.patternName && <p className="text-sm text-secondary mb-4">{bridge.patternName}</p>}
 
               {bridge.patternDescription && <p className="text-sm text-secondary mb-3">{bridge.patternDescription}</p>}
               {bridge.starterNarrative && <p className="text-sm mb-4">{bridge.starterNarrative}</p>}

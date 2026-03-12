@@ -18,6 +18,8 @@
   --color-success: #047857;
   --color-warning: #F9A825;
   --color-danger: #be123c;
+  --color-moderate-danger: #ea580c;
+  --color-moderate-success: #2563eb;
   --header-height: 0px;
 }
 
@@ -140,6 +142,16 @@ h1, h2, h3, h4, h5, h6 {
   }
   .badge-danger {
     @apply badge bg-danger/10 text-danger;
+  }
+  .badge-moderate-danger {
+    @apply badge;
+    background: color-mix(in srgb, var(--color-moderate-danger) 10%, transparent);
+    color: var(--color-moderate-danger);
+  }
+  .badge-moderate-success {
+    @apply badge;
+    background: color-mix(in srgb, var(--color-moderate-success) 10%, transparent);
+    color: var(--color-moderate-success);
   }
   .badge-neutral {
     @apply badge bg-stone-100 text-secondary;
