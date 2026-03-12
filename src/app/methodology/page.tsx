@@ -26,7 +26,7 @@ export default function MethodologyPage() {
       {/* Hero */}
       <section className="relative pt-16 pb-12 px-6 bg-gradient-to-b from-stone-100 to-background">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-4">Deep Dive</p>
+          <p className="text-xs tracking-widest text-accent uppercase mb-4">Deep Dive</p>
           <h1 className="font-serif text-4xl md:text-5xl font-semibold leading-[1.1] mb-6">
             Assessment Methodology
           </h1>
@@ -39,7 +39,7 @@ export default function MethodologyPage() {
       {/* Clinical Foundations */}
       <section className="px-6 py-16 border-b border-border">
         <div className="max-w-3xl mx-auto">
-          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Foundations</p>
+          <p className="text-xs tracking-widest text-accent uppercase mb-3">Foundations</p>
           <h2 className="font-serif text-3xl font-semibold mb-8">Clinical Frameworks</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -74,7 +74,7 @@ export default function MethodologyPage() {
       {/* The Four Modules */}
       <section className="px-6 py-16 bg-stone-50 border-b border-border">
         <div className="max-w-3xl mx-auto">
-          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">The Assessment</p>
+          <p className="text-xs tracking-widest text-accent uppercase mb-3">The Assessment</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">Five Modules, 336 Questions</h2>
           <p className="text-secondary mb-10">
             The assessment takes approximately 80 minutes across five modules. Each module measures a distinct aspect of your relationship profile, and results build progressively as you complete each one.
@@ -83,7 +83,7 @@ export default function MethodologyPage() {
           {/* Module 1 */}
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-mono text-lg">1</div>
+              <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-serif text-lg">1</div>
               <div>
                 <h3 className="font-serif text-xl font-semibold">What You Want</h3>
                 <p className="text-xs text-secondary">134 questions, approximately 25 minutes</p>
@@ -111,7 +111,7 @@ export default function MethodologyPage() {
           {/* Module 2 */}
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-mono text-lg">2</div>
+              <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-serif text-lg">2</div>
               <div>
                 <h3 className="font-serif text-xl font-semibold">Who You Are</h3>
                 <p className="text-xs text-secondary">137 questions, approximately 25 minutes</p>
@@ -133,7 +133,7 @@ export default function MethodologyPage() {
           {/* Module 3 */}
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-mono text-lg">3</div>
+              <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-serif text-lg">3</div>
               <div>
                 <h3 className="font-serif text-xl font-semibold">How You Connect</h3>
                 <p className="text-xs text-secondary">28 questions, approximately 10 minutes</p>
@@ -145,11 +145,11 @@ export default function MethodologyPage() {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="p-3 bg-white border border-border rounded-md">
-                  <p className="text-xs font-mono text-accent uppercase mb-1">Want Score (0-100)</p>
+                  <p className="text-xs text-accent uppercase mb-1">Want Score (0-100)</p>
                   <p className="text-sm text-secondary">How much differentiated access you seek from a partner. High scorers want someone who can be playful, serious, vulnerable, and commanding depending on context.</p>
                 </div>
                 <div className="p-3 bg-white border border-border rounded-md">
-                  <p className="text-xs font-mono text-accent uppercase mb-1">Offer Score (0-100)</p>
+                  <p className="text-xs text-accent uppercase mb-1">Offer Score (0-100)</p>
                   <p className="text-sm text-secondary">How much differentiated access you provide. High scorers naturally adapt their energy and behavior to different situations and relationships.</p>
                 </div>
               </div>
@@ -165,7 +165,7 @@ export default function MethodologyPage() {
           {/* Module 4 */}
           <div className="mb-4">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-mono text-lg">4</div>
+              <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-serif text-lg">4</div>
               <div>
                 <h3 className="font-serif text-xl font-semibold">When Things Get Hard</h3>
                 <p className="text-xs text-secondary">68 questions, approximately 15 minutes</p>
@@ -191,7 +191,7 @@ export default function MethodologyPage() {
       {/* Gottman Deep Dive */}
       <section className="px-6 py-16 border-b border-border">
         <div className="max-w-3xl mx-auto">
-          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Conflict Patterns</p>
+          <p className="text-xs tracking-widest text-accent uppercase mb-3">Conflict Patterns</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">The Four Horsemen</h2>
           <p className="text-secondary mb-8">
             Dr. John Gottman identified four communication patterns so destructive that he could predict divorce with over 90% accuracy by observing just 15 minutes of a couple&apos;s conversation. Module 4 screens for each pattern and its intensity.
@@ -202,7 +202,7 @@ export default function MethodologyPage() {
               <div key={h.name} className="card">
                 <div className="flex items-start justify-between mb-2">
                   <h3 className="font-serif font-semibold">{h.name}</h3>
-                  <span className="text-xs font-mono text-success">Antidote: {h.antidote}</span>
+                  <span className="text-xs text-success">Antidote: {h.antidote}</span>
                 </div>
                 <p className="explainer leading-relaxed">{h.desc}</p>
               </div>
@@ -214,7 +214,7 @@ export default function MethodologyPage() {
       {/* Persona System */}
       <section className="px-6 py-16 bg-stone-50 border-b border-border">
         <div className="max-w-3xl mx-auto">
-          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Identity</p>
+          <p className="text-xs tracking-widest text-accent uppercase mb-3">Identity</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">The 32 Personas</h2>
           <p className="text-secondary mb-8">
             Your Module 2 results map to one of 32 relationship personas (16 per gender). Each persona is defined by a 4-letter code representing your position on the Physical, Social, Lifestyle, and Values dimensions.
@@ -268,7 +268,7 @@ export default function MethodologyPage() {
       {/* Compatibility System */}
       <section className="px-6 py-16 border-b border-border">
         <div className="max-w-3xl mx-auto">
-          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Matching</p>
+          <p className="text-xs tracking-widest text-accent uppercase mb-3">Matching</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">Compatibility Scoring</h2>
           <p className="text-secondary mb-8">
             After completing all five modules, the system ranks all 16 opposite-gender personas by compatibility. Your score with each persona is calculated from four weighted components.
@@ -292,7 +292,7 @@ export default function MethodologyPage() {
                 <div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-sm font-medium">{tier.name}</span>
-                    <span className="text-xs font-mono text-secondary">{tier.score}</span>
+                    <span className="text-xs font-serif text-secondary">{tier.score}</span>
                   </div>
                   <p className="text-sm text-secondary">{tier.desc}</p>
                 </div>
@@ -305,7 +305,7 @@ export default function MethodologyPage() {
       {/* Emotional Drivers */}
       <section className="px-6 py-16 bg-stone-50 border-b border-border">
         <div className="max-w-3xl mx-auto">
-          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Module 4 Deep Dive</p>
+          <p className="text-xs tracking-widest text-accent uppercase mb-3">Module 4 Deep Dive</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">Emotional Drivers</h2>
           <p className="text-secondary mb-8">
             When conflict escalates, one of four core fears typically gets activated. Your primary driver shapes your instinctive reaction and determines what you need most from your partner in difficult moments.
@@ -356,7 +356,7 @@ export default function MethodologyPage() {
       {/* Scoring Transparency */}
       <section className="px-6 py-16 border-b border-border">
         <div className="max-w-3xl mx-auto">
-          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Transparency</p>
+          <p className="text-xs tracking-widest text-accent uppercase mb-3">Transparency</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">How Scoring Works</h2>
           <p className="text-secondary mb-8">
             Every score in the assessment is deterministic and reproducible. There is no randomness and no AI interpretation in the scoring itself.
@@ -397,7 +397,7 @@ export default function MethodologyPage() {
       {/* Finding Your Ideal Match */}
       <section id="ideal-match" className="px-6 py-16 bg-stone-50 border-b border-border">
         <div className="max-w-3xl mx-auto">
-          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Demographics</p>
+          <p className="text-xs tracking-widest text-accent uppercase mb-3">Demographics</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">Finding Your Ideal Match Pool</h2>
           <p className="text-secondary mb-8">
             After completing the assessment, Relate estimates how many people in your area realistically match what you are looking for. This is a demographic funnel: we start with the full population and narrow it step by step using your preferences, publicly available population data, and standard demographic modeling techniques.
@@ -474,7 +474,7 @@ export default function MethodologyPage() {
       {/* Market Competition Curve */}
       <section className="px-6 py-16 border-b border-border">
         <div className="max-w-3xl mx-auto">
-          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Market Competition</p>
+          <p className="text-xs tracking-widest text-accent uppercase mb-3">Market Competition</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">Designing the Market Competition Curve</h2>
           <p className="text-secondary mb-8">
             The market competition curve measures how competitive you are in your local dating market. It uses publicly available CBSA demographic data and behavioral research to score each trait twice: once against research-calibrated preference curves that reflect how people actually choose partners, and once against the real distribution of single adults in your metro area. The result tells you not just how desirable a trait makes you in general, but how scarce or common your profile is relative to the people you are competing against locally.
@@ -535,7 +535,7 @@ export default function MethodologyPage() {
       {/* Attachment Style */}
       <section className="px-6 py-16 border-b border-border">
         <div className="max-w-3xl mx-auto">
-          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Attachment Style</p>
+          <p className="text-xs tracking-widest text-accent uppercase mb-3">Attachment Style</p>
           <h2 className="font-serif text-3xl font-semibold mb-3">Attachment Style Methodology</h2>
           <p className="text-secondary mb-8">
             The Attachment Style assessment extends RELATE into four psychological layers that a persona code alone cannot capture. Where the core assessment measures what you do in relationships, the Attachment Style assessment examines why you do it: the history, emotions, decision patterns, and identity structures underneath your results. It is a 30-minute guided assessment that produces a 3,000-word individualized report.
@@ -621,7 +621,7 @@ export default function MethodologyPage() {
 function DimensionCard({ dim, desc }: { dim: string; desc: string }) {
   return (
     <div className="p-3 bg-white border border-border rounded-md">
-      <p className="text-xs font-mono text-accent uppercase mb-1">{dim}</p>
+      <p className="text-xs text-accent uppercase mb-1">{dim}</p>
       <p className="text-sm text-secondary">{desc}</p>
     </div>
   );
@@ -642,7 +642,7 @@ function ConflictComponent({ title, desc }: { title: string; desc: string }) {
 function ScoreComponent({ weight, label, desc }: { weight: string; label: string; desc: string }) {
   return (
     <div className="flex items-start gap-3">
-      <span className="font-mono text-sm text-accent font-semibold w-10 flex-shrink-0">{weight}</span>
+      <span className="font-serif text-sm text-accent font-semibold w-10 flex-shrink-0">{weight}</span>
       <div>
         <p className="text-sm font-medium">{label}</p>
         <p className="text-xs text-secondary mt-0.5">{desc}</p>
@@ -654,7 +654,7 @@ function ScoreComponent({ weight, label, desc }: { weight: string; label: string
 function FunnelStep({ number, title, desc }: { number: string; title: string; desc: string }) {
   return (
     <div className="flex items-start gap-3 p-3 bg-white border border-border rounded-md">
-      <span className="font-mono text-xs text-accent font-semibold w-5 flex-shrink-0 mt-0.5">{number}</span>
+      <span className="font-serif text-xs text-accent font-semibold w-5 flex-shrink-0 mt-0.5">{number}</span>
       <div>
         <p className="text-sm font-medium">{title}</p>
         <p className="text-xs text-secondary mt-0.5">{desc}</p>

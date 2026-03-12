@@ -155,7 +155,7 @@ export default function GrowthPage() {
                 {points} points · {level.pointsToNext > 0 ? `${level.pointsToNext} to next level` : 'Max level!'}
               </p>
             </div>
-            <span className="font-mono text-2xl font-bold text-accent">{level.level}</span>
+            <span className="font-serif text-2xl font-bold text-accent">{level.level}</span>
           </div>
           <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
             <div
@@ -176,7 +176,7 @@ export default function GrowthPage() {
                 <p className="font-serif text-sm font-semibold">Growth Impact</p>
                 <p className="text-xs text-secondary">Where targeted exercises can shift your profile</p>
               </div>
-              <Link href="/results/persona" className="font-mono text-xs text-accent hover:underline">
+              <Link href="/results/persona" className="text-xs text-accent hover:underline">
                 {projection.originalName}
               </Link>
             </div>
@@ -262,10 +262,10 @@ export default function GrowthPage() {
           <div className="card border-accent">
             <div className="flex items-start justify-between mb-2">
               <div>
-                <p className="text-xs text-accent font-mono">Active Exercise</p>
+                <p className="text-xs text-accent">Active Exercise</p>
                 <p className="font-serif text-sm font-semibold mt-1">{activeExercise.title}</p>
               </div>
-              <span className="font-mono text-xs text-secondary">+{activeExercise.points}pts</span>
+              <span className="font-serif text-xs text-secondary">+{activeExercise.points}pts</span>
             </div>
             <p className="text-xs text-secondary mb-3">{activeExercise.description}</p>
 
@@ -344,7 +344,7 @@ export default function GrowthPage() {
                 <div key={exercise.id} className="card">
                   <div className="flex items-start justify-between mb-2">
                     <p className="font-serif text-sm font-semibold">{exercise.title}</p>
-                    <span className="font-mono text-xs text-accent">+{exercise.points}</span>
+                    <span className="font-serif text-xs text-accent">+{exercise.points}</span>
                   </div>
                   <p className="text-xs text-secondary mb-3">{exercise.description}</p>
                   <div className="flex items-center justify-between">
@@ -381,7 +381,7 @@ export default function GrowthPage() {
                       {c.reflection ? ' · Has reflection' : ''}
                     </p>
                   </div>
-                  <span className="font-mono text-xs text-success">+{c.points}pts</span>
+                  <span className="font-serif text-xs text-success">+{c.points}pts</span>
                 </div>
               ))}
             </div>
@@ -399,7 +399,7 @@ export default function GrowthPage() {
               return (
                 <div className="space-y-4 pt-6 border-t border-border">
                   <div>
-                    <p className="text-[10px] font-mono text-accent uppercase tracking-widest mb-1">Attachment Style Add-On</p>
+                    <p className="text-[10px] text-accent uppercase tracking-widest mb-1">Attachment Style Add-On</p>
                     <h2 className="font-serif text-xl font-semibold">Attachment Style Growth Track</h2>
                   </div>
 

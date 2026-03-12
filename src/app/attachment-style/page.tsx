@@ -539,7 +539,7 @@ export default function AttachmentStylePage() {
             <span className="text-xs text-secondary">
               Quadrant {currentQuadrant} of 4: {QUADRANT_LABELS[currentQuadrant]}
             </span>
-            <span className="text-xs text-secondary">
+            <span className="font-serif text-xs text-secondary">
               {currentIndex + 1} / {questions.length}
             </span>
           </div>
@@ -578,7 +578,7 @@ export default function AttachmentStylePage() {
                 className="w-full h-40 px-4 py-3 rounded-md border border-border text-sm leading-relaxed resize-y focus:outline-none focus:border-accent transition-colors"
               />
               <div className="flex items-center justify-between mt-2">
-                <span className={`text-xs ${narrativeValid ? 'text-success' : 'text-secondary'}`}>
+                <span className={`font-serif text-xs ${narrativeValid ? 'text-success' : 'text-secondary'}`}>
                   {charCount} / 100 characters minimum
                 </span>
                 <button

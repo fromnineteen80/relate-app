@@ -235,7 +235,7 @@ export default function CouplesDashboard() {
                     <p className="text-xs font-medium">{c.title}</p>
                     <p className="text-[10px] text-secondary">{new Date(c.completedAt).toLocaleDateString()}</p>
                   </div>
-                  <span className="font-mono text-xs text-success">+{c.points}pts <Icon name="check" size={12} /></span>
+                  <span className="font-serif text-xs text-success">+{c.points}pts <Icon name="check" size={12} /></span>
                 </div>
               ))}
             </div>
@@ -325,7 +325,7 @@ function CoachingInsights({ report }: { report: any }) {
       <div className="space-y-3">
         {insights.slice(0, 3).map((insight, i) => (
           <div key={i} className={`card border-l-4 ${typeStyles[insight.type]}`}>
-            <p className="text-xs font-mono text-secondary mb-1">{insight.title}</p>
+            <p className="text-xs text-secondary mb-1">{insight.title}</p>
             <p className="text-sm leading-relaxed">{insight.body}</p>
           </div>
         ))}
@@ -383,7 +383,7 @@ function SliderField({ label, value, onChange }: { label: string; value: number;
     <div>
       <div className="flex items-center justify-between mb-1">
         <label className="text-xs text-secondary">{label}</label>
-        <span className="font-mono text-xs font-semibold">{value}/10</span>
+        <span className="font-serif text-xs font-semibold">{value}/10</span>
       </div>
       <input
         type="range"

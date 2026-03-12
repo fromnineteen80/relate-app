@@ -78,7 +78,7 @@ export default function MatchesPage() {
         <h2 className="font-serif text-2xl font-semibold mb-2">All Compatibility Rankings</h2>
         {persona && (
           <p className="explainer mb-6">
-            Based on your <span className="font-semibold text-foreground">{persona.name}</span> <span className="font-mono text-xs text-accent">{persona.code}</span> persona
+            Based on your <span className="font-semibold text-foreground">{persona.name}</span> <span className="text-xs text-accent">{persona.code}</span> persona
           </p>
         )}
 
@@ -116,15 +116,15 @@ export default function MatchesPage() {
                     {/* Header row: rank + name/code/traits on left, score + tier on right, vertically centered */}
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-4 min-w-0">
-                        <span className="font-mono text-lg text-secondary w-8 shrink-0 text-center">{match.rank}</span>
+                        <span className="font-serif text-lg text-secondary w-8 shrink-0 text-center">{match.rank}</span>
                         <div className="min-w-0">
                           <h3 className="font-serif font-semibold">{match.name}</h3>
-                          <span className="font-mono text-xs text-secondary">{match.code}</span>
+                          <span className="text-xs text-secondary">{match.code}</span>
                           {match.traits && <p className="text-xs text-secondary mt-0.5">{match.traits}</p>}
                         </div>
                       </div>
                       <div className="text-right shrink-0">
-                        <span className="font-mono text-xl font-semibold block">{match.compatibilityScore}</span>
+                        <span className="font-serif text-xl font-semibold block">{match.compatibilityScore}</span>
                         <span className={`text-xs font-semibold ${tierTextColor(match.tier)}`}>
                           {tierLabel(match.tier)}
                         </span>

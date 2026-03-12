@@ -75,7 +75,7 @@ export default function CheckinHistoryPage() {
               ].map(m => (
                 <div key={m.label} className="card text-center">
                   <div className="flex items-center justify-center gap-1">
-                    <span className="font-mono text-xl font-semibold">{m.avg}</span>
+                    <span className="font-serif text-xl font-semibold">{m.avg}</span>
                     <span className="text-sm">{trendIcons[m.trend]}</span>
                   </div>
                   <p className="text-[10px] text-secondary mt-1">{m.label}</p>
@@ -89,7 +89,7 @@ export default function CheckinHistoryPage() {
                 <div key={i} className="card">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-secondary">{new Date(ci.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
-                    <span className="font-mono text-xs text-secondary">
+                    <span className="font-serif text-xs text-secondary">
                       Avg: {Math.round((ci.satisfaction + ci.communication + ci.connection) / 3 * 10) / 10}
                     </span>
                   </div>

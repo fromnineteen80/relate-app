@@ -36,11 +36,11 @@ export default function ConflictPage() {
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-xs text-secondary">Style</span>
-              <p className="font-mono capitalize">{summary.approach || '-'}</p>
+              <p className="capitalize">{summary.approach || '-'}</p>
             </div>
             <div>
               <span className="text-xs text-secondary">Primary Driver</span>
-              <p className="font-mono capitalize">{summary.primaryDriver || '-'}</p>
+              <p className="capitalize">{summary.primaryDriver || '-'}</p>
             </div>
           </div>
         </section>
@@ -50,15 +50,15 @@ export default function ConflictPage() {
           <div className="grid grid-cols-3 gap-4 text-sm">
             <div>
               <span className="text-xs text-secondary">Speed</span>
-              <p className="font-mono capitalize">{summary.repairSpeed || '-'}</p>
+              <p className="capitalize">{summary.repairSpeed || '-'}</p>
             </div>
             <div>
               <span className="text-xs text-secondary">Mode</span>
-              <p className="font-mono capitalize">{summary.repairMode || '-'}</p>
+              <p className="capitalize">{summary.repairMode || '-'}</p>
             </div>
             <div>
               <span className="text-xs text-secondary">Capacity</span>
-              <p className="font-mono capitalize">{summary.capacity || '-'}</p>
+              <p className="capitalize">{summary.capacity || '-'}</p>
             </div>
           </div>
         </section>
@@ -73,7 +73,7 @@ export default function ConflictPage() {
                 <div key={horseman}>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="capitalize">{horseman}</span>
-                    <span className={`font-mono ${level}`}>{score}</span>
+                    <span className={`font-serif ${level}`}>{score}</span>
                   </div>
                   <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
                     <div
@@ -91,7 +91,7 @@ export default function ConflictPage() {
           <section className="card">
             <h3 className="font-serif font-semibold mb-3">Attentiveness</h3>
             <div className="flex items-center gap-4">
-              <span className="font-mono text-2xl font-semibold">{report.attentiveness.score ?? '-'}</span>
+              <span className="font-serif text-2xl font-semibold">{report.attentiveness.score ?? '-'}</span>
               <span className="text-sm text-secondary capitalize">{report.attentiveness.level || '-'}</span>
             </div>
           </section>

@@ -16,7 +16,7 @@ function InfoRow({ label, value }: { label: string; value: string | null | undef
   return (
     <div className="flex justify-between gap-6 flex-wrap py-1.5 border-b border-border last:border-0">
       <span className="text-xs text-secondary">{label}</span>
-      <span className="text-xs font-mono">{value}</span>
+      <span className="text-xs">{value}</span>
     </div>
   );
 }
@@ -183,7 +183,7 @@ export default function ProfileSettings() {
               {saved ? 'Saved' : 'Save Name'}
             </button>
             <p className="text-sm text-secondary">Email</p>
-            <p className="font-mono text-sm">{user?.email || '-'}</p>
+            <p className="text-sm">{user?.email || '-'}</p>
           </div>
         </div>
 

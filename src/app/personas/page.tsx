@@ -134,7 +134,7 @@ export default function PersonasPage() {
       <main className="flex-1 max-w-4xl mx-auto px-6 py-8 w-full">
         {/* Header */}
         <div className="text-center mb-10">
-          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">Reference Guide</p>
+          <p className="text-xs tracking-widest text-accent uppercase mb-3">Reference Guide</p>
           <h1 className="font-serif text-3xl md:text-4xl font-semibold mb-3">The 32 Personas</h1>
           <p className="text-secondary max-w-lg mx-auto">
             Each persona is defined by a 4-letter code representing your position on four dimensions: Physical, Social, Lifestyle, and Values.
@@ -147,28 +147,28 @@ export default function PersonasPage() {
           {activeTab === 'male' ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-xs text-secondary font-mono mb-1">PHYSICAL</p>
+                <p className="text-xs text-secondary mb-1">PHYSICAL</p>
                 <p className="mb-0.5"><span className="font-mono text-accent">A</span> = Fitness</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You lead with physical vitality and take pride in how your body performs. Your energy and discipline around fitness signal drive and self-investment.</p>
                 <p className="mb-0.5"><span className="font-mono text-accent">B</span> = Maturity</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You lead with depth and lived experience over raw physicality. Your presence carries weight because of who you are, not how you look.</p>
               </div>
               <div>
-                <p className="text-xs text-secondary font-mono mb-1">SOCIAL</p>
+                <p className="text-xs text-secondary mb-1">SOCIAL</p>
                 <p className="mb-0.5"><span className="font-mono text-accent">C</span> = Leadership</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You naturally take charge in social settings and people look to you for direction. Your confidence in leading creates a sense of safety and momentum.</p>
                 <p className="mb-0.5"><span className="font-mono text-accent">D</span> = Presence</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You draw people in through quiet attentiveness rather than commanding the room. Your ability to make others feel seen is your strongest social asset.</p>
               </div>
               <div>
-                <p className="text-xs text-secondary font-mono mb-1">LIFESTYLE</p>
+                <p className="text-xs text-secondary mb-1">LIFESTYLE</p>
                 <p className="mb-0.5"><span className="font-mono text-accent">E</span> = Adventure</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You are energized by novelty, adventure, and spontaneous experiences. A life without surprises feels stagnant to you.</p>
                 <p className="mb-0.5"><span className="font-mono text-accent">F</span> = Stability</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You are grounded by routine, consistency, and a reliable foundation. You build a life that feels secure and sustainable over time.</p>
               </div>
               <div>
-                <p className="text-xs text-secondary font-mono mb-1">VALUES</p>
+                <p className="text-xs text-secondary mb-1">VALUES</p>
                 <p className="mb-0.5"><span className="font-mono text-accent">G</span> = Traditional</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You value clearly defined roles and responsibilities in a partnership. Structure and tradition give your relationships a reliable foundation.</p>
                 <p className="mb-0.5"><span className="font-mono text-accent">H</span> = Egalitarian</p>
@@ -178,28 +178,28 @@ export default function PersonasPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-xs text-secondary font-mono mb-1">PHYSICAL</p>
+                <p className="text-xs text-secondary mb-1">PHYSICAL</p>
                 <p className="mb-0.5"><span className="font-mono text-accent">A</span> = Beauty</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You lead with aesthetic presence and take pride in how you present yourself. Your appearance signals self-care and intentionality.</p>
                 <p className="mb-0.5"><span className="font-mono text-accent">B</span> = Confidence</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You lead with self-assurance that transcends appearance. Your confidence in who you are draws people in more than any physical trait.</p>
               </div>
               <div>
-                <p className="text-xs text-secondary font-mono mb-1">SOCIAL</p>
+                <p className="text-xs text-secondary mb-1">SOCIAL</p>
                 <p className="mb-0.5"><span className="font-mono text-accent">C</span> = Allure</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You carry an air of magnetic mystery that makes people want to know more. Your selective attention creates intrigue and desire.</p>
                 <p className="mb-0.5"><span className="font-mono text-accent">D</span> = Charm</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You connect through warmth, humor, and genuine engagement. People feel instantly comfortable around you because of how present you are.</p>
               </div>
               <div>
-                <p className="text-xs text-secondary font-mono mb-1">LIFESTYLE</p>
+                <p className="text-xs text-secondary mb-1">LIFESTYLE</p>
                 <p className="mb-0.5"><span className="font-mono text-accent">E</span> = Thrill</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You are energized by novelty, adventure, and spontaneous experiences. A life without surprises feels stagnant to you.</p>
                 <p className="mb-0.5"><span className="font-mono text-accent">F</span> = Peace</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You are grounded by routine, consistency, and intentional calm. You build a life that feels secure and sustainable over time.</p>
               </div>
               <div>
-                <p className="text-xs text-secondary font-mono mb-1">VALUES</p>
+                <p className="text-xs text-secondary mb-1">VALUES</p>
                 <p className="mb-0.5"><span className="font-mono text-accent">G</span> = Traditional</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You value clearly defined roles and responsibilities in a partnership. Structure and tradition give your relationships a reliable foundation.</p>
                 <p className="mb-0.5"><span className="font-mono text-accent">H</span> = Egalitarian</p>
@@ -254,7 +254,7 @@ export default function PersonasPage() {
                       <div className="flex items-center gap-2">
                         <h3 className="font-serif text-lg font-semibold">{persona.name}</h3>
                         {isUserPersona && (
-                          <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-full font-mono">You</span>
+                          <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-full">You</span>
                         )}
                         {isBestMatch && (
                           <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded-full font-mono">Best Match</span>
