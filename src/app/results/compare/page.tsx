@@ -728,17 +728,17 @@ function RepairSection({ data, overview }: { data: any; overview: any }) {
                   <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
                     <div className={`h-full ${userBarColor} rounded-full`} style={{ width: `${(h.user1Score / 20) * 100}%` }} />
                   </div>
-                  <p className="text-[10px] text-secondary mt-0.5">{userName}: {h.user1Score}</p>
+                  <p className="explainer mt-0.5">{userName}: {h.user1Score}</p>
                 </div>
                 <div className="flex-1">
                   <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
                     <div className={`h-full ${partnerBarColor} rounded-full`} style={{ width: `${(h.user2Score / 20) * 100}%` }} />
                   </div>
-                  <p className="text-[10px] text-secondary mt-0.5">{partnerName}: {h.user2Score}</p>
+                  <p className="explainer mt-0.5">{partnerName}: {h.user2Score}</p>
                 </div>
               </div>
               {h.riskLevel !== 'low' && (
-                <p className="text-[10px] text-secondary mt-1 italic">Antidote: {horsemenAntidotes[h.horseman]}</p>
+                <p className="explainer mt-1 italic">Antidote: {horsemenAntidotes[h.horseman]}</p>
               )}
             </div>
           ))}
