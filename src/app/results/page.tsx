@@ -738,7 +738,7 @@ function ResultsDashboard() {
         {/* ── Assessment Incomplete CTA ── */}
         {!hasResults && (
           <section className="card mb-6 text-center py-12 lg:[column-span:all]">
-            <h3 className="font-serif text-lg font-semibold mb-2">Assessment Not Complete</h3>
+            <h3 className="card-title mb-2">Assessment Not Complete</h3>
             <p className="card-summary mb-6 max-w-md mx-auto">
               Complete all five modules of your RELATE assessment to generate your persona, compatibility rankings, dating market analysis, and personalized coaching.
             </p>
@@ -767,8 +767,8 @@ function ResultsDashboard() {
         {(persona || hasDimensions || m4Summary || tensionStacks) && (
           <div id="persona" className="scroll-mt-32 mb-2 lg:[column-span:all]">
             <div className="flex items-baseline gap-3 mb-4 mt-6">
-              <span className="text-[10px] text-secondary uppercase tracking-widest">01</span>
-              <span className="text-xs text-secondary uppercase tracking-widest">Your Persona</span>
+              <span className="section-number">01</span>
+              <span className="section-title">Your Persona</span>
             </div>
           </div>
         )}
@@ -777,7 +777,7 @@ function ResultsDashboard() {
         {persona && (
           <section className="card mb-4 scroll-mt-32">
             <div className="flex items-center justify-between mb-1">
-              <h3 className="font-serif text-lg font-semibold flex items-center gap-2">{persona.code && <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-accent text-white text-[7px] font-bold leading-none shrink-0"><span className="flex flex-col items-center gap-px"><span>{persona.code.slice(0,2)}</span><span>{persona.code.slice(2,4)}</span></span></span>}{persona.name}</h3>
+              <h3 className="card-title flex items-center gap-2">{persona.code && <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-accent text-white text-[7px] font-bold leading-none shrink-0"><span className="flex flex-col items-center gap-px"><span>{persona.code.slice(0,2)}</span><span>{persona.code.slice(2,4)}</span></span></span>}{persona.name}</h3>
               <Link href="/results/persona" className="text-xs text-accent hover:underline">View Details</Link>
             </div>
             {persona.traits && <p className="card-summary mb-4">{persona.traits}</p>}
@@ -859,7 +859,7 @@ function ResultsDashboard() {
             : { physical: { A: 'Beauty', B: 'Confidence' }, social: { A: 'Allure', B: 'Charm' }, lifestyle: { A: 'Thrill', B: 'Peace' }, values: { A: 'Traditional', B: 'Egalitarian' } };
           return (
           <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-3 flex items-center gap-2"><Icon name="bar_chart" size={20} className={isMale ? 'text-rose-400' : 'text-blue-500'} />Persona Signatures</h3>
+            <h3 className="card-title mb-3 flex items-center gap-2"><Icon name="bar_chart" size={20} className={isMale ? 'text-rose-400' : 'text-blue-500'} />Persona Signatures</h3>
             <div className="space-y-3.5">
               {dimOrder.map((dim) => {
                 const data = (dimensions as any)[dim];
@@ -927,7 +927,7 @@ function ResultsDashboard() {
         {/* ── Conflict Profile ── */}
         {m4Summary && (
           <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="bolt" size={20} className="text-accent" />Conflict Profile</h3>
+            <h3 className="card-title mb-4 flex items-center gap-2"><Icon name="bolt" size={20} className="text-accent" />Conflict Profile</h3>
             <p className="card-summary mb-5">How you engage in conflict, what drives your emotional reactions, and how you recover afterward.</p>
             <div className="space-y-4 mb-4">
               {(() => {
@@ -981,7 +981,7 @@ function ResultsDashboard() {
         {/* ── Gottman Four Horsemen ── */}
         {gottman?.horsemen && Object.keys(gottman.horsemen).length > 0 && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="warning" size={20} className="text-accent" />Gottman Four Horsemen</h3>
+            <h3 className="card-title mb-1 flex items-center gap-2"><Icon name="warning" size={20} className="text-accent" />Gottman Four Horsemen</h3>
             <p className="card-summary mb-4">
               The four communication patterns researcher John Gottman identified as the strongest predictors of relationship failure. Lower scores are better.
             </p>
@@ -1036,8 +1036,8 @@ function ResultsDashboard() {
         {hasMarket && (
           <div id="know-your-market" className="scroll-mt-32 mb-2 lg:[column-span:all]">
             <div className="flex items-baseline gap-3 mb-4 mt-10">
-              <span className="text-[10px] text-secondary uppercase tracking-widest">02</span>
-              <span className="text-xs text-secondary uppercase tracking-widest">Dating Market</span>
+              <span className="section-number">02</span>
+              <span className="section-title">Dating Market</span>
             </div>
           </div>
         )}
@@ -1091,13 +1091,13 @@ function ResultsDashboard() {
         {ic?.attachment && (
           <div id="attachment" className="scroll-mt-32 mb-2 lg:[column-span:all]">
             <div className="flex items-baseline gap-3 mb-4 mt-10">
-              <span className="text-[10px] text-secondary uppercase tracking-widest">03</span>
-              <span className="text-xs text-secondary uppercase tracking-widest">Attachment Style</span>
+              <span className="section-number">03</span>
+              <span className="section-title">Attachment Style</span>
             </div>
 
           <section className="card mb-4 scroll-mt-32">
             <div className="flex items-center justify-between mb-1">
-              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="shield" size={20} className="text-accent" />Your Attachment Style</h3>
+              <h3 className="card-title flex items-center gap-2"><Icon name="shield" size={20} className="text-accent" />Your Attachment Style</h3>
               {(() => {
                 const hasReport = typeof window !== 'undefined' && localStorage.getItem('relate_attachment_results');
                 return hasReport ? (
@@ -1193,8 +1193,8 @@ function ResultsDashboard() {
         {(matches.length > 0 || ic?.attachmentTiers || m3 || hasResults) && (
           <div id="how-you-date" className="scroll-mt-32 mb-2 lg:[column-span:all]">
             <div className="flex items-baseline gap-3 mb-4 mt-10">
-              <span className="text-[10px] text-secondary uppercase tracking-widest">04</span>
-              <span className="text-xs text-secondary uppercase tracking-widest">How You Date</span>
+              <span className="section-number">04</span>
+              <span className="section-title">How You Date</span>
             </div>
           </div>
         )}
@@ -1203,7 +1203,7 @@ function ResultsDashboard() {
         {matches.length > 0 && (
           <section className="card mb-4 scroll-mt-32">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="leaderboard" size={20} className="text-accent" />Compatibility Rankings</h3>
+              <h3 className="card-title flex items-center gap-2"><Icon name="leaderboard" size={20} className="text-accent" />Compatibility Rankings</h3>
               {hasPaid && <Link href="/results/matches" className="text-xs text-accent hover:underline">View all</Link>}
             </div>
             <div className="space-y-3">
@@ -1258,7 +1258,7 @@ function ResultsDashboard() {
         {/* ── Ideal Partner Profile ── */}
         {ic?.attachmentTiers && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="person_search" size={20} className="text-accent" />Ideal Partner Profile</h3>
+            <h3 className="card-title mb-1 flex items-center gap-2"><Icon name="person_search" size={20} className="text-accent" />Ideal Partner Profile</h3>
             <p className="card-summary mb-4">The attachment styles, emotional drivers, and conflict behaviors that complement yours best</p>
 
             {/* Attachment Style */}
@@ -1335,7 +1335,7 @@ function ResultsDashboard() {
         {/* ── Connection Style ── */}
         {m3 && (
           <section className="card mb-4 scroll-mt-32">
-            <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="sync_alt" size={20} className="text-accent" />Connection Style</h3>
+            <h3 className="card-title mb-4 flex items-center gap-2"><Icon name="sync_alt" size={20} className="text-accent" />Connection Style</h3>
             <div className="grid grid-cols-3 gap-6 text-center mb-4">
               <div>
                 <span className="font-serif text-lg font-semibold">{m3.wantScore ?? '-'}</span>
@@ -1393,7 +1393,7 @@ function ResultsDashboard() {
         {/* ── Intimacy Under Stress ── */}
         {ic?.m3States?.states?.normal && (
           <section className="card mb-4">
-            <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="local_fire_department" size={20} className="text-accent" />Intimacy Under Stress</h3>
+            <h3 className="card-title mb-1 flex items-center gap-2"><Icon name="local_fire_department" size={20} className="text-accent" />Intimacy Under Stress</h3>
             <p className="card-summary mb-4">How your Want and Offer shift across relationship states</p>
 
             {/* Legend */}
@@ -1478,7 +1478,7 @@ function ResultsDashboard() {
           const riskLevel = bridge.riskLevel || bridge.tensionLevel;
           return (
             <section className="card mb-4">
-              <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2">
+              <h3 className="card-title mb-1 flex items-center gap-2">
                 <Icon name="sports_mma" size={20} className="text-accent" />Conflict Patterns
               </h3>
               <div className="flex items-center gap-3 mb-4">
@@ -1544,7 +1544,7 @@ function ResultsDashboard() {
         {hasResults && (
           <section className="card mb-4 border-accent">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-serif text-lg font-semibold flex items-center gap-2"><Icon name="favorite" size={20} className="text-accent" />Couples Mode</h3>
+              <h3 className="card-title flex items-center gap-2"><Icon name="favorite" size={20} className="text-accent" />Couples Mode</h3>
               {hasPartner && hasResults && partnerHasResults && hasCouplesAccess && (
                 <Link href="/results/compare" className="text-xs text-accent hover:underline font-medium whitespace-nowrap">View Your Couples Results</Link>
               )}

@@ -80,6 +80,21 @@ h1, h2, h3, h4, h5, h6 {
     }
   }
 
+  /* Card title — main heading inside cards */
+  .card-title {
+    @apply font-serif text-lg font-semibold;
+  }
+
+  /* Section number — numbered divider above card groups (10px) */
+  .section-number {
+    @apply text-[10px] text-secondary uppercase tracking-widest;
+  }
+
+  /* Section title — label next to section number (12px) */
+  .section-title {
+    @apply text-xs text-secondary uppercase tracking-widest;
+  }
+
   /* Card subheader (small uppercase label inside cards) */
   .card-subheader {
     @apply text-[11px] font-semibold uppercase tracking-wider mb-1.5;
