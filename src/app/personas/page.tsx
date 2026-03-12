@@ -260,7 +260,7 @@ export default function PersonasPage() {
                           <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded-full">Best Match</span>
                         )}
                       </div>
-                      <p className="text-xs text-secondary">{dims.join(' + ')}</p>
+                      <p className="card-summary">{dims.join(' + ')}</p>
                     </div>
                   </div>
                   <span className="text-secondary text-sm">{isExpanded ? '−' : '+'}</span>
@@ -277,7 +277,7 @@ export default function PersonasPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {persona.datingBehavior.length > 0 && (
                         <div>
-                          <h4 className="text-xs text-secondary uppercase tracking-wider mb-2">Dating Behavior</h4>
+                          <h4 className="subsection-label mb-2">Dating Behavior</h4>
                           <ul className="bullet-list">
                             {persona.datingBehavior.map((item, i) => (
                               <li key={i}>{item}</li>
@@ -288,7 +288,7 @@ export default function PersonasPage() {
 
                       {persona.inRelationships.length > 0 && (
                         <div>
-                          <h4 className="text-xs text-secondary uppercase tracking-wider mb-2">In Relationships</h4>
+                          <h4 className="subsection-label mb-2">In Relationships</h4>
                           <ul className="bullet-list">
                             {persona.inRelationships.map((item, i) => (
                               <li key={i}>{item}</li>

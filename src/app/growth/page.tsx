@@ -448,7 +448,7 @@ export default function GrowthPage() {
                 </div>
                 <div className="card border-accent/30 text-center py-8">
                   <Icon name="psychology" size={32} className="text-accent mx-auto mb-3" />
-                  <p className="text-sm font-medium mb-2">Your Attachment Style growth plan hasn&apos;t been generated yet</p>
+                  <p className="data-label mb-2">Your Attachment Style growth plan hasn&apos;t been generated yet</p>
                   <p className="card-summary mb-4">Complete the Attachment Style assessment to unlock personalized growth exercises.</p>
                   <Link href="/attachment-style" className="btn-primary text-xs">Complete Attachment Style</Link>
                 </div>

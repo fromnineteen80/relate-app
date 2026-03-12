@@ -1225,7 +1225,7 @@ function AccountPage() {
 
             {/* Disclaimer */}
             <div className="p-3 bg-warning/5 border border-warning/20 rounded-lg">
-              <p className="text-[11px] text-secondary">
+              <p className="body-paragraph">
                 <strong>Not a therapist.</strong> This coaching tool references evidence-based frameworks but is not a substitute for licensed therapy. See DISCLAIMER.md in the download. If you&apos;re in crisis: <strong>988 Suicide &amp; Crisis Lifeline</strong> or <strong>National Domestic Violence Hotline (1-800-799-7233)</strong>.
               </p>
             </div>
@@ -1351,7 +1351,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
               );
             })}
           </div>
-          <p className="text-[11px] text-secondary mt-2">
+          <p className="body-paragraph mt-2">
             Each bar shows your local percentile (0 = bottom, 100 = top).
           </p>
         </div>
