@@ -10,7 +10,7 @@ export function SiteFooter({ spacerClassName }: { spacerClassName?: string } = {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div>
               <p className="font-serif text-lg font-semibold">RELATE</p>
-              <p className="text-xs text-secondary mt-1">Relationship Intelligence Platform</p>
+              <p className="card-summary mt-1">Relationship Intelligence Platform</p>
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-secondary">
               <Link href="/about" className="hover:text-foreground transition-colors">About</Link>
@@ -18,7 +18,7 @@ export function SiteFooter({ spacerClassName }: { spacerClassName?: string } = {
               <Link href="/personas" className="hover:text-foreground transition-colors">Personas</Link>
             </div>
           </div>
-          <div className="mt-6 pt-6 border-t border-border text-xs text-secondary">
+          <div className="mt-6 pt-6 border-t border-border card-summary">
             RELATE draws from Gottman Method, Emotionally Focused Therapy, Attachment Theory, and Internal Family Systems. This is not a diagnostic tool and does not replace licensed therapy.
           </div>
         </div>

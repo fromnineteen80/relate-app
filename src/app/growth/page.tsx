@@ -151,7 +151,7 @@ export default function GrowthPage() {
           <div className="flex items-center justify-between mb-3">
             <div>
               <p className="font-serif text-sm font-semibold">Level {level.level}: {level.name}</p>
-              <p className="text-xs text-secondary">
+              <p className="card-summary">
                 {points} points · {level.pointsToNext > 0 ? `${level.pointsToNext} to next level` : 'Max level!'}
               </p>
             </div>
@@ -163,7 +163,7 @@ export default function GrowthPage() {
               style={{ width: `${level.progress}%` }}
             />
           </div>
-          <p className="text-[10px] text-secondary mt-2">
+          <p className="explainer mt-2">
             {completedExercises.length} exercises completed
           </p>
         </div>
@@ -174,7 +174,7 @@ export default function GrowthPage() {
             <div className="flex items-center justify-between mb-3">
               <div>
                 <p className="font-serif text-sm font-semibold">Growth Impact</p>
-                <p className="text-xs text-secondary">Where targeted exercises can shift your profile</p>
+                <p className="card-summary">Where targeted exercises can shift your profile</p>
               </div>
               <Link href="/results/persona" className="text-xs text-accent hover:underline">
                 {projection.originalName}
@@ -190,7 +190,7 @@ export default function GrowthPage() {
                   <div key={b.dimension}>
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-medium capitalize">{b.dimension}</span>
-                      <span className="text-[10px] text-secondary">
+                      <span className="explainer">
                         {b.currentPole} ({pct}%) <Icon name="arrow_forward" size={10} /> {b.oppositePole}
                       </span>
                     </div>
@@ -213,7 +213,7 @@ export default function GrowthPage() {
               const projectedLabel = projection.projectedName || getPersonaName(projection.projectedCode, gender);
               return (
                 <div className="mt-4 pt-3 border-t border-stone-100">
-                  <p className="text-xs text-secondary">
+                  <p className="card-summary">
                     <span className="font-medium text-foreground">Growth trajectory: </span>
                     {projection.originalName} ({projection.originalCode}) <Icon name="arrow_forward" size={12} />{' '}
                     <Link href={`/results/match/${projection.projectedCode}`} className="text-accent hover:underline font-medium">
@@ -239,7 +239,7 @@ export default function GrowthPage() {
             >
               <div>
                 <p className="font-serif text-sm font-semibold text-left">Your Pattern Insights</p>
-                <p className="text-xs text-secondary text-left">
+                <p className="card-summary text-left">
                   {patternInsights.length} pattern{patternInsights.length !== 1 ? 's' : ''} identified from your assessment
                 </p>
               </div>
@@ -249,7 +249,7 @@ export default function GrowthPage() {
               <div className="mt-4 space-y-4">
                 {patternInsights.map((insight, i) => (
                   <div key={i} className="border-l-2 border-accent pl-4">
-                    <p className="text-xs text-secondary leading-relaxed">{insight}</p>
+                    <p className="card-summary leading-relaxed">{insight}</p>
                   </div>
                 ))}
               </div>
@@ -265,17 +265,17 @@ export default function GrowthPage() {
                 <p className="text-xs text-accent">Active Exercise</p>
                 <p className="font-serif text-sm font-semibold mt-1">{activeExercise.title}</p>
               </div>
-              <span className="font-serif text-xs text-secondary">+{activeExercise.points}pts</span>
+              <span className="font-serif card-summary">+{activeExercise.points}pts</span>
             </div>
-            <p className="text-xs text-secondary mb-3">{activeExercise.description}</p>
+            <p className="card-summary mb-3">{activeExercise.description}</p>
 
             <div className="bg-stone-50 rounded p-4 mb-4">
               <p className="text-xs font-medium mb-2">Instructions</p>
-              <p className="text-xs text-secondary leading-relaxed whitespace-pre-line">{activeExercise.instruction}</p>
+              <p className="card-summary leading-relaxed whitespace-pre-line">{activeExercise.instruction}</p>
             </div>
 
             <div className="mb-4">
-              <label className="text-xs text-secondary block mb-1">Reflection (optional)</label>
+              <label className="card-summary block mb-1">Reflection (optional)</label>
               <textarea
                 value={reflectionText}
                 onChange={e => setReflectionText(e.target.value)}
@@ -330,7 +330,7 @@ export default function GrowthPage() {
 
         {/* Category Description */}
         {!activeExercise && activeCategory !== 'recommended' && activeCategory !== 'all' && (
-          <p className="text-xs text-secondary">{GROWTH_CATEGORIES[activeCategory].description}</p>
+          <p className="card-summary">{GROWTH_CATEGORIES[activeCategory].description}</p>
         )}
 
         {/* Exercise Grid */}
@@ -346,10 +346,10 @@ export default function GrowthPage() {
                     <p className="font-serif text-sm font-semibold">{exercise.title}</p>
                     <span className="font-serif text-xs text-accent">+{exercise.points}</span>
                   </div>
-                  <p className="text-xs text-secondary mb-3">{exercise.description}</p>
+                  <p className="card-summary mb-3">{exercise.description}</p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-secondary capitalize">{exercise.category} · {exercise.duration}</span>
+                      <span className="explainer capitalize">{exercise.category} · {exercise.duration}</span>
                       <span className="text-[10px] text-accent/60">{exercise.framework}</span>
                     </div>
                     <button onClick={() => startExercise(exercise)} className="text-xs text-accent hover:underline">
@@ -359,7 +359,7 @@ export default function GrowthPage() {
                 </div>
               ))}
               {filteredExercises.filter(e => !completedIds.has(e.id)).length === 0 && (
-                <p className="text-xs text-secondary col-span-2">All exercises in this category completed.</p>
+                <p className="card-summary col-span-2">All exercises in this category completed.</p>
               )}
             </div>
           </div>
@@ -376,7 +376,7 @@ export default function GrowthPage() {
                 <div key={i} className="card flex items-center justify-between opacity-60">
                   <div>
                     <p className="text-xs font-medium">{c.title}</p>
-                    <p className="text-[10px] text-secondary">
+                    <p className="explainer">
                       {new Date(c.completedAt).toLocaleDateString()}
                       {c.reflection ? ' · Has reflection' : ''}
                     </p>
@@ -443,13 +443,13 @@ export default function GrowthPage() {
             return (
               <div className="space-y-4 pt-6 border-t border-border">
                 <div>
-                  <p className="text-[10px] font-mono text-accent uppercase tracking-widest mb-1">Attachment Style Add-On</p>
+                  <p className="text-[10px] text-accent uppercase tracking-widest mb-1">Attachment Style Add-On</p>
                   <h2 className="font-serif text-xl font-semibold">Attachment Style Growth Track</h2>
                 </div>
                 <div className="card border-accent/30 text-center py-8">
                   <Icon name="psychology" size={32} className="text-accent mx-auto mb-3" />
-                  <p className="text-sm font-medium mb-2">Your Attachment Style growth plan hasn&apos;t been generated yet</p>
-                  <p className="text-xs text-secondary mb-4">Complete the Attachment Style assessment to unlock personalized growth exercises.</p>
+                  <p className="data-label mb-2">Your Attachment Style growth plan hasn&apos;t been generated yet</p>
+                  <p className="card-summary mb-4">Complete the Attachment Style assessment to unlock personalized growth exercises.</p>
                   <Link href="/attachment-style" className="btn-primary text-xs">Complete Attachment Style</Link>
                 </div>
               </div>
@@ -460,8 +460,8 @@ export default function GrowthPage() {
             <div className="pt-6 border-t border-border">
               <div className="card bg-stone-50 border-dashed border-stone-300 text-center py-8">
                 <Icon name="lock" size={28} className="text-secondary mx-auto mb-3" />
-                <p className="text-sm font-medium mb-1">Unlock deeper growth insights with the Attachment Style assessment</p>
-                <p className="text-xs text-secondary mb-4">Attachment-based growth exercises tailored to your unique patterns.</p>
+                <p className="data-label mb-1">Unlock deeper growth insights with the Attachment Style assessment</p>
+                <p className="card-summary mb-4">Attachment-based growth exercises tailored to your unique patterns.</p>
                 <Link href="/attachment-style" className="text-xs text-accent hover:underline font-medium">
                   Learn More <Icon name="arrow_forward" size={12} />
                 </Link>

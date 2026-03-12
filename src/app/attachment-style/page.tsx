@@ -381,7 +381,7 @@ export default function AttachmentStylePage() {
               personalized report you can actually use.
             </p>
             <div className="border border-border rounded-lg p-6 mb-8">
-              <p className="text-xs text-secondary mb-1">One-time purchase</p>
+              <p className="card-summary mb-1">One-time purchase</p>
               <p className="font-serif text-4xl font-semibold mb-4">$49</p>
               <p className="text-sm text-secondary mb-6">
                 Includes full session, personalized report, and growth plan.
@@ -432,7 +432,7 @@ export default function AttachmentStylePage() {
         <SubNav />
         <main className="flex-1 flex items-center justify-center px-6">
           <div className="max-w-md text-center">
-            <span className="text-xs text-secondary">4 quadrants</span>
+            <span className="card-summary">4 quadrants</span>
             <h2 className="font-serif text-3xl font-semibold mt-2 mb-4">Attachment Style</h2>
             <p className="text-secondary mb-4 leading-relaxed">
               This session takes about 30 minutes. You will move through four quadrants
@@ -536,7 +536,7 @@ export default function AttachmentStylePage() {
       <div className="border-b border-border">
         <div className="max-w-2xl mx-auto px-6 py-3">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-secondary">
+            <span className="card-summary">
               Quadrant {currentQuadrant} of 4: {QUADRANT_LABELS[currentQuadrant]}
             </span>
             <span className="font-serif text-xs text-secondary">
@@ -593,7 +593,7 @@ export default function AttachmentStylePage() {
           ) : (
             <div>
               {currentQuestion.anchors && (
-                <div className="flex justify-between text-xs text-secondary mb-2 px-1">
+                <div className="flex justify-between card-summary mb-2 px-1">
                   <span>{currentQuestion.anchors.low}</span>
                   <span>{currentQuestion.anchors.high}</span>
                 </div>

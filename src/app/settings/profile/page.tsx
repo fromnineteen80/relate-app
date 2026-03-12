@@ -15,7 +15,7 @@ function InfoRow({ label, value }: { label: string; value: string | null | undef
   if (!value) return null;
   return (
     <div className="flex justify-between gap-6 flex-wrap py-1.5 border-b border-border last:border-0">
-      <span className="text-xs text-secondary">{label}</span>
+      <span className="card-summary">{label}</span>
       <span className="text-xs">{value}</span>
     </div>
   );
@@ -166,7 +166,7 @@ export default function ProfileSettings() {
                 )}
               </div>
             </div>
-            <p className="text-xs text-secondary mt-2">Max 2MB. JPG, PNG, or WebP.</p>
+            <p className="card-summary mt-2">Max 2MB. JPG, PNG, or WebP.</p>
           </div>
 
           {/* Name & Email */}
@@ -192,7 +192,7 @@ export default function ProfileSettings() {
           {demographics ? (
             <div className="card">
               <div className="flex items-center justify-between gap-6 flex-wrap mb-2">
-                <p className="text-sm font-medium">About You</p>
+                <p className="data-label">About You</p>
                 <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">Edit</Link>
               </div>
               <InfoRow label="Gender" value={genderDisplay} />
@@ -220,7 +220,7 @@ export default function ProfileSettings() {
           {demographics?.pref_age_min != null && (
             <div className="card">
               <div className="flex items-center justify-between gap-6 flex-wrap mb-2">
-                <p className="text-sm font-medium">Partner Preferences</p>
+                <p className="data-label">Partner Preferences</p>
                 <Link href="/onboarding/demographics" className="text-xs text-accent hover:underline">Edit</Link>
               </div>
               <InfoRow label="Age Range" value={`${demographics.pref_age_min} to ${demographics.pref_age_max}`} />
@@ -241,7 +241,7 @@ export default function ProfileSettings() {
         {profile && (
           <div className="card mb-4">
             <div className="flex items-center justify-between gap-6 flex-wrap mb-2">
-              <p className="text-sm font-medium">Location</p>
+              <p className="data-label">Location</p>
               <Link href="/onboarding/profile" className="text-xs text-accent hover:underline">Edit</Link>
             </div>
             <InfoRow label="City" value={profile.city} />
@@ -258,7 +258,7 @@ export default function ProfileSettings() {
           return (
             <div className="card mb-4">
               <div className="flex items-center justify-between gap-6 flex-wrap mb-2">
-                <p className="text-sm font-medium">Sun, Moon &amp; Rise</p>
+                <p className="data-label">Sun, Moon &amp; Rise</p>
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => {
@@ -291,12 +291,12 @@ export default function ProfileSettings() {
                     </div>
                   </>
                 ) : (
-                  <p className="text-xs text-secondary">
+                  <p className="card-summary">
                     Add your birthday and birth time to unlock your Sun, Moon &amp; Rising astrology profile.
                   </p>
                 )
               ) : (
-                <p className="text-xs text-secondary">
+                <p className="card-summary">
                   Enable to access your Sun, Moon &amp; Rising astrology profile.
                 </p>
               )}

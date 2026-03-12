@@ -141,22 +141,22 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8 text-center">
           <div>
             <p className="font-serif text-2xl font-semibold">336</p>
-            <p className="text-xs text-secondary">Assessment Questions</p>
+            <p className="card-summary">Assessment Questions</p>
           </div>
           <div className="w-px h-8 bg-border hidden sm:block" />
           <div>
             <p className="font-serif text-2xl font-semibold">32</p>
-            <p className="text-xs text-secondary">Unique Personas</p>
+            <p className="card-summary">Unique Personas</p>
           </div>
           <div className="w-px h-8 bg-border hidden sm:block" />
           <div>
             <p className="font-serif text-2xl font-semibold">8</p>
-            <p className="text-xs text-secondary">Clinical Frameworks</p>
+            <p className="card-summary">Clinical Frameworks</p>
           </div>
           <div className="w-px h-8 bg-border hidden sm:block" />
           <div>
             <p className="font-serif text-2xl font-semibold">16</p>
-            <p className="text-xs text-secondary">Match Rankings</p>
+            <p className="card-summary">Match Rankings</p>
           </div>
         </div>
       </section>
@@ -179,10 +179,10 @@ export default function LandingPage() {
                   <span className="font-serif text-3xl font-light text-stone-300">{m.num}</span>
                   <div>
                     <h3 className="font-serif text-lg font-semibold">{m.title}</h3>
-                    <p className="text-xs text-secondary">{m.time}</p>
+                    <p className="card-summary">{m.time}</p>
                   </div>
                 </div>
-                <p className="text-sm text-secondary leading-relaxed">{m.desc}</p>
+                <p className="card-summary leading-relaxed">{m.desc}</p>
               </div>
             ))}
           </div>
@@ -211,7 +211,7 @@ export default function LandingPage() {
             ].map((item) => (
               <div key={item.title} className="card">
                 <h3 className="font-serif font-semibold mb-2">{item.title}</h3>
-                <p className="text-sm text-secondary leading-relaxed">{item.desc}</p>
+                <p className="card-summary leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -236,7 +236,7 @@ export default function LandingPage() {
                   <span className="font-serif text-3xl font-light text-stone-300">{f.num}</span>
                   <h3 className="font-serif text-lg font-semibold">{f.title}</h3>
                 </div>
-                <p className="text-sm text-secondary leading-relaxed">{f.desc}</p>
+                <p className="card-summary leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -245,7 +245,7 @@ export default function LandingPage() {
             <Link href="/attachment-style" className="btn-primary text-base px-8 py-3">
               Explore Attachment Style
             </Link>
-            <p className="text-xs text-secondary mt-3">$49 one-time add-on</p>
+            <p className="card-summary mt-3">$49 one-time add-on</p>
           </div>
         </div>
       </section>
@@ -264,9 +264,9 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {PERSONAS_PREVIEW.map((p) => (
               <div key={p.code} className="card text-center py-5">
-                <span className="font-mono text-xs text-accent">{p.code}</span>
+                <span className="text-xs text-accent">{p.code}</span>
                 <h3 className="font-serif text-lg font-semibold mt-1">{p.name}</h3>
-                <p className="text-xs text-secondary mt-1">{p.desc}</p>
+                <p className="card-summary mt-1">{p.desc}</p>
               </div>
             ))}
           </div>
@@ -300,7 +300,7 @@ export default function LandingPage() {
             />
           </div>
 
-          <p className="text-center text-xs text-secondary mt-6">
+          <p className="text-center card-summary mt-6">
             Aggregate persona distribution data across U.S. dating markets. Coming soon.
           </p>
         </div>
@@ -321,7 +321,7 @@ export default function LandingPage() {
             {FRAMEWORKS.map((f) => (
               <div key={f.name} className="card">
                 <h3 className="font-serif font-semibold mb-1">{f.name}</h3>
-                <p className="text-sm text-secondary">{f.desc}</p>
+                <p className="card-summary">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -346,9 +346,9 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* Free */}
             <div className="card flex flex-col">
-              <span className="text-xs text-secondary tracking-wider">FREE</span>
+              <span className="subsection-label">FREE</span>
               <p className="font-serif text-4xl font-semibold mt-2">$0</p>
-              <p className="text-sm text-secondary mt-3 mb-6">Discover your persona.</p>
+              <p className="card-summary mt-3 mb-6">Discover your persona.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   '336-question assessment',
@@ -364,9 +364,9 @@ export default function LandingPage() {
 
             {/* Plus */}
             <div className="card flex flex-col">
-              <span className="text-xs text-secondary tracking-wider">PLUS</span>
+              <span className="subsection-label">PLUS</span>
               <p className="font-serif text-4xl font-semibold mt-2">$29.99</p>
-              <p className="text-sm text-secondary mt-3 mb-6">The complete picture.</p>
+              <p className="card-summary mt-3 mb-6">The complete picture.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   'Everything in Free',
@@ -388,7 +388,7 @@ export default function LandingPage() {
               </div>
               <span className="text-xs text-accent tracking-wider">PREMIUM</span>
               <p className="font-serif text-4xl font-semibold mt-2">$49.99</p>
-              <p className="text-sm text-secondary mt-3 mb-6">Insight + AI coaching.</p>
+              <p className="card-summary mt-3 mb-6">Insight + AI coaching.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   'Everything in Plus',
@@ -404,9 +404,9 @@ export default function LandingPage() {
 
             {/* Pro */}
             <div className="card flex flex-col">
-              <span className="text-xs text-secondary tracking-wider">PRO</span>
+              <span className="subsection-label">PRO</span>
               <p className="font-serif text-4xl font-semibold mt-2">$69.99</p>
-              <p className="text-sm text-secondary mt-3 mb-6">Unlimited AI coaching.</p>
+              <p className="card-summary mt-3 mb-6">Unlimited AI coaching.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   'Everything in Premium',
@@ -421,9 +421,9 @@ export default function LandingPage() {
 
             {/* Couples */}
             <div className="card flex flex-col">
-              <span className="text-xs text-secondary tracking-wider">COUPLES</span>
+              <span className="subsection-label">COUPLES</span>
               <p className="font-serif text-4xl font-semibold mt-2">$119</p>
-              <p className="text-sm text-secondary mt-3 mb-6">Two partners, full compatibility.</p>
+              <p className="card-summary mt-3 mb-6">Two partners, full compatibility.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   'Everything in Pro (x2)',
@@ -442,7 +442,7 @@ export default function LandingPage() {
             <div className="card flex flex-col border-accent/40">
               <span className="text-xs text-accent tracking-wider">ATTACHMENT STYLE</span>
               <p className="font-serif text-4xl font-semibold mt-2">$49</p>
-              <p className="text-sm text-secondary mt-3 mb-6">The psychology underneath your persona.</p>
+              <p className="card-summary mt-3 mb-6">The psychology underneath your persona.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   '30-minute deep assessment',
@@ -470,7 +470,7 @@ export default function LandingPage() {
             {FAQS.map((faq) => (
               <div key={faq.q}>
                 <h3 className="font-serif font-semibold mb-1">{faq.q}</h3>
-                <p className="text-sm text-secondary leading-relaxed">{faq.a}</p>
+                <p className="card-summary leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>

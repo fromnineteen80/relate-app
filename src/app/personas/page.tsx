@@ -148,30 +148,30 @@ export default function PersonasPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-xs text-secondary mb-1">PHYSICAL</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">A</span> = Fitness</p>
+                <p className="mb-0.5"><span className="text-accent font-semibold">A</span> = Fitness</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You lead with physical vitality and take pride in how your body performs. Your energy and discipline around fitness signal drive and self-investment.</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">B</span> = Maturity</p>
+                <p className="mb-0.5"><span className="text-accent font-semibold">B</span> = Maturity</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You lead with depth and lived experience over raw physicality. Your presence carries weight because of who you are, not how you look.</p>
               </div>
               <div>
                 <p className="text-xs text-secondary mb-1">SOCIAL</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">C</span> = Leadership</p>
+                <p className="mb-0.5"><span className="text-accent font-semibold">C</span> = Leadership</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You naturally take charge in social settings and people look to you for direction. Your confidence in leading creates a sense of safety and momentum.</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">D</span> = Presence</p>
+                <p className="mb-0.5"><span className="text-accent font-semibold">D</span> = Presence</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You draw people in through quiet attentiveness rather than commanding the room. Your ability to make others feel seen is your strongest social asset.</p>
               </div>
               <div>
                 <p className="text-xs text-secondary mb-1">LIFESTYLE</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">E</span> = Adventure</p>
+                <p className="mb-0.5"><span className="text-accent font-semibold">E</span> = Adventure</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You are energized by novelty, adventure, and spontaneous experiences. A life without surprises feels stagnant to you.</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">F</span> = Stability</p>
+                <p className="mb-0.5"><span className="text-accent font-semibold">F</span> = Stability</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You are grounded by routine, consistency, and a reliable foundation. You build a life that feels secure and sustainable over time.</p>
               </div>
               <div>
                 <p className="text-xs text-secondary mb-1">VALUES</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">G</span> = Traditional</p>
+                <p className="mb-0.5"><span className="text-accent font-semibold">G</span> = Traditional</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You value clearly defined roles and responsibilities in a partnership. Structure and tradition give your relationships a reliable foundation.</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">H</span> = Egalitarian</p>
+                <p className="mb-0.5"><span className="text-accent font-semibold">H</span> = Egalitarian</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You believe partnership roles should be negotiated, not inherited. Shared responsibility and flexibility define how you build a life together.</p>
               </div>
             </div>
@@ -179,30 +179,30 @@ export default function PersonasPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-xs text-secondary mb-1">PHYSICAL</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">A</span> = Beauty</p>
+                <p className="mb-0.5"><span className="text-accent font-semibold">A</span> = Beauty</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You lead with aesthetic presence and take pride in how you present yourself. Your appearance signals self-care and intentionality.</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">B</span> = Confidence</p>
+                <p className="mb-0.5"><span className="text-accent font-semibold">B</span> = Confidence</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You lead with self-assurance that transcends appearance. Your confidence in who you are draws people in more than any physical trait.</p>
               </div>
               <div>
                 <p className="text-xs text-secondary mb-1">SOCIAL</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">C</span> = Allure</p>
+                <p className="mb-0.5"><span className="text-accent font-semibold">C</span> = Allure</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You carry an air of magnetic mystery that makes people want to know more. Your selective attention creates intrigue and desire.</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">D</span> = Charm</p>
+                <p className="mb-0.5"><span className="text-accent font-semibold">D</span> = Charm</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You connect through warmth, humor, and genuine engagement. People feel instantly comfortable around you because of how present you are.</p>
               </div>
               <div>
                 <p className="text-xs text-secondary mb-1">LIFESTYLE</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">E</span> = Thrill</p>
+                <p className="mb-0.5"><span className="text-accent font-semibold">E</span> = Thrill</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You are energized by novelty, adventure, and spontaneous experiences. A life without surprises feels stagnant to you.</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">F</span> = Peace</p>
+                <p className="mb-0.5"><span className="text-accent font-semibold">F</span> = Peace</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You are grounded by routine, consistency, and intentional calm. You build a life that feels secure and sustainable over time.</p>
               </div>
               <div>
                 <p className="text-xs text-secondary mb-1">VALUES</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">G</span> = Traditional</p>
+                <p className="mb-0.5"><span className="text-accent font-semibold">G</span> = Traditional</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You value clearly defined roles and responsibilities in a partnership. Structure and tradition give your relationships a reliable foundation.</p>
-                <p className="mb-0.5"><span className="font-mono text-accent">H</span> = Egalitarian</p>
+                <p className="mb-0.5"><span className="text-accent font-semibold">H</span> = Egalitarian</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You believe partnership roles should be negotiated, not inherited. Shared responsibility and flexibility define how you build a life together.</p>
               </div>
             </div>
@@ -249,7 +249,7 @@ export default function PersonasPage() {
                   className="w-full text-left flex items-center justify-between"
                 >
                   <div className="flex items-center gap-4">
-                    <span className="font-mono text-sm text-accent w-12">{persona.code}</span>
+                    <span className="text-sm text-accent w-12">{persona.code}</span>
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="font-serif text-lg font-semibold">{persona.name}</h3>
@@ -260,7 +260,7 @@ export default function PersonasPage() {
                           <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded-full">Best Match</span>
                         )}
                       </div>
-                      <p className="text-xs text-secondary">{dims.join(' + ')}</p>
+                      <p className="card-summary">{dims.join(' + ')}</p>
                     </div>
                   </div>
                   <span className="text-secondary text-sm">{isExpanded ? '−' : '+'}</span>
@@ -277,7 +277,7 @@ export default function PersonasPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {persona.datingBehavior.length > 0 && (
                         <div>
-                          <h4 className="text-xs text-secondary uppercase tracking-wider mb-2">Dating Behavior</h4>
+                          <h4 className="subsection-label mb-2">Dating Behavior</h4>
                           <ul className="bullet-list">
                             {persona.datingBehavior.map((item, i) => (
                               <li key={i}>{item}</li>
@@ -288,7 +288,7 @@ export default function PersonasPage() {
 
                       {persona.inRelationships.length > 0 && (
                         <div>
-                          <h4 className="text-xs text-secondary uppercase tracking-wider mb-2">In Relationships</h4>
+                          <h4 className="subsection-label mb-2">In Relationships</h4>
                           <ul className="bullet-list">
                             {persona.inRelationships.map((item, i) => (
                               <li key={i}>{item}</li>
@@ -326,7 +326,7 @@ export default function PersonasPage() {
                     {/* Row 3: Shadow Side (centered) */}
                     {persona.struggles.length > 0 && (
                       <div className="md:w-1/2 md:mx-auto">
-                        <h4 className="text-xs text-secondary uppercase tracking-wider mb-2">Shadow Side</h4>
+                        <h4 className="subsection-label mb-2">Shadow Side</h4>
                         <ul className="bullet-list">
                           {persona.struggles.map((item, i) => (
                             <li key={i}>{item}</li>
@@ -356,12 +356,12 @@ export default function PersonasPage() {
 
             <div className="card mb-4">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-accent/10 text-accent flex items-center justify-center font-mono text-sm font-semibold">
+                <div className="w-10 h-10 rounded-full bg-accent/10 text-accent flex items-center justify-center text-sm font-semibold">
                   {userPersonaCode}
                 </div>
                 <div>
                   <p className="font-serif font-semibold">{userPersonaName}</p>
-                  <p className="text-xs text-secondary">Your persona compatibility with all {userGender === 'M' ? 'female' : 'male'} personas</p>
+                  <p className="card-summary">Your persona compatibility with all {userGender === 'M' ? 'female' : 'male'} personas</p>
                 </div>
               </div>
 
@@ -372,8 +372,8 @@ export default function PersonasPage() {
                     <div className={`w-2 h-2 rounded-full ${tierBgColor(match.tier)} flex-shrink-0`} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium truncate">{match.name}</span>
-                        <span className="font-mono text-xs text-accent">{match.code}</span>
+                        <span className="data-label truncate">{match.name}</span>
+                        <span className="text-xs text-accent">{match.code}</span>
                       </div>
                     </div>
                     <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>

@@ -596,7 +596,7 @@ function AccountPage() {
             <Icon name="check" size={20} className="text-success" />
             <div>
               <p className="text-sm font-medium">Payment successful</p>
-              <p className="text-xs text-secondary">Your account has been upgraded to {(PRICING[currentTier]?.label || currentTier)}.</p>
+              <p className="card-summary">Your account has been upgraded to {(PRICING[currentTier]?.label || currentTier)}.</p>
             </div>
           </div>
         )}
@@ -623,7 +623,7 @@ function AccountPage() {
                   ? `${profileData.firstName} ${profileData.lastName}`
                   : user?.email || '-'}
               </p>
-              <p className="text-xs text-secondary">{user?.email}</p>
+              <p className="card-summary">{user?.email}</p>
             </div>
           </div>
           <div className="space-y-3">
@@ -660,7 +660,7 @@ function AccountPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">{PRICING[individualTier]?.label || individualTier}: Active</p>
-                    <p className="text-xs text-secondary">{individualDescriptions[individualTier] || ''}</p>
+                    <p className="card-summary">{individualDescriptions[individualTier] || ''}</p>
                   </div>
                 </div>
               );
@@ -674,7 +674,7 @@ function AccountPage() {
                 </div>
                 <div>
                   <p className="text-sm font-medium">Couples: Active</p>
-                  <p className="text-xs text-secondary">Partner compatibility report, shared advisor, combined tools.</p>
+                  <p className="card-summary">Partner compatibility report, shared advisor, combined tools.</p>
                 </div>
               </div>
             )}
@@ -684,7 +684,7 @@ function AccountPage() {
               <div className="p-3 border rounded-md border-border mt-1">
                 <p className="text-sm font-medium">Couples</p>
                 <p className="font-serif text-xl font-semibold my-1">{PRICING.couples.priceDisplay}</p>
-                <p className="text-xs text-secondary mb-3">Add your partner for a couples compatibility report and shared advisor tools.</p>
+                <p className="card-summary mb-3">Add your partner for a couples compatibility report and shared advisor tools.</p>
                 {config.useMockPayments ? (
                   <button onClick={() => handleMockUpgrade('couples')} className="text-xs w-full btn-secondary" disabled={mockUpgrading}>
                     {mockUpgrading ? 'Processing...' : 'Upgrade to Couples'}
@@ -706,7 +706,7 @@ function AccountPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">{attachmentProduct === 'attachment_style_couples' ? 'Attachment Style Couples' : 'Attachment Style'}: Active</p>
-                    <p className="text-xs text-secondary">Deep attachment style assessment, personalized report, and growth plan.</p>
+                    <p className="card-summary">Deep attachment style assessment, personalized report, and growth plan.</p>
                   </div>
                 </div>
               ) : (
@@ -714,7 +714,7 @@ function AccountPage() {
                   <p className="text-[10px] uppercase tracking-wider text-secondary mb-1">Add-on</p>
                   <p className="text-sm font-medium">Attachment Style Assessment</p>
                   <p className="font-serif text-xl font-semibold my-1">{ATTACHMENT_PRICING.attachment_style.priceDisplay}</p>
-                  <p className="text-xs text-secondary mb-3">A 30-minute deep assessment revealing the psychology underneath your persona. 3,000-word personalized report.</p>
+                  <p className="card-summary mb-3">A 30-minute deep assessment revealing the psychology underneath your persona. 3,000-word personalized report.</p>
                   {config.useMockPayments ? (
                     <button onClick={async () => {
                       localStorage.setItem('relate_attachment_purchased', JSON.stringify({ purchased: true, product: 'attachment_style' }));
@@ -730,7 +730,7 @@ function AccountPage() {
                   )}
                   {hasPartner && !attachmentPurchased && (
                     <div className="mt-2">
-                      <p className="text-xs text-secondary">Or add for both partners:</p>
+                      <p className="card-summary">Or add for both partners:</p>
                       {config.useMockPayments ? (
                         <button onClick={async () => {
                           localStorage.setItem('relate_attachment_purchased', JSON.stringify({ purchased: true, product: 'attachment_style_couples' }));
@@ -753,7 +753,7 @@ function AccountPage() {
             {/* Discount code for all users — works for both tiers and add-ons */}
             {currentTier !== 'free' && !attachmentPurchased && (
               <div className="mt-3 pt-3 border-t border-border">
-                <p className="text-xs text-secondary mb-2">Have a discount code?</p>
+                <p className="card-summary mb-2">Have a discount code?</p>
                 <form onSubmit={handleDiscountCode} className="flex gap-2">
                   <input
                     type="text"
@@ -788,7 +788,7 @@ function AccountPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Free: Active</p>
-                    <p className="text-xs text-secondary">Persona code, top 3 matches, 3 advisor messages.</p>
+                    <p className="card-summary">Persona code, top 3 matches, 3 advisor messages.</p>
                   </div>
                 </div>
 
@@ -801,7 +801,7 @@ function AccountPage() {
                     <div key={tier} className="p-3 border rounded-md border-border">
                       <p className="text-sm font-medium">{PRICING[tier]?.label || tier}</p>
                       <p className="font-serif text-xl font-semibold my-1">{PRICING[tier]?.priceDisplay || ''}</p>
-                      <p className="text-xs text-secondary mb-3">
+                      <p className="card-summary mb-3">
                         {tier === 'plus' && 'All 16 matches, conflict analysis, growth path, PDF report.'}
                         {tier === 'premium' && 'Plus features + rate-limited AI advisor + retake assessment.'}
                         {tier === 'pro' && 'Everything in Premium + unlimited AI advisor.'}
@@ -829,7 +829,7 @@ function AccountPage() {
                     </div>
                   ) : (
                     <>
-                      <p className="text-xs text-secondary mb-2">Have a discount code?</p>
+                      <p className="card-summary mb-2">Have a discount code?</p>
                       <form onSubmit={handleDiscountCode} className="flex gap-2">
                         <input
                           type="text"
@@ -882,12 +882,12 @@ function AccountPage() {
                       <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
                     </div>
                     {partnerPersonaName ? (
-                      <p className="text-xs text-secondary truncate">{partnerPersonaName}</p>
+                      <p className="card-summary truncate">{partnerPersonaName}</p>
                     ) : partnerName && partnerEmail ? (
-                      <p className="text-xs text-secondary truncate">{partnerEmail}</p>
+                      <p className="card-summary truncate">{partnerEmail}</p>
                     ) : null}
                     {connectedAt && (
-                      <p className="text-xs text-secondary mt-0.5">Connected {new Date(connectedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                      <p className="card-summary mt-0.5">Connected {new Date(connectedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                     )}
                   </div>
                 </div>
@@ -895,7 +895,7 @@ function AccountPage() {
                   <Link href="/results/compare" className="btn-primary text-xs w-full text-center block">View Couples Results</Link>
                 ) : (
                   <div>
-                    <p className="text-xs text-secondary mb-2">Upgrade to Couples tier to unlock your compatibility report.</p>
+                    <p className="card-summary mb-2">Upgrade to Couples tier to unlock your compatibility report.</p>
                     <Link href="/invite" className="btn-primary text-xs w-full text-center block">Activate Couples</Link>
                   </div>
                 )}
@@ -915,7 +915,7 @@ function AccountPage() {
         <section id="assessment" className="card mb-4 scroll-mt-32">
           <div className="flex items-center justify-between gap-6 flex-wrap mb-4">
             <h2 className="font-serif text-lg font-semibold">Assessment Progress</h2>
-            <span className="text-xs text-secondary">{completedModules}/5 modules</span>
+            <span className="card-summary">{completedModules}/5 modules</span>
           </div>
 
           <div className="space-y-2">
@@ -1004,8 +1004,8 @@ function AccountPage() {
             <div className="space-y-3">
               <div className="flex items-center gap-4 py-2 border-b border-border">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium">Persona Card</p>
-                  <p className="text-xs text-secondary">Your persona summary and key traits</p>
+                  <p className="data-label">Persona Card</p>
+                  <p className="card-summary">Your persona summary and key traits</p>
                 </div>
                 <Link href="/results/persona" className="btn-secondary text-xs flex-shrink-0">
                   View
@@ -1013,8 +1013,8 @@ function AccountPage() {
               </div>
               <div className="flex items-center gap-4 py-2 border-b border-border">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium">Full PDF Report</p>
-                  <p className="text-xs text-secondary">
+                  <p className="data-label">Full PDF Report</p>
+                  <p className="card-summary">
                     {canDownload
                       ? 'Complete assessment report with market data'
                       : 'Available with Plus, Premium, or Couples'}
@@ -1032,8 +1032,8 @@ function AccountPage() {
               </div>
               <div className="flex items-center gap-4 py-2 border-b border-border">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium">AI Coach Skill (.zip)</p>
-                  <p className="text-xs text-secondary">
+                  <p className="data-label">AI Coach Skill (.zip)</p>
+                  <p className="card-summary">
                     {canDownload
                       ? 'Claude skill with coaching workflows and your data'
                       : 'Available with Plus, Premium, or Couples'}
@@ -1051,8 +1051,8 @@ function AccountPage() {
               </div>
               <div className="flex items-center gap-4 py-2">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium">AI Coach Prompt (.md)</p>
-                  <p className="text-xs text-secondary">
+                  <p className="data-label">AI Coach Prompt (.md)</p>
+                  <p className="card-summary">
                     {canDownload
                       ? 'Basic coaching file for any AI platform'
                       : 'Available with Plus, Premium, or Couples'}
@@ -1078,7 +1078,7 @@ function AccountPage() {
           <div className="flex items-center justify-between gap-6 flex-wrap">
             <div>
               <h2 className="font-serif text-lg font-semibold">Feedback</h2>
-              <p className="text-xs text-secondary">Help us improve RELATE</p>
+              <p className="card-summary">Help us improve RELATE</p>
             </div>
             <Link href="/feedback" className="btn-secondary text-xs">
               Send Feedback
@@ -1134,7 +1134,7 @@ function AccountPage() {
                   <span className="text-xs bg-accent/10 text-accent px-1.5 py-0.5 rounded">ZIP</span>
                   <h3 className="text-sm font-semibold">Claude Skill Package</h3>
                 </div>
-                <p className="text-xs text-secondary mb-3">
+                <p className="card-summary mb-3">
                   Full skill with coaching workflows, response patterns, report summary, and disclaimer. Upload directly to Claude.ai as a Skill.
                 </p>
                 <div className="mb-3 text-[11px] text-secondary font-mono leading-relaxed bg-stone-50 p-2 rounded border border-border">
@@ -1157,10 +1157,10 @@ function AccountPage() {
                   <span className="text-xs bg-stone-200 text-secondary px-1.5 py-0.5 rounded">MD</span>
                   <h3 className="text-sm font-semibold">Basic Coaching Prompt</h3>
                 </div>
-                <p className="text-xs text-secondary mb-3">
+                <p className="card-summary mb-3">
                   Single markdown file with your coaching instructions and assessment data combined. Works with any AI. Paste it into a chat or upload as a file.
                 </p>
-                <div className="mb-3 text-[11px] text-secondary bg-stone-50 p-2 rounded border border-border">
+                <div className="mb-3 body-paragraph bg-stone-50 p-2 rounded border border-border">
                   <p>A single <code className="bg-stone-100 px-1 rounded">relate-coach.md</code> file containing your coaching prompt, report summary, and full assessment data. No setup required. Just upload or paste.</p>
                 </div>
                 <button onClick={handleDownloadCoachMd} disabled={downloadingCoach} className="btn-secondary text-xs w-full">
@@ -1225,7 +1225,7 @@ function AccountPage() {
 
             {/* Disclaimer */}
             <div className="p-3 bg-warning/5 border border-warning/20 rounded-lg">
-              <p className="text-[11px] text-secondary">
+              <p className="body-paragraph">
                 <strong>Not a therapist.</strong> This coaching tool references evidence-based frameworks but is not a substitute for licensed therapy. See DISCLAIMER.md in the download. If you&apos;re in crisis: <strong>988 Suicide &amp; Crisis Lifeline</strong> or <strong>National Domestic Violence Hotline (1-800-799-7233)</strong>.
               </p>
             </div>
@@ -1243,7 +1243,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
     return (
       <section className="card mb-4">
         <h2 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h2>
-        <p className="text-xs text-secondary mb-4">Analyzing your local market...</p>
+        <p className="card-summary mb-4">Analyzing your local market...</p>
         <div className="flex items-center justify-center py-8">
           <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
         </div>
@@ -1293,13 +1293,13 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
   return (
     <section className="card mb-4">
       <h2 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h2>
-      <p className="text-xs text-secondary mb-5">{metro}</p>
+      <p className="card-summary mb-5">{metro}</p>
 
       {/* Relate Score Gauge */}
       <div className="mb-6">
         <div className="flex items-end justify-between mb-2">
           <div>
-            <span className="text-xs text-secondary uppercase tracking-wider">Relate Score</span>
+            <span className="subsection-label">Relate Score</span>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="font-serif text-3xl font-semibold">{score.toFixed(0)}</span>
               <span className={`text-sm font-medium ${tier.color}`}>{tier.label}</span>
@@ -1322,7 +1322,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
             <div key={tick} className="absolute top-0 bottom-0 w-px bg-white/50" style={{ left: `${tick}%` }} />
           ))}
         </div>
-        <p className="text-xs text-secondary mt-2">
+        <p className="card-summary mt-2">
           How competitive you are in the {metro} dating market based on income, education, age, and demographics.
         </p>
       </div>
@@ -1330,7 +1330,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
       {/* Score Components */}
       {Object.keys(components).length > 0 && (
         <div className="mb-6">
-          <span className="text-xs text-secondary uppercase tracking-wider">Score Breakdown</span>
+          <span className="subsection-label">Score Breakdown</span>
           <div className="space-y-2 mt-2">
             {compOrder.map(key => {
               const comp = components[key];
@@ -1339,7 +1339,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
               const weight = comp.weight ?? 0;
               return (
                 <div key={key} className="flex items-center gap-3">
-                  <span className="text-xs text-secondary w-16">{compLabels[key]}</span>
+                  <span className="card-summary w-16">{compLabels[key]}</span>
                   <div className="flex-1 h-1.5 bg-stone-200 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-accent rounded-full transition-all duration-700"
@@ -1351,7 +1351,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
               );
             })}
           </div>
-          <p className="text-[11px] text-secondary mt-2">
+          <p className="body-paragraph mt-2">
             Each bar shows your local percentile (0 = bottom, 100 = top).
           </p>
         </div>
@@ -1360,7 +1360,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
       {/* Match Pool Funnel */}
       {pool && (
         <div className="mb-6">
-          <span className="text-xs text-secondary uppercase tracking-wider">Match Pool Funnel</span>
+          <span className="subsection-label">Match Pool Funnel</span>
           <div className="mt-3 space-y-1">
             {milestones.map((m, i) => {
               const maxVal = milestones[0].value || 1;
@@ -1396,7 +1396,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
           </div>
           <div className="mt-3 space-y-1">
             {milestones.map(m => (
-              <p key={m.label} className="text-[11px] text-secondary">
+              <p key={m.label} className="body-paragraph">
                 <span className="font-medium">{m.label}:</span> {m.desc}
               </p>
             ))}
@@ -1407,16 +1407,16 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
       {/* Match Probability & Count */}
       <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
         <div className="text-center">
-          <span className="text-xs text-secondary uppercase tracking-wider">Match Probability</span>
+          <span className="subsection-label">Match Probability</span>
           <p className="font-serif text-2xl font-semibold mt-1">{prob?.percentage || 'N/A'}</p>
-          <p className="text-xs text-secondary mt-1">
+          <p className="card-summary mt-1">
             Chance of matching with someone from your ideal pool
           </p>
         </div>
         <div className="text-center">
-          <span className="text-xs text-secondary uppercase tracking-wider">Estimated Matches</span>
+          <span className="subsection-label">Estimated Matches</span>
           <p className="font-serif text-2xl font-semibold mt-1">{matchCount.toLocaleString()}</p>
-          <p className="text-xs text-secondary mt-1">
+          <p className="card-summary mt-1">
             Number of Singles from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats
           </p>
         </div>

@@ -91,7 +91,7 @@ export default function M2Reward({ scoredData, onContinue }: Props) {
   if (screen === 1) {
     return (
       <div className={`max-w-md mx-auto text-center transition-opacity duration-700 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-        <span className="text-xs text-secondary">You are</span>
+        <span className="card-summary">You are</span>
         <h2
           className="font-serif text-4xl font-semibold mt-2 mb-2 transition-all duration-1000"
           style={{ opacity: fadeIn ? 1 : 0, transform: fadeIn ? 'translateY(0)' : 'translateY(12px)' }}
@@ -122,7 +122,7 @@ export default function M2Reward({ scoredData, onContinue }: Props) {
               <span className="inline-block text-[10px] border border-border rounded-md px-2 py-1 mb-2.5 mt-1">
                 {p.pole}
               </span>
-              <p className="text-[10px] text-secondary capitalize">{p.dim}</p>
+              <p className="explainer capitalize">{p.dim}</p>
               {p.description && (
                 <p className="text-[10px] text-secondary/70 mt-0.5 leading-tight">{p.description}</p>
               )}
@@ -226,8 +226,8 @@ export default function M2Reward({ scoredData, onContinue }: Props) {
               >
                 <span className="text-success mt-0.5">&#10003;</span>
                 <div>
-                  <span className="text-sm font-medium capitalize">{a.dim}</span>
-                  <p className="text-xs text-secondary">
+                  <span className="data-label capitalize">{a.dim}</span>
+                  <p className="card-summary">
                     You want <strong>{a.m1Pole}</strong> and you are <strong>{a.m2Pole}</strong>
                   </p>
                 </div>
@@ -248,15 +248,15 @@ export default function M2Reward({ scoredData, onContinue }: Props) {
                 >
                   <span className="text-warning mt-0.5">&#9889;</span>
                   <div>
-                    <span className="text-sm font-medium capitalize">{a.dim}</span>
-                    <p className="text-xs text-secondary">
+                    <span className="data-label capitalize">{a.dim}</span>
+                    <p className="card-summary">
                       You want <strong>{a.m1Pole}</strong> but lead with <strong>{a.m2Pole}</strong>
                     </p>
                   </div>
                 </div>
               ))}
             </div>
-            <p className="text-xs text-secondary italic mb-6">
+            <p className="definition italic mb-6">
               These gaps aren&apos;t flaws. They&apos;re where growth happens, and where the wrong match exposes friction.
             </p>
           </>

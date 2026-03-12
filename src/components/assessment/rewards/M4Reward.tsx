@@ -91,7 +91,7 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
 
     return (
       <div className={`max-w-xl mx-auto transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-        <span className="text-xs text-secondary">Your Conflict Signature</span>
+        <span className="card-summary">Your Conflict Signature</span>
         <h2 className="font-serif text-2xl font-semibold mt-1 mb-8">When Things Get Hard</h2>
 
         <div className="space-y-5">
@@ -102,7 +102,7 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
               style={{ transitionDelay: `${i * 150}ms`, opacity: fadeIn ? 1 : 0, transform: fadeIn ? 'translateY(0)' : 'translateY(8px)' }}
             >
               <div className="flex items-baseline gap-3 mb-1">
-                <span className="text-xs text-secondary w-28">{f.label}:</span>
+                <span className="card-summary w-28">{f.label}:</span>
                 <span className="font-serif font-semibold uppercase">{f.value || '-'}</span>
               </div>
               {f.desc && <p className="explainer ml-[7.5rem] leading-relaxed">{f.desc}</p>}
@@ -163,7 +163,7 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
                   <span className={`text-sm ${isRisk ? 'text-warning' : 'text-success'}`}>
                     {isRisk ? '\u26A0' : '\u2713'}
                   </span>
-                  <span className="text-sm font-medium capitalize">{h}</span>
+                  <span className="data-label capitalize">{h}</span>
                   <span className={`font-serif text-xs ml-auto ${isRisk ? 'text-warning' : 'text-success'}`}>
                     {score}/100
                   </span>
@@ -177,10 +177,10 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
                   />
                 </div>
                 {isRisk && (
-                  <p className="text-xs text-secondary leading-relaxed">{ANTIDOTES[h]}</p>
+                  <p className="card-summary leading-relaxed">{ANTIDOTES[h]}</p>
                 )}
                 {!isRisk && (
-                  <p className="text-xs text-secondary">
+                  <p className="card-summary">
                     {risk === 'low' ? 'Low risk. This is not a significant pattern for you.' : 'Moderate range. Worth monitoring.'}
                   </p>
                 )}
@@ -189,7 +189,7 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
           })}
         </div>
 
-        <p className="text-xs text-secondary italic mt-6 mb-6">
+        <p className="definition italic mt-6 mb-6">
           These aren&apos;t character flaws. They&apos;re patterns you can interrupt once you see them.
         </p>
 
@@ -211,7 +211,7 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
             : " A partner who withdraws while you pursue creates a chase dynamic: your intensity meets their silence. A partner who also pursues may escalate conflicts into warfare."
           }
         </p>
-        <p className="text-xs text-secondary italic mb-8">
+        <p className="definition italic mb-8">
           Your full report shows exactly which of your 16 matches carry these risks, and which are built to last.
         </p>
 

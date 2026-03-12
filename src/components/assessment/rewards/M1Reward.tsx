@@ -86,7 +86,7 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
 
     return (
       <div className={`max-w-xl mx-auto transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-        <span className="text-xs text-secondary">Your Preference Profile</span>
+        <span className="card-summary">Your Preference Profile</span>
         <h2 className="font-serif text-2xl font-semibold mt-1 mb-8">What You&apos;re Looking For</h2>
 
         {balancedCount >= 3 && (
@@ -126,7 +126,7 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
                     style={{ left: `${position}%`, transitionDelay: `${i * 200 + 400}ms` }}
                   />
                 </div>
-                <div className="flex justify-between text-xs text-secondary mb-1">
+                <div className="flex justify-between card-summary mb-1">
                   <span>{poleA}</span>
                   <span>{poleB}</span>
                 </div>
@@ -134,7 +134,7 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
                   <p className="text-sm text-secondary mt-1">{desc}</p>
                 )}
                 {isWeak && balancedCount < 3 && (
-                  <p className="text-xs text-secondary italic mt-1">
+                  <p className="definition italic mt-1">
                     Your responses here were close to the middle. This may reflect genuine flexibility, or it may sharpen with more experience.
                   </p>
                 )}

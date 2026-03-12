@@ -101,7 +101,7 @@ export default function CouplesDashboard() {
             <p className="font-serif text-lg font-semibold">
               {overview.user1?.name} & {overview.user2?.name}
             </p>
-            <p className="text-xs text-secondary">{overview.archetype?.name} · Score: {overview.overallScore}</p>
+            <p className="card-summary">{overview.archetype?.name} · Score: {overview.overallScore}</p>
           </div>
           <Link href="/results/compare" className="btn-secondary text-xs">
             Full Report
@@ -113,7 +113,7 @@ export default function CouplesDashboard() {
           <div className="flex items-center justify-between mb-3">
             <div>
               <p className="font-serif text-sm font-semibold">Level {level.level}: {level.name}</p>
-              <p className="text-xs text-secondary">{points} points · {level.pointsToNext > 0 ? `${level.pointsToNext} to next level` : 'Max level!'}</p>
+              <p className="card-summary">{points} points · {level.pointsToNext > 0 ? `${level.pointsToNext} to next level` : 'Max level!'}</p>
             </div>
             <span className="font-serif text-2xl font-bold text-accent">{level.level}</span>
           </div>
@@ -156,9 +156,9 @@ export default function CouplesDashboard() {
                 <p className="text-xs text-accent">Active Challenge</p>
                 <p className="font-serif text-sm font-semibold mt-1">{activeChallenge.title}</p>
               </div>
-              <span className="font-serif text-xs text-secondary">+{activeChallenge.points}pts</span>
+              <span className="font-serif card-summary">+{activeChallenge.points}pts</span>
             </div>
-            <p className="text-xs text-secondary mb-3">{activeChallenge.description}</p>
+            <p className="card-summary mb-3">{activeChallenge.description}</p>
             <button onClick={completeChallenge} className="btn-primary text-xs w-full">
               Mark Complete
             </button>
@@ -179,9 +179,9 @@ export default function CouplesDashboard() {
                     <p className="font-serif text-sm font-semibold">{challenge.title}</p>
                     <span className="font-serif text-xs text-accent">+{challenge.points}</span>
                   </div>
-                  <p className="text-xs text-secondary mb-3">{challenge.description}</p>
+                  <p className="card-summary mb-3">{challenge.description}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-secondary capitalize">{challenge.category} · {challenge.duration}</span>
+                    <span className="explainer capitalize">{challenge.category} · {challenge.duration}</span>
                     <button onClick={() => startChallenge(challenge)} className="text-xs text-accent hover:underline">
                       Start <Icon name="arrow_forward" size={12} />
                     </button>
@@ -202,18 +202,18 @@ export default function CouplesDashboard() {
                   <div className="flex-1 grid grid-cols-3 gap-2 text-center">
                     <div>
                       <span className="font-serif text-sm font-semibold">{ci.satisfaction}</span>
-                      <p className="text-[10px] text-secondary">Satisfaction</p>
+                      <p className="explainer">Satisfaction</p>
                     </div>
                     <div>
                       <span className="font-serif text-sm font-semibold">{ci.communication}</span>
-                      <p className="text-[10px] text-secondary">Communication</p>
+                      <p className="explainer">Communication</p>
                     </div>
                     <div>
                       <span className="font-serif text-sm font-semibold">{ci.connection}</span>
-                      <p className="text-[10px] text-secondary">Connection</p>
+                      <p className="explainer">Connection</p>
                     </div>
                   </div>
-                  <span className="text-[10px] text-secondary whitespace-nowrap">
+                  <span className="explainer whitespace-nowrap">
                     {new Date(ci.date).toLocaleDateString()}
                   </span>
                 </div>
@@ -233,7 +233,7 @@ export default function CouplesDashboard() {
                 <div key={i} className="card flex items-center justify-between opacity-60">
                   <div>
                     <p className="text-xs font-medium">{c.title}</p>
-                    <p className="text-[10px] text-secondary">{new Date(c.completedAt).toLocaleDateString()}</p>
+                    <p className="explainer">{new Date(c.completedAt).toLocaleDateString()}</p>
                   </div>
                   <span className="font-serif text-xs text-success">+{c.points}pts <Icon name="check" size={12} /></span>
                 </div>
@@ -325,7 +325,7 @@ function CoachingInsights({ report }: { report: any }) {
       <div className="space-y-3">
         {insights.slice(0, 3).map((insight, i) => (
           <div key={i} className={`card border-l-4 ${typeStyles[insight.type]}`}>
-            <p className="text-xs text-secondary mb-1">{insight.title}</p>
+            <p className="card-summary mb-1">{insight.title}</p>
             <p className="text-sm leading-relaxed">{insight.body}</p>
           </div>
         ))}
@@ -354,7 +354,7 @@ function CheckinModal({ onSubmit, onClose }: { onSubmit: (data: any) => void; on
           <SliderField label="Feeling of Connection" value={connection} onChange={setConnection} />
 
           <div>
-            <label className="text-xs text-secondary block mb-1">Notes (optional)</label>
+            <label className="card-summary block mb-1">Notes (optional)</label>
             <textarea
               value={notes}
               onChange={e => setNotes(e.target.value)}
@@ -382,7 +382,7 @@ function SliderField({ label, value, onChange }: { label: string; value: number;
   return (
     <div>
       <div className="flex items-center justify-between mb-1">
-        <label className="text-xs text-secondary">{label}</label>
+        <label className="card-summary">{label}</label>
         <span className="font-serif text-xs font-semibold">{value}/10</span>
       </div>
       <input
@@ -422,10 +422,10 @@ function AttachmentStatusCard() {
       <Link href="/results/compare#attachment-overlay" className="card flex items-center gap-3 hover:border-accent transition-colors">
         <Icon name="diamond" size={20} className="text-accent" />
         <div className="flex-1">
-          <p className="text-sm font-medium">
+          <p className="data-label">
             {status === 'overlay' ? 'Attachment Style Overlay Available' : 'Attachment Style Overlay Ready'}
           </p>
-          <p className="text-xs text-secondary">
+          <p className="card-summary">
             {status === 'overlay' ? 'View your deeper relational dynamic' : 'Both partners completed — generate your overlay'}
           </p>
         </div>
@@ -439,8 +439,8 @@ function AttachmentStatusCard() {
       <div className="card flex items-center gap-3">
         <Icon name="diamond" size={20} className="text-secondary" />
         <div>
-          <p className="text-sm font-medium">Partner needs to complete Attachment Style</p>
-          <p className="text-xs text-secondary">Both partners must finish the Attachment Style assessment for the couples overlay</p>
+          <p className="data-label">Partner needs to complete Attachment Style</p>
+          <p className="card-summary">Both partners must finish the Attachment Style assessment for the couples overlay</p>
         </div>
       </div>
     );
@@ -450,8 +450,8 @@ function AttachmentStatusCard() {
     <Link href="/attachment-style" className="card flex items-center gap-3 bg-stone-50 hover:border-accent transition-colors">
       <Icon name="diamond" size={20} className="text-accent" />
       <div className="flex-1">
-        <p className="text-sm font-medium">Unlock deeper couple insights</p>
-        <p className="text-xs text-secondary">Add Attachment Style for a deeper understanding of your dynamic together</p>
+        <p className="data-label">Unlock deeper couple insights</p>
+        <p className="card-summary">Add Attachment Style for a deeper understanding of your dynamic together</p>
       </div>
       <Icon name="arrow_forward" size={16} className="text-secondary" />
     </Link>

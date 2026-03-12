@@ -35,11 +35,11 @@ export default function ConflictPage() {
           <h3 className="font-serif font-semibold mb-3">Conflict Approach</h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <span className="text-xs text-secondary">Style</span>
+              <span className="card-summary">Style</span>
               <p className="capitalize">{summary.approach || '-'}</p>
             </div>
             <div>
-              <span className="text-xs text-secondary">Primary Driver</span>
+              <span className="card-summary">Primary Driver</span>
               <p className="capitalize">{summary.primaryDriver || '-'}</p>
             </div>
           </div>
@@ -49,15 +49,15 @@ export default function ConflictPage() {
           <h3 className="font-serif font-semibold mb-3">Repair Style</h3>
           <div className="grid grid-cols-3 gap-4 text-sm">
             <div>
-              <span className="text-xs text-secondary">Speed</span>
+              <span className="card-summary">Speed</span>
               <p className="capitalize">{summary.repairSpeed || '-'}</p>
             </div>
             <div>
-              <span className="text-xs text-secondary">Mode</span>
+              <span className="card-summary">Mode</span>
               <p className="capitalize">{summary.repairMode || '-'}</p>
             </div>
             <div>
-              <span className="text-xs text-secondary">Capacity</span>
+              <span className="card-summary">Capacity</span>
               <p className="capitalize">{summary.capacity || '-'}</p>
             </div>
           </div>
