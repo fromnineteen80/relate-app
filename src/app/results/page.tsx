@@ -1105,7 +1105,7 @@ function ResultsDashboard() {
                     View Full Report <Icon name="arrow_forward" size={12} />
                   </Link>
                 ) : (
-                  <Link href="/attachment-style" className="card-summary hover:text-accent transition-colors whitespace-nowrap">
+                  <Link href="/attachment-style" className="text-xs text-accent hover:underline transition-colors whitespace-nowrap">
                     Go deeper <Icon name="arrow_forward" size={12} />
                   </Link>
                 );
