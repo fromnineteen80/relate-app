@@ -86,7 +86,7 @@ export default function MethodologyPage() {
               <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-serif text-lg">1</div>
               <div>
                 <h3 className="font-serif text-xl font-semibold">What You Want</h3>
-                <p className="text-xs text-secondary">134 questions, approximately 25 minutes</p>
+                <p className="card-summary">134 questions, approximately 25 minutes</p>
               </div>
             </div>
             <div className="pl-13 space-y-3">
@@ -114,7 +114,7 @@ export default function MethodologyPage() {
               <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-serif text-lg">2</div>
               <div>
                 <h3 className="font-serif text-xl font-semibold">Who You Are</h3>
-                <p className="text-xs text-secondary">137 questions, approximately 25 minutes</p>
+                <p className="card-summary">137 questions, approximately 25 minutes</p>
               </div>
             </div>
             <div className="pl-13 space-y-3">
@@ -136,7 +136,7 @@ export default function MethodologyPage() {
               <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-serif text-lg">3</div>
               <div>
                 <h3 className="font-serif text-xl font-semibold">How You Connect</h3>
-                <p className="text-xs text-secondary">28 questions, approximately 10 minutes</p>
+                <p className="card-summary">28 questions, approximately 10 minutes</p>
               </div>
             </div>
             <div className="pl-13 space-y-3">
@@ -168,7 +168,7 @@ export default function MethodologyPage() {
               <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-serif text-lg">4</div>
               <div>
                 <h3 className="font-serif text-xl font-semibold">When Things Get Hard</h3>
-                <p className="text-xs text-secondary">68 questions, approximately 15 minutes</p>
+                <p className="card-summary">68 questions, approximately 15 minutes</p>
               </div>
             </div>
             <div className="pl-13 space-y-3">
@@ -633,7 +633,7 @@ function ConflictComponent({ title, desc }: { title: string; desc: string }) {
       <div className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0 mt-1.5" />
       <div>
         <p className="text-sm font-medium">{title}</p>
-        <p className="text-xs text-secondary mt-0.5">{desc}</p>
+        <p className="card-summary mt-0.5">{desc}</p>
       </div>
     </div>
   );
@@ -645,7 +645,7 @@ function ScoreComponent({ weight, label, desc }: { weight: string; label: string
       <span className="font-serif text-sm text-accent font-semibold w-10 flex-shrink-0">{weight}</span>
       <div>
         <p className="text-sm font-medium">{label}</p>
-        <p className="text-xs text-secondary mt-0.5">{desc}</p>
+        <p className="card-summary mt-0.5">{desc}</p>
       </div>
     </div>
   );
@@ -657,7 +657,7 @@ function FunnelStep({ number, title, desc }: { number: string; title: string; de
       <span className="font-serif text-xs text-accent font-semibold w-5 flex-shrink-0 mt-0.5">{number}</span>
       <div>
         <p className="text-sm font-medium">{title}</p>
-        <p className="text-xs text-secondary mt-0.5">{desc}</p>
+        <p className="card-summary mt-0.5">{desc}</p>
       </div>
     </div>
   );

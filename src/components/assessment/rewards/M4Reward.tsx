@@ -189,7 +189,7 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
           })}
         </div>
 
-        <p className="text-xs text-secondary italic mt-6 mb-6">
+        <p className="definition italic mt-6 mb-6">
           These aren&apos;t character flaws. They&apos;re patterns you can interrupt once you see them.
         </p>
 
@@ -211,7 +211,7 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
             : " A partner who withdraws while you pursue creates a chase dynamic: your intensity meets their silence. A partner who also pursues may escalate conflicts into warfare."
           }
         </p>
-        <p className="text-xs text-secondary italic mb-8">
+        <p className="definition italic mb-8">
           Your full report shows exactly which of your 16 matches carry these risks, and which are built to last.
         </p>
 

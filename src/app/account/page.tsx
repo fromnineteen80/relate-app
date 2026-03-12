@@ -915,7 +915,7 @@ function AccountPage() {
         <section id="assessment" className="card mb-4 scroll-mt-32">
           <div className="flex items-center justify-between gap-6 flex-wrap mb-4">
             <h2 className="font-serif text-lg font-semibold">Assessment Progress</h2>
-            <span className="text-xs text-secondary">{completedModules}/5 modules</span>
+            <span className="card-summary">{completedModules}/5 modules</span>
           </div>
 
           <div className="space-y-2">
@@ -1005,7 +1005,7 @@ function AccountPage() {
               <div className="flex items-center gap-4 py-2 border-b border-border">
                 <div className="flex-1 min-w-0">
                   <p className="data-label">Persona Card</p>
-                  <p className="text-xs text-secondary">Your persona summary and key traits</p>
+                  <p className="card-summary">Your persona summary and key traits</p>
                 </div>
                 <Link href="/results/persona" className="btn-secondary text-xs flex-shrink-0">
                   View
@@ -1014,7 +1014,7 @@ function AccountPage() {
               <div className="flex items-center gap-4 py-2 border-b border-border">
                 <div className="flex-1 min-w-0">
                   <p className="data-label">Full PDF Report</p>
-                  <p className="text-xs text-secondary">
+                  <p className="card-summary">
                     {canDownload
                       ? 'Complete assessment report with market data'
                       : 'Available with Plus, Premium, or Couples'}
@@ -1033,7 +1033,7 @@ function AccountPage() {
               <div className="flex items-center gap-4 py-2 border-b border-border">
                 <div className="flex-1 min-w-0">
                   <p className="data-label">AI Coach Skill (.zip)</p>
-                  <p className="text-xs text-secondary">
+                  <p className="card-summary">
                     {canDownload
                       ? 'Claude skill with coaching workflows and your data'
                       : 'Available with Plus, Premium, or Couples'}
@@ -1052,7 +1052,7 @@ function AccountPage() {
               <div className="flex items-center gap-4 py-2">
                 <div className="flex-1 min-w-0">
                   <p className="data-label">AI Coach Prompt (.md)</p>
-                  <p className="text-xs text-secondary">
+                  <p className="card-summary">
                     {canDownload
                       ? 'Basic coaching file for any AI platform'
                       : 'Available with Plus, Premium, or Couples'}
@@ -1078,7 +1078,7 @@ function AccountPage() {
           <div className="flex items-center justify-between gap-6 flex-wrap">
             <div>
               <h2 className="font-serif text-lg font-semibold">Feedback</h2>
-              <p className="text-xs text-secondary">Help us improve RELATE</p>
+              <p className="card-summary">Help us improve RELATE</p>
             </div>
             <Link href="/feedback" className="btn-secondary text-xs">
               Send Feedback
@@ -1134,7 +1134,7 @@ function AccountPage() {
                   <span className="text-xs bg-accent/10 text-accent px-1.5 py-0.5 rounded">ZIP</span>
                   <h3 className="text-sm font-semibold">Claude Skill Package</h3>
                 </div>
-                <p className="text-xs text-secondary mb-3">
+                <p className="card-summary mb-3">
                   Full skill with coaching workflows, response patterns, report summary, and disclaimer. Upload directly to Claude.ai as a Skill.
                 </p>
                 <div className="mb-3 text-[11px] text-secondary font-mono leading-relaxed bg-stone-50 p-2 rounded border border-border">
@@ -1157,10 +1157,10 @@ function AccountPage() {
                   <span className="text-xs bg-stone-200 text-secondary px-1.5 py-0.5 rounded">MD</span>
                   <h3 className="text-sm font-semibold">Basic Coaching Prompt</h3>
                 </div>
-                <p className="text-xs text-secondary mb-3">
+                <p className="card-summary mb-3">
                   Single markdown file with your coaching instructions and assessment data combined. Works with any AI. Paste it into a chat or upload as a file.
                 </p>
-                <div className="mb-3 text-[11px] text-secondary bg-stone-50 p-2 rounded border border-border">
+                <div className="mb-3 body-paragraph bg-stone-50 p-2 rounded border border-border">
                   <p>A single <code className="bg-stone-100 px-1 rounded">relate-coach.md</code> file containing your coaching prompt, report summary, and full assessment data. No setup required. Just upload or paste.</p>
                 </div>
                 <button onClick={handleDownloadCoachMd} disabled={downloadingCoach} className="btn-secondary text-xs w-full">
@@ -1243,7 +1243,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
     return (
       <section className="card mb-4">
         <h2 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h2>
-        <p className="text-xs text-secondary mb-4">Analyzing your local market...</p>
+        <p className="card-summary mb-4">Analyzing your local market...</p>
         <div className="flex items-center justify-center py-8">
           <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
         </div>
@@ -1293,7 +1293,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
   return (
     <section className="card mb-4">
       <h2 className="font-serif text-lg font-semibold mb-1">Your Dating Market</h2>
-      <p className="text-xs text-secondary mb-5">{metro}</p>
+      <p className="card-summary mb-5">{metro}</p>
 
       {/* Relate Score Gauge */}
       <div className="mb-6">
@@ -1322,7 +1322,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
             <div key={tick} className="absolute top-0 bottom-0 w-px bg-white/50" style={{ left: `${tick}%` }} />
           ))}
         </div>
-        <p className="text-xs text-secondary mt-2">
+        <p className="card-summary mt-2">
           How competitive you are in the {metro} dating market based on income, education, age, and demographics.
         </p>
       </div>
@@ -1339,7 +1339,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
               const weight = comp.weight ?? 0;
               return (
                 <div key={key} className="flex items-center gap-3">
-                  <span className="text-xs text-secondary w-16">{compLabels[key]}</span>
+                  <span className="card-summary w-16">{compLabels[key]}</span>
                   <div className="flex-1 h-1.5 bg-stone-200 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-accent rounded-full transition-all duration-700"
@@ -1409,14 +1409,14 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
         <div className="text-center">
           <span className="subsection-label">Match Probability</span>
           <p className="font-serif text-2xl font-semibold mt-1">{prob?.percentage || 'N/A'}</p>
-          <p className="text-xs text-secondary mt-1">
+          <p className="card-summary mt-1">
             Chance of matching with someone from your ideal pool
           </p>
         </div>
         <div className="text-center">
           <span className="subsection-label">Estimated Matches</span>
           <p className="font-serif text-2xl font-semibold mt-1">{matchCount.toLocaleString()}</p>
-          <p className="text-xs text-secondary mt-1">
+          <p className="card-summary mt-1">
             Number of Singles from your Ideal Match Pool in the surrounding {metroShort} metro area likely to be interested in you based on your own reported stats
           </p>
         </div>

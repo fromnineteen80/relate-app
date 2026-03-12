@@ -445,7 +445,7 @@ export default function InvitePage() {
               ].map(s => (
                 <div key={s.step} className="flex items-start gap-3">
                   <span className="w-6 h-6 rounded-full bg-accent/10 text-accent text-xs flex items-center justify-center flex-shrink-0 font-serif">{s.step}</span>
-                  <p className="text-xs text-secondary">{s.text}</p>
+                  <p className="card-summary">{s.text}</p>
                 </div>
               ))}
             </div>
