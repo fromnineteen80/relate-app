@@ -777,7 +777,7 @@ function ResultsDashboard() {
         {persona && (
           <section className="card mb-4 scroll-mt-32">
             <div className="flex items-center justify-between mb-1">
-              <h3 className="font-serif text-lg font-semibold flex items-center gap-2">{persona.code && <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-accent text-white text-[7px] font-mono font-bold leading-none shrink-0"><span className="flex flex-col items-center gap-px"><span>{persona.code.slice(0,2)}</span><span>{persona.code.slice(2,4)}</span></span></span>}{persona.name}</h3>
+              <h3 className="font-serif text-lg font-semibold flex items-center gap-2">{persona.code && <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-accent text-white text-[7px] font-bold leading-none shrink-0"><span className="flex flex-col items-center gap-px"><span>{persona.code.slice(0,2)}</span><span>{persona.code.slice(2,4)}</span></span></span>}{persona.name}</h3>
               <Link href="/results/persona" className="text-xs text-accent hover:underline">View Details</Link>
             </div>
             {persona.traits && <p className="card-summary mb-4">{persona.traits}</p>}
@@ -1216,7 +1216,7 @@ function ResultsDashboard() {
                         {hasPaid ? (
                           <Link href={`/results/match/${match.code}`} className="text-sm font-semibold text-accent hover:underline">{match.name}</Link>
                         ) : <span className="text-sm font-semibold">{match.name}</span>}
-                        <span className="font-mono text-xs text-secondary">{match.code}</span>
+                        <span className="text-xs text-secondary">{match.code}</span>
                       </div>
                       {match.traits && <p className="card-summary mt-1">{match.traits.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
                     </div>
