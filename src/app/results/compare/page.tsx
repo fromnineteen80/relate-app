@@ -448,7 +448,7 @@ function OverviewSection({ data }: { data: any }) {
                 <div className={`w-3 h-3 rounded-full ${dc.aligned ? 'bg-success' : 'bg-warning'}`} />
                 <span className="text-xs w-20 truncate">{dc.user2Pole}</span>
               </div>
-              <span className={`text-xs font-mono ${dc.aligned ? 'text-success' : 'text-warning'}`}>
+              <span className={`text-xs ${dc.aligned ? 'text-success' : 'text-warning'}`}>
                 {dc.aligned ? 'Aligned' : 'Differs'}
               </span>
             </div>
@@ -483,7 +483,7 @@ function AlignmentSection({ data, overview }: { data: any; overview: any }) {
                     <div className="h-1.5 flex-1 bg-stone-200 rounded-full overflow-hidden">
                       <div className="h-full bg-success rounded-full" style={{ width: `${p.strength}%` }} />
                     </div>
-                    <span className="text-xs font-mono text-secondary">{p.strength}%</span>
+                    <span className="text-xs font-serif text-secondary">{p.strength}%</span>
                   </div>
                 </div>
               </div>
@@ -506,7 +506,7 @@ function AlignmentSection({ data, overview }: { data: any; overview: any }) {
               <div className="h-1.5 flex-1 bg-stone-200 rounded-full overflow-hidden">
                 <div className="h-full bg-accent rounded-full" style={{ width: `${Math.max(0, 100 - data.m3Alignment?.wantGap)}%` }} />
               </div>
-              <span className="text-xs font-mono">{data.m3Alignment?.wantGap} gap</span>
+              <span className="text-xs font-serif">{data.m3Alignment?.wantGap} gap</span>
             </div>
           </div>
           <div>

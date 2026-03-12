@@ -164,7 +164,7 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
                     {isRisk ? '\u26A0' : '\u2713'}
                   </span>
                   <span className="text-sm font-medium capitalize">{h}</span>
-                  <span className={`font-mono text-xs ml-auto ${isRisk ? 'text-warning' : 'text-success'}`}>
+                  <span className={`font-serif text-xs ml-auto ${isRisk ? 'text-warning' : 'text-success'}`}>
                     {score}/100
                   </span>
                 </div>

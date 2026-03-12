@@ -177,7 +177,7 @@ export default function CouplesDashboard() {
                 <div key={challenge.id} className="card">
                   <div className="flex items-start justify-between mb-2">
                     <p className="font-serif text-sm font-semibold">{challenge.title}</p>
-                    <span className="font-mono text-xs text-accent">+{challenge.points}</span>
+                    <span className="font-serif text-xs text-accent">+{challenge.points}</span>
                   </div>
                   <p className="text-xs text-secondary mb-3">{challenge.description}</p>
                   <div className="flex items-center justify-between">
@@ -201,15 +201,15 @@ export default function CouplesDashboard() {
                 <div key={i} className="card flex items-center gap-4">
                   <div className="flex-1 grid grid-cols-3 gap-2 text-center">
                     <div>
-                      <span className="font-mono text-sm font-semibold">{ci.satisfaction}</span>
+                      <span className="font-serif text-sm font-semibold">{ci.satisfaction}</span>
                       <p className="text-[10px] text-secondary">Satisfaction</p>
                     </div>
                     <div>
-                      <span className="font-mono text-sm font-semibold">{ci.communication}</span>
+                      <span className="font-serif text-sm font-semibold">{ci.communication}</span>
                       <p className="text-[10px] text-secondary">Communication</p>
                     </div>
                     <div>
-                      <span className="font-mono text-sm font-semibold">{ci.connection}</span>
+                      <span className="font-serif text-sm font-semibold">{ci.connection}</span>
                       <p className="text-[10px] text-secondary">Connection</p>
                     </div>
                   </div>
