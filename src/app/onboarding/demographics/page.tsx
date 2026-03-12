@@ -566,7 +566,7 @@ export default function DemographicsPage() {
             <input type="range" min={0} max={1000000} step={10000} value={form.income}
               onChange={e => updateField('income', parseInt(e.target.value))}
               className="w-full accent-accent" />
-            <span className="text-sm font-mono text-secondary">{formatCurrency(form.income)}</span>
+            <span className="text-sm font-serif text-secondary">{formatCurrency(form.income)}</span>
           </div>
           <div>
             <label className="label">Education *</label>
@@ -662,7 +662,7 @@ export default function DemographicsPage() {
             <input type="range" min={0} max={1000000} step={10000} value={form.prefIncome}
               onChange={e => updateField('prefIncome', parseInt(e.target.value))}
               className="w-full accent-accent" />
-            <span className="text-sm font-mono text-secondary">{formatCurrency(form.prefIncome)}</span>
+            <span className="text-sm font-serif text-secondary">{formatCurrency(form.prefIncome)}</span>
           </div>
           {form.gender === 'Woman' && (
             <div>
@@ -810,7 +810,7 @@ export default function DemographicsPage() {
         )}
 
         <div className="mb-6">
-          <span className="font-mono text-xs text-secondary">Step 2 of 3</span>
+          <span className="text-xs text-secondary">Step 2 of 3</span>
           <h2 className="font-serif text-2xl font-semibold mt-1">{SECTIONS[currentSection].title}</h2>
           <p className="text-sm text-secondary">{SECTIONS[currentSection].subtitle}</p>
         </div>

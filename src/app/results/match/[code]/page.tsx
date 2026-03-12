@@ -112,7 +112,7 @@ function ScoreBar({ label, value, description, barColor }: { label: string; valu
         <div className="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
           <div className={`h-full ${barColor || 'bg-accent'} rounded-full transition-all`} style={{ width: `${Math.min(100, value)}%` }} />
         </div>
-        <span className="font-mono text-xs text-secondary w-8 text-right">{Math.round(value)}</span>
+        <span className="font-serif text-xs text-secondary w-8 text-right">{Math.round(value)}</span>
       </div>
       {description && <p className="text-[11px] text-secondary/70 mt-1 ml-[92px] leading-snug">{description}</p>}
     </div>
@@ -191,12 +191,12 @@ export default function MatchDetailPage() {
         {/* Header: name/code on left, score/tier on right, vertically centered */}
         <div className="flex items-center justify-between gap-6 mb-6">
           <div className="min-w-0">
-            <span className="font-mono text-xs text-secondary">Match #{match.rank}</span>
+            <span className="text-xs text-secondary">Match #{match.rank}</span>
             <h2 className="font-serif text-3xl font-semibold">{match.name}</h2>
-            <span className="font-mono text-sm text-accent">{match.code}</span>
+            <span className="text-sm text-accent">{match.code}</span>
           </div>
           <div className="text-right shrink-0">
-            <span className="font-mono text-3xl font-semibold block">{match.compatibilityScore}</span>
+            <span className="font-serif text-3xl font-semibold block">{match.compatibilityScore}</span>
             <span className={`text-sm font-semibold ${tierTextColor(match.tier)}`}>
               {tierLabel(match.tier)}
             </span>

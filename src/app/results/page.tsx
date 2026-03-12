@@ -1114,9 +1114,9 @@ function ResultsDashboard() {
             <p className="card-summary mb-4">How you connect, protect, and respond in close relationships</p>
             <div className="flex items-center gap-3 mb-4">
               <span className="font-serif text-lg font-semibold capitalize">{ic.attachment.style}</span>
-              {ic.attachment.subtype && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded capitalize">{ic.attachment.subtype}</span>}
-              {ic.attachment.leaningToward && <span className="text-xs font-mono bg-stone-100 px-2 py-0.5 rounded">leaning {ic.attachment.leaningToward}</span>}
-              <span className="text-xs font-mono text-secondary ml-auto">{Math.round((ic.attachment.confidence ?? 0) * 100)}% confidence</span>
+              {ic.attachment.subtype && <span className="text-xs bg-stone-100 px-2 py-0.5 rounded capitalize">{ic.attachment.subtype}</span>}
+              {ic.attachment.leaningToward && <span className="text-xs bg-stone-100 px-2 py-0.5 rounded">leaning {ic.attachment.leaningToward}</span>}
+              <span className="text-xs font-serif text-secondary ml-auto">{Math.round((ic.attachment.confidence ?? 0) * 100)}% confidence</span>
             </div>
             {ic.attachment.description && <p className="card-summary mb-4">{ic.attachment.description}</p>}
             {ic.attachment.strengths && Array.isArray(ic.attachment.strengths) && ic.attachment.strengths.length > 0 && (
@@ -1161,7 +1161,7 @@ function ResultsDashboard() {
                   const bp = JSON.parse(bpRaw);
                   return (
                     <div className="mt-4 pt-4 border-t border-accent/30">
-                      <span className="text-[10px] font-mono text-accent uppercase tracking-widest">Attachment Style Insights</span>
+                      <span className="text-[10px] text-accent uppercase tracking-widest">Attachment Style Insights</span>
                       <div className="mt-3 space-y-2">
                         {bp.q2?.patternName && (
                           <div className="flex items-center justify-between">
@@ -1193,8 +1193,8 @@ function ResultsDashboard() {
         {(matches.length > 0 || ic?.attachmentTiers || m3 || hasResults) && (
           <div id="how-you-date" className="scroll-mt-32 mb-2 lg:[column-span:all]">
             <div className="flex items-baseline gap-3 mb-4 mt-10">
-              <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">04</span>
-              <span className="font-mono text-xs text-secondary uppercase tracking-widest">How You Date</span>
+              <span className="text-[10px] text-secondary uppercase tracking-widest">04</span>
+              <span className="text-xs text-secondary uppercase tracking-widest">How You Date</span>
             </div>
           </div>
         )}
@@ -1212,16 +1212,16 @@ function ResultsDashboard() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono text-xs text-secondary">#{match.rank}</span>
+                        <span className="font-serif text-xs text-secondary">#{match.rank}</span>
                         {hasPaid ? (
                           <Link href={`/results/match/${match.code}`} className="text-sm font-semibold text-accent hover:underline">{match.name}</Link>
                         ) : <span className="text-sm font-semibold">{match.name}</span>}
-                        <span className="font-mono text-xs text-secondary">{match.code}</span>
+                        <span className="font-serif text-xs text-secondary">{match.code}</span>
                       </div>
                       {match.traits && <p className="card-summary mt-1">{match.traits.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
                     </div>
                     <div className="text-right shrink-0">
-                      <span className="font-mono text-sm font-semibold block">{match.compatibilityScore}</span>
+                      <span className="font-serif text-sm font-semibold block">{match.compatibilityScore}</span>
                       <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>
                       {(() => {
                         const note = rankingNote(match, visibleMatches);
@@ -1268,7 +1268,7 @@ function ResultsDashboard() {
                 {sortedAttachmentMatches.map((m, i) => (
                     <div key={i} className={`text-center px-3 py-2 rounded-lg border ${m.bg}`}>
                       <p className="data-label capitalize">{m.style}</p>
-                      <p className={`text-xs font-mono ${m.color}`}>{m.score}</p>
+                      <p className={`text-xs font-serif ${m.color}`}>{m.score}</p>
                     </div>
                   ))}
               </div>
@@ -1279,12 +1279,12 @@ function ResultsDashboard() {
             {ic.driverTiers && (
               <div className="mb-4 pt-4 border-t border-border">
                 <span className="subsection-label">Partner Emotional Driver</span>
-                <p className="explainer mt-1 mb-3">Your primary: <span className="font-mono capitalize text-foreground">{ic.driverTiers.yourDriver?.primary || '-'}</span></p>
+                <p className="explainer mt-1 mb-3">Your primary: <span className="capitalize text-foreground">{ic.driverTiers.yourDriver?.primary || '-'}</span></p>
                 <div className="flex flex-wrap gap-2">
                   {sortedDriverMatches.map((m, i) => (
                       <div key={i} className={`text-center px-3 py-2 rounded-lg border ${m.bg}`}>
                         <p className="data-label capitalize">{m.driver}</p>
-                        <p className={`text-xs font-mono ${m.color}`}>{m.score}</p>
+                        <p className={`text-xs font-serif ${m.color}`}>{m.score}</p>
                       </div>
                     ))}
                 </div>
@@ -1338,21 +1338,21 @@ function ResultsDashboard() {
             <h3 className="font-serif text-lg font-semibold mb-4 flex items-center gap-2"><Icon name="sync_alt" size={20} className="text-accent" />Connection Style</h3>
             <div className="grid grid-cols-3 gap-6 text-center mb-4">
               <div>
-                <span className="font-mono text-lg font-semibold">{m3.wantScore ?? '-'}</span>
+                <span className="font-serif text-lg font-semibold">{m3.wantScore ?? '-'}</span>
                 <p className="card-summary mt-1">Want Score</p>
               </div>
               <div>
-                <span className="font-mono text-lg font-semibold">{m3.offerScore ?? '-'}</span>
+                <span className="font-serif text-lg font-semibold">{m3.offerScore ?? '-'}</span>
                 <p className="card-summary mt-1">Offer Score</p>
               </div>
               <div>
-                <span className="font-mono text-lg font-semibold">{m3.typeName ?? '-'}</span>
+                <span className="font-serif text-lg font-semibold">{m3.typeName ?? '-'}</span>
                 <p className="card-summary mt-1">Type</p>
               </div>
             </div>
             {m3.wantOfferGap !== undefined && (
               <p className="card-summary text-center mb-4">
-                Gap: <span className={`font-mono ${Math.abs(m3.wantOfferGap) <= 5 ? 'text-success' : Math.abs(m3.wantOfferGap) <= 20 ? 'text-warning' : 'text-danger'}`}>
+                Gap: <span className={`font-serif ${Math.abs(m3.wantOfferGap) <= 5 ? 'text-success' : Math.abs(m3.wantOfferGap) <= 20 ? 'text-warning' : 'text-danger'}`}>
                   {m3.wantOfferGap > 0 ? '+' : ''}{m3.wantOfferGap}
                 </span>
               </p>
@@ -1414,7 +1414,7 @@ function ResultsDashboard() {
                   <div key={key}>
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="text-xs font-medium">{data.label || label}</span>
-                      <span className={`text-xs font-mono px-1.5 py-0.5 rounded ${
+                      <span className={`text-xs font-serif px-1.5 py-0.5 rounded ${
                         Math.abs(data.gap) <= 5 ? 'bg-success/10 text-success' :
                         Math.abs(data.gap) <= 15 ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
                       }`}>gap {data.gap > 0 ? '+' : ''}{data.gap}</span>
@@ -1425,8 +1425,8 @@ function ResultsDashboard() {
                       <div className="absolute right-0 top-0 h-full bg-rose-400/70 rounded-r-full transition-all duration-300"
                         style={{ width: `${wantPct}%` }} />
                       <div className="absolute left-1/2 top-0 w-px h-full bg-stone-300" />
-                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-blue-800">{data.offer}</span>
-                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-rose-800">{data.want}</span>
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-serif text-blue-800">{data.offer}</span>
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-serif text-rose-800">{data.want}</span>
                     </div>
                   </div>
                 );
@@ -1442,7 +1442,7 @@ function ResultsDashboard() {
               <div className="mt-4 pt-4 border-t border-border space-y-4">
                 <div>
                   <h4 className="font-serif text-sm font-semibold mb-1">Gap Expansion Under Stress</h4>
-                  <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+                  <span className={`text-xs font-serif px-2 py-0.5 rounded ${
                     ic.m3States.insights.gapExpansionLevel === 'HIGH' ? 'bg-danger/10 text-danger' :
                     ic.m3States.insights.gapExpansionLevel === 'MODERATE' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
                   }`}>
@@ -1458,7 +1458,7 @@ function ResultsDashboard() {
                 </div>
                 <div>
                   <h4 className="font-serif text-sm font-semibold mb-1">Repair Effort</h4>
-                  <span className={`text-xs font-mono px-2 py-0.5 rounded ${ic.m3States.insights.repairSustainable ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded ${ic.m3States.insights.repairSustainable ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'}`}>
                     {ic.m3States.insights.repairSustainable ? 'Sustainable' : 'High strain'}
                   </span>
                   <p className="explainer mt-2">
@@ -1484,7 +1484,7 @@ function ResultsDashboard() {
               <div className="flex items-center gap-3 mb-4">
                 {bridge.patternName && <span className="card-summary">{bridge.patternName}</span>}
                 {riskLevel && (
-                  <span className={`text-xs font-mono px-2 py-0.5 rounded ${
+                  <span className={`text-xs px-2 py-0.5 rounded ${
                     riskLevel === 'high' ? 'bg-danger/10 text-danger' :
                     riskLevel === 'medium' || riskLevel === 'medium-high' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
                   }`}>{riskLevel} risk</span>
@@ -1576,7 +1576,7 @@ function ResultsDashboard() {
                   </div>
 
                   {/* Connected pill */}
-                  <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
+                  <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
 
                   {/* Partner */}
                   <div className="flex items-center gap-3 min-w-0 sm:flex-row-reverse">
@@ -1636,7 +1636,7 @@ function ResultsDashboard() {
               {/* ZIP Skill */}
               <div className="bg-white border border-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-mono bg-accent/10 text-accent px-1.5 py-0.5 rounded">ZIP</span>
+                  <span className="text-xs bg-accent/10 text-accent px-1.5 py-0.5 rounded">ZIP</span>
                   <h3 className="text-sm font-semibold">Claude Skill Package</h3>
                 </div>
                 <p className="card-summary mb-3">
@@ -1659,7 +1659,7 @@ function ResultsDashboard() {
               {/* Basic .md */}
               <div className="bg-white border border-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-mono bg-stone-200 text-secondary px-1.5 py-0.5 rounded">MD</span>
+                  <span className="text-xs bg-stone-200 text-secondary px-1.5 py-0.5 rounded">MD</span>
                   <h3 className="text-sm font-semibold">Basic Coaching Prompt</h3>
                 </div>
                 <p className="card-summary mb-3">

@@ -824,7 +824,7 @@ function AccountPage() {
                 <div className="mt-4 pt-4 border-t border-border">
                   {activeDiscountCode ? (
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded">Discount Active</span>
+                      <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded">Discount Active</span>
                       <span className="text-xs font-mono">{activeDiscountCode}</span>
                     </div>
                   ) : (
@@ -879,7 +879,7 @@ function AccountPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium truncate">{partnerName || partnerEmail || 'Partner'}</p>
-                      <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
+                      <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
                     </div>
                     {partnerPersonaName ? (
                       <p className="text-xs text-secondary truncate">{partnerPersonaName}</p>
@@ -915,7 +915,7 @@ function AccountPage() {
         <section id="assessment" className="card mb-4 scroll-mt-32">
           <div className="flex items-center justify-between gap-6 flex-wrap mb-4">
             <h2 className="font-serif text-lg font-semibold">Assessment Progress</h2>
-            <span className="text-xs font-mono text-secondary">{completedModules}/5 modules</span>
+            <span className="text-xs text-secondary">{completedModules}/5 modules</span>
           </div>
 
           <div className="space-y-2">
@@ -928,7 +928,7 @@ function AccountPage() {
             ].map((mod) => (
               <div key={mod.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                 <div className="flex items-center gap-3">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-mono ${
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-serif ${
                     moduleProgress[mod.id] ? 'bg-success text-white' : 'bg-stone-200 text-secondary'
                   }`}>
                     {moduleProgress[mod.id] ? <Icon name="check" size={14} /> : mod.id}
@@ -936,7 +936,7 @@ function AccountPage() {
                   <span className="text-sm">Module {mod.id}: {mod.name}</span>
                 </div>
                 {moduleProgress[mod.id] ? (
-                  <span className="text-xs text-success font-mono">Complete</span>
+                  <span className="text-xs text-success">Complete</span>
                 ) : (
                   <Link href={`/assessment/module-${mod.id}`} className="text-xs text-accent hover:underline">
                     {mod.id === 1 || moduleProgress[mod.id - 1] ? 'Start' : 'Locked'}
@@ -955,7 +955,7 @@ function AccountPage() {
                   <span className="text-sm">Attachment Style</span>
                 </div>
                 {attachmentHasResults ? (
-                  <span className="text-xs text-success font-mono">Complete</span>
+                  <span className="text-xs text-success">Complete</span>
                 ) : (
                   <Link href="/attachment-style" className="text-xs text-accent hover:underline">Start</Link>
                 )}
@@ -1131,7 +1131,7 @@ function AccountPage() {
               {/* ZIP Skill */}
               <div className="bg-white border border-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-mono bg-accent/10 text-accent px-1.5 py-0.5 rounded">ZIP</span>
+                  <span className="text-xs bg-accent/10 text-accent px-1.5 py-0.5 rounded">ZIP</span>
                   <h3 className="text-sm font-semibold">Claude Skill Package</h3>
                 </div>
                 <p className="text-xs text-secondary mb-3">
@@ -1154,7 +1154,7 @@ function AccountPage() {
               {/* Basic .md */}
               <div className="bg-white border border-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-mono bg-stone-200 text-secondary px-1.5 py-0.5 rounded">MD</span>
+                  <span className="text-xs bg-stone-200 text-secondary px-1.5 py-0.5 rounded">MD</span>
                   <h3 className="text-sm font-semibold">Basic Coaching Prompt</h3>
                 </div>
                 <p className="text-xs text-secondary mb-3">
@@ -1299,13 +1299,13 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
       <div className="mb-6">
         <div className="flex items-end justify-between mb-2">
           <div>
-            <span className="text-xs font-mono text-secondary uppercase tracking-wider">Relate Score</span>
+            <span className="text-xs text-secondary uppercase tracking-wider">Relate Score</span>
             <div className="flex items-baseline gap-2 mt-1">
-              <span className="font-mono text-3xl font-semibold">{score.toFixed(0)}</span>
+              <span className="font-serif text-3xl font-semibold">{score.toFixed(0)}</span>
               <span className={`text-sm font-medium ${tier.color}`}>{tier.label}</span>
             </div>
           </div>
-          <span className="text-xs text-secondary font-mono">/100</span>
+          <span className="text-xs text-secondary font-serif">/100</span>
         </div>
 
         {/* Score bar */}
@@ -1330,7 +1330,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
       {/* Score Components */}
       {Object.keys(components).length > 0 && (
         <div className="mb-6">
-          <span className="text-xs font-mono text-secondary uppercase tracking-wider">Score Breakdown</span>
+          <span className="text-xs text-secondary uppercase tracking-wider">Score Breakdown</span>
           <div className="space-y-2 mt-2">
             {compOrder.map(key => {
               const comp = components[key];

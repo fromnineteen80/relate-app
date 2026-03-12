@@ -51,9 +51,9 @@ export default function PersonaPage() {
       <SubNav />
 
       <main className="max-w-3xl mx-auto px-6 py-8 w-full">
-        <span className="font-mono text-xs text-secondary">Your Persona</span>
+        <span className="text-xs text-secondary">Your Persona</span>
         <h2 className="font-serif text-3xl font-semibold mt-1 mb-1">{persona.name}</h2>
-        <span className="font-mono text-sm text-accent">{persona.code}</span>
+        <span className="text-sm text-accent">{persona.code}</span>
         {/* traits string removed per design */}
 
         {codeKeys.length > 0 && (
