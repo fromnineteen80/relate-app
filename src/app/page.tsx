@@ -141,22 +141,22 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8 text-center">
           <div>
             <p className="font-serif text-2xl font-semibold">336</p>
-            <p className="text-xs text-secondary">Assessment Questions</p>
+            <p className="card-summary">Assessment Questions</p>
           </div>
           <div className="w-px h-8 bg-border hidden sm:block" />
           <div>
             <p className="font-serif text-2xl font-semibold">32</p>
-            <p className="text-xs text-secondary">Unique Personas</p>
+            <p className="card-summary">Unique Personas</p>
           </div>
           <div className="w-px h-8 bg-border hidden sm:block" />
           <div>
             <p className="font-serif text-2xl font-semibold">8</p>
-            <p className="text-xs text-secondary">Clinical Frameworks</p>
+            <p className="card-summary">Clinical Frameworks</p>
           </div>
           <div className="w-px h-8 bg-border hidden sm:block" />
           <div>
             <p className="font-serif text-2xl font-semibold">16</p>
-            <p className="text-xs text-secondary">Match Rankings</p>
+            <p className="card-summary">Match Rankings</p>
           </div>
         </div>
       </section>
@@ -179,7 +179,7 @@ export default function LandingPage() {
                   <span className="font-serif text-3xl font-light text-stone-300">{m.num}</span>
                   <div>
                     <h3 className="font-serif text-lg font-semibold">{m.title}</h3>
-                    <p className="text-xs text-secondary">{m.time}</p>
+                    <p className="card-summary">{m.time}</p>
                   </div>
                 </div>
                 <p className="text-sm text-secondary leading-relaxed">{m.desc}</p>
