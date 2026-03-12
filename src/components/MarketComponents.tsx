@@ -1242,10 +1242,10 @@ export function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
               }`}>{insight.priority}</span>
               <h3 className="text-sm font-medium leading-tight">{insight.title}</h3>
             </div>
-            <p className="text-xs text-secondary mb-2">{insight.description}</p>
+            <p className="body-paragraph mb-2">{insight.description}</p>
             <div className="bg-stone-50 border border-border rounded p-2">
               <span className="text-[10px] font-mono text-accent uppercase tracking-wider">What to do</span>
-              <p className="text-xs text-secondary mt-1">{insight.action}</p>
+              <p className="body-paragraph mt-1">{insight.action}</p>
             </div>
           </div>
         ))}
