@@ -95,10 +95,98 @@ h1, h2, h3, h4, h5, h6 {
 
   /* Bullet list with accent-colored disc markers */
   .bullet-list {
-    @apply list-disc pl-5 space-y-2 text-sm text-secondary marker:text-accent;
+    @apply list-disc pl-4 space-y-1 text-xs text-secondary marker:text-accent;
   }
   .bullet-list-xs {
-    @apply list-disc pl-4 space-y-2 text-xs text-secondary marker:text-accent;
+    @apply list-disc pl-3 space-y-1 text-[11px] text-secondary marker:text-accent;
+  }
+
+  /* ── Section group headers (01 Your Persona, 02 Dating Market, etc.) ── */
+  .section-number {
+    @apply text-[10px] text-secondary uppercase tracking-widest;
+    font-family: 'Noto Serif', Georgia, serif;
+  }
+  .section-label {
+    @apply text-xs text-secondary uppercase tracking-widest;
+    font-family: 'Noto Serif', Georgia, serif;
+  }
+
+  /* ── Field labels (uppercase category headers within cards) ── */
+  .field-label {
+    @apply text-xs text-secondary uppercase tracking-wider;
+  }
+  .field-label-success {
+    @apply text-xs text-success uppercase tracking-wider;
+  }
+  .field-label-warning {
+    @apply text-xs text-warning uppercase tracking-wider;
+  }
+  .field-label-danger {
+    @apply text-xs text-danger uppercase tracking-wider;
+  }
+  .field-label-accent {
+    @apply text-[10px] text-accent uppercase tracking-widest;
+  }
+
+  /* ── Badges / status pills ── */
+  .badge {
+    @apply text-xs px-2 py-0.5 rounded;
+  }
+  .badge-success {
+    @apply badge bg-success/10 text-success;
+  }
+  .badge-warning {
+    @apply badge bg-warning/10 text-warning;
+  }
+  .badge-danger {
+    @apply badge bg-danger/10 text-danger;
+  }
+  .badge-neutral {
+    @apply badge bg-stone-100 text-secondary;
+  }
+  .badge-accent {
+    @apply badge bg-accent/10 text-accent;
+  }
+
+  /* ── Data values (serif numbers with tabular alignment) ── */
+  .data-value {
+    @apply text-sm font-semibold;
+    font-family: 'Noto Serif', Georgia, serif;
+    font-variant-numeric: tabular-nums;
+  }
+  .data-value-lg {
+    @apply text-lg font-semibold;
+    font-family: 'Noto Serif', Georgia, serif;
+    font-variant-numeric: tabular-nums;
+  }
+  .data-value-xs {
+    @apply text-xs text-secondary;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Section kicker (uppercase accent label above section headings) ── */
+  .section-kicker {
+    @apply text-xs tracking-widest text-accent uppercase mb-3;
+  }
+
+  /* ── Module number (large decorative numbering) ── */
+  .module-number {
+    @apply text-2xl font-light text-stone-300;
+    font-family: 'Noto Serif', Georgia, serif;
+  }
+
+  /* ── Tier label (pricing tier name) ── */
+  .tier-label {
+    @apply text-xs text-secondary tracking-wider uppercase;
+  }
+  .tier-label-accent {
+    @apply text-xs text-accent tracking-wider uppercase;
+  }
+
+  /* ── Code block (intentional monospace for file paths / code) ── */
+  .code-block {
+    @apply text-[11px] text-secondary leading-relaxed bg-stone-50 p-2 rounded border border-border;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 }
 
