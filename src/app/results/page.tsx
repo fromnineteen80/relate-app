@@ -903,7 +903,7 @@ function ResultsDashboard() {
                 return (
                   <div key={dim}>
                     <div className="flex items-center gap-3">
-                      <span className="text-xs text-secondary w-20 shrink-0 capitalize">{dim} <span className="normal-case text-secondary/60">({pair.A} / {pair.B})</span></span>
+                      <span className="card-summary w-20 shrink-0 capitalize">{dim} <span className="normal-case text-secondary/60">({pair.A} / {pair.B})</span></span>
                       <div className="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
                         <div className={`h-full ${dimBarColor[dim]} rounded-full transition-all`} style={{ width: `${Math.min(100, strength)}%` }} />
                       </div>
@@ -1009,7 +1009,7 @@ function ResultsDashboard() {
                 return (
                   <div key={name}>
                     <div className="flex items-baseline justify-between gap-4 mb-1">
-                      <span className="text-sm font-medium capitalize">{name}</span>
+                      <span className="data-label capitalize">{name}</span>
                       <span className={`text-xs font-semibold ${riskColor}`}>{normalized}/10</span>
                     </div>
                     <p className="definition mb-2">{HORSEMAN_DESC[name] || ''}</p>
@@ -1105,7 +1105,7 @@ function ResultsDashboard() {
                     View Full Report <Icon name="arrow_forward" size={12} />
                   </Link>
                 ) : (
-                  <Link href="/attachment-style" className="text-xs text-secondary hover:text-accent transition-colors whitespace-nowrap">
+                  <Link href="/attachment-style" className="card-summary hover:text-accent transition-colors whitespace-nowrap">
                     Go deeper <Icon name="arrow_forward" size={12} />
                   </Link>
                 );
@@ -1218,7 +1218,7 @@ function ResultsDashboard() {
                         ) : <span className="text-sm font-semibold">{match.name}</span>}
                         <span className="font-mono text-xs text-secondary">{match.code}</span>
                       </div>
-                      {match.traits && <p className="text-xs text-secondary mt-1">{match.traits.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
+                      {match.traits && <p className="card-summary mt-1">{match.traits.replace(/\s*[—–]\s*/g, ', ').replace(/,\s*,/g, ',')}</p>}
                     </div>
                     <div className="text-right shrink-0">
                       <span className="font-mono text-sm font-semibold block">{match.compatibilityScore}</span>
@@ -1267,7 +1267,7 @@ function ResultsDashboard() {
               <div className="flex flex-wrap gap-2 mt-3">
                 {sortedAttachmentMatches.map((m, i) => (
                     <div key={i} className={`text-center px-3 py-2 rounded-lg border ${m.bg}`}>
-                      <p className="text-sm font-medium capitalize">{m.style}</p>
+                      <p className="data-label capitalize">{m.style}</p>
                       <p className={`text-xs font-mono ${m.color}`}>{m.score}</p>
                     </div>
                   ))}
@@ -1283,7 +1283,7 @@ function ResultsDashboard() {
                 <div className="flex flex-wrap gap-2">
                   {sortedDriverMatches.map((m, i) => (
                       <div key={i} className={`text-center px-3 py-2 rounded-lg border ${m.bg}`}>
-                        <p className="text-sm font-medium capitalize">{m.driver}</p>
+                        <p className="data-label capitalize">{m.driver}</p>
                         <p className={`text-xs font-mono ${m.color}`}>{m.score}</p>
                       </div>
                     ))}
@@ -1339,19 +1339,19 @@ function ResultsDashboard() {
             <div className="grid grid-cols-3 gap-6 text-center mb-4">
               <div>
                 <span className="font-mono text-lg font-semibold">{m3.wantScore ?? '-'}</span>
-                <p className="text-xs text-secondary mt-1">Want Score</p>
+                <p className="card-summary mt-1">Want Score</p>
               </div>
               <div>
                 <span className="font-mono text-lg font-semibold">{m3.offerScore ?? '-'}</span>
-                <p className="text-xs text-secondary mt-1">Offer Score</p>
+                <p className="card-summary mt-1">Offer Score</p>
               </div>
               <div>
                 <span className="font-mono text-lg font-semibold">{m3.typeName ?? '-'}</span>
-                <p className="text-xs text-secondary mt-1">Type</p>
+                <p className="card-summary mt-1">Type</p>
               </div>
             </div>
             {m3.wantOfferGap !== undefined && (
-              <p className="text-xs text-secondary text-center mb-4">
+              <p className="card-summary text-center mb-4">
                 Gap: <span className={`font-mono ${Math.abs(m3.wantOfferGap) <= 5 ? 'text-success' : Math.abs(m3.wantOfferGap) <= 20 ? 'text-warning' : 'text-danger'}`}>
                   {m3.wantOfferGap > 0 ? '+' : ''}{m3.wantOfferGap}
                 </span>
@@ -1397,7 +1397,7 @@ function ResultsDashboard() {
             <p className="card-summary mb-4">How your Want and Offer shift across relationship states</p>
 
             {/* Legend */}
-            <div className="flex items-center gap-6 mb-4 text-xs text-secondary">
+            <div className="flex items-center gap-6 mb-4 card-summary">
               <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-sm bg-blue-500 inline-block" /> Offer (what you give)</span>
               <span className="flex items-center gap-1.5"><span className="w-3 h-2 rounded-sm bg-rose-400 inline-block" /> Want (what you need)</span>
             </div>
@@ -1566,9 +1566,9 @@ function ResultsDashboard() {
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium truncate">{userFullName || 'You'}</p>
+                      <p className="data-label truncate">{userFullName || 'You'}</p>
                       {persona?.name ? (
-                        <Link href="/results/persona" className="text-xs text-secondary hover:text-accent truncate block">{persona.name}</Link>
+                        <Link href="/results/persona" className="card-summary hover:text-accent truncate block">{persona.name}</Link>
                       ) : (
                         <Link href="/assessment" className="text-xs text-accent hover:underline">Complete Assessment</Link>
                       )}
@@ -1590,13 +1590,13 @@ function ResultsDashboard() {
                       )}
                     </div>
                     <div className="min-w-0 sm:text-right">
-                      <p className="text-sm font-medium truncate">{partnerName || 'Partner'}</p>
+                      <p className="data-label truncate">{partnerName || 'Partner'}</p>
                       {partnerPersonaName ? (
-                        <span className="text-xs text-secondary truncate block">{partnerPersonaName}</span>
+                        <span className="card-summary truncate block">{partnerPersonaName}</span>
                       ) : partnerAssessmentComplete ? (
-                        <span className="text-xs text-secondary">Results ready</span>
+                        <span className="card-summary">Results ready</span>
                       ) : (
-                        <span className="text-xs text-secondary">Complete Assessment</span>
+                        <span className="card-summary">Complete Assessment</span>
                       )}
                     </div>
                   </div>
@@ -1665,7 +1665,7 @@ function ResultsDashboard() {
                 <p className="card-summary mb-3">
                   Single markdown file with your coaching instructions and assessment data combined. Works with any AI. Paste it into a chat or upload as a file.
                 </p>
-                <div className="mb-3 text-[11px] text-secondary bg-stone-50 p-2 rounded border border-border">
+                <div className="mb-3 body-paragraph bg-stone-50 p-2 rounded border border-border">
                   <p>A single <code className="bg-stone-100 px-1 rounded">relate-coach.md</code> file containing your coaching prompt, report summary, and full assessment data. No setup required. Just upload or paste.</p>
                 </div>
                 <button onClick={handleDownloadCoachMd} disabled={downloadingCoach} className="btn-secondary text-xs w-full">
@@ -1718,7 +1718,7 @@ function ResultsDashboard() {
                   'How do I improve my Relate Score?',
                   'Analyze my last date',
                 ].map((q, i) => (
-                  <span key={i} className="text-[11px] text-secondary bg-stone-50 border border-border px-2 py-1 rounded">
+                  <span key={i} className="body-paragraph bg-stone-50 border border-border px-2 py-1 rounded">
                     &quot;{q}&quot;
                   </span>
                 ))}
