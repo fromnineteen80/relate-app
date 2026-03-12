@@ -611,7 +611,7 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
         </div>
       )}
       <h3 className="font-serif text-lg font-semibold mb-1 flex items-center gap-2"><Icon name="trending_up" size={20} className="text-accent" />Your Dating Market</h3>
-      <p className="explainer mb-4">{metro}</p>
+      <p className="card-summary mb-4">{metro}</p>
 
       <div className="mb-6">
         <div className="flex items-end justify-between mb-2">

@@ -85,9 +85,9 @@ h1, h2, h3, h4, h5, h6 {
     @apply text-[11px] font-semibold uppercase tracking-wider mb-1.5;
   }
 
-  /* Subsection label — mono uppercase dividers within cards (12px) */
+  /* Subsection label — uppercase dividers within cards (12px) */
   .subsection-label {
-    @apply text-xs font-mono text-secondary uppercase tracking-wider;
+    @apply text-xs text-secondary uppercase tracking-wider;
   }
 
   /* Card summary — overview text under card titles (12px) */
