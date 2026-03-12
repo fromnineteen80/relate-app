@@ -1051,7 +1051,7 @@ function AccountPage() {
               </div>
               <div className="flex items-center gap-4 py-2">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium">AI Coach Prompt (.md)</p>
+                  <p className="data-label">AI Coach Prompt (.md)</p>
                   <p className="text-xs text-secondary">
                     {canDownload
                       ? 'Basic coaching file for any AI platform'

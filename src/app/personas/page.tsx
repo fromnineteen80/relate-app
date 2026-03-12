@@ -249,7 +249,7 @@ export default function PersonasPage() {
                   className="w-full text-left flex items-center justify-between"
                 >
                   <div className="flex items-center gap-4">
-                    <span className="text-sm text-accent w-12">{persona.code}</span>
+                    <span className="font-mono text-sm text-accent w-12">{persona.code}</span>
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="font-serif text-lg font-semibold">{persona.name}</h3>
@@ -356,7 +356,7 @@ export default function PersonasPage() {
 
             <div className="card mb-4">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-accent/10 text-accent flex items-center justify-center font-serif text-sm font-semibold">
+                <div className="w-10 h-10 rounded-full bg-accent/10 text-accent flex items-center justify-center font-mono text-sm font-semibold">
                   {userPersonaCode}
                 </div>
                 <div>
@@ -373,7 +373,7 @@ export default function PersonasPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium truncate">{match.name}</span>
-                        <span className="text-xs text-accent">{match.code}</span>
+                        <span className="font-mono text-xs text-accent">{match.code}</span>
                       </div>
                     </div>
                     <span className={`text-xs font-medium ${tierColor(match.tier)}`}>{tierLabel(match.tier)}</span>

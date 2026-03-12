@@ -439,8 +439,8 @@ function AttachmentStatusCard() {
       <div className="card flex items-center gap-3">
         <Icon name="diamond" size={20} className="text-secondary" />
         <div>
-          <p className="text-sm font-medium">Partner needs to complete Attachment Style</p>
-          <p className="text-xs text-secondary">Both partners must finish the Attachment Style assessment for the couples overlay</p>
+          <p className="data-label">Partner needs to complete Attachment Style</p>
+          <p className="card-summary">Both partners must finish the Attachment Style assessment for the couples overlay</p>
         </div>
       </div>
     );

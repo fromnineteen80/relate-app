@@ -256,7 +256,7 @@ export default function M2Reward({ scoredData, onContinue }: Props) {
                 </div>
               ))}
             </div>
-            <p className="text-xs text-secondary italic mb-6">
+            <p className="definition italic mb-6">
               These gaps aren&apos;t flaws. They&apos;re where growth happens, and where the wrong match exposes friction.
             </p>
           </>
