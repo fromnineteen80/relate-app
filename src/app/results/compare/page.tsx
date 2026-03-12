@@ -477,7 +477,7 @@ function AlignmentSection({ data, overview }: { data: any; overview: any }) {
                   <Icon name="check" size={18} />
                 </div>
                 <div>
-                  <p className="text-sm font-medium capitalize">{p.dimension}, {p.type === 'shared_desire' ? 'Shared Desire' : 'Want-Offer Match'}</p>
+                  <p className="data-label capitalize">{p.dimension}, {p.type === 'shared_desire' ? 'Shared Desire' : 'Want-Offer Match'}</p>
                   <p className="card-summary mt-1">{p.narrative}</p>
                   <div className="flex items-center gap-2 mt-2">
                     <div className="h-1.5 flex-1 bg-stone-200 rounded-full overflow-hidden">
@@ -546,7 +546,7 @@ function ClashSection({ data, overview }: { data: any; overview: any }) {
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <p className="text-sm font-medium capitalize">{c.dimension}</p>
+                <p className="data-label capitalize">{c.dimension}</p>
                 <span className={`text-xs ${c.severity === 'high' ? 'text-danger' : 'text-warning'}`}>
                   {c.severity}
                 </span>
@@ -767,12 +767,12 @@ function RepairSection({ data, overview }: { data: any; overview: any }) {
           <div className="text-center">
             <span className="font-serif text-2xl font-semibold">{data.capacity?.user1Score}</span>
             <p className="card-summary mt-1">{userName}</p>
-            <p className="text-[10px] text-secondary capitalize">{data.capacity?.user1Level}</p>
+            <p className="explainer capitalize">{data.capacity?.user1Level}</p>
           </div>
           <div className="text-center">
             <span className="font-serif text-2xl font-semibold">{data.capacity?.user2Score}</span>
             <p className="card-summary mt-1">{partnerName}</p>
-            <p className="text-[10px] text-secondary capitalize">{data.capacity?.user2Level}</p>
+            <p className="explainer capitalize">{data.capacity?.user2Level}</p>
           </div>
         </div>
         <p className="card-summary">{data.capacity?.narrative}</p>
@@ -836,7 +836,7 @@ function CeilingFloorSection({ data }: { data: any }) {
           <div className="absolute top-0" style={{ left: `${data.floor}%`, transform: 'translateX(-50%)' }}>
             <div className="text-center">
               <p className="font-serif text-xs text-warning">{data.floor}</p>
-              <p className="text-[10px] text-secondary">Floor</p>
+              <p className="explainer">Floor</p>
             </div>
             <div className="w-0.5 h-8 bg-warning mx-auto mt-1" />
           </div>
@@ -844,7 +844,7 @@ function CeilingFloorSection({ data }: { data: any }) {
           <div className="absolute top-0" style={{ left: `${data.current}%`, transform: 'translateX(-50%)' }}>
             <div className="text-center">
               <p className="font-serif text-sm font-bold text-accent">{data.current}</p>
-              <p className="text-[10px] text-secondary">Current</p>
+              <p className="explainer">Current</p>
             </div>
             <div className="w-0.5 h-8 bg-accent mx-auto mt-1" />
           </div>
@@ -852,7 +852,7 @@ function CeilingFloorSection({ data }: { data: any }) {
           <div className="absolute top-0" style={{ left: `${Math.min(data.ceiling, 95)}%`, transform: 'translateX(-50%)' }}>
             <div className="text-center">
               <p className="font-serif text-xs text-success">{data.ceiling}</p>
-              <p className="text-[10px] text-secondary">Ceiling</p>
+              <p className="explainer">Ceiling</p>
             </div>
             <div className="w-0.5 h-8 bg-success mx-auto mt-1" />
           </div>
@@ -967,7 +967,7 @@ function EnhancedCompatibilitySection({ data, overview }: { data: any; overview:
             <div key={dim.name}>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-medium">{dim.name}</span>
-                <span className="text-[10px] text-secondary font-serif">{Math.round(dim.weight * 100)}% weight</span>
+                <span className="explainer font-serif">{Math.round(dim.weight * 100)}% weight</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-2 bg-stone-100 rounded-full overflow-hidden">
@@ -1022,7 +1022,7 @@ function EnhancedCompatibilitySection({ data, overview }: { data: any; overview:
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 mt-1 text-[10px] text-secondary">
+                  <div className="flex items-center gap-4 mt-1 explainer">
                     <span>Mutual: <span className="font-serif">{d.mutualSatisfaction > 0 ? '+' : ''}{d.mutualSatisfaction}</span></span>
                     <span>Asymmetry: <span className="font-serif">{d.asymmetry}</span></span>
                   </div>
