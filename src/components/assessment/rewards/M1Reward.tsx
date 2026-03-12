@@ -86,7 +86,7 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
 
     return (
       <div className={`max-w-xl mx-auto transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-        <span className="font-mono text-xs text-secondary">Your Preference Profile</span>
+        <span className="text-xs text-secondary">Your Preference Profile</span>
         <h2 className="font-serif text-2xl font-semibold mt-1 mb-8">What You&apos;re Looking For</h2>
 
         {balancedCount >= 3 && (
@@ -117,7 +117,7 @@ export default function M1Reward({ scoredData, onContinue }: Props) {
                 style={{ transitionDelay: `${i * 200}ms`, opacity: fadeIn ? 1 : 0, transform: fadeIn ? 'translateY(0)' : 'translateY(8px)' }}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-mono text-secondary uppercase w-20">{dim}</span>
+                  <span className="text-xs text-secondary uppercase w-20">{dim}</span>
                   <span className="font-serif font-semibold text-sm">{poleName}</span>
                 </div>
                 <div className="relative h-2 bg-stone-200 rounded-full mb-2">

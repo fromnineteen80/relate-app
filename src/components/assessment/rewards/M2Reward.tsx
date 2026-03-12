@@ -156,7 +156,7 @@ export default function M2Reward({ scoredData, onContinue }: Props) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
             {strengths.length > 0 && (
               <div className="card">
-                <h4 className="text-xs font-mono text-success mb-2">In Partnership, You Offer</h4>
+                <h4 className="text-xs text-success mb-2">In Partnership, You Offer</h4>
                 {strengths.map((s: string, i: number) => (
                   <p key={i} className="explainer mb-1">{s}</p>
                 ))}
@@ -164,7 +164,7 @@ export default function M2Reward({ scoredData, onContinue }: Props) {
             )}
             {challenges.length > 0 && (
               <div className="card">
-                <h4 className="text-xs font-mono text-warning mb-2">Your Challenge</h4>
+                <h4 className="text-xs text-warning mb-2">Your Challenge</h4>
                 {challenges.map((c: string, i: number) => (
                   <p key={i} className="explainer mb-1">{c}</p>
                 ))}

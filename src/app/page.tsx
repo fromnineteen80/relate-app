@@ -364,7 +364,7 @@ export default function LandingPage() {
 
             {/* Plus */}
             <div className="card flex flex-col">
-              <span className="font-mono text-xs text-secondary tracking-wider">PLUS</span>
+              <span className="text-xs text-secondary tracking-wider">PLUS</span>
               <p className="font-serif text-4xl font-semibold mt-2">$29.99</p>
               <p className="text-sm text-secondary mt-3 mb-6">The complete picture.</p>
               <ul className="bullet-list mb-8 flex-1">
@@ -386,7 +386,7 @@ export default function LandingPage() {
               <div className="absolute -top-3 left-4 bg-accent text-white text-xs font-medium px-3 py-1 rounded-full">
                 Most popular
               </div>
-              <span className="font-mono text-xs text-accent tracking-wider">PREMIUM</span>
+              <span className="text-xs text-accent tracking-wider">PREMIUM</span>
               <p className="font-serif text-4xl font-semibold mt-2">$49.99</p>
               <p className="text-sm text-secondary mt-3 mb-6">Insight + AI coaching.</p>
               <ul className="bullet-list mb-8 flex-1">
@@ -404,7 +404,7 @@ export default function LandingPage() {
 
             {/* Pro */}
             <div className="card flex flex-col">
-              <span className="font-mono text-xs text-secondary tracking-wider">PRO</span>
+              <span className="text-xs text-secondary tracking-wider">PRO</span>
               <p className="font-serif text-4xl font-semibold mt-2">$69.99</p>
               <p className="text-sm text-secondary mt-3 mb-6">Unlimited AI coaching.</p>
               <ul className="bullet-list mb-8 flex-1">
@@ -421,7 +421,7 @@ export default function LandingPage() {
 
             {/* Couples */}
             <div className="card flex flex-col">
-              <span className="font-mono text-xs text-secondary tracking-wider">COUPLES</span>
+              <span className="text-xs text-secondary tracking-wider">COUPLES</span>
               <p className="font-serif text-4xl font-semibold mt-2">$119</p>
               <p className="text-sm text-secondary mt-3 mb-6">Two partners, full compatibility.</p>
               <ul className="bullet-list mb-8 flex-1">
@@ -440,7 +440,7 @@ export default function LandingPage() {
 
             {/* Attachment Style */}
             <div className="card flex flex-col border-accent/40">
-              <span className="font-mono text-xs text-accent tracking-wider">ATTACHMENT STYLE</span>
+              <span className="text-xs text-accent tracking-wider">ATTACHMENT STYLE</span>
               <p className="font-serif text-4xl font-semibold mt-2">$49</p>
               <p className="text-sm text-secondary mt-3 mb-6">The psychology underneath your persona.</p>
               <ul className="bullet-list mb-8 flex-1">

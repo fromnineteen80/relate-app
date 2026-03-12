@@ -298,7 +298,7 @@ export default function AstrologyPage() {
                             <span className={`font-semibold text-sm ${isActive ? colors.text : 'text-secondary'}`}>
                               {el}
                             </span>
-                            <span className={`font-mono text-xs ${isActive ? colors.text : 'text-secondary'}`}>
+                            <span className={`text-xs ${isActive ? colors.text : 'text-secondary'}`}>
                               {count === 0 ? 'none' : count === 1 ? '1 placement' : `${count} placements`}
                             </span>
                           </div>

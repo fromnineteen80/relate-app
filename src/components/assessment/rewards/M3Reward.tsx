@@ -85,7 +85,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
 
     return (
       <div className={`max-w-xl mx-auto transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-        <span className="font-mono text-xs text-secondary">Your Connection Style</span>
+        <span className="text-xs text-secondary">Your Connection Style</span>
         <h2 className="font-serif text-2xl font-semibold mt-1 mb-4">How You Connect</h2>
 
         <p className="explainer mb-8 leading-relaxed">
@@ -97,8 +97,8 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
             className="text-center transition-all duration-700"
             style={{ opacity: fadeIn ? 1 : 0, transform: fadeIn ? 'translateY(0)' : 'translateY(12px)' }}
           >
-            <span className="text-xs font-mono text-secondary">WHAT YOU SEEK</span>
-            <p className="font-mono text-3xl font-semibold mt-2">{wantScore}</p>
+            <span className="text-xs text-secondary">WHAT YOU SEEK</span>
+            <p className="font-serif text-3xl font-semibold mt-2">{wantScore}</p>
             <div className="h-2 bg-stone-200 rounded-full mt-3 overflow-hidden">
               <div
                 className="h-full bg-accent rounded-full transition-all duration-1000"
@@ -112,8 +112,8 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
             className="text-center transition-all duration-700"
             style={{ transitionDelay: '200ms', opacity: fadeIn ? 1 : 0, transform: fadeIn ? 'translateY(0)' : 'translateY(12px)' }}
           >
-            <span className="text-xs font-mono text-secondary">WHAT YOU OFFER</span>
-            <p className="font-mono text-3xl font-semibold mt-2">{offerScore}</p>
+            <span className="text-xs text-secondary">WHAT YOU OFFER</span>
+            <p className="font-serif text-3xl font-semibold mt-2">{offerScore}</p>
             <div className="h-2 bg-stone-200 rounded-full mt-3 overflow-hidden">
               <div
                 className="h-full bg-accent rounded-full transition-all duration-1000"

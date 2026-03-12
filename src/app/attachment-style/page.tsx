@@ -381,7 +381,7 @@ export default function AttachmentStylePage() {
               personalized report you can actually use.
             </p>
             <div className="border border-border rounded-lg p-6 mb-8">
-              <p className="font-mono text-xs text-secondary mb-1">One-time purchase</p>
+              <p className="text-xs text-secondary mb-1">One-time purchase</p>
               <p className="font-serif text-4xl font-semibold mb-4">$49</p>
               <p className="text-sm text-secondary mb-6">
                 Includes full session, personalized report, and growth plan.
@@ -432,7 +432,7 @@ export default function AttachmentStylePage() {
         <SubNav />
         <main className="flex-1 flex items-center justify-center px-6">
           <div className="max-w-md text-center">
-            <span className="font-mono text-xs text-secondary">4 quadrants</span>
+            <span className="text-xs text-secondary">4 quadrants</span>
             <h2 className="font-serif text-3xl font-semibold mt-2 mb-4">Attachment Style</h2>
             <p className="text-secondary mb-4 leading-relaxed">
               This session takes about 30 minutes. You will move through four quadrants

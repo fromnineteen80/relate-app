@@ -240,7 +240,7 @@ export default function ComparePage() {
             <button
               key={s.key}
               onClick={() => setActiveSection(i)}
-              className={`px-3 py-1.5 text-xs font-mono rounded-md whitespace-nowrap transition-colors ${
+              className={`px-3 py-1.5 text-xs rounded-md whitespace-nowrap transition-colors ${
                 activeSection === i
                   ? 'bg-accent text-white'
                   : 'bg-stone-100 text-secondary hover:bg-stone-200'
@@ -342,7 +342,7 @@ function AttachmentOverlaySection({ overlay }: { overlay: any }) {
   return (
     <div className="space-y-8">
       <div className="text-center mb-6">
-        <p className="font-mono text-xs text-accent tracking-wide uppercase mb-2">Attachment Style Couples Overlay</p>
+        <p className="text-xs text-accent tracking-wide uppercase mb-2">Attachment Style Couples Overlay</p>
         <h2 className="font-serif text-2xl font-semibold">The Dynamic Between You</h2>
       </div>
       {sectionConfig.map(({ key, title }) => {
@@ -359,7 +359,7 @@ function AttachmentOverlaySection({ overlay }: { overlay: any }) {
             )}
             {!content && !misread && section.collisionFrame?.name && (
               <div className="card bg-stone-50">
-                <p className="text-xs font-mono text-secondary mb-1">{section.collisionFrame.name}</p>
+                <p className="text-xs text-secondary mb-1">{section.collisionFrame.name}</p>
                 {section.collisionFrame.mechanism && (
                   <p className="text-sm leading-relaxed">{section.collisionFrame.mechanism}</p>
                 )}
