@@ -112,7 +112,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
             className="text-center transition-all duration-700"
             style={{ transitionDelay: '200ms', opacity: fadeIn ? 1 : 0, transform: fadeIn ? 'translateY(0)' : 'translateY(12px)' }}
           >
-            <span className="text-xs text-secondary">WHAT YOU OFFER</span>
+            <span className="card-summary">WHAT YOU OFFER</span>
             <p className="font-serif text-3xl font-semibold mt-2">{offerScore}</p>
             <div className="h-2 bg-stone-200 rounded-full mt-3 overflow-hidden">
               <div
@@ -120,7 +120,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
                 style={{ width: `${offerScore}%`, transitionDelay: '600ms' }}
               />
             </div>
-            <p className="text-xs text-secondary mt-2">{offerLabel}</p>
+            <p className="card-summary mt-2">{offerLabel}</p>
           </div>
         </div>
 
@@ -144,7 +144,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
         <div className="card mb-6">
           <div className="space-y-3">
             <div>
-              <div className="flex justify-between text-xs text-secondary mb-1">
+              <div className="flex justify-between card-summary mb-1">
                 <span>WANT</span>
                 <span className="font-serif">{wantScore}</span>
               </div>
@@ -153,7 +153,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
               </div>
             </div>
             <div>
-              <div className="flex justify-between text-xs text-secondary mb-1">
+              <div className="flex justify-between card-summary mb-1">
                 <span>OFFER</span>
                 <span className="font-serif">{offerScore}</span>
               </div>
@@ -167,14 +167,14 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
             {getGapInterpretation(wantOfferGap)}
           </p>
           {wantScore >= 40 && wantScore <= 60 && offerScore >= 40 && offerScore <= 60 && Math.abs(wantOfferGap) <= 10 && (
-            <p className="text-xs text-secondary italic mt-3">
+            <p className="definition italic mt-3">
               With both scores near the midpoint, you may find your style becomes clearer in the context of a specific partner.
             </p>
           )}
         </div>
 
         <div className="card mb-6">
-          <span className="text-xs text-secondary">Connection Type</span>
+          <span className="card-summary">Connection Type</span>
           <p className="font-serif text-lg font-semibold mt-1">{typeName}</p>
         </div>
 
@@ -201,7 +201,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
               style={{ left: `${Math.min(95, Math.max(5, 100 - score))}%` }}
             />
           </div>
-          <div className="flex justify-between text-xs text-secondary mb-4">
+          <div className="flex justify-between card-summary mb-4">
             <span>Other-Focused</span>
             <span>Self-Focused</span>
           </div>

@@ -274,12 +274,12 @@ export default function InvitePage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium truncate">{partnerName}</p>
+                    <p className="data-label truncate">{partnerName}</p>
                     <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
                   </div>
-                  {partner.firstName && <p className="text-xs text-secondary truncate">{partner.email}</p>}
+                  {partner.firstName && <p className="card-summary truncate">{partner.email}</p>}
                   {connectedDateStr && (
-                    <p className="text-xs text-secondary mt-0.5">Connected {connectedDateStr}</p>
+                    <p className="card-summary mt-0.5">Connected {connectedDateStr}</p>
                   )}
                 </div>
               </div>
@@ -293,7 +293,7 @@ export default function InvitePage() {
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded">Active</span>
-                    <span className="text-xs text-secondary">
+                    <span className="card-summary">
                       {discountMessage || 'Couples tier activated'}
                     </span>
                   </div>
@@ -310,7 +310,7 @@ export default function InvitePage() {
                 <div className="space-y-4">
                   {/* Discount code input */}
                   <div>
-                    <p className="text-xs text-secondary mb-2">Have a discount code?</p>
+                    <p className="card-summary mb-2">Have a discount code?</p>
                     <div className="flex gap-2">
                       <input
                         type="text"
@@ -333,13 +333,13 @@ export default function InvitePage() {
                   {/* Divider */}
                   <div className="flex items-center gap-3">
                     <div className="flex-1 border-t border-border" />
-                    <span className="text-xs text-secondary">or</span>
+                    <span className="card-summary">or</span>
                     <div className="flex-1 border-t border-border" />
                   </div>
 
                   {/* Pay $119 */}
                   <div>
-                    <p className="text-xs text-secondary mb-2">
+                    <p className="card-summary mb-2">
                       Unlock Couples Mode for both you and your partner.
                     </p>
                     <a
@@ -368,7 +368,7 @@ export default function InvitePage() {
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-2">
                       <span className="text-success text-xs mt-0.5 flex-shrink-0">+</span>
-                      <span className="text-xs text-secondary">{item}</span>
+                      <span className="card-summary">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -380,7 +380,7 @@ export default function InvitePage() {
           <div className="space-y-6">
             <form onSubmit={handleLookup} className="card">
               <h3 className="font-serif text-sm font-semibold mb-3">Find Your Partner</h3>
-              <p className="text-xs text-secondary mb-4">
+              <p className="card-summary mb-4">
                 Enter your partner&apos;s email address to connect your accounts.
               </p>
               <div className="space-y-3">
@@ -403,7 +403,7 @@ export default function InvitePage() {
             {showInvite && !inviteSent && (
               <div className="card">
                 <h3 className="font-serif text-sm font-semibold mb-2">No Account Found</h3>
-                <p className="text-xs text-secondary mb-4">
+                <p className="card-summary mb-4">
                   <span className="font-medium text-primary">{inviteEmail}</span> doesn&apos;t have a RELATE account yet.
                   Send them an invitation to sign up and take the assessment.
                 </p>

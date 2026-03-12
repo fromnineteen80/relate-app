@@ -684,7 +684,7 @@ function AccountPage() {
               <div className="p-3 border rounded-md border-border mt-1">
                 <p className="text-sm font-medium">Couples</p>
                 <p className="font-serif text-xl font-semibold my-1">{PRICING.couples.priceDisplay}</p>
-                <p className="text-xs text-secondary mb-3">Add your partner for a couples compatibility report and shared advisor tools.</p>
+                <p className="card-summary mb-3">Add your partner for a couples compatibility report and shared advisor tools.</p>
                 {config.useMockPayments ? (
                   <button onClick={() => handleMockUpgrade('couples')} className="text-xs w-full btn-secondary" disabled={mockUpgrading}>
                     {mockUpgrading ? 'Processing...' : 'Upgrade to Couples'}
@@ -706,7 +706,7 @@ function AccountPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">{attachmentProduct === 'attachment_style_couples' ? 'Attachment Style Couples' : 'Attachment Style'}: Active</p>
-                    <p className="text-xs text-secondary">Deep attachment style assessment, personalized report, and growth plan.</p>
+                    <p className="card-summary">Deep attachment style assessment, personalized report, and growth plan.</p>
                   </div>
                 </div>
               ) : (
@@ -714,7 +714,7 @@ function AccountPage() {
                   <p className="text-[10px] uppercase tracking-wider text-secondary mb-1">Add-on</p>
                   <p className="text-sm font-medium">Attachment Style Assessment</p>
                   <p className="font-serif text-xl font-semibold my-1">{ATTACHMENT_PRICING.attachment_style.priceDisplay}</p>
-                  <p className="text-xs text-secondary mb-3">A 30-minute deep assessment revealing the psychology underneath your persona. 3,000-word personalized report.</p>
+                  <p className="card-summary mb-3">A 30-minute deep assessment revealing the psychology underneath your persona. 3,000-word personalized report.</p>
                   {config.useMockPayments ? (
                     <button onClick={async () => {
                       localStorage.setItem('relate_attachment_purchased', JSON.stringify({ purchased: true, product: 'attachment_style' }));
@@ -730,7 +730,7 @@ function AccountPage() {
                   )}
                   {hasPartner && !attachmentPurchased && (
                     <div className="mt-2">
-                      <p className="text-xs text-secondary">Or add for both partners:</p>
+                      <p className="card-summary">Or add for both partners:</p>
                       {config.useMockPayments ? (
                         <button onClick={async () => {
                           localStorage.setItem('relate_attachment_purchased', JSON.stringify({ purchased: true, product: 'attachment_style_couples' }));
@@ -753,7 +753,7 @@ function AccountPage() {
             {/* Discount code for all users — works for both tiers and add-ons */}
             {currentTier !== 'free' && !attachmentPurchased && (
               <div className="mt-3 pt-3 border-t border-border">
-                <p className="text-xs text-secondary mb-2">Have a discount code?</p>
+                <p className="card-summary mb-2">Have a discount code?</p>
                 <form onSubmit={handleDiscountCode} className="flex gap-2">
                   <input
                     type="text"
@@ -788,7 +788,7 @@ function AccountPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Free: Active</p>
-                    <p className="text-xs text-secondary">Persona code, top 3 matches, 3 advisor messages.</p>
+                    <p className="card-summary">Persona code, top 3 matches, 3 advisor messages.</p>
                   </div>
                 </div>
 
@@ -801,7 +801,7 @@ function AccountPage() {
                     <div key={tier} className="p-3 border rounded-md border-border">
                       <p className="text-sm font-medium">{PRICING[tier]?.label || tier}</p>
                       <p className="font-serif text-xl font-semibold my-1">{PRICING[tier]?.priceDisplay || ''}</p>
-                      <p className="text-xs text-secondary mb-3">
+                      <p className="card-summary mb-3">
                         {tier === 'plus' && 'All 16 matches, conflict analysis, growth path, PDF report.'}
                         {tier === 'premium' && 'Plus features + rate-limited AI advisor + retake assessment.'}
                         {tier === 'pro' && 'Everything in Premium + unlimited AI advisor.'}
@@ -829,7 +829,7 @@ function AccountPage() {
                     </div>
                   ) : (
                     <>
-                      <p className="text-xs text-secondary mb-2">Have a discount code?</p>
+                      <p className="card-summary mb-2">Have a discount code?</p>
                       <form onSubmit={handleDiscountCode} className="flex gap-2">
                         <input
                           type="text"
@@ -882,9 +882,9 @@ function AccountPage() {
                       <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
                     </div>
                     {partnerPersonaName ? (
-                      <p className="text-xs text-secondary truncate">{partnerPersonaName}</p>
+                      <p className="card-summary truncate">{partnerPersonaName}</p>
                     ) : partnerName && partnerEmail ? (
-                      <p className="text-xs text-secondary truncate">{partnerEmail}</p>
+                      <p className="card-summary truncate">{partnerEmail}</p>
                     ) : null}
                     {connectedAt && (
                       <p className="text-xs text-secondary mt-0.5">Connected {new Date(connectedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>

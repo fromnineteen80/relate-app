@@ -78,7 +78,7 @@ export default function CheckinHistoryPage() {
                     <span className="font-serif text-xl font-semibold">{m.avg}</span>
                     <span className="text-sm">{trendIcons[m.trend]}</span>
                   </div>
-                  <p className="text-[10px] text-secondary mt-1">{m.label}</p>
+                  <p className="explainer mt-1">{m.label}</p>
                 </div>
               ))}
             </div>
@@ -88,8 +88,8 @@ export default function CheckinHistoryPage() {
               {checkins.map((ci, i) => (
                 <div key={i} className="card">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-secondary">{new Date(ci.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
-                    <span className="font-serif text-xs text-secondary">
+                    <span className="card-summary">{new Date(ci.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+                    <span className="font-serif card-summary">
                       Avg: {Math.round((ci.satisfaction + ci.communication + ci.connection) / 3 * 10) / 10}
                     </span>
                   </div>
@@ -103,11 +103,11 @@ export default function CheckinHistoryPage() {
                         <div className="h-1.5 bg-stone-200 rounded-full overflow-hidden mb-1">
                           <div className="h-full bg-accent rounded-full" style={{ width: `${f.value * 10}%` }} />
                         </div>
-                        <p className="text-[10px] text-secondary">{f.label}: {f.value}</p>
+                        <p className="explainer">{f.label}: {f.value}</p>
                       </div>
                     ))}
                   </div>
-                  {ci.notes && <p className="text-xs text-secondary mt-2 italic">&ldquo;{ci.notes}&rdquo;</p>}
+                  {ci.notes && <p className="card-summary mt-2 italic">&ldquo;{ci.notes}&rdquo;</p>}
                 </div>
               ))}
             </div>
