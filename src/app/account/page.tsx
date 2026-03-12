@@ -1004,7 +1004,7 @@ function AccountPage() {
             <div className="space-y-3">
               <div className="flex items-center gap-4 py-2 border-b border-border">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium">Persona Card</p>
+                  <p className="data-label">Persona Card</p>
                   <p className="text-xs text-secondary">Your persona summary and key traits</p>
                 </div>
                 <Link href="/results/persona" className="btn-secondary text-xs flex-shrink-0">
@@ -1013,7 +1013,7 @@ function AccountPage() {
               </div>
               <div className="flex items-center gap-4 py-2 border-b border-border">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium">Full PDF Report</p>
+                  <p className="data-label">Full PDF Report</p>
                   <p className="text-xs text-secondary">
                     {canDownload
                       ? 'Complete assessment report with market data'
@@ -1032,7 +1032,7 @@ function AccountPage() {
               </div>
               <div className="flex items-center gap-4 py-2 border-b border-border">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium">AI Coach Skill (.zip)</p>
+                  <p className="data-label">AI Coach Skill (.zip)</p>
                   <p className="text-xs text-secondary">
                     {canDownload
                       ? 'Claude skill with coaching workflows and your data'

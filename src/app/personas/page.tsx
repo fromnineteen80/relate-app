@@ -193,16 +193,16 @@ export default function PersonasPage() {
               </div>
               <div>
                 <p className="text-xs text-secondary mb-1">LIFESTYLE</p>
-                <p className="mb-0.5"><span className="text-accent">E</span> = Thrill</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">E</span> = Thrill</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You are energized by novelty, adventure, and spontaneous experiences. A life without surprises feels stagnant to you.</p>
-                <p className="mb-0.5"><span className="text-accent">F</span> = Peace</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">F</span> = Peace</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You are grounded by routine, consistency, and intentional calm. You build a life that feels secure and sustainable over time.</p>
               </div>
               <div>
                 <p className="text-xs text-secondary mb-1">VALUES</p>
-                <p className="mb-0.5"><span className="text-accent">G</span> = Traditional</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">G</span> = Traditional</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You value clearly defined roles and responsibilities in a partnership. Structure and tradition give your relationships a reliable foundation.</p>
-                <p className="mb-0.5"><span className="text-accent">H</span> = Egalitarian</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">H</span> = Egalitarian</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You believe partnership roles should be negotiated, not inherited. Shared responsibility and flexibility define how you build a life together.</p>
               </div>
             </div>

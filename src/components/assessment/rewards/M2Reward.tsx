@@ -226,8 +226,8 @@ export default function M2Reward({ scoredData, onContinue }: Props) {
               >
                 <span className="text-success mt-0.5">&#10003;</span>
                 <div>
-                  <span className="text-sm font-medium capitalize">{a.dim}</span>
-                  <p className="text-xs text-secondary">
+                  <span className="data-label capitalize">{a.dim}</span>
+                  <p className="card-summary">
                     You want <strong>{a.m1Pole}</strong> and you are <strong>{a.m2Pole}</strong>
                   </p>
                 </div>
@@ -248,8 +248,8 @@ export default function M2Reward({ scoredData, onContinue }: Props) {
                 >
                   <span className="text-warning mt-0.5">&#9889;</span>
                   <div>
-                    <span className="text-sm font-medium capitalize">{a.dim}</span>
-                    <p className="text-xs text-secondary">
+                    <span className="data-label capitalize">{a.dim}</span>
+                    <p className="card-summary">
                       You want <strong>{a.m1Pole}</strong> but lead with <strong>{a.m2Pole}</strong>
                     </p>
                   </div>

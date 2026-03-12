@@ -325,7 +325,7 @@ function CoachingInsights({ report }: { report: any }) {
       <div className="space-y-3">
         {insights.slice(0, 3).map((insight, i) => (
           <div key={i} className={`card border-l-4 ${typeStyles[insight.type]}`}>
-            <p className="text-xs text-secondary mb-1">{insight.title}</p>
+            <p className="card-summary mb-1">{insight.title}</p>
             <p className="text-sm leading-relaxed">{insight.body}</p>
           </div>
         ))}
@@ -354,7 +354,7 @@ function CheckinModal({ onSubmit, onClose }: { onSubmit: (data: any) => void; on
           <SliderField label="Feeling of Connection" value={connection} onChange={setConnection} />
 
           <div>
-            <label className="text-xs text-secondary block mb-1">Notes (optional)</label>
+            <label className="card-summary block mb-1">Notes (optional)</label>
             <textarea
               value={notes}
               onChange={e => setNotes(e.target.value)}
@@ -382,7 +382,7 @@ function SliderField({ label, value, onChange }: { label: string; value: number;
   return (
     <div>
       <div className="flex items-center justify-between mb-1">
-        <label className="text-xs text-secondary">{label}</label>
+        <label className="card-summary">{label}</label>
         <span className="font-serif text-xs font-semibold">{value}/10</span>
       </div>
       <input
@@ -422,10 +422,10 @@ function AttachmentStatusCard() {
       <Link href="/results/compare#attachment-overlay" className="card flex items-center gap-3 hover:border-accent transition-colors">
         <Icon name="diamond" size={20} className="text-accent" />
         <div className="flex-1">
-          <p className="text-sm font-medium">
+          <p className="data-label">
             {status === 'overlay' ? 'Attachment Style Overlay Available' : 'Attachment Style Overlay Ready'}
           </p>
-          <p className="text-xs text-secondary">
+          <p className="card-summary">
             {status === 'overlay' ? 'View your deeper relational dynamic' : 'Both partners completed — generate your overlay'}
           </p>
         </div>

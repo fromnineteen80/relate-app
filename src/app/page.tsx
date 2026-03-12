@@ -348,7 +348,7 @@ export default function LandingPage() {
             <div className="card flex flex-col">
               <span className="subsection-label">FREE</span>
               <p className="font-serif text-4xl font-semibold mt-2">$0</p>
-              <p className="text-sm text-secondary mt-3 mb-6">Discover your persona.</p>
+              <p className="card-summary mt-3 mb-6">Discover your persona.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   '336-question assessment',
@@ -366,7 +366,7 @@ export default function LandingPage() {
             <div className="card flex flex-col">
               <span className="subsection-label">PLUS</span>
               <p className="font-serif text-4xl font-semibold mt-2">$29.99</p>
-              <p className="text-sm text-secondary mt-3 mb-6">The complete picture.</p>
+              <p className="card-summary mt-3 mb-6">The complete picture.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   'Everything in Free',
@@ -388,7 +388,7 @@ export default function LandingPage() {
               </div>
               <span className="text-xs text-accent tracking-wider">PREMIUM</span>
               <p className="font-serif text-4xl font-semibold mt-2">$49.99</p>
-              <p className="text-sm text-secondary mt-3 mb-6">Insight + AI coaching.</p>
+              <p className="card-summary mt-3 mb-6">Insight + AI coaching.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   'Everything in Plus',
@@ -406,7 +406,7 @@ export default function LandingPage() {
             <div className="card flex flex-col">
               <span className="subsection-label">PRO</span>
               <p className="font-serif text-4xl font-semibold mt-2">$69.99</p>
-              <p className="text-sm text-secondary mt-3 mb-6">Unlimited AI coaching.</p>
+              <p className="card-summary mt-3 mb-6">Unlimited AI coaching.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   'Everything in Premium',
@@ -423,7 +423,7 @@ export default function LandingPage() {
             <div className="card flex flex-col">
               <span className="subsection-label">COUPLES</span>
               <p className="font-serif text-4xl font-semibold mt-2">$119</p>
-              <p className="text-sm text-secondary mt-3 mb-6">Two partners, full compatibility.</p>
+              <p className="card-summary mt-3 mb-6">Two partners, full compatibility.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   'Everything in Pro (x2)',
@@ -442,7 +442,7 @@ export default function LandingPage() {
             <div className="card flex flex-col border-accent/40">
               <span className="text-xs text-accent tracking-wider">ATTACHMENT STYLE</span>
               <p className="font-serif text-4xl font-semibold mt-2">$49</p>
-              <p className="text-sm text-secondary mt-3 mb-6">The psychology underneath your persona.</p>
+              <p className="card-summary mt-3 mb-6">The psychology underneath your persona.</p>
               <ul className="bullet-list mb-8 flex-1">
                 {[
                   '30-minute deep assessment',
@@ -470,7 +470,7 @@ export default function LandingPage() {
             {FAQS.map((faq) => (
               <div key={faq.q}>
                 <h3 className="font-serif font-semibold mb-1">{faq.q}</h3>
-                <p className="text-sm text-secondary leading-relaxed">{faq.a}</p>
+                <p className="card-summary leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>

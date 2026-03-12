@@ -136,7 +136,7 @@ export default function AssessmentHub() {
                   </div>
                   <div className="min-w-0">
                     <h3 className="font-serif font-semibold">{mod.title}</h3>
-                    <p className="text-xs text-secondary">{mod.desc} · {mod.time}</p>
+                    <p className="card-summary">{mod.desc} · {mod.time}</p>
                   </div>
                 </div>
                 {state === 'active' && (
@@ -161,7 +161,7 @@ export default function AssessmentHub() {
                 </div>
                 <div className="min-w-0">
                   <h3 className="font-serif font-semibold">Attachment Style</h3>
-                  <p className="text-xs text-secondary">Deep attachment assessment · ~30 min</p>
+                  <p className="card-summary">Deep attachment assessment · ~30 min</p>
                 </div>
               </div>
               {attachmentHasResults ? (
