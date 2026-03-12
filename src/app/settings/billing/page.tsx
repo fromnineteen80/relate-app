@@ -435,7 +435,7 @@ export default function BillingPage() {
                 <span className="text-[10px] uppercase text-secondary">{subscription.paymentMethod.brand}</span>
               </div>
               <div>
-                <p className="text-sm font-mono">**** **** **** {subscription.paymentMethod.last4}</p>
+                <p className="text-sm">**** **** **** {subscription.paymentMethod.last4}</p>
                 <p className="text-xs text-secondary">
                   Expires {subscription.paymentMethod.expMonth.toString().padStart(2, '0')}/{subscription.paymentMethod.expYear}
                 </p>

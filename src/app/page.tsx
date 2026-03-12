@@ -264,7 +264,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {PERSONAS_PREVIEW.map((p) => (
               <div key={p.code} className="card text-center py-5">
-                <span className="font-mono text-xs text-accent">{p.code}</span>
+                <span className="text-xs text-accent">{p.code}</span>
                 <h3 className="font-serif text-lg font-semibold mt-1">{p.name}</h3>
                 <p className="text-xs text-secondary mt-1">{p.desc}</p>
               </div>

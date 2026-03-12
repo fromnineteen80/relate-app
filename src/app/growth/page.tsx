@@ -443,7 +443,7 @@ export default function GrowthPage() {
             return (
               <div className="space-y-4 pt-6 border-t border-border">
                 <div>
-                  <p className="text-[10px] font-mono text-accent uppercase tracking-widest mb-1">Attachment Style Add-On</p>
+                  <p className="text-[10px] text-accent uppercase tracking-widest mb-1">Attachment Style Add-On</p>
                   <h2 className="font-serif text-xl font-semibold">Attachment Style Growth Track</h2>
                 </div>
                 <div className="card border-accent/30 text-center py-8">

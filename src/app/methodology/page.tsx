@@ -231,7 +231,7 @@ export default function MethodologyPage() {
                   ['BDEG', 'The Ranger'], ['BDEH', 'The Playwright'], ['BDFG', 'The Arborist'], ['BDFH', 'The Builder'],
                 ].map(([code, name]) => (
                   <div key={code} className="flex items-center gap-2">
-                    <span className="font-mono text-xs text-accent w-12">{code}</span>
+                    <span className="text-xs text-accent w-12">{code}</span>
                     <span>{name}</span>
                   </div>
                 ))}
@@ -247,7 +247,7 @@ export default function MethodologyPage() {
                   ['BDEG', 'The Coach'], ['BDEH', 'The Founder'], ['BDFG', 'The Designer'], ['BDFH', 'The Therapist'],
                 ].map(([code, name]) => (
                   <div key={code} className="flex items-center gap-2">
-                    <span className="font-mono text-xs text-accent w-12">{code}</span>
+                    <span className="text-xs text-accent w-12">{code}</span>
                     <span>{name}</span>
                   </div>
                 ))}
