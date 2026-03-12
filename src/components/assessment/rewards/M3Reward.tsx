@@ -144,18 +144,18 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
         <div className="card mb-6">
           <div className="space-y-3">
             <div>
-              <div className="flex justify-between text-xs font-mono text-secondary mb-1">
+              <div className="flex justify-between text-xs text-secondary mb-1">
                 <span>WANT</span>
-                <span>{wantScore}</span>
+                <span className="font-serif">{wantScore}</span>
               </div>
               <div className="h-3 bg-stone-200 rounded-full overflow-hidden">
                 <div className="h-full bg-accent rounded-full transition-all duration-1000" style={{ width: `${wantScore}%` }} />
               </div>
             </div>
             <div>
-              <div className="flex justify-between text-xs font-mono text-secondary mb-1">
+              <div className="flex justify-between text-xs text-secondary mb-1">
                 <span>OFFER</span>
-                <span>{offerScore}</span>
+                <span className="font-serif">{offerScore}</span>
               </div>
               <div className="h-3 bg-stone-200 rounded-full overflow-hidden">
                 <div className="h-full bg-accent rounded-full transition-all duration-1000" style={{ width: `${offerScore}%`, transitionDelay: '200ms' }} />

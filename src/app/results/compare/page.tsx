@@ -401,7 +401,7 @@ function OverviewSection({ data }: { data: any }) {
             <p className="font-mono text-xs text-secondary">{data.user1?.code}</p>
           </div>
           <div className="w-12 h-12 rounded-full border-2 border-accent flex items-center justify-center">
-            <span className="font-mono text-sm font-bold text-accent">{data.overallScore}</span>
+            <span className="font-serif text-sm font-bold text-accent">{data.overallScore}</span>
           </div>
           <div className="text-left">
             <p className="font-serif text-lg font-semibold">{data.user2?.name}</p>
@@ -415,7 +415,7 @@ function OverviewSection({ data }: { data: any }) {
       {/* Coaching */}
       {data.archetype?.coaching && (
         <div className="card bg-stone-50 border-accent/30">
-          <p className="text-xs text-secondary font-mono mb-1">What this means for you</p>
+          <p className="text-xs text-secondary mb-1">What this means for you</p>
           <p className="text-sm leading-relaxed">{data.archetype.coaching}</p>
         </div>
       )}
@@ -423,7 +423,7 @@ function OverviewSection({ data }: { data: any }) {
       {/* Score breakdown */}
       <div className="grid grid-cols-3 gap-4">
         <div className="card text-center">
-          <span className="font-mono text-2xl font-semibold">{data.alignmentPercent}%</span>
+          <span className="font-serif text-2xl font-semibold">{data.alignmentPercent}%</span>
           <p className="text-xs text-secondary mt-1">Value Alignment</p>
         </div>
         <div className="card text-center">
