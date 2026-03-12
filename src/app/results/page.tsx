@@ -1012,12 +1012,12 @@ function ResultsDashboard() {
                       <span className="text-sm font-medium capitalize">{name}</span>
                       <span className={`text-xs font-semibold ${riskColor}`}>{normalized}/10</span>
                     </div>
-                    <p className="text-xs text-secondary mb-2">{HORSEMAN_DESC[name] || ''}</p>
+                    <p className="definition mb-2">{HORSEMAN_DESC[name] || ''}</p>
                     <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden mb-1.5">
                       <div className={`h-full rounded-full transition-all ${barColor}`} style={{ width: `${Math.max(2, pct)}%` }} />
                     </div>
                     {data.antidote && (
-                      <p className="text-xs text-secondary"><span className="font-medium">Antidote:</span> {data.antidote}</p>
+                      <p className="explainer"><span className="font-medium">Antidote:</span> {data.antidote}</p>
                     )}
                   </div>
                 );

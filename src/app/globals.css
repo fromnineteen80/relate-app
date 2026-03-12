@@ -85,12 +85,24 @@ h1, h2, h3, h4, h5, h6 {
     @apply text-[11px] font-semibold uppercase tracking-wider mb-1.5;
   }
 
-  /* Explainer / description text */
-  .explainer {
-    @apply text-sm text-secondary;
-  }
-  .explainer-xs {
+  /* Card summary — overview text under card titles (12px) */
+  .card-summary {
     @apply text-xs text-secondary;
+  }
+
+  /* Body paragraph — standard body text (11px) */
+  .body-paragraph {
+    @apply text-[11px] text-secondary;
+  }
+
+  /* Definition — describes what a data point means (11px, lighter) */
+  .definition {
+    @apply text-[11px] font-light text-secondary/70;
+  }
+
+  /* Explainer — antidotes, tips, supplementary notes (10px) */
+  .explainer {
+    @apply text-[10px] text-secondary;
   }
 
   /* Bullet list with accent-colored disc markers */
