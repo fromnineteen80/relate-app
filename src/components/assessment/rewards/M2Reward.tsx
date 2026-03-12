@@ -107,7 +107,7 @@ export default function M2Reward({ scoredData, onContinue }: Props) {
           </p>
         )}
         <p
-          className="font-mono text-lg text-accent mb-6 transition-all duration-700"
+          className="text-lg text-accent mb-6 transition-all duration-700"
           style={{ transitionDelay: '600ms', opacity: fadeIn ? 1 : 0 }}
         >
           {personaCode}
@@ -147,7 +147,7 @@ export default function M2Reward({ scoredData, onContinue }: Props) {
       <div className={`max-w-xl mx-auto transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
         <div className="flex items-center gap-3 mb-6">
           <h3 className="font-serif text-xl font-semibold">{personaName}</h3>
-          <span className="font-mono text-xs text-accent">{personaCode}</span>
+          <span className="text-xs text-accent">{personaCode}</span>
         </div>
 
         {desc && <p className="text-secondary mb-6 leading-relaxed">{desc}</p>}
@@ -156,7 +156,7 @@ export default function M2Reward({ scoredData, onContinue }: Props) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
             {strengths.length > 0 && (
               <div className="card">
-                <h4 className="text-xs font-mono text-success mb-2">In Partnership, You Offer</h4>
+                <h4 className="text-xs text-success mb-2">In Partnership, You Offer</h4>
                 {strengths.map((s: string, i: number) => (
                   <p key={i} className="explainer mb-1">{s}</p>
                 ))}
@@ -164,7 +164,7 @@ export default function M2Reward({ scoredData, onContinue }: Props) {
             )}
             {challenges.length > 0 && (
               <div className="card">
-                <h4 className="text-xs font-mono text-warning mb-2">Your Challenge</h4>
+                <h4 className="text-xs text-warning mb-2">Your Challenge</h4>
                 {challenges.map((c: string, i: number) => (
                   <p key={i} className="explainer mb-1">{c}</p>
                 ))}

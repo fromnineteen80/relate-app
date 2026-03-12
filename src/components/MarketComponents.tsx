@@ -1237,14 +1237,14 @@ export function MarketCoaching({ marketData, demographics, m3, m4, persona }: {
         {insights.map((insight, i) => (
           <div key={i} className="border border-border rounded-md p-3">
             <div className="flex items-start gap-2 mb-2">
-              <span className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded flex-shrink-0 ${
+              <span className={`text-[10px] uppercase px-1.5 py-0.5 rounded flex-shrink-0 ${
                 insight.priority === 'high' ? 'bg-danger/10 text-danger' : insight.priority === 'medium' ? 'bg-warning/10 text-warning' : 'bg-stone-100 text-secondary'
               }`}>{insight.priority}</span>
               <h3 className="data-label leading-tight">{insight.title}</h3>
             </div>
             <p className="body-paragraph mb-2">{insight.description}</p>
             <div className="bg-stone-50 border border-border rounded p-2">
-              <span className="text-[10px] font-mono text-accent uppercase tracking-wider">What to do</span>
+              <span className="text-[10px] text-accent uppercase tracking-wider">What to do</span>
               <p className="body-paragraph mt-1">{insight.action}</p>
             </div>
           </div>

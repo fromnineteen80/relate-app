@@ -240,7 +240,7 @@ export default function ComparePage() {
             <button
               key={s.key}
               onClick={() => setActiveSection(i)}
-              className={`px-3 py-1.5 text-xs font-mono rounded-md whitespace-nowrap transition-colors ${
+              className={`px-3 py-1.5 text-xs rounded-md whitespace-nowrap transition-colors ${
                 activeSection === i
                   ? 'bg-accent text-white'
                   : 'bg-stone-100 text-secondary hover:bg-stone-200'
@@ -342,7 +342,7 @@ function AttachmentOverlaySection({ overlay }: { overlay: any }) {
   return (
     <div className="space-y-8">
       <div className="text-center mb-6">
-        <p className="font-mono text-xs text-accent tracking-wide uppercase mb-2">Attachment Style Couples Overlay</p>
+        <p className="text-xs text-accent tracking-wide uppercase mb-2">Attachment Style Couples Overlay</p>
         <h2 className="font-serif text-2xl font-semibold">The Dynamic Between You</h2>
       </div>
       {sectionConfig.map(({ key, title }) => {
@@ -359,7 +359,7 @@ function AttachmentOverlaySection({ overlay }: { overlay: any }) {
             )}
             {!content && !misread && section.collisionFrame?.name && (
               <div className="card bg-stone-50">
-                <p className="text-xs font-mono text-secondary mb-1">{section.collisionFrame.name}</p>
+                <p className="text-xs text-secondary mb-1">{section.collisionFrame.name}</p>
                 {section.collisionFrame.mechanism && (
                   <p className="text-sm leading-relaxed">{section.collisionFrame.mechanism}</p>
                 )}
@@ -398,14 +398,14 @@ function OverviewSection({ data }: { data: any }) {
         <div className="flex items-center justify-center gap-4 mb-4">
           <div className="text-right">
             <p className="font-serif text-lg font-semibold">{data.user1?.name}</p>
-            <p className="font-mono text-xs text-secondary">{data.user1?.code}</p>
+            <p className="text-xs text-secondary">{data.user1?.code}</p>
           </div>
           <div className="w-12 h-12 rounded-full border-2 border-accent flex items-center justify-center">
-            <span className="font-mono text-sm font-bold text-accent">{data.overallScore}</span>
+            <span className="font-serif text-sm font-bold text-accent">{data.overallScore}</span>
           </div>
           <div className="text-left">
             <p className="font-serif text-lg font-semibold">{data.user2?.name}</p>
-            <p className="font-mono text-xs text-secondary">{data.user2?.code}</p>
+            <p className="text-xs text-secondary">{data.user2?.code}</p>
           </div>
         </div>
         <p className="font-serif text-xl font-semibold">{data.archetype?.name}</p>
@@ -415,7 +415,7 @@ function OverviewSection({ data }: { data: any }) {
       {/* Coaching */}
       {data.archetype?.coaching && (
         <div className="card bg-stone-50 border-accent/30">
-          <p className="text-xs text-secondary font-mono mb-1">What this means for you</p>
+          <p className="text-xs text-secondary mb-1">What this means for you</p>
           <p className="text-sm leading-relaxed">{data.archetype.coaching}</p>
         </div>
       )}
@@ -423,15 +423,15 @@ function OverviewSection({ data }: { data: any }) {
       {/* Score breakdown */}
       <div className="grid grid-cols-3 gap-4">
         <div className="card text-center">
-          <span className="font-mono text-2xl font-semibold">{data.alignmentPercent}%</span>
+          <span className="font-serif text-2xl font-semibold">{data.alignmentPercent}%</span>
           <p className="text-xs text-secondary mt-1">Value Alignment</p>
         </div>
         <div className="card text-center">
-          <span className="font-mono text-2xl font-semibold">{data.m3Compat}%</span>
+          <span className="font-serif text-2xl font-semibold">{data.m3Compat}%</span>
           <p className="text-xs text-secondary mt-1">Connection Fit</p>
         </div>
         <div className="card text-center">
-          <span className="font-mono text-2xl font-semibold">{data.m4Compat}%</span>
+          <span className="font-serif text-2xl font-semibold">{data.m4Compat}%</span>
           <p className="text-xs text-secondary mt-1">Conflict Fit</p>
         </div>
       </div>
@@ -444,11 +444,11 @@ function OverviewSection({ data }: { data: any }) {
             <div key={dc.dimension} className="flex items-center gap-3">
               <span className="text-xs text-secondary w-16 capitalize">{dc.dimension}</span>
               <div className="flex-1 flex items-center gap-2">
-                <span className="text-xs font-mono w-20 text-right truncate">{dc.user1Pole}</span>
+                <span className="text-xs w-20 text-right truncate">{dc.user1Pole}</span>
                 <div className={`w-3 h-3 rounded-full ${dc.aligned ? 'bg-success' : 'bg-warning'}`} />
-                <span className="text-xs font-mono w-20 truncate">{dc.user2Pole}</span>
+                <span className="text-xs w-20 truncate">{dc.user2Pole}</span>
               </div>
-              <span className={`text-xs font-mono ${dc.aligned ? 'text-success' : 'text-warning'}`}>
+              <span className={`text-xs ${dc.aligned ? 'text-success' : 'text-warning'}`}>
                 {dc.aligned ? 'Aligned' : 'Differs'}
               </span>
             </div>
@@ -483,7 +483,7 @@ function AlignmentSection({ data, overview }: { data: any; overview: any }) {
                     <div className="h-1.5 flex-1 bg-stone-200 rounded-full overflow-hidden">
                       <div className="h-full bg-success rounded-full" style={{ width: `${p.strength}%` }} />
                     </div>
-                    <span className="text-xs font-mono text-secondary">{p.strength}%</span>
+                    <span className="text-xs font-serif text-secondary">{p.strength}%</span>
                   </div>
                 </div>
               </div>
@@ -506,7 +506,7 @@ function AlignmentSection({ data, overview }: { data: any; overview: any }) {
               <div className="h-1.5 flex-1 bg-stone-200 rounded-full overflow-hidden">
                 <div className="h-full bg-accent rounded-full" style={{ width: `${Math.max(0, 100 - data.m3Alignment?.wantGap)}%` }} />
               </div>
-              <span className="text-xs font-mono">{data.m3Alignment?.wantGap} gap</span>
+              <span className="text-xs font-serif">{data.m3Alignment?.wantGap} gap</span>
             </div>
           </div>
           <div>
@@ -515,7 +515,7 @@ function AlignmentSection({ data, overview }: { data: any; overview: any }) {
               <div className="h-1.5 flex-1 bg-stone-200 rounded-full overflow-hidden">
                 <div className="h-full bg-accent rounded-full" style={{ width: `${Math.max(0, 100 - data.m3Alignment?.offerGap)}%` }} />
               </div>
-              <span className="text-xs font-mono">{data.m3Alignment?.offerGap} gap</span>
+              <span className="text-xs font-serif">{data.m3Alignment?.offerGap} gap</span>
             </div>
           </div>
         </div>
@@ -547,7 +547,7 @@ function ClashSection({ data, overview }: { data: any; overview: any }) {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <p className="text-sm font-medium capitalize">{c.dimension}</p>
-                <span className={`text-xs font-mono ${c.severity === 'high' ? 'text-danger' : 'text-warning'}`}>
+                <span className={`text-xs ${c.severity === 'high' ? 'text-danger' : 'text-warning'}`}>
                   {c.severity}
                 </span>
               </div>
@@ -559,7 +559,7 @@ function ClashSection({ data, overview }: { data: any; overview: any }) {
               <p className="text-xs text-secondary">{c.narrative}</p>
               {c.coaching && (
                 <div className="mt-3 p-3 bg-stone-50 rounded-md">
-                  <p className="text-[10px] text-accent font-mono mb-1">What to try</p>
+                  <p className="text-[10px] text-accent mb-1">What to try</p>
                   <p className="text-xs text-secondary">{c.coaching}</p>
                 </div>
               )}
@@ -600,20 +600,20 @@ function ConflictSection({ data, overview }: { data: any; overview: any }) {
         <div className="flex items-center gap-4 mb-4">
           <div className="flex-1 text-center">
             <p className="text-xs text-secondary">{overview?.user1?.name}</p>
-            <p className="font-mono text-sm font-semibold capitalize mt-1">{data.user1Approach}</p>
+            <p className="text-sm font-semibold capitalize mt-1">{data.user1Approach}</p>
           </div>
           <div className="text-center">
             <p className="font-serif text-lg font-semibold">{data.dynamic?.label}</p>
           </div>
           <div className="flex-1 text-center">
             <p className="text-xs text-secondary">{overview?.user2?.name}</p>
-            <p className="font-mono text-sm font-semibold capitalize mt-1">{data.user2Approach}</p>
+            <p className="text-sm font-semibold capitalize mt-1">{data.user2Approach}</p>
           </div>
         </div>
         <p className="text-xs text-secondary">{data.dynamic?.description}</p>
         {data.dynamic?.coaching && (
           <div className="mt-3 p-3 bg-stone-50 rounded-md">
-            <p className="text-[10px] text-accent font-mono mb-1">Your action plan</p>
+            <p className="text-[10px] text-accent mb-1">Your action plan</p>
             <p className="text-xs text-secondary">{data.dynamic.coaching}</p>
           </div>
         )}
@@ -625,16 +625,16 @@ function ConflictSection({ data, overview }: { data: any; overview: any }) {
         <div className="grid grid-cols-2 gap-4 mb-3">
           <div className="text-center p-3 bg-stone-50 rounded-md">
             <p className="text-xs text-secondary">{overview?.user1?.name}</p>
-            <p className="font-mono text-sm font-semibold capitalize mt-1">{data.driverAnalysis?.user1Driver}</p>
+            <p className="text-sm font-semibold capitalize mt-1">{data.driverAnalysis?.user1Driver}</p>
           </div>
           <div className="text-center p-3 bg-stone-50 rounded-md">
             <p className="text-xs text-secondary">{overview?.user2?.name}</p>
-            <p className="font-mono text-sm font-semibold capitalize mt-1">{data.driverAnalysis?.user2Driver}</p>
+            <p className="text-sm font-semibold capitalize mt-1">{data.driverAnalysis?.user2Driver}</p>
           </div>
         </div>
         {data.driverAnalysis?.collision && (
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs font-mono text-warning">Driver Collision</span>
+            <span className="text-xs text-warning">Driver Collision</span>
           </div>
         )}
         <p className="text-xs text-secondary">{data.driverAnalysis?.narrative}</p>
@@ -647,17 +647,17 @@ function ConflictSection({ data, overview }: { data: any; overview: any }) {
           <div>
             <p className="text-xs text-secondary mb-1">Speed</p>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono capitalize">{data.repair?.user1Speed}</span>
+              <span className="text-xs capitalize">{data.repair?.user1Speed}</span>
               <span className={`w-2 h-2 rounded-full ${data.repair?.speedMatch ? 'bg-success' : 'bg-warning'}`} />
-              <span className="text-xs font-mono capitalize">{data.repair?.user2Speed}</span>
+              <span className="text-xs capitalize">{data.repair?.user2Speed}</span>
             </div>
           </div>
           <div>
             <p className="text-xs text-secondary mb-1">Mode</p>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono capitalize">{data.repair?.user1Mode}</span>
+              <span className="text-xs capitalize">{data.repair?.user1Mode}</span>
               <span className={`w-2 h-2 rounded-full ${data.repair?.modeMatch ? 'bg-success' : 'bg-warning'}`} />
-              <span className="text-xs font-mono capitalize">{data.repair?.user2Mode}</span>
+              <span className="text-xs capitalize">{data.repair?.user2Mode}</span>
             </div>
           </div>
         </div>
@@ -705,7 +705,7 @@ function RepairSection({ data, overview }: { data: any; overview: any }) {
       <div>
         <h2 className="font-serif text-2xl font-semibold mb-1">How You Repair As A Couple</h2>
         <p className="explainer">
-          Overall risk: <span className={`font-mono ${data.overallRisk === 'high' ? 'text-danger' : data.overallRisk === 'moderate' ? 'text-warning' : 'text-success'}`}>
+          Overall risk: <span className={`${data.overallRisk === 'high' ? 'text-danger' : data.overallRisk === 'moderate' ? 'text-warning' : 'text-success'}`}>
             {data.overallRisk}
           </span>
         </p>
@@ -719,7 +719,7 @@ function RepairSection({ data, overview }: { data: any; overview: any }) {
             <div key={h.horseman}>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-medium">{horsemenLabels[h.horseman]}</span>
-                <span className={`text-xs font-mono ${
+                <span className={`text-xs ${
                   h.riskLevel === 'high' ? 'text-danger' : h.riskLevel === 'moderate' ? 'text-warning' : 'text-success'
                 }`}>{h.riskLevel}</span>
               </div>
@@ -748,7 +748,7 @@ function RepairSection({ data, overview }: { data: any; overview: any }) {
       {/* Coaching */}
       {data.coaching?.length > 0 && (
         <div className="card bg-stone-50 border-accent/30">
-          <p className="text-xs text-accent font-mono mb-2">What to work on</p>
+          <p className="text-xs text-accent mb-2">What to work on</p>
           <ul className="space-y-2">
             {data.coaching.map((tip: string, i: number) => (
               <li key={i} className="text-xs text-secondary leading-relaxed flex items-start gap-2">
@@ -765,12 +765,12 @@ function RepairSection({ data, overview }: { data: any; overview: any }) {
         <h3 className="font-serif text-sm font-semibold mb-3">Emotional Capacity</h3>
         <div className="grid grid-cols-2 gap-4 mb-3">
           <div className="text-center">
-            <span className="font-mono text-2xl font-semibold">{data.capacity?.user1Score}</span>
+            <span className="font-serif text-2xl font-semibold">{data.capacity?.user1Score}</span>
             <p className="text-xs text-secondary mt-1">{userName}</p>
             <p className="text-[10px] text-secondary capitalize">{data.capacity?.user1Level}</p>
           </div>
           <div className="text-center">
-            <span className="font-mono text-2xl font-semibold">{data.capacity?.user2Score}</span>
+            <span className="font-serif text-2xl font-semibold">{data.capacity?.user2Score}</span>
             <p className="text-xs text-secondary mt-1">{partnerName}</p>
             <p className="text-[10px] text-secondary capitalize">{data.capacity?.user2Level}</p>
           </div>
@@ -835,7 +835,7 @@ function CeilingFloorSection({ data }: { data: any }) {
           {/* Floor marker */}
           <div className="absolute top-0" style={{ left: `${data.floor}%`, transform: 'translateX(-50%)' }}>
             <div className="text-center">
-              <p className="font-mono text-xs text-warning">{data.floor}</p>
+              <p className="font-serif text-xs text-warning">{data.floor}</p>
               <p className="text-[10px] text-secondary">Floor</p>
             </div>
             <div className="w-0.5 h-8 bg-warning mx-auto mt-1" />
@@ -843,7 +843,7 @@ function CeilingFloorSection({ data }: { data: any }) {
           {/* Current marker */}
           <div className="absolute top-0" style={{ left: `${data.current}%`, transform: 'translateX(-50%)' }}>
             <div className="text-center">
-              <p className="font-mono text-sm font-bold text-accent">{data.current}</p>
+              <p className="font-serif text-sm font-bold text-accent">{data.current}</p>
               <p className="text-[10px] text-secondary">Current</p>
             </div>
             <div className="w-0.5 h-8 bg-accent mx-auto mt-1" />
@@ -851,7 +851,7 @@ function CeilingFloorSection({ data }: { data: any }) {
           {/* Ceiling marker */}
           <div className="absolute top-0" style={{ left: `${Math.min(data.ceiling, 95)}%`, transform: 'translateX(-50%)' }}>
             <div className="text-center">
-              <p className="font-mono text-xs text-success">{data.ceiling}</p>
+              <p className="font-serif text-xs text-success">{data.ceiling}</p>
               <p className="text-[10px] text-secondary">Ceiling</p>
             </div>
             <div className="w-0.5 h-8 bg-success mx-auto mt-1" />
@@ -860,11 +860,11 @@ function CeilingFloorSection({ data }: { data: any }) {
 
         <div className="grid grid-cols-2 gap-4 text-center">
           <div>
-            <span className="font-mono text-lg font-semibold text-success">+{data.growthPotential}</span>
+            <span className="font-serif text-lg font-semibold text-success">+{data.growthPotential}</span>
             <p className="text-xs text-secondary">Growth Potential</p>
           </div>
           <div>
-            <span className="font-mono text-lg font-semibold text-warning">-{data.riskExposure}</span>
+            <span className="font-serif text-lg font-semibold text-warning">-{data.riskExposure}</span>
             <p className="text-xs text-secondary">Risk Exposure</p>
           </div>
         </div>
@@ -903,7 +903,7 @@ function CeilingFloorSection({ data }: { data: any }) {
           <ul className="space-y-3">
             {data.growthSteps.map((step: string, i: number) => (
               <li key={i} className="flex items-start gap-3 text-xs">
-                <span className="w-6 h-6 rounded-full bg-accent/10 text-accent flex items-center justify-center flex-shrink-0 font-mono text-[10px] font-semibold">{i + 1}</span>
+                <span className="w-6 h-6 rounded-full bg-accent/10 text-accent flex items-center justify-center flex-shrink-0 font-serif text-[10px] font-semibold">{i + 1}</span>
                 <span className="text-secondary leading-relaxed">{step}</span>
               </li>
             ))}
@@ -939,9 +939,9 @@ function EnhancedCompatibilitySection({ data, overview }: { data: any; overview:
       {/* Overall score + state scores */}
       <div className="card">
         <div className="text-center mb-4">
-          <span className="font-mono text-4xl font-bold">{data.summary?.overallScore}</span>
+          <span className="font-serif text-4xl font-bold">{data.summary?.overallScore}</span>
           <p className="text-xs text-secondary mt-1">
-            Overall Score: <span className={`font-mono capitalize ${tierColor(data.summary?.tier)}`}>{data.summary?.tier}</span>
+            Overall Score: <span className={`capitalize ${tierColor(data.summary?.tier)}`}>{data.summary?.tier}</span>
           </p>
         </div>
         <div className="grid grid-cols-3 gap-4">
@@ -951,9 +951,9 @@ function EnhancedCompatibilitySection({ data, overview }: { data: any; overview:
             { label: 'Repair', state: data.summary?.repairState },
           ].map(({ label, state }) => (
             <div key={label} className="text-center p-3 bg-stone-50 rounded-md">
-              <span className={`font-mono text-xl font-semibold ${scoreColor(state?.score || 0)}`}>{state?.score}</span>
+              <span className={`font-serif text-xl font-semibold ${scoreColor(state?.score || 0)}`}>{state?.score}</span>
               <p className="text-xs text-secondary mt-1">{label}</p>
-              <p className={`text-[10px] font-mono capitalize ${tierColor(state?.tier)}`}>{state?.tier}</p>
+              <p className={`text-[10px] capitalize ${tierColor(state?.tier)}`}>{state?.tier}</p>
             </div>
           ))}
         </div>
@@ -967,7 +967,7 @@ function EnhancedCompatibilitySection({ data, overview }: { data: any; overview:
             <div key={dim.name}>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-medium">{dim.name}</span>
-                <span className="text-[10px] text-secondary font-mono">{Math.round(dim.weight * 100)}% weight</span>
+                <span className="text-[10px] text-secondary font-serif">{Math.round(dim.weight * 100)}% weight</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-2 bg-stone-100 rounded-full overflow-hidden">
@@ -976,14 +976,14 @@ function EnhancedCompatibilitySection({ data, overview }: { data: any; overview:
                     style={{ width: `${dim.scores.normal}%` }}
                   />
                 </div>
-                <span className="text-xs font-mono w-8 text-right">{dim.scores.normal}</span>
+                <span className="text-xs font-serif w-8 text-right">{dim.scores.normal}</span>
               </div>
               {dim.scores.conflict !== dim.scores.normal && (
                 <div className="flex items-center gap-2 mt-0.5">
                   <div className="flex-1 h-1 bg-stone-100 rounded-full overflow-hidden">
                     <div className="h-full rounded-full bg-warning/60" style={{ width: `${dim.scores.conflict}%` }} />
                   </div>
-                  <span className="text-[10px] font-mono text-secondary w-8 text-right">{dim.scores.conflict}</span>
+                  <span className="text-[10px] font-serif text-secondary w-8 text-right">{dim.scores.conflict}</span>
                 </div>
               )}
             </div>
@@ -1004,27 +1004,27 @@ function EnhancedCompatibilitySection({ data, overview }: { data: any; overview:
                 <div key={state} className="p-3 bg-stone-50 rounded-md">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-medium">{stateLabel}</span>
-                    <span className={`text-xs font-mono ${d.sustainable ? 'text-success' : 'text-warning'}`}>
+                    <span className={`text-xs ${d.sustainable ? 'text-success' : 'text-warning'}`}>
                       {d.sustainable ? 'Sustainable' : 'Strained'}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-3 text-xs">
                     <div>
                       <span className="text-secondary">{overview?.user1?.name} satisfaction:</span>
-                      <span className={`font-mono ml-1 ${d.aSatisfaction >= 0 ? 'text-success' : 'text-warning'}`}>
+                      <span className={`font-serif ml-1 ${d.aSatisfaction >= 0 ? 'text-success' : 'text-warning'}`}>
                         {d.aSatisfaction > 0 ? '+' : ''}{d.aSatisfaction}
                       </span>
                     </div>
                     <div>
                       <span className="text-secondary">{overview?.user2?.name} satisfaction:</span>
-                      <span className={`font-mono ml-1 ${d.bSatisfaction >= 0 ? 'text-success' : 'text-warning'}`}>
+                      <span className={`font-serif ml-1 ${d.bSatisfaction >= 0 ? 'text-success' : 'text-warning'}`}>
                         {d.bSatisfaction > 0 ? '+' : ''}{d.bSatisfaction}
                       </span>
                     </div>
                   </div>
                   <div className="flex items-center gap-4 mt-1 text-[10px] text-secondary">
-                    <span>Mutual: <span className="font-mono">{d.mutualSatisfaction > 0 ? '+' : ''}{d.mutualSatisfaction}</span></span>
-                    <span>Asymmetry: <span className="font-mono">{d.asymmetry}</span></span>
+                    <span>Mutual: <span className="font-serif">{d.mutualSatisfaction > 0 ? '+' : ''}{d.mutualSatisfaction}</span></span>
+                    <span>Asymmetry: <span className="font-serif">{d.asymmetry}</span></span>
                   </div>
                 </div>
               );
@@ -1040,23 +1040,23 @@ function EnhancedCompatibilitySection({ data, overview }: { data: any; overview:
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div className="p-2 bg-stone-50 rounded">
               <span className="text-secondary">Approach Pairing</span>
-              <p className="font-mono mt-1 capitalize">{data.conflictChoreography.approachPairing?.pattern?.replace('_', ' + ')}</p>
+              <p className="mt-1 capitalize">{data.conflictChoreography.approachPairing?.pattern?.replace('_', ' + ')}</p>
             </div>
             <div className="p-2 bg-stone-50 rounded">
               <span className="text-secondary">Driver Collision</span>
-              <p className={`font-mono mt-1 ${data.conflictChoreography.driverCollision?.risk === 'CRITICAL' ? 'text-danger' : ''}`}>
+              <p className={`mt-1 ${data.conflictChoreography.driverCollision?.risk === 'CRITICAL' ? 'text-danger' : ''}`}>
                 {data.conflictChoreography.driverCollision?.risk}
               </p>
             </div>
             <div className="p-2 bg-stone-50 rounded">
               <span className="text-secondary">Repair Match</span>
-              <p className="font-mono mt-1">
+              <p className="mt-1">
                 Speed: {data.conflictChoreography.repairCompatibility?.speedMatch ? 'Yes' : 'No'} | Mode: {data.conflictChoreography.repairCompatibility?.modeMatch ? 'Yes' : 'No'}
               </p>
             </div>
             <div className="p-2 bg-stone-50 rounded">
               <span className="text-secondary">Horsemen Loops</span>
-              <p className="font-mono mt-1 text-[10px]">
+              <p className="mt-1 text-[10px]">
                 {data.conflictChoreography.horsemenRisk?.loops?.length > 0
                   ? data.conflictChoreography.horsemenRisk.loops.join(', ')
                   : 'None detected'}
@@ -1072,21 +1072,21 @@ function EnhancedCompatibilitySection({ data, overview }: { data: any; overview:
           <h3 className="font-serif text-sm font-semibold mb-3">Ideal Partner Comparison</h3>
           <div className="grid grid-cols-2 gap-4 mb-3">
             <div className="text-center p-3 bg-stone-50 rounded-md">
-              <span className="font-mono text-2xl font-semibold">{data.idealComparison.partnerAGetsFromB.overall}%</span>
+              <span className="font-serif text-2xl font-semibold">{data.idealComparison.partnerAGetsFromB.overall}%</span>
               <p className="text-xs text-secondary mt-1">{overview?.user2?.name} matches {overview?.user1?.name}&apos;s ideal</p>
             </div>
             <div className="text-center p-3 bg-stone-50 rounded-md">
-              <span className="font-mono text-2xl font-semibold">{data.idealComparison.partnerBGetsFromA.overall}%</span>
+              <span className="font-serif text-2xl font-semibold">{data.idealComparison.partnerBGetsFromA.overall}%</span>
               <p className="text-xs text-secondary mt-1">{overview?.user1?.name} matches {overview?.user2?.name}&apos;s ideal</p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4 text-center">
             <div>
-              <span className="font-mono text-lg font-semibold">{data.idealComparison.mutualFit}%</span>
+              <span className="font-serif text-lg font-semibold">{data.idealComparison.mutualFit}%</span>
               <p className="text-xs text-secondary">Mutual Fit</p>
             </div>
             <div>
-              <span className={`font-mono text-lg font-semibold ${data.idealComparison.asymmetry > 20 ? 'text-warning' : 'text-success'}`}>
+              <span className={`font-serif text-lg font-semibold ${data.idealComparison.asymmetry > 20 ? 'text-warning' : 'text-success'}`}>
                 {data.idealComparison.asymmetry}
               </span>
               <p className="text-xs text-secondary">Asymmetry</p>
@@ -1100,9 +1100,9 @@ function EnhancedCompatibilitySection({ data, overview }: { data: any; overview:
         <div className="card bg-stone-50">
           <h3 className="font-serif text-sm font-semibold mb-2">Conflict Gap Dynamics</h3>
           <p className="text-xs text-secondary">
-            {overview?.user1?.name} gap expansion: <span className="font-mono">{data.stateComparison.conflictDynamics.gapExpansionA > 0 ? '+' : ''}{data.stateComparison.conflictDynamics.gapExpansionA} pts</span>
+            {overview?.user1?.name} gap expansion: <span className="font-serif">{data.stateComparison.conflictDynamics.gapExpansionA > 0 ? '+' : ''}{data.stateComparison.conflictDynamics.gapExpansionA} pts</span>
             {' | '}
-            {overview?.user2?.name} gap expansion: <span className="font-mono">{data.stateComparison.conflictDynamics.gapExpansionB > 0 ? '+' : ''}{data.stateComparison.conflictDynamics.gapExpansionB} pts</span>
+            {overview?.user2?.name} gap expansion: <span className="font-serif">{data.stateComparison.conflictDynamics.gapExpansionB > 0 ? '+' : ''}{data.stateComparison.conflictDynamics.gapExpansionB} pts</span>
           </p>
           {data.stateComparison.conflictDynamics.combinedRisk === 'HIGH' && (
             <p className="text-xs text-warning mt-2">Both partners show significant gap expansion under stress. Conflict may compound rapidly without intentional de-escalation.</p>

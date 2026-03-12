@@ -381,7 +381,7 @@ export default function AttachmentStylePage() {
               personalized report you can actually use.
             </p>
             <div className="border border-border rounded-lg p-6 mb-8">
-              <p className="font-mono text-xs text-secondary mb-1">One-time purchase</p>
+              <p className="text-xs text-secondary mb-1">One-time purchase</p>
               <p className="font-serif text-4xl font-semibold mb-4">$49</p>
               <p className="text-sm text-secondary mb-6">
                 Includes full session, personalized report, and growth plan.
@@ -432,7 +432,7 @@ export default function AttachmentStylePage() {
         <SubNav />
         <main className="flex-1 flex items-center justify-center px-6">
           <div className="max-w-md text-center">
-            <span className="font-mono text-xs text-secondary">4 quadrants</span>
+            <span className="text-xs text-secondary">4 quadrants</span>
             <h2 className="font-serif text-3xl font-semibold mt-2 mb-4">Attachment Style</h2>
             <p className="text-secondary mb-4 leading-relaxed">
               This session takes about 30 minutes. You will move through four quadrants
@@ -536,10 +536,10 @@ export default function AttachmentStylePage() {
       <div className="border-b border-border">
         <div className="max-w-2xl mx-auto px-6 py-3">
           <div className="flex items-center justify-between mb-2">
-            <span className="font-mono text-xs text-secondary">
+            <span className="text-xs text-secondary">
               Quadrant {currentQuadrant} of 4: {QUADRANT_LABELS[currentQuadrant]}
             </span>
-            <span className="font-mono text-xs text-secondary">
+            <span className="font-serif text-xs text-secondary">
               {currentIndex + 1} / {questions.length}
             </span>
           </div>
@@ -578,7 +578,7 @@ export default function AttachmentStylePage() {
                 className="w-full h-40 px-4 py-3 rounded-md border border-border text-sm leading-relaxed resize-y focus:outline-none focus:border-accent transition-colors"
               />
               <div className="flex items-center justify-between mt-2">
-                <span className={`font-mono text-xs ${narrativeValid ? 'text-success' : 'text-secondary'}`}>
+                <span className={`font-serif text-xs ${narrativeValid ? 'text-success' : 'text-secondary'}`}>
                   {charCount} / 100 characters minimum
                 </span>
                 <button
@@ -609,7 +609,7 @@ export default function AttachmentStylePage() {
                         : 'border-border hover:border-accent text-secondary'
                     }`}
                   >
-                    <span className="font-mono text-lg">{v}</span>
+                    <span className="font-serif text-lg">{v}</span>
                   </button>
                 ))}
               </div>

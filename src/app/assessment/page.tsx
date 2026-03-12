@@ -127,7 +127,7 @@ export default function AssessmentHub() {
             return (
               <div key={mod.id} className={`card flex items-center justify-between gap-4 ${state === 'locked' ? 'opacity-50' : ''}`}>
                 <div className="flex items-center gap-4 min-w-0">
-                  <div className={`w-8 h-8 min-w-[2rem] rounded-full flex items-center justify-center text-sm font-mono ${
+                  <div className={`w-8 h-8 min-w-[2rem] rounded-full flex items-center justify-center text-sm font-serif ${
                     state === 'completed' ? 'bg-success text-white' :
                     state === 'active' ? 'bg-accent text-white' :
                     'bg-stone-200 text-secondary'
@@ -145,7 +145,7 @@ export default function AssessmentHub() {
                   </Link>
                 )}
                 {state === 'completed' && (
-                  <span className="text-xs font-mono text-success flex-shrink-0">Complete</span>
+                  <span className="text-xs text-success flex-shrink-0">Complete</span>
                 )}
               </div>
             );
@@ -165,7 +165,7 @@ export default function AssessmentHub() {
                 </div>
               </div>
               {attachmentHasResults ? (
-                <Link href="/results/attachment" className="text-xs font-mono text-success flex-shrink-0">Complete</Link>
+                <Link href="/results/attachment" className="text-xs text-success flex-shrink-0">Complete</Link>
               ) : (
                 <Link href="/attachment-style" className="btn-primary text-sm flex-shrink-0">Start</Link>
               )}

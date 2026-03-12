@@ -10,7 +10,7 @@ export default function AboutPage() {
       {/* ── Hero ── */}
       <section className="relative pt-16 pb-16 px-6 bg-gradient-to-b from-stone-100 to-background">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="font-mono text-xs tracking-widest text-accent uppercase mb-4">About Relate</p>
+          <p className="text-xs tracking-widest text-accent uppercase mb-4">About Relate</p>
           <h1 className="font-serif text-4xl md:text-5xl font-semibold leading-[1.1] mb-6">
             The Intelligence Layer For Modern Dating
           </h1>
@@ -75,7 +75,7 @@ export default function AboutPage() {
       <section className="px-6 py-20">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-10">
-            <p className="font-mono text-xs tracking-widest text-accent uppercase mb-3">The Problem</p>
+            <p className="text-xs tracking-widest text-accent uppercase mb-3">The Problem</p>
             <h2 className="font-serif text-3xl md:text-4xl font-semibold">
               Competition in any marketplace is healthy, but only when it is informed.
             </h2>

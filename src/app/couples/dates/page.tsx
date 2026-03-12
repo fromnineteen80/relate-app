@@ -69,7 +69,7 @@ export default function DatesPage() {
             <button
               key={cat}
               onClick={() => setFilter(cat)}
-              className={`px-3 py-1.5 text-xs font-mono rounded-md capitalize transition-colors ${
+              className={`px-3 py-1.5 text-xs rounded-md capitalize transition-colors ${
                 filter === cat ? 'bg-accent text-white' : 'bg-stone-100 text-secondary hover:bg-stone-200'
               }`}
             >

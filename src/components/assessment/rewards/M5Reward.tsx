@@ -47,7 +47,7 @@ export default function M5Reward({ scoredData, totalQuestions, onContinue }: Pro
   if (screen === 0) {
     return (
       <div className={`max-w-md mx-auto text-center transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-        <span className="font-mono text-xs text-secondary tracking-wider">YOUR PRIMARY ARMOR</span>
+        <span className="text-xs text-secondary tracking-wider">YOUR PRIMARY ARMOR</span>
         <h2 className="font-serif text-3xl font-semibold mt-2 mb-3">{armorLabel}</h2>
         <p className="text-secondary text-sm italic mb-6">&ldquo;{armorCore}&rdquo;</p>
         <p className="explainer leading-relaxed mb-8">
@@ -65,7 +65,7 @@ export default function M5Reward({ scoredData, totalQuestions, onContinue }: Pro
   return (
     <div className={`max-w-md mx-auto text-center transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
       <div className="mb-8">
-        <span className="font-mono text-xs text-secondary">YOUR ASSESSMENT IS COMPLETE</span>
+        <span className="text-xs text-secondary">YOUR ASSESSMENT IS COMPLETE</span>
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-8">
@@ -80,7 +80,7 @@ export default function M5Reward({ scoredData, totalQuestions, onContinue }: Pro
             className="card text-center transition-all duration-500"
             style={{ transitionDelay: `${i * 150}ms`, opacity: fadeIn ? 1 : 0 }}
           >
-            <p className="font-mono text-2xl font-semibold">{stat.value}</p>
+            <p className="font-serif text-2xl font-semibold">{stat.value}</p>
             <p className="text-xs text-secondary mt-1">{stat.label}</p>
           </div>
         ))}

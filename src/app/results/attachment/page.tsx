@@ -227,7 +227,7 @@ export default function AttachmentResultsPage() {
             PAGE HEADER
         ═══════════════════════════════════════════════ */}
         <div className="mb-10">
-          <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">Attachment Style</span>
+          <span className="text-[10px] text-secondary uppercase tracking-widest">Attachment Style</span>
           <h1 className="font-serif text-3xl font-semibold mt-1 mb-2">Your Attachment Style</h1>
           {persona && (
             <p className="text-sm text-secondary">
@@ -248,25 +248,25 @@ export default function AttachmentResultsPage() {
             <div className="space-y-4">
               <div className="flex items-start justify-between py-2 border-b border-border">
                 <div>
-                  <span className="text-[10px] font-mono text-secondary uppercase tracking-widest">Relational History</span>
+                  <span className="text-[10px] text-secondary uppercase tracking-widest">Relational History</span>
                   <p className="font-serif text-sm font-semibold mt-0.5">{q1Info.title}</p>
                 </div>
               </div>
               <div className="flex items-start justify-between py-2 border-b border-border">
                 <div>
-                  <span className="text-[10px] font-mono text-secondary uppercase tracking-widest">Trigger Emotion</span>
+                  <span className="text-[10px] text-secondary uppercase tracking-widest">Trigger Emotion</span>
                   <p className="font-serif text-sm font-semibold mt-0.5">{q2Info.title}</p>
                 </div>
               </div>
               <div className="flex items-start justify-between py-2 border-b border-border">
                 <div>
-                  <span className="text-[10px] font-mono text-secondary uppercase tracking-widest">Decision Architecture</span>
+                  <span className="text-[10px] text-secondary uppercase tracking-widest">Decision Architecture</span>
                   <p className="font-serif text-sm font-semibold mt-0.5">{q3Info.title}</p>
                 </div>
               </div>
               <div className="flex items-start justify-between py-2">
                 <div>
-                  <span className="text-[10px] font-mono text-secondary uppercase tracking-widest">Persona in Practice</span>
+                  <span className="text-[10px] text-secondary uppercase tracking-widest">Persona in Practice</span>
                   <p className="font-serif text-sm font-semibold mt-0.5">
                     {persona?.name || 'Your Persona'}
                     {q4?.compositeDescriptor ? ` \u2014 ${q4.compositeDescriptor}` : ''}
@@ -285,28 +285,28 @@ export default function AttachmentResultsPage() {
 
           {/* Q1 Summary */}
           <div className="card">
-            <span className="text-[10px] font-mono text-secondary uppercase tracking-widest">Relational History</span>
+            <span className="text-[10px] text-secondary uppercase tracking-widest">Relational History</span>
             <h3 className="font-serif text-base font-semibold mt-1 mb-2">{q1Info.title}</h3>
             <p className="text-sm text-secondary leading-relaxed">{q1Info.description}</p>
           </div>
 
           {/* Q2 Summary */}
           <div className="card">
-            <span className="text-[10px] font-mono text-secondary uppercase tracking-widest">Trigger Emotion</span>
+            <span className="text-[10px] text-secondary uppercase tracking-widest">Trigger Emotion</span>
             <h3 className="font-serif text-base font-semibold mt-1 mb-2">{q2Info.title}</h3>
             <p className="text-sm text-secondary leading-relaxed">{q2Info.description}</p>
           </div>
 
           {/* Q3 Summary */}
           <div className="card">
-            <span className="text-[10px] font-mono text-secondary uppercase tracking-widest">Decision Architecture</span>
+            <span className="text-[10px] text-secondary uppercase tracking-widest">Decision Architecture</span>
             <h3 className="font-serif text-base font-semibold mt-1 mb-2">{q3Info.title}</h3>
             <p className="text-sm text-secondary leading-relaxed">{q3Info.description}</p>
           </div>
 
           {/* Q4 Summary */}
           <div className="card">
-            <span className="text-[10px] font-mono text-secondary uppercase tracking-widest">Persona in Practice</span>
+            <span className="text-[10px] text-secondary uppercase tracking-widest">Persona in Practice</span>
             <h3 className="font-serif text-base font-semibold mt-1 mb-2">
               {persona?.name || 'Your Persona'}
               {q4?.compositeDescriptor ? ` \u2014 ${q4.compositeDescriptor}` : ''}

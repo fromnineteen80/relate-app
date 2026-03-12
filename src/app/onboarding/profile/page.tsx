@@ -187,7 +187,7 @@ export default function ProfileSetupPage() {
         )}
 
         <div className="mb-6">
-          <span className="font-mono text-xs text-secondary">Step 1 of 3</span>
+          <span className="text-xs text-secondary">Step 1 of 3</span>
           <h2 className="font-serif text-2xl font-semibold mt-1">Set up your profile</h2>
           <p className="text-sm text-secondary">Your name and location help personalize your experience.</p>
         </div>

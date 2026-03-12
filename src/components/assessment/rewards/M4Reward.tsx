@@ -91,7 +91,7 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
 
     return (
       <div className={`max-w-xl mx-auto transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-        <span className="font-mono text-xs text-secondary">Your Conflict Signature</span>
+        <span className="text-xs text-secondary">Your Conflict Signature</span>
         <h2 className="font-serif text-2xl font-semibold mt-1 mb-8">When Things Get Hard</h2>
 
         <div className="space-y-5">
@@ -102,7 +102,7 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
               style={{ transitionDelay: `${i * 150}ms`, opacity: fadeIn ? 1 : 0, transform: fadeIn ? 'translateY(0)' : 'translateY(8px)' }}
             >
               <div className="flex items-baseline gap-3 mb-1">
-                <span className="text-xs font-mono text-secondary w-28">{f.label}:</span>
+                <span className="text-xs text-secondary w-28">{f.label}:</span>
                 <span className="font-serif font-semibold uppercase">{f.value || '-'}</span>
               </div>
               {f.desc && <p className="explainer ml-[7.5rem] leading-relaxed">{f.desc}</p>}
@@ -164,7 +164,7 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
                     {isRisk ? '\u26A0' : '\u2713'}
                   </span>
                   <span className="text-sm font-medium capitalize">{h}</span>
-                  <span className={`font-mono text-xs ml-auto ${isRisk ? 'text-warning' : 'text-success'}`}>
+                  <span className={`font-serif text-xs ml-auto ${isRisk ? 'text-warning' : 'text-success'}`}>
                     {score}/100
                   </span>
                 </div>

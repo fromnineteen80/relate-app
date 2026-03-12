@@ -40,7 +40,7 @@ export default function CardsPage() {
         <SubNav />
 
         <main className="flex-1 flex flex-col items-center justify-center px-6 py-8">
-          <p className="text-xs text-secondary font-mono mb-2">{deck.name} Deck</p>
+          <p className="text-xs text-secondary mb-2">{deck.name} Deck</p>
 
           {/* Card */}
           <div
@@ -89,7 +89,7 @@ export default function CardsPage() {
               >
                 <p className="font-serif text-lg font-semibold mb-1">{deck.name}</p>
                 <p className="text-xs text-secondary mb-2">{deck.description}</p>
-                <p className="text-[10px] font-mono text-accent">{deck.cards.length} cards</p>
+                <p className="text-[10px] font-serif text-accent">{deck.cards.length} cards</p>
               </button>
             );
           })}

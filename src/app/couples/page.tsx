@@ -115,7 +115,7 @@ export default function CouplesDashboard() {
               <p className="font-serif text-sm font-semibold">Level {level.level}: {level.name}</p>
               <p className="text-xs text-secondary">{points} points · {level.pointsToNext > 0 ? `${level.pointsToNext} to next level` : 'Max level!'}</p>
             </div>
-            <span className="font-mono text-2xl font-bold text-accent">{level.level}</span>
+            <span className="font-serif text-2xl font-bold text-accent">{level.level}</span>
           </div>
           <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
             <div
@@ -153,10 +153,10 @@ export default function CouplesDashboard() {
           <div className="card border-accent">
             <div className="flex items-start justify-between mb-2">
               <div>
-                <p className="text-xs text-accent font-mono">Active Challenge</p>
+                <p className="text-xs text-accent">Active Challenge</p>
                 <p className="font-serif text-sm font-semibold mt-1">{activeChallenge.title}</p>
               </div>
-              <span className="font-mono text-xs text-secondary">+{activeChallenge.points}pts</span>
+              <span className="font-serif text-xs text-secondary">+{activeChallenge.points}pts</span>
             </div>
             <p className="text-xs text-secondary mb-3">{activeChallenge.description}</p>
             <button onClick={completeChallenge} className="btn-primary text-xs w-full">
@@ -177,7 +177,7 @@ export default function CouplesDashboard() {
                 <div key={challenge.id} className="card">
                   <div className="flex items-start justify-between mb-2">
                     <p className="font-serif text-sm font-semibold">{challenge.title}</p>
-                    <span className="font-mono text-xs text-accent">+{challenge.points}</span>
+                    <span className="font-serif text-xs text-accent">+{challenge.points}</span>
                   </div>
                   <p className="text-xs text-secondary mb-3">{challenge.description}</p>
                   <div className="flex items-center justify-between">
@@ -201,15 +201,15 @@ export default function CouplesDashboard() {
                 <div key={i} className="card flex items-center gap-4">
                   <div className="flex-1 grid grid-cols-3 gap-2 text-center">
                     <div>
-                      <span className="font-mono text-sm font-semibold">{ci.satisfaction}</span>
+                      <span className="font-serif text-sm font-semibold">{ci.satisfaction}</span>
                       <p className="text-[10px] text-secondary">Satisfaction</p>
                     </div>
                     <div>
-                      <span className="font-mono text-sm font-semibold">{ci.communication}</span>
+                      <span className="font-serif text-sm font-semibold">{ci.communication}</span>
                       <p className="text-[10px] text-secondary">Communication</p>
                     </div>
                     <div>
-                      <span className="font-mono text-sm font-semibold">{ci.connection}</span>
+                      <span className="font-serif text-sm font-semibold">{ci.connection}</span>
                       <p className="text-[10px] text-secondary">Connection</p>
                     </div>
                   </div>
@@ -235,7 +235,7 @@ export default function CouplesDashboard() {
                     <p className="text-xs font-medium">{c.title}</p>
                     <p className="text-[10px] text-secondary">{new Date(c.completedAt).toLocaleDateString()}</p>
                   </div>
-                  <span className="font-mono text-xs text-success">+{c.points}pts <Icon name="check" size={12} /></span>
+                  <span className="font-serif text-xs text-success">+{c.points}pts <Icon name="check" size={12} /></span>
                 </div>
               ))}
             </div>
@@ -325,7 +325,7 @@ function CoachingInsights({ report }: { report: any }) {
       <div className="space-y-3">
         {insights.slice(0, 3).map((insight, i) => (
           <div key={i} className={`card border-l-4 ${typeStyles[insight.type]}`}>
-            <p className="text-xs font-mono text-secondary mb-1">{insight.title}</p>
+            <p className="text-xs text-secondary mb-1">{insight.title}</p>
             <p className="text-sm leading-relaxed">{insight.body}</p>
           </div>
         ))}
@@ -383,7 +383,7 @@ function SliderField({ label, value, onChange }: { label: string; value: number;
     <div>
       <div className="flex items-center justify-between mb-1">
         <label className="text-xs text-secondary">{label}</label>
-        <span className="font-mono text-xs font-semibold">{value}/10</span>
+        <span className="font-serif text-xs font-semibold">{value}/10</span>
       </div>
       <input
         type="range"
