@@ -425,7 +425,7 @@ export default function InvitePage() {
                   <span className="w-6 h-6 rounded-full bg-success/10 text-success text-xs flex items-center justify-center flex-shrink-0 mt-0.5">&#10003;</span>
                   <div>
                     <h3 className="font-serif text-sm font-semibold mb-1">Invitation Sent</h3>
-                    <p className="text-xs text-secondary">
+                    <p className="card-summary">
                       We sent an invitation to <span className="font-medium text-primary">{inviteEmail}</span>.
                       Once they create an account and complete the assessment, come back here to connect.
                     </p>

@@ -151,7 +151,7 @@ export default function GrowthPage() {
           <div className="flex items-center justify-between mb-3">
             <div>
               <p className="font-serif text-sm font-semibold">Level {level.level}: {level.name}</p>
-              <p className="text-xs text-secondary">
+              <p className="card-summary">
                 {points} points · {level.pointsToNext > 0 ? `${level.pointsToNext} to next level` : 'Max level!'}
               </p>
             </div>

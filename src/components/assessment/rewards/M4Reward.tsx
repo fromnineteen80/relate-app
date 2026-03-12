@@ -163,7 +163,7 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
                   <span className={`text-sm ${isRisk ? 'text-warning' : 'text-success'}`}>
                     {isRisk ? '\u26A0' : '\u2713'}
                   </span>
-                  <span className="text-sm font-medium capitalize">{h}</span>
+                  <span className="data-label capitalize">{h}</span>
                   <span className={`font-serif text-xs ml-auto ${isRisk ? 'text-warning' : 'text-success'}`}>
                     {score}/100
                   </span>
@@ -177,10 +177,10 @@ export default function M4Reward({ scoredData, totalQuestions, onContinue }: Pro
                   />
                 </div>
                 {isRisk && (
-                  <p className="text-xs text-secondary leading-relaxed">{ANTIDOTES[h]}</p>
+                  <p className="card-summary leading-relaxed">{ANTIDOTES[h]}</p>
                 )}
                 {!isRisk && (
-                  <p className="text-xs text-secondary">
+                  <p className="card-summary">
                     {risk === 'low' ? 'Low risk. This is not a significant pattern for you.' : 'Moderate range. Worth monitoring.'}
                   </p>
                 )}

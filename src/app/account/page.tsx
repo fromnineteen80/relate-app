@@ -887,7 +887,7 @@ function AccountPage() {
                       <p className="card-summary truncate">{partnerEmail}</p>
                     ) : null}
                     {connectedAt && (
-                      <p className="text-xs text-secondary mt-0.5">Connected {new Date(connectedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                      <p className="card-summary mt-0.5">Connected {new Date(connectedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                     )}
                   </div>
                 </div>
@@ -895,7 +895,7 @@ function AccountPage() {
                   <Link href="/results/compare" className="btn-primary text-xs w-full text-center block">View Couples Results</Link>
                 ) : (
                   <div>
-                    <p className="text-xs text-secondary mb-2">Upgrade to Couples tier to unlock your compatibility report.</p>
+                    <p className="card-summary mb-2">Upgrade to Couples tier to unlock your compatibility report.</p>
                     <Link href="/invite" className="btn-primary text-xs w-full text-center block">Activate Couples</Link>
                   </div>
                 )}
