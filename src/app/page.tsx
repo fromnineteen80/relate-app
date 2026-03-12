@@ -182,7 +182,7 @@ export default function LandingPage() {
                     <p className="card-summary">{m.time}</p>
                   </div>
                 </div>
-                <p className="text-sm text-secondary leading-relaxed">{m.desc}</p>
+                <p className="card-summary leading-relaxed">{m.desc}</p>
               </div>
             ))}
           </div>
@@ -211,7 +211,7 @@ export default function LandingPage() {
             ].map((item) => (
               <div key={item.title} className="card">
                 <h3 className="font-serif font-semibold mb-2">{item.title}</h3>
-                <p className="text-sm text-secondary leading-relaxed">{item.desc}</p>
+                <p className="card-summary leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -236,7 +236,7 @@ export default function LandingPage() {
                   <span className="font-serif text-3xl font-light text-stone-300">{f.num}</span>
                   <h3 className="font-serif text-lg font-semibold">{f.title}</h3>
                 </div>
-                <p className="text-sm text-secondary leading-relaxed">{f.desc}</p>
+                <p className="card-summary leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -245,7 +245,7 @@ export default function LandingPage() {
             <Link href="/attachment-style" className="btn-primary text-base px-8 py-3">
               Explore Attachment Style
             </Link>
-            <p className="text-xs text-secondary mt-3">$49 one-time add-on</p>
+            <p className="card-summary mt-3">$49 one-time add-on</p>
           </div>
         </div>
       </section>
@@ -266,7 +266,7 @@ export default function LandingPage() {
               <div key={p.code} className="card text-center py-5">
                 <span className="text-xs text-accent">{p.code}</span>
                 <h3 className="font-serif text-lg font-semibold mt-1">{p.name}</h3>
-                <p className="text-xs text-secondary mt-1">{p.desc}</p>
+                <p className="card-summary mt-1">{p.desc}</p>
               </div>
             ))}
           </div>
@@ -300,7 +300,7 @@ export default function LandingPage() {
             />
           </div>
 
-          <p className="text-center text-xs text-secondary mt-6">
+          <p className="text-center card-summary mt-6">
             Aggregate persona distribution data across U.S. dating markets. Coming soon.
           </p>
         </div>
@@ -321,7 +321,7 @@ export default function LandingPage() {
             {FRAMEWORKS.map((f) => (
               <div key={f.name} className="card">
                 <h3 className="font-serif font-semibold mb-1">{f.name}</h3>
-                <p className="text-sm text-secondary">{f.desc}</p>
+                <p className="card-summary">{f.desc}</p>
               </div>
             ))}
           </div>

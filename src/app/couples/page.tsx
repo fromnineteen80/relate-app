@@ -101,7 +101,7 @@ export default function CouplesDashboard() {
             <p className="font-serif text-lg font-semibold">
               {overview.user1?.name} & {overview.user2?.name}
             </p>
-            <p className="text-xs text-secondary">{overview.archetype?.name} · Score: {overview.overallScore}</p>
+            <p className="card-summary">{overview.archetype?.name} · Score: {overview.overallScore}</p>
           </div>
           <Link href="/results/compare" className="btn-secondary text-xs">
             Full Report
@@ -113,7 +113,7 @@ export default function CouplesDashboard() {
           <div className="flex items-center justify-between mb-3">
             <div>
               <p className="font-serif text-sm font-semibold">Level {level.level}: {level.name}</p>
-              <p className="text-xs text-secondary">{points} points · {level.pointsToNext > 0 ? `${level.pointsToNext} to next level` : 'Max level!'}</p>
+              <p className="card-summary">{points} points · {level.pointsToNext > 0 ? `${level.pointsToNext} to next level` : 'Max level!'}</p>
             </div>
             <span className="font-serif text-2xl font-bold text-accent">{level.level}</span>
           </div>
@@ -156,9 +156,9 @@ export default function CouplesDashboard() {
                 <p className="text-xs text-accent">Active Challenge</p>
                 <p className="font-serif text-sm font-semibold mt-1">{activeChallenge.title}</p>
               </div>
-              <span className="font-serif text-xs text-secondary">+{activeChallenge.points}pts</span>
+              <span className="font-serif card-summary">+{activeChallenge.points}pts</span>
             </div>
-            <p className="text-xs text-secondary mb-3">{activeChallenge.description}</p>
+            <p className="card-summary mb-3">{activeChallenge.description}</p>
             <button onClick={completeChallenge} className="btn-primary text-xs w-full">
               Mark Complete
             </button>
@@ -179,7 +179,7 @@ export default function CouplesDashboard() {
                     <p className="font-serif text-sm font-semibold">{challenge.title}</p>
                     <span className="font-serif text-xs text-accent">+{challenge.points}</span>
                   </div>
-                  <p className="text-xs text-secondary mb-3">{challenge.description}</p>
+                  <p className="card-summary mb-3">{challenge.description}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] text-secondary capitalize">{challenge.category} · {challenge.duration}</span>
                     <button onClick={() => startChallenge(challenge)} className="text-xs text-accent hover:underline">

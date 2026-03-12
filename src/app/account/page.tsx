@@ -1299,7 +1299,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
       <div className="mb-6">
         <div className="flex items-end justify-between mb-2">
           <div>
-            <span className="text-xs text-secondary uppercase tracking-wider">Relate Score</span>
+            <span className="subsection-label">Relate Score</span>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="font-serif text-3xl font-semibold">{score.toFixed(0)}</span>
               <span className={`text-sm font-medium ${tier.color}`}>{tier.label}</span>
@@ -1330,7 +1330,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
       {/* Score Components */}
       {Object.keys(components).length > 0 && (
         <div className="mb-6">
-          <span className="text-xs text-secondary uppercase tracking-wider">Score Breakdown</span>
+          <span className="subsection-label">Score Breakdown</span>
           <div className="space-y-2 mt-2">
             {compOrder.map(key => {
               const comp = components[key];
@@ -1360,7 +1360,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
       {/* Match Pool Funnel */}
       {pool && (
         <div className="mb-6">
-          <span className="text-xs text-secondary uppercase tracking-wider">Match Pool Funnel</span>
+          <span className="subsection-label">Match Pool Funnel</span>
           <div className="mt-3 space-y-1">
             {milestones.map((m, i) => {
               const maxVal = milestones[0].value || 1;

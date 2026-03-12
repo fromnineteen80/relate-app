@@ -148,16 +148,16 @@ export default function PersonasPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-xs text-secondary mb-1">PHYSICAL</p>
-                <p className="mb-0.5"><span className="text-accent">A</span> = Fitness</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">A</span> = Fitness</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You lead with physical vitality and take pride in how your body performs. Your energy and discipline around fitness signal drive and self-investment.</p>
-                <p className="mb-0.5"><span className="text-accent">B</span> = Maturity</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">B</span> = Maturity</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You lead with depth and lived experience over raw physicality. Your presence carries weight because of who you are, not how you look.</p>
               </div>
               <div>
                 <p className="text-xs text-secondary mb-1">SOCIAL</p>
-                <p className="mb-0.5"><span className="text-accent">C</span> = Leadership</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">C</span> = Leadership</p>
                 <p className="text-[11px] text-secondary/80 leading-snug mb-2">You naturally take charge in social settings and people look to you for direction. Your confidence in leading creates a sense of safety and momentum.</p>
-                <p className="mb-0.5"><span className="text-accent">D</span> = Presence</p>
+                <p className="mb-0.5"><span className="font-mono text-accent">D</span> = Presence</p>
                 <p className="text-[11px] text-secondary/80 leading-snug">You draw people in through quiet attentiveness rather than commanding the room. Your ability to make others feel seen is your strongest social asset.</p>
               </div>
               <div>
