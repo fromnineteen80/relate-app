@@ -326,7 +326,7 @@ export default function PersonasPage() {
                     {/* Row 3: Shadow Side (centered) */}
                     {persona.struggles.length > 0 && (
                       <div className="md:w-1/2 md:mx-auto">
-                        <h4 className="text-xs text-secondary uppercase tracking-wider mb-2">Shadow Side</h4>
+                        <h4 className="subsection-label mb-2">Shadow Side</h4>
                         <ul className="bullet-list">
                           {persona.struggles.map((item, i) => (
                             <li key={i}>{item}</li>
@@ -361,7 +361,7 @@ export default function PersonasPage() {
                 </div>
                 <div>
                   <p className="font-serif font-semibold">{userPersonaName}</p>
-                  <p className="text-xs text-secondary">Your persona compatibility with all {userGender === 'M' ? 'female' : 'male'} personas</p>
+                  <p className="card-summary">Your persona compatibility with all {userGender === 'M' ? 'female' : 'male'} personas</p>
                 </div>
               </div>
 
@@ -372,7 +372,7 @@ export default function PersonasPage() {
                     <div className={`w-2 h-2 rounded-full ${tierBgColor(match.tier)} flex-shrink-0`} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium truncate">{match.name}</span>
+                        <span className="data-label truncate">{match.name}</span>
                         <span className="font-mono text-xs text-accent">{match.code}</span>
                       </div>
                     </div>

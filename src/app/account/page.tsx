@@ -1396,7 +1396,7 @@ function DatingMarketViz({ data, loading }: { data: MarketData | null; loading: 
           </div>
           <div className="mt-3 space-y-1">
             {milestones.map(m => (
-              <p key={m.label} className="text-[11px] text-secondary">
+              <p key={m.label} className="body-paragraph">
                 <span className="font-medium">{m.label}:</span> {m.desc}
               </p>
             ))}
