@@ -275,7 +275,7 @@ export default function InvitePage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium truncate">{partnerName}</p>
-                    <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
+                    <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded flex-shrink-0">Connected</span>
                   </div>
                   {partner.firstName && <p className="text-xs text-secondary truncate">{partner.email}</p>}
                   {connectedDateStr && (
@@ -292,7 +292,7 @@ export default function InvitePage() {
               {hasCouplesAccess ? (
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono bg-success/10 text-success px-2 py-0.5 rounded">Active</span>
+                    <span className="text-xs bg-success/10 text-success px-2 py-0.5 rounded">Active</span>
                     <span className="text-xs text-secondary">
                       {discountMessage || 'Couples tier activated'}
                     </span>
@@ -444,7 +444,7 @@ export default function InvitePage() {
                 { step: '4', text: 'Use a discount code or pay $119 for Couples access' },
               ].map(s => (
                 <div key={s.step} className="flex items-start gap-3">
-                  <span className="w-6 h-6 rounded-full bg-accent/10 text-accent text-xs flex items-center justify-center flex-shrink-0 font-mono">{s.step}</span>
+                  <span className="w-6 h-6 rounded-full bg-accent/10 text-accent text-xs flex items-center justify-center flex-shrink-0 font-serif">{s.step}</span>
                   <p className="text-xs text-secondary">{s.text}</p>
                 </div>
               ))}

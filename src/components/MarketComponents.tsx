@@ -197,10 +197,10 @@ export function TopMetrosScatterPlot({ metros, worstMetros, demographics, market
           ))}
 
           {/* Axis labels */}
-          <text x={pad.left + plotW / 2} y={H - 6} textAnchor="middle" fontSize="12" fill="var(--color-secondary)" fontFamily="var(--font-mono, ui-monospace, monospace)" textDecoration="none" letterSpacing="0.05em">
+          <text x={pad.left + plotW / 2} y={H - 6} textAnchor="middle" fontSize="12" fill="var(--color-secondary)" textDecoration="none" letterSpacing="0.05em">
             IDEAL MATCH POOL
           </text>
-          <text x={14} y={pad.top + plotH / 2} textAnchor="middle" fontSize="12" fill="var(--color-secondary)" fontFamily="var(--font-mono, ui-monospace, monospace)" letterSpacing="0.05em" transform={`rotate(-90, 14, ${pad.top + plotH / 2})`}>
+          <text x={14} y={pad.top + plotH / 2} textAnchor="middle" fontSize="12" fill="var(--color-secondary)" letterSpacing="0.05em" transform={`rotate(-90, 14, ${pad.top + plotH / 2})`}>
             ESTIMATED MATCHES
           </text>
 
@@ -267,12 +267,12 @@ export function TopMetrosScatterPlot({ metros, worstMetros, demographics, market
 
                 {/* Local Competition Score */}
                 <div className="flex items-baseline gap-1.5 mb-1">
-                  <span className="text-[10px] text-gray-400 uppercase tracking-wider font-mono">Local Competition</span>
+                  <span className="text-[10px] text-gray-400 uppercase tracking-wider">Local Competition</span>
                 </div>
                 <div className="flex items-baseline gap-1.5 mb-1.5">
-                  <span className="font-mono text-lg font-semibold">{m.relateScore.toFixed(0)}</span>
+                  <span className="font-serif text-lg font-semibold">{m.relateScore.toFixed(0)}</span>
                   <span style={{ color: tier.color }} className="text-[10px] font-medium">{tier.label}</span>
-                  <span className="text-gray-500 text-[10px] font-mono ml-auto">/100</span>
+                  <span className="text-gray-500 text-[10px] font-serif ml-auto">/100</span>
                 </div>
 
                 {/* Score progress bar */}
@@ -282,7 +282,7 @@ export function TopMetrosScatterPlot({ metros, worstMetros, demographics, market
                 </div>
 
                 {/* Stats bars */}
-                <span className="text-[10px] text-gray-400 uppercase tracking-wider font-mono">Your Stats</span>
+                <span className="text-[10px] text-gray-400 uppercase tracking-wider">Your Stats</span>
                 <div className="space-y-1 mt-1">
                   {compOrder.map(key => {
                     const comp = components[key];
@@ -294,7 +294,7 @@ export function TopMetrosScatterPlot({ metros, worstMetros, demographics, market
                         <div className="flex-1 h-1 bg-gray-700 rounded-full overflow-hidden">
                           <div className="h-full bg-white/70 rounded-full" style={{ width: `${Math.min(100, Math.max(0, val))}%` }} />
                         </div>
-                        <span className="font-mono text-[10px] w-6 text-right">{Math.round(val)}</span>
+                        <span className="font-serif text-[10px] w-6 text-right">{Math.round(val)}</span>
                       </div>
                     );
                   })}
@@ -304,11 +304,11 @@ export function TopMetrosScatterPlot({ metros, worstMetros, demographics, market
                 <div className="mt-2 pt-2 border-t border-gray-700 grid grid-cols-2 gap-x-3">
                   <div>
                     <div className="text-gray-400 text-[9px] uppercase">Ideal Pool</div>
-                    <div className="font-mono text-xs font-medium">{m.idealPool.toLocaleString()}</div>
+                    <div className="font-serif text-xs font-medium">{m.idealPool.toLocaleString()}</div>
                   </div>
                   <div>
                     <div className="text-gray-400 text-[9px] uppercase">Est. Matches</div>
-                    <div className="font-mono text-xs font-medium">{m.matchCount.toLocaleString()}</div>
+                    <div className="font-serif text-xs font-medium">{m.matchCount.toLocaleString()}</div>
                   </div>
                 </div>
               </div>
@@ -543,7 +543,7 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
     <section className="card">
       {idealPool === 0 && relaxableFilters.length > 0 && (
         <div className="mb-6 border-2 border-dashed border-red-400/50 bg-red-50 rounded-lg p-4">
-          <span className="font-mono text-xs text-red-600 tracking-wider uppercase">Zero Matches</span>
+          <span className="text-xs text-red-600 tracking-wider uppercase">Zero Matches</span>
           <p className="data-label mt-1">Your preferences have filtered your match pool to zero.</p>
           <p className="text-sm text-secondary mt-1 mb-3">
             Adjust your preferences below to find matches. Each change updates your profile automatically.
@@ -553,7 +553,7 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
               <div key={f.key} className="bg-white border border-red-200 rounded-md px-3 py-2.5">
                 <div className="flex items-center justify-between mb-1">
                   <span className="data-label">{f.label}</span>
-                  <span className="text-xs text-red-500 font-mono">-{Math.round(f.lostPct)}% of pool</span>
+                  <span className="text-xs text-red-500 font-serif">-{Math.round(f.lostPct)}% of pool</span>
                 </div>
                 {f.type === 'income' && (
                   <div className="mt-2">
@@ -618,11 +618,11 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
           <div>
             <span className="subsection-label">Local Competition</span>
             <div className="flex items-baseline gap-2 mt-1">
-              <span className="font-mono text-3xl font-semibold">{score.toFixed(0)}</span>
+              <span className="font-serif text-3xl font-semibold">{score.toFixed(0)}</span>
               <span className={`text-sm font-medium ${tier.color}`}>{tier.label}</span>
             </div>
           </div>
-          <span className="text-xs text-secondary font-mono">/100</span>
+          <span className="text-xs text-secondary font-serif">/100</span>
         </div>
         <div className="relative h-5 bg-stone-200 rounded-full overflow-hidden">
           <div className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out" style={{ width: `${score}%`, background: score >= 65 ? 'var(--color-success)' : score >= 50 ? 'var(--color-accent)' : score >= 35 ? 'var(--color-warning)' : 'var(--color-danger)' }} />
@@ -646,7 +646,7 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
                   <div className="flex-1 h-1.5 bg-stone-200 rounded-full overflow-hidden">
                     <div className="h-full bg-accent rounded-full transition-all duration-700" style={{ width: `${Math.min(100, Math.max(0, val))}%` }} />
                   </div>
-                  <span className="text-xs font-mono w-8 text-right">{Math.round(val)}</span>
+                  <span className="text-xs font-serif w-8 text-right">{Math.round(val)}</span>
                 </div>
               );
             })}
@@ -691,7 +691,7 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
                 <div key={m.label}>
                   <div className="flex items-center justify-between mb-0.5">
                     <span className={`text-[11px] ${isLast ? 'font-medium' : 'text-secondary'}`}>{m.label}</span>
-                    <span className={`text-[11px] font-mono ${isLast ? 'font-semibold' : 'text-secondary'}`}>{m.value.toLocaleString()}{pctLabel ? ` (${pctLabel})` : ''}</span>
+                    <span className={`text-[11px] font-serif ${isLast ? 'font-semibold' : 'text-secondary'}`}>{m.value.toLocaleString()}{pctLabel ? ` (${pctLabel})` : ''}</span>
                   </div>
                   <div className="relative h-1.5 bg-stone-100 rounded-full overflow-hidden">
                     <div className="absolute inset-y-0 left-0 rounded-full transition-all duration-700" style={{ width: `${Math.max(1, pct)}%`, backgroundColor: funnelColors[i] }} />
@@ -726,11 +726,11 @@ export function DatingMarketViz({ data, loading, onRelaxPreference, demographics
               {/* Filled portion */}
               <div className="absolute inset-y-0 left-0" style={{ width: `${Math.max(1, matchPct * 100)}%`, backgroundColor: matchColor }} />
               {/* Estimated Matches — left-justified, white text */}
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-xl font-semibold text-white drop-shadow-sm" style={{ zIndex: 1 }}>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 font-serif text-xl font-semibold text-white drop-shadow-sm" style={{ zIndex: 1 }}>
                 {matchCount.toLocaleString()}
               </span>
               {/* Ideal Match Pool — right-justified, black text */}
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-xl font-semibold text-foreground" style={{ zIndex: 1 }}>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 font-serif text-xl font-semibold text-foreground" style={{ zIndex: 1 }}>
                 {idealCount.toLocaleString()}
               </span>
             </div>
