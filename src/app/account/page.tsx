@@ -596,7 +596,7 @@ function AccountPage() {
             <Icon name="check" size={20} className="text-success" />
             <div>
               <p className="text-sm font-medium">Payment successful</p>
-              <p className="text-xs text-secondary">Your account has been upgraded to {(PRICING[currentTier]?.label || currentTier)}.</p>
+              <p className="card-summary">Your account has been upgraded to {(PRICING[currentTier]?.label || currentTier)}.</p>
             </div>
           </div>
         )}
@@ -623,7 +623,7 @@ function AccountPage() {
                   ? `${profileData.firstName} ${profileData.lastName}`
                   : user?.email || '-'}
               </p>
-              <p className="text-xs text-secondary">{user?.email}</p>
+              <p className="card-summary">{user?.email}</p>
             </div>
           </div>
           <div className="space-y-3">
@@ -660,7 +660,7 @@ function AccountPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">{PRICING[individualTier]?.label || individualTier}: Active</p>
-                    <p className="text-xs text-secondary">{individualDescriptions[individualTier] || ''}</p>
+                    <p className="card-summary">{individualDescriptions[individualTier] || ''}</p>
                   </div>
                 </div>
               );
@@ -674,7 +674,7 @@ function AccountPage() {
                 </div>
                 <div>
                   <p className="text-sm font-medium">Couples: Active</p>
-                  <p className="text-xs text-secondary">Partner compatibility report, shared advisor, combined tools.</p>
+                  <p className="card-summary">Partner compatibility report, shared advisor, combined tools.</p>
                 </div>
               </div>
             )}

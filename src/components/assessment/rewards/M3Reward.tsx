@@ -85,7 +85,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
 
     return (
       <div className={`max-w-xl mx-auto transition-opacity duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-        <span className="text-xs text-secondary">Your Connection Style</span>
+        <span className="card-summary">Your Connection Style</span>
         <h2 className="font-serif text-2xl font-semibold mt-1 mb-4">How You Connect</h2>
 
         <p className="explainer mb-8 leading-relaxed">
@@ -97,7 +97,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
             className="text-center transition-all duration-700"
             style={{ opacity: fadeIn ? 1 : 0, transform: fadeIn ? 'translateY(0)' : 'translateY(12px)' }}
           >
-            <span className="text-xs text-secondary">WHAT YOU SEEK</span>
+            <span className="card-summary">WHAT YOU SEEK</span>
             <p className="font-serif text-3xl font-semibold mt-2">{wantScore}</p>
             <div className="h-2 bg-stone-200 rounded-full mt-3 overflow-hidden">
               <div
@@ -105,7 +105,7 @@ export default function M3Reward({ scoredData, onContinue }: Props) {
                 style={{ width: `${wantScore}%`, transitionDelay: '400ms' }}
               />
             </div>
-            <p className="text-xs text-secondary mt-2">{wantLabel}</p>
+            <p className="card-summary mt-2">{wantLabel}</p>
           </div>
 
           <div

@@ -85,9 +85,9 @@ export default function DatesPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <p className="font-serif text-sm font-semibold">{date.title}</p>
-                    <span className="text-[10px] text-secondary capitalize bg-stone-100 px-1.5 py-0.5 rounded">{date.category}</span>
+                    <span className="explainer capitalize bg-stone-100 px-1.5 py-0.5 rounded">{date.category}</span>
                   </div>
-                  <p className="text-xs text-secondary">{date.description}</p>
+                  <p className="card-summary">{date.description}</p>
                 </div>
                 <button
                   onClick={() => toggleSave(date.id)}

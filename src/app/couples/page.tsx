@@ -450,8 +450,8 @@ function AttachmentStatusCard() {
     <Link href="/attachment-style" className="card flex items-center gap-3 bg-stone-50 hover:border-accent transition-colors">
       <Icon name="diamond" size={20} className="text-accent" />
       <div className="flex-1">
-        <p className="text-sm font-medium">Unlock deeper couple insights</p>
-        <p className="text-xs text-secondary">Add Attachment Style for a deeper understanding of your dynamic together</p>
+        <p className="data-label">Unlock deeper couple insights</p>
+        <p className="card-summary">Add Attachment Style for a deeper understanding of your dynamic together</p>
       </div>
       <Icon name="arrow_forward" size={16} className="text-secondary" />
     </Link>
