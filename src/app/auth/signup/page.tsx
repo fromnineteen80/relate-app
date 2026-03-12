@@ -95,7 +95,7 @@ export default function SignUpPage() {
             </p>
           </div>
 
-          <ul className="bullet-list-xs mt-8 pt-6 border-t border-border">
+          <ul className="bullet-list mt-8 pt-6 border-t border-border">
             <li>The assessment takes ~80 minutes across 5 modules. Your progress is saved automatically.</li>
             <li>Free tier includes your persona code, traits, and top 3 compatibility matches.</li>
           </ul>

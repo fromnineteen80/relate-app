@@ -1193,13 +1193,13 @@ function ResultsDashboard() {
                       <span className="field-label-accent">Attachment Style Insights</span>
                       <div className="mt-3 space-y-2">
                         {bp.q2?.patternName && (
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between gap-4">
                             <span className="explainer">Trigger Emotion</span>
                             <span className="inline-label">{bp.q2.patternName}</span>
                           </div>
                         )}
                         {bp.q3?.patternName && (
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between gap-4">
                             <span className="explainer">Decision Mode</span>
                             <span className="inline-label">{bp.q3.patternName}</span>
                           </div>
@@ -1364,7 +1364,7 @@ function ResultsDashboard() {
         {/* ── Connection Style ── */}
         {m3 && (
           <section className="card mb-4 scroll-mt-32">
-            <div className="flex items-start justify-between mb-4">
+            <div className="flex items-start justify-between gap-4 mb-4">
               <h3 className="card-title flex items-center gap-2"><Icon name="sync_alt" size={20} className="text-accent" />Connection Style</h3>
               {m3.wantOfferGap !== undefined && ratingPill(gapToLevel(m3.wantOfferGap), `gap ${m3.wantOfferGap > 0 ? '+' : ''}${m3.wantOfferGap}`)}
             </div>
